@@ -294,13 +294,14 @@
 		0x2014,
 		NSLS(@"Disconnected", "Chat window title")]];
 	
-	error = [(WCServerConnection *) [notification object] error];
-	
-	if([[self connection] isReconnecting]) {
-		reason = [error localizedFailureReason];
+	error = [[self connection] error];
+	reason = [error localizedFailureReason];
 		
-		if([reason length] > 0)
-			[self printEvent:[reason substringWithRange:NSMakeRange(0, [reason length] - 1)]];
+	if([reason length] > 0)
+		reason = [reason substringWithRange:NSMakeRange(0, [reason length] - 1)];
+
+	if([[self connection] isReconnecting]) {
+		[self printEvent:reason];
 	} else {
 		if([[self window] isMiniaturized])
 			[self showWindow:self];
@@ -308,8 +309,8 @@
 		if([[self window] isVisible]) {
 			if(![WCSettings boolForKey:WCAutoReconnect] && ![[[self connection] bookmark] boolForKey:WCBookmarksAutoReconnect]) {
 				if(![[self connection] isDisconnecting]) {
-					[self printEvent:[NSSWF:NSLS(@"Lost connection to %@", @"Disconnected chat message"),
-						[[self connection] name]]];
+					[self printEvent:[NSSWF:NSLS(@"Lost connection to %@: %@", @"Disconnected chat message (server, error)"),
+						[[self connection] name], reason]];
 				}
 			}
 		}
