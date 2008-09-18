@@ -155,7 +155,7 @@
 	rect.origin.y -= rect.size.height - height;
 	[[self window] setFrame:rect display:YES animate:YES];
 	
-	if(![[self window] isOnScreen])
+	if(![[self window] isOnScreen] && ![[self connection] isHidden])
 		[self showWindow:self];
 }
 
