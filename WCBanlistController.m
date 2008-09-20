@@ -290,15 +290,24 @@
 
 - (IBAction)deleteBan:(id)sender {
 	NSString	*title;
+	NSUInteger	count;
 
-	if([_banlistTableView numberOfSelectedRows] == 1) {
+	if(![[_administration connection] isConnected])
+		return;
+
+	count = [[self _selectedBans] count];
+
+	if(count == 0)
+		return;
+	
+	if(count == 1) {
 		title = [NSSWF:
 			NSLS(@"Are you sure you want to delete \"%@\"?", @"Delete ban dialog title (IP)"),
 			[[self _selectedBan] IP]];
 	} else {
 		title = [NSSWF:
 			NSLS(@"Are you sure you want to delete %lu items?", @"Delete ban dialog title (count)"),
-			[_banlistTableView numberOfSelectedRows]];
+			count];
 	}
 
 	NSBeginAlertSheet(title,

@@ -1083,15 +1083,24 @@
 
 - (IBAction)delete:(id)sender {
 	NSString	*title;
+	NSUInteger	count;
 
-	if([_accountsTableView numberOfSelectedRows] == 1) {
+	if(![[self connection] isConnected])
+		return;
+
+	count = [[self _selectedAccounts] count];
+
+	if(count == 0)
+		return;
+
+	if(count == 1) {
 		title = [NSSWF:
 			NSLS(@"Are you sure you want to delete \"%@\"?", @"Delete account dialog title (filename)"),
 			[[self _selectedAccount] name]];
 	} else {
 		title = [NSSWF:
 			NSLS(@"Are you sure you want to delete %lu items?", @"Delete account dialog title (count)"),
-			[_accountsTableView numberOfSelectedRows]];
+			count];
 	}
 
 	NSBeginAlertSheet(title,
