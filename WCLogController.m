@@ -154,13 +154,11 @@
 
 #pragma mark -
 
-- (void)awakeFromNib {
+- (void)windowDidLoad {
 	[_logTableView setHighlightedTableColumn:_timeTableColumn sortOrder:WISortAscending];
 }
 
 
-
-#pragma mark -
 
 - (void)linkConnectionLoggedIn:(NSNotification *)notification {
 	_subscribed = NO;

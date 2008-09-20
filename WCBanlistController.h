@@ -29,6 +29,26 @@
 #import "WCAdministration.h"
 
 @interface WCBanlistController : WCAdministrationController {
+	IBOutlet WITableView				*_banlistTableView;
+	IBOutlet NSTableColumn				*_ipTableColumn;
+	IBOutlet NSTableColumn				*_expiresTableColumn;
+	
+	IBOutlet NSButton					*_addButton;
+	IBOutlet NSButton					*_deleteButton;
+	
+	IBOutlet NSProgressIndicator		*_progressIndicator;
+	
+	IBOutlet NSPanel					*_addBanPanel;
+	IBOutlet NSTextField				*_addBanTextField;
+	IBOutlet NSPopUpButton				*_addBanPopUpButton;
+	
+	NSMutableArray						*_bans;
+	NSMutableArray						*_shownBans;
+	
+	WIDateFormatter						*_dateFormatter;
 }
+
+- (IBAction)addBan:(id)sender;
+- (IBAction)deleteBan:(id)sender;
 
 @end

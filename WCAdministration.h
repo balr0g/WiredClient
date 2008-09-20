@@ -61,6 +61,9 @@
 	IBOutlet WCAdministration			*_administration;
 }
 
+- (void)windowDidLoad;
+- (void)windowTemplateShouldLoad:(NSMutableDictionary *)windowTemplate;
+- (void)windowTemplateShouldSave:(NSMutableDictionary *)windowTemplate;
 - (void)linkConnectionLoggedIn:(NSNotification *)notification;
 - (void)linkConnectionDidClose:(NSNotification *)notification;
 - (void)linkConnectionDidTerminate:(NSNotification *)notification;
@@ -70,5 +73,7 @@
 - (void)controllerWindowWillClose;
 - (void)controllerDidSelect;
 - (void)controllerDidUnselect;
+
+- (void)submitSheet:(id)sender;
 
 @end

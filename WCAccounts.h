@@ -101,6 +101,9 @@
 	IBOutlet NSButton					*_logViewLogButton;
 	IBOutlet NSButton					*_settingsGetSettingsButton;
 	IBOutlet NSButton					*_settingsSetSettingsButton;
+	IBOutlet NSButton					*_banlistGetBansButton;
+	IBOutlet NSButton					*_banlistAddBansButton;
+	IBOutlet NSButton					*_banlistDeleteBansButton;
 	IBOutlet NSButton					*_trackerListServersButton;
 	IBOutlet NSButton					*_trackerRegisterServersButton;
 	

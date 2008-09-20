@@ -61,6 +61,7 @@
 
 	BOOL									_touched;
 	NSSize									_windowSize;
+	NSSize									_minWindowSize;
 }
 
 - (IBAction)addTracker:(id)sender;

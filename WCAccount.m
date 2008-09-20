@@ -93,6 +93,9 @@
 	[message getBool:&_logViewLog forName:@"wired.account.log.view_log"];
 	[message getBool:&_settingsGetSettings forName:@"wired.account.settings.get_settings"];
 	[message getBool:&_settingsSetSettings forName:@"wired.account.settings.set_settings"];
+	[message getBool:&_banlistGetBans forName:@"wired.account.banlist.get_bans"];
+	[message getBool:&_banlistAddBans forName:@"wired.account.banlist.add_bans"];
+	[message getBool:&_banlistDeleteBans forName:@"wired.account.banlist.delete_bans"];
 	[message getBool:&_trackerListServers forName:@"wired.account.tracker.list_servers"];
 	[message getBool:&_trackerRegisterServers forName:@"wired.account.tracker.register_servers"];
 
@@ -150,6 +153,9 @@
 	[message setBool:_logViewLog forName:@"wired.account.log.view_log"];
 	[message setBool:_settingsGetSettings forName:@"wired.account.settings.get_settings"];
 	[message setBool:_settingsSetSettings forName:@"wired.account.settings.set_settings"];
+	[message setBool:_banlistGetBans forName:@"wired.account.banlist.get_bans"];
+	[message setBool:_banlistAddBans forName:@"wired.account.banlist.add_bans"];
+	[message setBool:_banlistDeleteBans forName:@"wired.account.banlist.delete_bans"];
 	[message setBool:_trackerListServers forName:@"wired.account.tracker.list_servers"];
 	[message setBool:_trackerRegisterServers forName:@"wired.account.tracker.register_servers"];
 }
@@ -798,6 +804,42 @@
 
 - (BOOL)trackerListServers {
 	return _trackerListServers;
+}
+
+
+
+- (void)setBanlistGetBans:(BOOL)value {
+	_banlistGetBans = value;
+}
+
+
+
+- (BOOL)banlistGetBans {
+	return _banlistGetBans;
+}
+
+
+
+- (void)setBanlistAddBans:(BOOL)value {
+	_banlistAddBans = value;
+}
+
+
+
+- (BOOL)banlistAddBans {
+	return _banlistAddBans;
+}
+
+
+
+- (void)setBanlistDeleteBans:(BOOL)value {
+	_banlistDeleteBans = value;
+}
+
+
+
+- (BOOL)banlistDeleteBans {
+	return _banlistDeleteBans;
 }
 
 

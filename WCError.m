@@ -43,16 +43,17 @@
 		case 2:		code = WCWiredProtocolUnrecognizedMessage;			break;
 		case 3:		code = WCWiredProtocolMessageOutOfSequence;			break;
 		case 4:		code = WCWiredProtocolLoginFailed;					break;
-		case 5:		code = WCWiredProtocolBanned;						break;
-		case 6:		code = WCWiredProtocolPermissionDenied;				break;
-		case 7:		code = WCWiredProtocolChatNotFound;					break;
-		case 8:		code = WCWiredProtocolUserNotFound;					break;
-		case 9:		code = WCWiredProtocolUserCannotBeDisconnected;		break;
-		case 10:	code = WCWiredProtocolFileNotFound;					break;
-		case 11:	code = WCWiredProtocolFileExists;					break;
-		case 12:	code = WCWiredProtocolAccountNotFound;				break;
-		case 13:	code = WCWiredProtocolAccountExists;				break;
-		case 14:	code = WCWiredProtocolTrackerNotEnabled;			break;
+		case 5:		code = WCWiredProtocolPermissionDenied;				break;
+		case 6:		code = WCWiredProtocolChatNotFound;					break;
+		case 7:		code = WCWiredProtocolUserNotFound;					break;
+		case 8:		code = WCWiredProtocolUserCannotBeDisconnected;		break;
+		case 9:		code = WCWiredProtocolFileNotFound;					break;
+		case 10:	code = WCWiredProtocolFileExists;					break;
+		case 11:	code = WCWiredProtocolAccountNotFound;				break;
+		case 12:	code = WCWiredProtocolAccountExists;				break;
+		case 13:	code = WCWiredProtocolTrackerNotEnabled;			break;
+		case 14:	code = WCWiredProtocolBanNotFound;					break;
+		case 15:	code = WCWiredProtocolBanExists;					break;
 		default:	code = error;										break;
 	}
 	
@@ -128,10 +129,6 @@
 				return NSLS(@"Login Failed", @"Wired protocol error title");
 				break;
 			
-			case WCWiredProtocolBanned:
-				return NSLS(@"Banned", @"Wired protocol error title");
-				break;
-			
 			case WCWiredProtocolPermissionDenied:
 				return NSLS(@"Permission Denied", @"Wired protocol error title");
 				break;
@@ -168,6 +165,14 @@
 				return NSLS(@"Tracker Not Enabled", @"Wired protocol error title");
 				break;
 
+			case WCWiredProtocolBanNotFound:
+				return NSLS(@"Ban Not Found", @"Wired protocol error title");
+				break;
+			
+			case WCWiredProtocolBanExists:
+				return NSLS(@"Ban Exists", @"Wired protocol error title");
+				break;
+			
 			default:
 				return NSLS(@"Unknown Error", @"Wired protocol error title");
 				break;
@@ -261,10 +266,6 @@
 				return NSLS(@"Could not login, the user name and/or password you supplied was rejected.", @"Wired protocol error description");
 				break;
 			
-			case WCWiredProtocolBanned:
-				return NSLS(@"Could not login, you are banned from this server.", @"Wired protocol error description");
-				break;
-			
 			case WCWiredProtocolPermissionDenied:
 				return NSLS(@"The command could not be completed due to insufficient privileges.", @"Wired protocol error description");
 				break;
@@ -301,6 +302,14 @@
 				return NSLS(@"This server does not function as a tracker.", @"Wired protocol error description");
 				break;
 
+			case WCWiredProtocolBanNotFound:
+				return NSLS(@"Could not find the ban you referred to. Perhaps someone deleted it.", @"Wired protocol error description");
+				break;
+			
+			case WCWiredProtocolBanExists:
+				return NSLS(@"The ban you tried to create already exists on the server", @"Wired protocol error description");
+				break;
+			
 			default:
                 return [NSSWF:NSLS(@"An unknown server error occured. The error received from the server was %u.", @"Wired protocol error description (code)"), [self code]];
                 break;

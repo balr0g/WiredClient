@@ -77,8 +77,11 @@
 	
 	[[[self window] toolbar] setSelectedItemIdentifier:@"Monitor"];
 
-//	[self settings:self];	[[[self window] toolbar] setSelectedItemIdentifier:[[[[self window] toolbar] itemWithTag:2] itemIdentifier]];
-
+	[_monitorController windowDidLoad];
+	[_logController windowDidLoad];
+	[_settingsController windowDidLoad];
+	[_banlistController windowDidLoad];
+	
 	[super windowDidLoad];
 }
 
@@ -92,6 +95,28 @@
 
 - (void)windowWillClose:(NSNotification *)notification {
 	[_selectedController controllerWindowWillClose];
+}
+
+
+
+- (void)windowTemplateShouldLoad:(NSMutableDictionary *)windowTemplate {
+	[_monitorController windowTemplateShouldLoad:windowTemplate];
+	[_logController windowTemplateShouldLoad:windowTemplate];
+	[_settingsController windowTemplateShouldLoad:windowTemplate];
+	[_banlistController windowTemplateShouldLoad:windowTemplate];
+
+	[super windowTemplateShouldLoad:windowTemplate];
+}
+
+
+
+- (void)windowTemplateShouldSave:(NSMutableDictionary *)windowTemplate {
+	[_monitorController windowTemplateShouldSave:windowTemplate];
+	[_logController windowTemplateShouldSave:windowTemplate];
+	[_settingsController windowTemplateShouldSave:windowTemplate];
+	[_banlistController windowTemplateShouldSave:windowTemplate];
+
+	[super windowTemplateShouldLoad:windowTemplate];
 }
 
 
@@ -172,6 +197,7 @@
 	[_monitorController linkConnectionLoggedIn:notification];
 	[_logController linkConnectionLoggedIn:notification];
 	[_settingsController linkConnectionLoggedIn:notification];
+	[_banlistController linkConnectionLoggedIn:notification];
 	
 	[super linkConnectionLoggedIn:notification];
 }
@@ -182,6 +208,7 @@
 	[_monitorController linkConnectionDidClose:notification];
 	[_logController linkConnectionDidClose:notification];
 	[_settingsController linkConnectionDidClose:notification];
+	[_banlistController linkConnectionDidClose:notification];
 	
 	[super linkConnectionDidClose:notification];
 }
@@ -192,6 +219,7 @@
 	[_monitorController linkConnectionDidTerminate:notification];
 	[_logController linkConnectionDidTerminate:notification];
 	[_settingsController linkConnectionDidTerminate:notification];
+	[_banlistController linkConnectionDidTerminate:notification];
 	
 	[super linkConnectionDidTerminate:notification];
 }
@@ -202,6 +230,7 @@
 	[_monitorController serverConnectionPrivilegesDidChange:notification];
 	[_logController serverConnectionPrivilegesDidChange:notification];
 	[_settingsController serverConnectionPrivilegesDidChange:notification];
+	[_banlistController serverConnectionPrivilegesDidChange:notification];
 	
 	[super serverConnectionPrivilegesDidChange:notification];
 }
@@ -274,11 +303,32 @@
 	}
 }
 
+
+
+- (IBAction)submitSheet:(id)sender {
+	[_selectedController submitSheet:sender];
+}
+
 @end
 
 
 
 @implementation WCAdministrationController
+
+- (void)windowDidLoad {
+}
+
+
+
+- (void)windowTemplateShouldLoad:(NSMutableDictionary *)windowTemplate {
+}
+
+
+
+- (void)windowTemplateShouldSave:(NSMutableDictionary *)windowTemplate {
+}
+
+
 
 - (void)linkConnectionLoggedIn:(NSNotification *)notification {
 }
@@ -318,6 +368,14 @@
 
 
 - (void)controllerDidUnselect {
+}
+
+
+
+#pragma mark -
+
+- (IBAction)submitSheet:(id)sender {
+	[NSApp endSheet:[sender window] returnCode:NSOKButton];
 }
 
 @end

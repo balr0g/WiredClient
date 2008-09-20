@@ -130,6 +130,8 @@
 		A54933440D8FEC07002D37D7 /* AddTracker.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54933430D8FEC07002D37D7 /* AddTracker.tiff */; };
 		A54933A50D9027BC002D37D7 /* DeleteTracker.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54933A40D9027BC002D37D7 /* DeleteTracker.tiff */; };
 		A54E14960C084A6900EF5FBF /* DefaultIcon.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54E14950C084A6900EF5FBF /* DefaultIcon.tiff */; };
+		A558A4EF0E8526F7004C724C /* WCBan.m in Sources */ = {isa = PBXBuildFile; fileRef = A558A4ED0E8526F7004C724C /* WCBan.m */; };
+		A558A6440E8589E4004C724C /* Banlist.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A558A6430E8589E4004C724C /* Banlist.tiff */; };
 		A55B1A4106B3952000201912 /* Remove.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A55B1A4006B3952000201912 /* Remove.tiff */; };
 		A565B5000D5DA94000AF91BA /* wired.xml in Resources */ = {isa = PBXBuildFile; fileRef = A565B4FF0D5DA94000AF91BA /* wired.xml */; };
 		A571EDEE0D7B27CC001FF437 /* Upload.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A571EDED0D7B27CC001FF437 /* Upload.tiff */; };
@@ -250,21 +252,21 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = A544C1B90758E0E9008446CF /* WiredAdditions.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 7712BA960E5C1726001C4210 /* WiredFoundation */;
+			remoteGlobalIDString = 7712BA960E5C1726001C4210;
 			remoteInfo = WiredFoundation;
 		};
 		7739D49B0E7FFC0200D76C47 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = A544C1B90758E0E9008446CF /* WiredAdditions.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 7712BB670E5C1964001C4210 /* WiredAppKit */;
+			remoteGlobalIDString = 7712BB670E5C1964001C4210;
 			remoteInfo = WiredAppKit;
 		};
 		7739D49D0E7FFC0200D76C47 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = A544C1B90758E0E9008446CF /* WiredAdditions.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 774896EA0CC8A63200E95A83 /* WiredNetworking */;
+			remoteGlobalIDString = 774896EA0CC8A63200E95A83;
 			remoteInfo = WiredNetworking;
 		};
 		774897930CC8A63300E95A83 /* PBXContainerItemProxy */ = {
@@ -448,6 +450,9 @@
 		A54933430D8FEC07002D37D7 /* AddTracker.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = AddTracker.tiff; sourceTree = "<group>"; };
 		A54933A40D9027BC002D37D7 /* DeleteTracker.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = DeleteTracker.tiff; sourceTree = "<group>"; };
 		A54E14950C084A6900EF5FBF /* DefaultIcon.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = DefaultIcon.tiff; sourceTree = "<group>"; };
+		A558A4ED0E8526F7004C724C /* WCBan.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCBan.m; sourceTree = "<group>"; };
+		A558A4EE0E8526F7004C724C /* WCBan.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCBan.h; sourceTree = "<group>"; };
+		A558A6430E8589E4004C724C /* Banlist.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Banlist.tiff; sourceTree = "<group>"; };
 		A55B1A4006B3952000201912 /* Remove.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Remove.tiff; sourceTree = "<group>"; };
 		A565B4FF0D5DA94000AF91BA /* wired.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = wired.xml; sourceTree = "<group>"; };
 		A571EDED0D7B27CC001FF437 /* Upload.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Upload.tiff; sourceTree = "<group>"; };
@@ -1021,6 +1026,7 @@
 				A5DB1BB30D7406B800EBD9D9 /* AliasBadge.icns */,
 				A5D4072A0D88FC35007851BD /* Back.tiff */,
 				A5E225BB057AB5290037C7F9 /* Ban.tiff */,
+				A558A6430E8589E4004C724C /* Banlist.tiff */,
 				A521257D061393990009F296 /* Banner.tiff */,
 				A5E225C2057AB5290037C7F9 /* Bonjour.tiff */,
 				77E556E107539B07009A7557 /* Bookmark.tiff */,
@@ -1188,10 +1194,12 @@
 				A5AAD12C0D86EAA00072FFA1 /* Resources */,
 				A5AAD12A0D86EA9C0072FFA1 /* WCAdministration.m */,
 				A5AAD1290D86EA9C0072FFA1 /* WCAdministration.h */,
-				A5AAD2DD0D879B250072FFA1 /* WCFilterView.m */,
-				A5AAD2DC0D879B250072FFA1 /* WCFilterView.h */,
+				A558A4ED0E8526F7004C724C /* WCBan.m */,
+				A558A4EE0E8526F7004C724C /* WCBan.h */,
 				A5D409760D897770007851BD /* WCBanlistController.m */,
 				A5D409750D897770007851BD /* WCBanlistController.h */,
+				A5AAD2DD0D879B250072FFA1 /* WCFilterView.m */,
+				A5AAD2DC0D879B250072FFA1 /* WCFilterView.h */,
 				A5AAD14A0D86F1980072FFA1 /* WCLogController.m */,
 				A5AAD1490D86F1980072FFA1 /* WCLogController.h */,
 				A5F802970D8E378300A84685 /* WCMonitorCell.m */,
@@ -1474,6 +1482,7 @@
 				A54931870D8FACAE002D37D7 /* ReloadTracker.tiff in Resources */,
 				A54933440D8FEC07002D37D7 /* AddTracker.tiff in Resources */,
 				A54933A50D9027BC002D37D7 /* DeleteTracker.tiff in Resources */,
+				A558A6440E8589E4004C724C /* Banlist.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1538,6 +1547,7 @@
 				A5AAD12B0D86EA9C0072FFA1 /* WCAdministration.m in Sources */,
 				A5DC7FCE057AB0F200736BBF /* WCApplication.m in Sources */,
 				A5DC7EC8057AAEAD00736BBF /* WCApplicationController.m in Sources */,
+				A558A4EF0E8526F7004C724C /* WCBan.m in Sources */,
 				A5D409770D897771007851BD /* WCBanlistController.m in Sources */,
 				A57512EC05E4E64D003B51D7 /* WCCache.m in Sources */,
 				A5DC64130D92AC2D00DB3B16 /* WCChat.m in Sources */,

@@ -1,7 +1,7 @@
 /* $Id$ */
 
 /*
- *  Copyright (c) 2003-2007 Axel Andersson
+ *  Copyright (c) 2008 Axel Andersson
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -26,44 +26,19 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define WCWiredClientErrorDomain		@"WCWiredClientErrorDomain"
-#define WCWiredProtocolErrorDomain		@"WCWiredProtocolErrorDomain"
+#import "WCServerConnectionObject.h"
 
+@interface WCBan : WCServerConnectionObject {
+	NSString			*_ip;
+	NSDate				*_expirationDate;
+}
 
-enum _WCWiredClientErrors {
-	WCWiredClientServerDisconnected,
-	WCWiredClientOpenFailed,
-	WCWiredClientCreateFailed,
-	WCWiredClientFileExists,
-	WCWiredClientFolderExists,
-	WCWiredClientTransferExists,
-	WCWiredClientTransferWithResourceFork,
-	WCWiredClientTransferFailed,
-	WCWiredClientClientNotFound
-};
++ (id)banWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection;
 
-enum _WCWiredProtocolErrors {
-	WCWiredProtocolInternalError,
-	WCWiredProtocolInvalidMessage,
-	WCWiredProtocolUnrecognizedMessage,
-	WCWiredProtocolMessageOutOfSequence,
-	WCWiredProtocolLoginFailed,
-	WCWiredProtocolPermissionDenied,
-	WCWiredProtocolChatNotFound,
-	WCWiredProtocolUserNotFound,
-	WCWiredProtocolUserCannotBeDisconnected,
-	WCWiredProtocolFileNotFound,
-	WCWiredProtocolFileExists,
-	WCWiredProtocolAccountNotFound,
-	WCWiredProtocolAccountExists,
-	WCWiredProtocolTrackerNotEnabled,
-	WCWiredProtocolBanNotFound,
-	WCWiredProtocolBanExists
-};
+- (NSString *)IP;
+- (NSDate *)expirationDate;
 
-
-@interface WCError : WIError
-
-+ (id)errorWithWiredMessage:(WIP7Message *)message;
+- (NSComparisonResult)compareIP:(WCBan *)ban;
+- (NSComparisonResult)compareExpirationDate:(WCBan *)ban;
 
 @end

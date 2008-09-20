@@ -76,6 +76,9 @@
 	WIP7Bool				_logViewLog;
 	WIP7Bool				_settingsGetSettings;
 	WIP7Bool				_settingsSetSettings;
+	WIP7Bool				_banlistGetBans;
+	WIP7Bool				_banlistAddBans;
+	WIP7Bool				_banlistDeleteBans;
 	WIP7Bool				_trackerListServers;
 	WIP7Bool				_trackerRegisterServers;
 }
@@ -181,6 +184,12 @@
 - (BOOL)settingsGetSettings;
 - (void)setSettingsSetSettings:(BOOL)value;
 - (BOOL)settingsSetSettings;
+- (void)setBanlistGetBans:(BOOL)value;
+- (BOOL)banlistGetBans;
+- (void)setBanlistAddBans:(BOOL)value;
+- (BOOL)banlistAddBans;
+- (void)setBanlistDeleteBans:(BOOL)value;
+- (BOOL)banlistDeleteBans;
 - (void)setTrackerListServers:(BOOL)value;
 - (BOOL)trackerListServers;
 - (void)setTrackerRegisterServers:(BOOL)value;

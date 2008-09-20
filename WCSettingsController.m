@@ -125,7 +125,7 @@
 
 @implementation WCSettingsController
 
-- (void)awakeFromNib {
+- (void)windowDidLoad {
 	NSComboBoxCell		*comboBoxCell;
 	
 	[_bannerImageView setMaxImageSize:NSMakeSize(200.0, 32.0)];
@@ -158,8 +158,6 @@
 }
 
 
-
-#pragma mark -
 
 - (void)controlTextDidChange:(NSNotification *)notification {
 	[self touch:self];
@@ -253,13 +251,16 @@
 	NSRect		rect, frame;
 	
 	frame = [[_administration window] frame];
+
+	_windowSize = frame.size;
+	_minWindowSize = [[_administration window] minSize];
+
 	rect = [[_administration window] frameRectForContentRect:[_box frame]];
 	rect.origin = frame.origin;
 	rect.origin.y -= rect.size.height - frame.size.height;
 	[[_administration window] setFrame:rect display:YES animate:YES];
-	[_box setFrameOrigin:NSZeroPoint];
-
-	_windowSize = frame.size;
+	[[_administration window] setMinSize:rect.size];
+	[[_administration window] setMaxSize:rect.size];
 	
 	[[_administration window] setShowsResizeIndicator:NO];
 	[[_administration window] makeFirstResponder:_nameTextField];
@@ -276,6 +277,8 @@
 	rect.origin.y -= _windowSize.height - rect.size.height;
 	rect.size = _windowSize;
 	[[_administration window] setFrame:rect display:YES animate:YES];
+	[[_administration window] setMinSize:_minWindowSize];
+	[[_administration window] setMaxSize:NSMakeSize(0.0, 0.0)];
 
 	[[_administration window] setShowsResizeIndicator:YES];
 }

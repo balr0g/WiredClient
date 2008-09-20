@@ -34,6 +34,7 @@
 
 	IBOutlet NSPanel			*_banMessagePanel;
 	IBOutlet NSTextField		*_banMessageTextField;
+	IBOutlet NSPopUpButton		*_banMessagePopUpButton;
 
 	BOOL						_isShown;
 }

@@ -140,6 +140,9 @@
 	if([[message name] isEqualToString:@"wired.login"]) {
 		[self postNotificationName:WCLinkConnectionLoggedIn object:self];
 	}
+	if([[message name] isEqualToString:@"wired.banned"]) {
+//		handle banned
+	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
 //		handle login error
 	}

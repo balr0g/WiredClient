@@ -321,6 +321,9 @@
 		[_logViewLogButton setState:[account logViewLog]];
 		[_settingsGetSettingsButton setState:[account settingsGetSettings]];
 		[_settingsSetSettingsButton setState:[account settingsSetSettings]];
+		[_banlistGetBansButton setState:[account banlistGetBans]];
+		[_banlistAddBansButton setState:[account banlistAddBans]];
+		[_banlistDeleteBansButton setState:[account banlistDeleteBans]];
 		[_trackerListServersButton setState:[account trackerListServers]];
 		[_trackerRegisterServersButton setState:[account trackerRegisterServers]];
 	} else {
@@ -427,6 +430,9 @@
 	[account setLogViewLog:[_logViewLogButton state]];
 	[account setSettingsGetSettings:[_settingsGetSettingsButton state]];
 	[account setSettingsSetSettings:[_settingsSetSettingsButton state]];
+	[account setBanlistGetBans:[_banlistGetBansButton state]];
+	[account setBanlistAddBans:[_banlistAddBansButton state]];
+	[account setBanlistDeleteBans:[_banlistDeleteBansButton state]];
 	[account setTrackerListServers:[_trackerListServersButton state]];
 	[account setTrackerRegisterServers:[_trackerRegisterServersButton state]];
 }
@@ -629,6 +635,9 @@
 		_logViewLogButton,
 		_settingsGetSettingsButton,
 		_settingsSetSettingsButton,
+		_banlistGetBansButton,
+		_banlistAddBansButton,
+		_banlistDeleteBansButton,
 		_trackerListServersButton,
 		_trackerRegisterServersButton,
 		NULL];
@@ -1290,6 +1299,9 @@
 	[_logViewLogButton setState:NSOnState];
 	[_settingsGetSettingsButton setState:NSOnState];
 	[_settingsSetSettingsButton setState:NSOnState];
+	[_banlistGetBansButton setState:NSOnState];
+	[_banlistAddBansButton setState:NSOnState];
+	[_banlistDeleteBansButton setState:NSOnState];
 	
 	[self touch:self];
 }

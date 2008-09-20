@@ -889,6 +889,18 @@
 
 
 
+- (void)submitSheet:(id)sender {
+	BOOL	valid = YES;
+	
+	if([sender window] == _createFolderPanel)
+		valid = ([[_createFolderTextField stringValue] length] > 0);
+	
+	if(valid)
+		[super submitSheet:sender];
+}
+
+
+
 #pragma mark -
 
 - (IBAction)open:(id)sender {
