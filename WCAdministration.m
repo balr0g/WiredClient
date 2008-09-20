@@ -116,7 +116,7 @@
 	[_settingsController windowTemplateShouldSave:windowTemplate];
 	[_banlistController windowTemplateShouldSave:windowTemplate];
 
-	[super windowTemplateShouldLoad:windowTemplate];
+	[super windowTemplateShouldSave:windowTemplate];
 }
 
 

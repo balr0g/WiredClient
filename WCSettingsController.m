@@ -278,7 +278,7 @@
 	rect.size = _windowSize;
 	[[_administration window] setFrame:rect display:YES animate:YES];
 	[[_administration window] setMinSize:_minWindowSize];
-	[[_administration window] setMaxSize:NSMakeSize(0.0, 0.0)];
+	[[_administration window] setMaxSize:NSMakeSize(10000.0, 10000.0)];
 
 	[[_administration window] setShowsResizeIndicator:YES];
 }

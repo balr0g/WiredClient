@@ -1979,8 +1979,8 @@ v9ORgAAAAAAAAAAAAAAAAAAAAAB0ZXh0AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOAA</byt
 																<reference key="NSBackgroundColor" ref="854732550"/>
 																<reference key="NSGridColor" ref="723020190"/>
 																<double key="NSRowHeight">1.700000e+01</double>
-																<int key="NSTvFlags">-633307136</int>
-																<int key="NSColumnAutoresizingStyle">1</int>
+																<int key="NSTvFlags">-633339904</int>
+																<int key="NSColumnAutoresizingStyle">4</int>
 																<int key="NSDraggingSourceMaskForLocal">15</int>
 																<int key="NSDraggingSourceMaskForNonLocal">0</int>
 																<bool key="NSAllowsTypeSelect">YES</bool>
