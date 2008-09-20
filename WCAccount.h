@@ -186,6 +186,9 @@
 - (void)setTrackerRegisterServers:(BOOL)value;
 - (BOOL)trackerRegisterServers;
 
+- (NSComparisonResult)compareName:(WCAccount *)account;
+- (NSComparisonResult)compareType:(WCAccount *)account;
+
 @end
 
 

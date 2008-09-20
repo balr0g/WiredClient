@@ -825,7 +825,7 @@
 - (NSComparisonResult)compareType:(WCAccount *)account {
 	if([self isKindOfClass:[WCUserAccount class]] && [account isKindOfClass:[WCGroupAccount class]])
 		return NSOrderedAscending;
-	if([self isKindOfClass:[WCGroupAccount class]] && [account isKindOfClass:[WCUserAccount class]])
+	else if([self isKindOfClass:[WCGroupAccount class]] && [account isKindOfClass:[WCUserAccount class]])
 		return NSOrderedDescending;
 
 	return [self compareName:account];
