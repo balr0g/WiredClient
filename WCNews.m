@@ -58,9 +58,9 @@
 	_newsFilter = [[WITextFilter alloc] initWithSelectors:@selector(filterURLs:), @selector(filterWiredSmilies:), 0];
 	
 	[[NSNotificationCenter defaultCenter]
-	 addObserver:self
-	 selector:@selector(preferencesDidChange:)
-	 name:WCPreferencesDidChange];
+		addObserver:self
+		   selector:@selector(preferencesDidChange:)
+			   name:WCPreferencesDidChange];
 	
 	[[self connection] addObserver:self selector:@selector(wiredNewsPost:) messageName:@"wired.news.post"];
 	
