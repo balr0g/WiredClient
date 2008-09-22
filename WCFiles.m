@@ -409,6 +409,7 @@
 					[_history addObject:file];
 					_historyPosition = [_history count] - 1;
 					
+					[self _setSelectPath:NULL];
 					[self _changeDirectory:file];
 					[self validate];
 				}
