@@ -198,10 +198,10 @@
 
 
 - (void)wiredBanlistGetBansReply:(WIP7Message *)message {
-	if([[message name] isEqualToString:@"wired.banlist.ban_list"]) {
+	if([[message name] isEqualToString:@"wired.banlist.list"]) {
 		[_bans addObject:[WCBan banWithMessage:message connection:[_administration connection]]];
 	}
-	else if([[message name] isEqualToString:@"wired.banlist.ban_list.done"]) {
+	else if([[message name] isEqualToString:@"wired.banlist.list.done"]) {
 		[_shownBans setArray:_bans];
 		[_bans removeAllObjects];
 		
