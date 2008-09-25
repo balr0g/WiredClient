@@ -146,17 +146,6 @@
 
 #pragma mark -
 
-- (NSComparisonResult)compareClass:(WCMessage *)message {
-	if([self isKindOfClass:[WCPrivateMessage class]] && ![message isKindOfClass:[WCPrivateMessage class]])
-		return NSOrderedAscending;
-	else if([self isKindOfClass:[WCBroadcastMessage class]] && ![message isKindOfClass:[WCBroadcastMessage class]])
-		return NSOrderedDescending;
-	
-	return NSOrderedSame;
-}
-
-
-
 - (NSComparisonResult)compareUser:(WCMessage *)message {
 	NSComparisonResult	result;
 	

@@ -30,7 +30,7 @@
 #define WCMessagesDidReadMessage		@"WCMessagesDidReadMessage"
 
 
-@class WCUser;
+@class WCConversation, WCMessageConversation, WCBroadcastConversation, WCUser;
 
 @interface WCMessages : WIWindowController {
 	IBOutlet WISplitView				*_conversationsSplitView;
@@ -56,11 +56,9 @@
 	IBOutlet NSPanel					*_broadcastPanel;
 	IBOutlet NSTextView					*_broadcastTextView;
 
-	NSMutableArray						*_titles;
-	NSMutableArray						*_allConversations;
-	NSMutableDictionary					*_conversations;
-	NSMutableArray						*_allMessages;
-	NSMutableArray						*_shownMessages;
+	WCConversation						*_conversations;
+	WCMessageConversation				*_messageConversations;
+	WCBroadcastConversation				*_broadcastConversations;
 	
 	WITextFilter						*_messageFilter;
 	WITextFilter						*_userFilter;

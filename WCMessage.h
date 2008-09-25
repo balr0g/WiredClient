@@ -58,7 +58,6 @@ typedef enum _WCMessageDirection	WCMessageDirection;
 - (void)setConversation:(WCConversation *)conversation;
 - (WCConversation *)conversation;
 
-- (NSComparisonResult)compareClass:(WCMessage *)message;
 - (NSComparisonResult)compareUser:(WCMessage *)message;
 - (NSComparisonResult)compareDate:(WCMessage *)message;
 

@@ -26,19 +26,56 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WCMessage.h"
 #import "WCServerConnectionObject.h"
 
+@class WCMessage, WCUser;
+
 @interface WCConversation : WCServerConnectionObject {
+	NSString					*_name;
+	NSUInteger					_userID;
+	NSMutableArray				*_conversations;
 	NSMutableArray				*_messages;
+	BOOL						_expandable;
 }
 
-+ (id)conversationWithMessage:(WCMessage *)message;
++ (id)rootConversation;
++ (id)conversationWithUser:(WCUser *)user connection:(WCServerConnection *)connection;
 
-- (void)addMessage:(WCMessage *)message;
-- (NSArray *)messages;
-- (Class)messageClass;
+- (NSString *)name;
+- (BOOL)isExpandable;
 - (NSUInteger)userID;
-- (NSString *)userNick;
+
+- (NSUInteger)numberOfConversations;
+- (NSArray *)conversations;
+- (id)conversationAtIndex:(NSUInteger)index;
+- (id)conversationForUser:(WCUser *)user connection:(WCServerConnection *)connection;
+- (void)addConversation:(id)conversation;
+- (void)removeConversation:(id)conversation;
+- (void)removeAllConversations;
+
+- (NSUInteger)numberOfMessages;
+- (NSUInteger)numberOfUnreadMessages;
+- (NSUInteger)numberOfUnreadMessagesForConnection:(WCServerConnection *)connection;
+- (NSArray *)messages;
+- (NSArray *)unreadMessages;
+- (id)messageAtIndex:(NSUInteger)index;
+- (id)previousUnreadMessageStartingAtConversation:(id)conversation message:(id)message;
+- (id)nextUnreadMessageStartingAtConversation:(id)conversation message:(id)message;
+- (void)sortMessagesUsingSelector:(SEL)selector;
+- (void)addMessage:(id)message;
+- (void)removeMessage:(id)message;
+- (void)removeAllMessages;
+- (void)invalidateMessagesForConnection:(WCServerConnection *)connection;
+- (void)revalidateMessagesForConnection:(WCServerConnection *)connection;
+
+@end
+
+
+@interface WCMessageConversation : WCConversation
+
+@end
+
+
+@interface WCBroadcastConversation : WCConversation
 
 @end

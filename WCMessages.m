@@ -36,59 +36,27 @@
 #import "WCStats.h"
 #import "WCUser.h"
 
-static NSInteger _WCMessagesCompareMessages(id, id, void *);
-
-
-static NSInteger _WCMessagesCompareMessages(id message1, id message2, void *contextInfo) {
-	NSComparisonResult	result;
-	
-	result = [message1 compareClass:message2];
-	
-	if(result != NSOrderedSame)
-		return result;
-	
-	return (NSComparisonResult) [message1 performSelector:(SEL) contextInfo withObject:message2];
-}
-
-
-
 @interface WCMessages(Private)
-
-+ (NSString *)_conversationKeyForClass:(Class)class user:(WCUser *)user connection:(WCServerConnection *)connection;
 
 - (void)_showDialogForMessage:(WCMessage *)message;
 
 - (void)_validate;
 - (void)_update;
 
-- (NSArray *)_conversationsOfClass:(Class)class;
-- (NSArray *)_messagesOfClass:(Class)class;
-- (NSArray *)_unreadMessagesOfClass:(Class)class;
-- (NSArray *)_messagesForConversation:(WCConversation *)conversation unreadOnly:(BOOL)unreadOnly;
-- (NSArray *)_messagesSortedForView;
-- (id)_selectedMessageBox;
-- (WCConversation *)_selectedConversation;
-- (WCMessage *)_selectedMessage;
-- (WCMessage *)_selectedMessageForTraversing;
-- (WCMessage *)_messageAtIndex:(NSUInteger)index;
-- (void)_selectMessage:(WCMessage *)message;
-- (SEL)_sortSelector;
+- (id)_messageAtIndex:(NSUInteger)index;
+- (id)_selectedConversation;
+- (id)_selectedMessage;
+- (void)_selectMessage:(id)message;
 - (void)_readMessages;
 - (void)_removeAllMessages;
-- (void)_removeAllConversations;
+
+- (void)_reselectConversation:(WCConversation *)conversation message:(WCMessage *)message;
+- (SEL)_sortSelector;
 
 @end
 
 
 @implementation WCMessages(Private)
-
-+ (NSString *)_conversationKeyForClass:(Class)class user:(WCUser *)user connection:(WCServerConnection *)connection {
-	return [NSSWF:@"%@_%u_%@", NSStringFromClass(class), [user userID], [connection URL]];
-}
-
-
-
-#pragma mark -
 
 - (void)_showDialogForMessage:(WCMessage *)message {
 	NSAlert		*alert;
@@ -161,116 +129,25 @@ static NSInteger _WCMessagesCompareMessages(id message1, id message2, void *cont
 
 #pragma mark -
 
-- (NSArray *)_conversationsOfClass:(Class)class {
-	NSEnumerator	*enumerator;
-	NSMutableArray	*array;
-	WCConversation	*conversation;
+- (id)_messageAtIndex:(NSUInteger)index {
+	id				conversation;
+	NSUInteger		i;
 	
-	array = [NSMutableArray array];
-	enumerator = [_allConversations objectEnumerator];
+	conversation = [self _selectedConversation];
 	
-	while((conversation = [enumerator nextObject])) {
-		if([conversation messageClass] == class)
-			[array addObject:conversation];
-	}
+	if(!conversation)
+		return NULL;
 	
-	[array reverse];
+	i = ([_messagesTableView sortOrder] == WISortDescending)
+		? [conversation numberOfMessages] - index - 1
+		: index;
 	
-	return array;
+	return [conversation messageAtIndex:i];
 }
 
 
 
-- (NSArray *)_messagesOfClass:(Class)class {
-	NSEnumerator	*enumerator;
-	NSMutableArray	*array;
-	WCMessage		*message;
-	
-	array = [NSMutableArray array];
-	enumerator = [_allMessages objectEnumerator];
-	
-	while((message = [enumerator nextObject])) {
-		if([message isKindOfClass:class])
-			[array addObject:message];
-	}
-	
-	return array;
-}
-
-
-
-- (NSArray *)_unreadMessagesOfClass:(Class)class {
-	NSEnumerator	*enumerator;
-	NSMutableArray	*array;
-	WCMessage		*message;
-	
-	array = [NSMutableArray array];
-	enumerator = [[self _messagesOfClass:class] objectEnumerator];
-	
-	while((message = [enumerator nextObject])) {
-		if(![message isRead])
-			[array addObject:message];
-	}
-	
-	return array;
-}
-
-
-
-- (NSArray *)_messagesForConversation:(WCConversation *)conversation unreadOnly:(BOOL)unreadOnly {
-	NSMutableArray		*messages;
-	NSUInteger			i, count;
-	
-	messages = [[conversation messages] mutableCopy];
-	
-	if(unreadOnly) {
-		count = [messages count];
-		
-		for(i = 0; i < count; i++) {
-			if([[messages objectAtIndex:i] isRead]) {
-				[messages removeObjectAtIndex:i];
-				
-				i--;
-				count--;
-			}
-		}
-	}
-	
-	return [messages autorelease];
-}
-
-
-
-- (NSArray *)_messagesSortedForView {
-	NSMutableArray		*array;
-	NSMutableArray		*messages;
-	WISortOrder			order;
-	
-	array = [NSMutableArray array];
-	order = [_messagesTableView sortOrder];
-	
-	messages = [[[self _messagesOfClass:[WCPrivateMessage class]] mutableCopy] autorelease];
-	[messages sortUsingFunction:_WCMessagesCompareMessages context:[self _sortSelector]];
-	
-	if(order == WISortDescending)
-		[messages reverse];
-	
-	[array addObjectsFromArray:messages];
-	
-	messages = [[[self _messagesOfClass:[WCBroadcastMessage class]] mutableCopy] autorelease];
-	[messages sortUsingFunction:_WCMessagesCompareMessages context:[self _sortSelector]];
-	
-	if(order == WISortDescending)
-		[messages reverse];
-	
-	[array addObjectsFromArray:messages];
-	
-	return array;
-}
-
-
-
-- (id)_selectedMessageBox {
+- (id)_selectedConversation {
 	NSInteger		row;
 	
 	row = [_conversationsOutlineView selectedRow];
@@ -283,90 +160,26 @@ static NSInteger _WCMessagesCompareMessages(id message1, id message2, void *cont
 
 
 
-- (WCConversation *)_selectedConversation {
-	id		messageBox;
-	
-	messageBox = [self _selectedMessageBox];
-	
-	if([messageBox isKindOfClass:[WCConversation class]])
-		return messageBox;
-	
-	return NULL;
-}
-
-
-
-- (WCMessage *)_selectedMessage {
+- (id)_selectedMessage {
+	id				conversation;
 	NSInteger		row;
+	
+	conversation = [self _selectedConversation];
+	
+	if(!conversation)
+		return NULL;
 	
 	row = [_messagesTableView selectedRow];
 	
 	if(row < 0)
 		return NULL;
-	
+
 	return [self _messageAtIndex:row];
 }
 
 
 
-- (WCMessage *)_selectedMessageForTraversing {
-	NSArray				*messages;
-	WCConversation		*conversation;
-	WCMessage			*message;
-	Class				class;
-	id					messageBox;
-	
-	message = [self _selectedMessage];
-	
-	if(message)
-		return message;
-	
-	class = [WCPrivateMessage class];
-	messageBox = [self _selectedMessageBox];
-	
-	if(messageBox) {
-		if([messageBox isKindOfClass:[NSString class]]) {
-			if([_titles indexOfObject:messageBox] == 0)
-				class = [WCPrivateMessage class];
-			else if([_titles indexOfObject:messageBox] == 1)
-				class = [WCBroadcastMessage class];
-		}
-		else if([messageBox isKindOfClass:[WCConversation class]]) {
-			conversation = messageBox;
-			class = [conversation messageClass];
-		}
-	}
-	
-	messages = [self _messagesOfClass:class];
-	
-	if([messages count] > 0)
-		return [messages objectAtIndex:0];
-	
-	class = (class == [WCPrivateMessage class]) ? [WCBroadcastMessage class] : [WCPrivateMessage class];
-	
-	messages = [self _messagesOfClass:class];
-	
-	if([messages count] > 0)
-		return [messages objectAtIndex:0];
-	
-	return NULL;
-}
-
-
-
-- (WCMessage *)_messageAtIndex:(NSUInteger)index {
-	NSUInteger		i;
-	
-	i = ([_messagesTableView sortOrder] == WISortDescending)
-		? [_shownMessages count] - index - 1
-		: index;
-
-	return [_shownMessages objectAtIndex:i];
-}
-
-
-
-- (void)_selectMessage:(WCMessage *)message {
+- (void)_selectMessage:(id)message {
 	WCConversation		*conversation;
 	NSUInteger			i, index;
 	NSInteger			row;
@@ -379,22 +192,70 @@ static NSInteger _WCMessagesCompareMessages(id message1, id message2, void *cont
 	
 	[_conversationsOutlineView selectRow:row byExtendingSelection:NO];
 	
-	index = [_shownMessages indexOfObject:message];
+	index = [[conversation messages] indexOfObject:message];
 	
 	if(index == NSNotFound)
 		return;
 	
 	i = ([_messagesTableView sortOrder] == WISortDescending)
-		? [_shownMessages count] - index - 1
+		? [conversation numberOfMessages] - index - 1
 		: index;
-
+	
 	[_messagesTableView selectRow:i byExtendingSelection:NO];
 }
 
 
 
-- (void)_sortMessages {
-	[_shownMessages sortUsingSelector:[self _sortSelector]];
+- (void)_readMessages {
+	NSArray			*messages;
+	WCMessage		*message;
+	NSUInteger		i, count;
+	
+	messages = [_conversations unreadMessages];
+	count = [messages count];
+	
+	for(i = 0; i < count; i++) {
+		message = [messages objectAtIndex:i];
+		[message setRead:YES];
+		[[message connection] postNotificationName:WCMessagesDidReadMessage];
+	}
+}
+
+
+
+- (void)_removeAllMessages {
+	NSEnumerator	*enumerator;
+	WCConversation	*conversation;
+	
+	enumerator = [[_conversations conversations] objectEnumerator];
+	
+	while((conversation = [enumerator nextObject]))
+		[conversation removeAllConversations];
+}
+
+
+
+#pragma mark -
+
+- (void)_reselectConversation:(WCConversation *)conversation message:(WCMessage *)message {
+	NSUInteger		i, index;
+	NSInteger		row;
+	
+	row = [_conversationsOutlineView rowForItem:conversation];
+	
+	if(row >= 0)
+		[_conversationsOutlineView selectRow:row byExtendingSelection:NO];
+
+	row = [[[self _selectedConversation] messages] indexOfObject:message];
+	
+	if(row >= 0) {
+		index = row;
+		i = ([_messagesTableView sortOrder] == WISortDescending)
+			? [[self _selectedConversation] numberOfMessages] - index - 1
+			: index;
+		
+		[_messagesTableView selectRow:i byExtendingSelection:NO];
+	}
 }
 
 
@@ -410,41 +271,6 @@ static NSInteger _WCMessagesCompareMessages(id message1, id message2, void *cont
 		return @selector(compareDate:);
 
 	return @selector(compareDate:);
-}
-
-
-
-- (void)_readMessages {
-	NSEnumerator	*enumerator;
-	WCMessage		*message;
-	
-	enumerator = [_allMessages objectEnumerator];
-	
-	while((message = [enumerator nextObject])) {
-		if(![message isRead]) {
-			[message setRead:YES];
-						
-			[[message connection] postNotificationName:WCMessagesDidReadMessage];
-		}
-	}
-}
-
-
-
-- (void)_removeAllMessages {
-	[_allMessages removeAllObjects];
-	[_shownMessages removeAllObjects];
-	[_conversationsOutlineView reloadData];
-	[_messagesTableView reloadData];
-}
-
-
-
-- (void)_removeAllConversations {
-	[_allConversations removeAllObjects];
-	[_conversations removeAllObjects];
-	[_conversationsOutlineView reloadData];
-	[_messagesTableView reloadData];
 }
 
 @end
@@ -468,18 +294,17 @@ static NSInteger _WCMessagesCompareMessages(id message1, id message2, void *cont
 - (id)init {
 	self = [super initWithWindowNibName:@"Messages"];
 
-	_titles = [[NSMutableArray alloc] init];
-	[_titles addObject:NSLS(@"Conversations", @"Messages item")];
-	[_titles addObject:NSLS(@"Broadcasts", @"Messages item")];
+	_messageConversations	= [[WCMessageConversation rootConversation] retain];
+	_broadcastConversations	= [[WCBroadcastConversation rootConversation] retain];
+	_conversations			= [[WCConversation rootConversation] retain];
 
-	_allConversations	= [[NSMutableArray alloc] init];
-	_conversations		= [[NSMutableDictionary alloc] init];
-	_allMessages		= [[NSMutableArray alloc] init];
-	_shownMessages		= [[NSMutableArray alloc] init];
-	_conversationIcon	= [[NSImage imageNamed:@"Conversation"] retain];
+	[_conversations addConversation:_messageConversations];
+	[_conversations addConversation:_broadcastConversations];
 	
-	_messageFilter	= [[WITextFilter alloc] initWithSelectors:@selector(filterURLs:), @selector(filterWiredSmilies:), 0];
-	_userFilter		= [[WITextFilter alloc] initWithSelectors:@selector(filterWiredSmallSmilies:), 0];
+	_conversationIcon		= [[NSImage imageNamed:@"Conversation"] retain];
+	
+	_messageFilter			= [[WITextFilter alloc] initWithSelectors:@selector(filterURLs:), @selector(filterWiredSmilies:), 0];
+	_userFilter				= [[WITextFilter alloc] initWithSelectors:@selector(filterWiredSmallSmilies:), 0];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
@@ -511,11 +336,9 @@ static NSInteger _WCMessagesCompareMessages(id message1, id message2, void *cont
 - (void)dealloc {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
-	[_titles release];
-	[_allConversations release];
 	[_conversations release];
-	[_allMessages release];
-	[_shownMessages release];
+
+	[_conversationIcon release];
 	
 	[_messageFilter release];
 	[_userFilter release];
@@ -553,8 +376,8 @@ static NSInteger _WCMessagesCompareMessages(id message1, id message2, void *cont
 	[_messagesTableView setAllowsUserCustomization:YES];
 	[_messagesTableView setDefaultHighlightedTableColumnIdentifier:@"Time"];
 	[_messagesTableView setDefaultSortOrder:WISortAscending];
-	[_conversationsOutlineView expandItem:[_titles objectAtIndex:0]];
-	[_conversationsOutlineView expandItem:[_titles objectAtIndex:1]];
+	[_conversationsOutlineView expandItem:_messageConversations];
+	[_conversationsOutlineView expandItem:_broadcastConversations];
 	
 	[_messageTextView setEditable:NO];
 	[_messageTextView setUsesFindPanel:YES];
@@ -626,20 +449,14 @@ static NSInteger _WCMessagesCompareMessages(id message1, id message2, void *cont
 
 
 - (void)linkConnectionLoggedIn:(NSNotification *)notification {
-	NSEnumerator			*enumerator;
 	WCServerConnection		*connection;
-	WCMessage				*message;
 
 	if(![[notification object] isKindOfClass:[WCServerConnection class]])
 		return;
 
 	connection = [notification object];
-	enumerator = [_allMessages objectEnumerator];
 	
-	while((message = [enumerator nextObject])) {
-		if([message belongsToConnection:connection])
-			[message setConnection:connection];
-	}
+	[_conversations revalidateMessagesForConnection:connection];
 	
 	[connection addObserver:self selector:@selector(wiredMessageMessage:) messageName:@"wired.message.message"];
 	[connection addObserver:self selector:@selector(wiredMessageBroadcast:) messageName:@"wired.message.broadcast"];
@@ -659,20 +476,14 @@ static NSInteger _WCMessagesCompareMessages(id message1, id message2, void *cont
 
 
 - (void)linkConnectionDidTerminate:(NSNotification *)notification {
-	NSEnumerator			*enumerator;
 	WCServerConnection		*connection;
-	WCMessage				*message;
 	
 	if(![[notification object] isKindOfClass:[WCServerConnection class]])
 		return;
 
 	connection = [notification object];
-	enumerator = [_allMessages objectEnumerator];
-
-	while((message = [enumerator nextObject])) {
-		if([message connection] == connection)
-			[message setConnection:NULL];
-	}
+	
+	[_conversations invalidateMessagesForConnection:connection];
 	
 	[self _validate];
 }
@@ -680,12 +491,11 @@ static NSInteger _WCMessagesCompareMessages(id message1, id message2, void *cont
 
 
 - (void)wiredMessageMessage:(WIP7Message *)p7Message {
-	NSString			*key;
-	WCServerConnection	*connection;
-	WCUser				*user;
-	WCMessage			*message;
-	WCConversation		*conversation;
-	WIP7UInt32			uid;
+	WCServerConnection		*connection;
+	WCUser					*user;
+	WCMessage				*message, *selectedMessage;
+	WCConversation			*conversation, *selectedConversation;
+	WIP7UInt32				uid;
 	
 	[p7Message getUInt32:&uid forName:@"wired.user.id"];
 	
@@ -695,28 +505,28 @@ static NSInteger _WCMessagesCompareMessages(id message1, id message2, void *cont
 	if(!user || [user isIgnored])
 		return;
 	
+	conversation = [_messageConversations conversationForUser:user connection:connection];
+	
+	if(!conversation) {
+		conversation = [WCMessageConversation conversationWithUser:user connection:connection];
+		[_messageConversations addConversation:conversation];
+	}
+	
+	selectedMessage = [self _selectedMessage];
+	selectedConversation = [self _selectedConversation];
+
 	message = [WCPrivateMessage messageWithMessage:[p7Message stringForName:@"wired.message.message"]
 											  user:user
 										connection:connection];
 
-	key = [[self class] _conversationKeyForClass:[message class] user:user connection:connection];
-	conversation = [_conversations objectForKey:key];
-	
-	if(conversation) {
-		[conversation addMessage:message];
-	} else {
-		conversation = [WCConversation conversationWithMessage:message];
-		[_allConversations addObject:conversation];
-		[_conversations setObject:conversation forKey:key];
-	}
-	
+	[conversation addMessage:message];
 	[message setConversation:conversation];
 
-	[_allMessages addObject:message];
-	
 	[_conversationsOutlineView reloadData];
-	[[_conversationsOutlineView delegate] outlineViewSelectionDidChange:NULL];
+	[_messagesTableView reloadData];
 	
+	[self _reselectConversation:selectedConversation message:selectedMessage];
+
 	if([[WCSettings eventForTag:WCEventsMessageReceived] boolForKey:WCEventsShowDialog])
 		[self _showDialogForMessage:message];
 
@@ -731,11 +541,10 @@ static NSInteger _WCMessagesCompareMessages(id message1, id message2, void *cont
 
 
 - (void)wiredMessageBroadcast:(WIP7Message *)p7Message {
-	NSString			*key;
 	WCServerConnection	*connection;
 	WCUser				*user;
-	WCMessage			*message;
-	WCConversation		*conversation;
+	WCMessage			*message, *selectedMessage;
+	WCConversation		*conversation, *selectedConversation;
 	WIP7UInt32			uid;
 	
 	[p7Message getUInt32:&uid forName:@"wired.user.id"];
@@ -746,28 +555,28 @@ static NSInteger _WCMessagesCompareMessages(id message1, id message2, void *cont
 	if(!user || [user isIgnored])
 		return;
 
+	conversation = [_broadcastConversations conversationForUser:user connection:connection];
+	
+	if(!conversation) {
+		conversation = [WCBroadcastConversation conversationWithUser:user connection:connection];
+		[_broadcastConversations addConversation:conversation];
+	}
+
+	selectedMessage = [self _selectedMessage];
+	selectedConversation = [self _selectedConversation];
+
 	message = [WCBroadcastMessage broadcastWithMessage:[p7Message stringForName:@"wired.message.broadcast"]
 												  user:user
 											connection:connection];
 	
-	key = [[self class] _conversationKeyForClass:[message class] user:user connection:connection];
-	conversation = [_conversations objectForKey:key];
-	
-	if(conversation) {
-		[conversation addMessage:message];
-	} else {
-		conversation = [WCConversation conversationWithMessage:message];
-		[_allConversations addObject:conversation];
-		[_conversations setObject:conversation forKey:key];
-	}
-
+	[conversation addMessage:message];
 	[message setConversation:conversation];
 
-	[_allMessages addObject:message];
-
 	[_conversationsOutlineView reloadData];
-	[[_conversationsOutlineView delegate] outlineViewSelectionDidChange:NULL];
+	[_messagesTableView reloadData];
 	
+	[self _reselectConversation:selectedConversation message:selectedMessage];
+
 	if([[WCSettings eventForTag:WCEventsBroadcastReceived] boolForKey:WCEventsShowDialog])
 		[self _showDialogForMessage:message];
 
@@ -849,10 +658,10 @@ static NSInteger _WCMessagesCompareMessages(id message1, id message2, void *cont
 	
 	if(selector == @selector(reply:))
 		return (message != NULL && [[message connection] isConnected]);
-	if(selector == @selector(revealInUserList:))
-		return ([self _selectedConversation] != NULL);
+	else if(selector == @selector(revealInUserList:))
+		return ([[self _selectedConversation] userID] != 0);
 	else if(selector == @selector(clearMessages:))
-		return ([_allMessages count] > 0);
+		return ([_messageConversations numberOfConversations] > 0 || [_broadcastConversations numberOfConversations] > 0);
 	
 	return YES;
 }
@@ -862,38 +671,12 @@ static NSInteger _WCMessagesCompareMessages(id message1, id message2, void *cont
 #pragma mark -
 
 - (void)showNextUnreadMessage {
-	NSArray			*messages;
-	WCMessage		*message, *selectedMessage;
-	NSUInteger		i, index, count;
+	WCMessage		*message;
 	
-	message = [self _selectedMessageForTraversing];
+	message = [_conversations nextUnreadMessageStartingAtConversation:[self _selectedConversation] message:[self _selectedMessage]];
 	
 	if(!message)
-		return;
-	
-	messages = [self _messagesSortedForView];
-	selectedMessage = [self _selectedMessage];
-	
-	if(!selectedMessage || message == selectedMessage) {
-		index = [messages indexOfObject:message];
-		
-		if(index == NSNotFound)
-			return;
-		
-		count = [messages count];
-		i = (index < count - 1) ? index + 1 : 0;
-		
-		do {
-			message = [messages objectAtIndex:i];
-			
-			if(![message isRead])
-				break;
-			
-			message = NULL;
-			
-			i = (i < count - 1) ? i + 1 : 0;
-		} while(i != index);
-	}
+		message = [_conversations nextUnreadMessageStartingAtConversation:NULL message:NULL];
 	
 	if(message)
 		[self _selectMessage:message];
@@ -902,40 +685,15 @@ static NSInteger _WCMessagesCompareMessages(id message1, id message2, void *cont
 
 
 - (void)showPreviousUnreadMessage {
-	NSArray			*messages;
-	WCMessage		*message, *selectedMessage;
-	NSUInteger		i, index, count;
+	WCMessage		*message;
 	
-	message = [self _selectedMessageForTraversing];
+	message = [_conversations previousUnreadMessageStartingAtConversation:[self _selectedConversation] message:[self _selectedMessage]];
 	
 	if(!message)
-		return;
+		message = [_conversations previousUnreadMessageStartingAtConversation:NULL message:NULL];
 	
-	messages = [self _messagesSortedForView];
-	selectedMessage = [self _selectedMessage];
-
-	if(message == [self _selectedMessage]) {
-		index = [messages indexOfObject:message];
-		
-		if(index == NSNotFound)
-			return;
-		
-		count = [messages count];
-		i = (index > 0) ? index - 1 : count - 1;
-		
-		do {
-			message = [messages objectAtIndex:i];
-			
-			if(![message isRead])
-				break;
-			
-			message = NULL;
-			
-			i = (i > 0) ? i - 1 : count - 1;
-		} while(i != index);
-	}
-
-	[self _selectMessage:message];
+	if(message)
+		[self _selectMessage:message];
 }
 
 
@@ -980,18 +738,7 @@ static NSInteger _WCMessagesCompareMessages(id message1, id message2, void *cont
 
 
 - (NSUInteger)numberOfUnreadMessagesForConnection:(WCServerConnection *)connection {
-	NSEnumerator		*enumerator;
-	WCMessage			*message;
-	NSUInteger			count = 0;
-	
-	enumerator = [_allMessages objectEnumerator];
-	
-	while((message = [enumerator nextObject])) {
-		if([message connection] == connection && [message isRead])
-			count++;
-	}
-	
-	return count;
+	return [_conversations numberOfUnreadMessagesForConnection:connection];
 }
 
 
@@ -1038,31 +785,28 @@ static NSInteger _WCMessagesCompareMessages(id message1, id message2, void *cont
 
 
 - (void)replySheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-	NSString		*key;
 	WIP7Message		*p7Message;
 	WCUser			*user = contextInfo;
-	WCMessage		*message;
-	WCConversation  *conversation;
+	WCMessage		*message, *selectedMessage;
+	WCConversation  *conversation, *selectedConversation;
 	
 	if(returnCode == NSAlertDefaultReturn) {
+		conversation = [_messageConversations conversationForUser:user connection:[user connection]];
+		
+		if(!conversation) {
+			conversation = [WCMessageConversation conversationWithUser:user connection:[user connection]];
+			[_messageConversations addConversation:conversation];
+		}
+		
+		selectedMessage = [self _selectedMessage];
+		selectedConversation = [self _selectedConversation];
+
 		message = [WCPrivateMessage messageToUser:user
 										  message:[[[_replyTextView string] copy] autorelease]
 									   connection:[user connection]];
 
-		key = [[self class] _conversationKeyForClass:[message class] user:user connection:[user connection]];
-		conversation = [_conversations objectForKey:key];
-		
-		if(conversation) {
-			[conversation addMessage:message];
-		} else {
-			conversation = [WCConversation conversationWithMessage:message];
-			[_allConversations addObject:conversation];
-			[_conversations setObject:conversation forKey:key];
-		}
-		
+		[conversation addMessage:message];
 		[message setConversation:conversation];
-
-		[_allMessages addObject:message];
 		
 		p7Message = [WIP7Message messageWithName:@"wired.message.send_message" spec:WCP7Spec];
 		[p7Message setUInt32:[message userID] forName:@"wired.user.id"];
@@ -1072,7 +816,9 @@ static NSInteger _WCMessagesCompareMessages(id message1, id message2, void *cont
 		[[WCStats stats] addUnsignedInt:1 forKey:WCStatsMessagesSent];
 		
 		[_conversationsOutlineView reloadData];
-		[[_conversationsOutlineView delegate] outlineViewSelectionDidChange:NULL];
+		[_messagesTableView reloadData];
+		
+		[self _reselectConversation:selectedConversation message:selectedMessage];
 	}
 	
 	[_replyPanel close];
@@ -1125,7 +871,9 @@ static NSInteger _WCMessagesCompareMessages(id message1, id message2, void *cont
 		[self _readMessages];
 		
 		[self _removeAllMessages];
-		[self _removeAllConversations];
+		
+		[_conversationsOutlineView reloadData];
+		[_messagesTableView reloadData];
 		
 		[self _validate];
 	}
@@ -1137,53 +885,31 @@ static NSInteger _WCMessagesCompareMessages(id message1, id message2, void *cont
 
 - (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item {
 	if(!item)
-		return [_titles count];
+		item = _conversations;
 	
-	if([_titles indexOfObject:item] == 0)
-		return [[self _conversationsOfClass:[WCPrivateMessage class]] count];
-	else if([_titles indexOfObject:item] == 1)
-		return [[self _conversationsOfClass:[WCBroadcastMessage class]] count];
-	
-	return 0;
+	return [item numberOfConversations];
 }
 
 
 
 - (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(id)item {
 	if(!item)
-		return [_titles objectAtIndex:index];
+		item = _conversations;
 	
-	if([_titles indexOfObject:item] == 0)
-		return [[self _conversationsOfClass:[WCPrivateMessage class]] objectAtIndex:index];
-	else if([_titles indexOfObject:item] == 1)
-		return [[self _conversationsOfClass:[WCBroadcastMessage class]] objectAtIndex:index];
-	
-	return NULL;
+	return [item conversationAtIndex:index];
 }
 
 
 
 - (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item {
-	NSString			*name = NULL;
-	WCConversation		*conversation;
-	NSUInteger			count = 0;
+	NSString		*name;
+	NSUInteger		unread;
 	
-	if([item isKindOfClass:[NSString class]]) {
-		name = item;
-
-		if([_titles indexOfObject:item] == 0)
-			count = [[self _unreadMessagesOfClass:[WCPrivateMessage class]] count];
-		else if([_titles indexOfObject:item] == 1)
-			count = [[self _unreadMessagesOfClass:[WCBroadcastMessage class]] count];
-	}
-	else if([item isKindOfClass:[WCConversation class]]) {
-		conversation = item;
-		name = [conversation userNick];
-		count = [[self _messagesForConversation:conversation unreadOnly:YES] count];
-	}
+	name = [item name];
+	unread = [item numberOfUnreadMessages];
 	
-	if(count > 0)
-		name = [name stringByAppendingFormat:@" (%lu)", count];
+	if(unread > 0)
+		name = [name stringByAppendingFormat:@" (%lu)", unread];
 	
 	return [[NSAttributedString attributedStringWithString:name] attributedStringByApplyingFilter:_userFilter];
 }
@@ -1191,60 +917,28 @@ static NSInteger _WCMessagesCompareMessages(id message1, id message2, void *cont
 
 
 - (void)outlineView:(NSOutlineView *)outlineView willDisplayCell:(id)cell forTableColumn:(NSTableColumn *)tableColumn item:(id)item {
-	NSImage			*image = NULL;
-	NSUInteger		count = 0;
-	
-	if([item isKindOfClass:[NSString class]]) {
-		image = _conversationIcon;
-
-		if([_titles indexOfObject:item] == 0)
-			count = [[self _unreadMessagesOfClass:[WCPrivateMessage class]] count];
-		else if([_titles indexOfObject:item] == 1)
-			count = [[self _unreadMessagesOfClass:[WCBroadcastMessage class]] count];
-	}
-	else if([item isKindOfClass:[WCConversation class]]) {
-		count = [[self _messagesForConversation:item unreadOnly:YES] count];
-		image = NULL;
-	}	
-
-	if(count > 0)
+	if([item numberOfUnreadMessages] > 0)
 		[cell setFont:[NSFont boldSystemFontOfSize:[NSFont smallSystemFontSize]]];
 	else
 		[cell setFont:[NSFont systemFontOfSize:[NSFont smallSystemFontSize]]];
 	
-	[cell setImage:image];
+	if(item == _messageConversations || item == _broadcastConversations)
+		[cell setImage:_conversationIcon];
+	else
+		[cell setImage:NULL];
 }
 
 
 
 - (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item {
-	if([_titles containsObject:item])
-		return YES;
-	
-	return NO;
+	return [item isExpandable];
 }
 
 
 
 - (void)outlineViewSelectionDidChange:(NSNotification *)notification {
-	NSArray			*messages = NULL;
-	id				messageBox;
+	[[self _selectedConversation] sortMessagesUsingSelector:[self _sortSelector]];
 
-	messageBox = [self _selectedMessageBox];
-
-	if([messageBox isKindOfClass:[NSString class]]) {
-		if([_titles indexOfObject:messageBox] == 0)
-			messages = [self _messagesOfClass:[WCPrivateMessage class]];
-		else if([_titles indexOfObject:messageBox] == 1)
-			messages = [self _messagesOfClass:[WCBroadcastMessage class]];
-	}
-	else if([messageBox isKindOfClass:[WCConversation class]]) {
-		messages = [self _messagesForConversation:messageBox unreadOnly:NO];
-	}
-	
-	[_shownMessages setArray:messages];
-	[self _sortMessages];
-	
 	[_messagesTableView reloadData];
 	[_messagesTableView deselectAll:self];
 }
@@ -1254,7 +948,7 @@ static NSInteger _WCMessagesCompareMessages(id message1, id message2, void *cont
 #pragma mark -
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
-	return [_shownMessages count];
+	return [[self _selectedConversation] numberOfMessages];
 }
 
 
@@ -1297,7 +991,7 @@ static NSInteger _WCMessagesCompareMessages(id message1, id message2, void *cont
 
 - (void)tableView:(NSTableView *)tableView didClickTableColumn:(NSTableColumn *)tableColumn {
 	[_messagesTableView setHighlightedTableColumn:tableColumn];
-	[self _sortMessages];
+	[[self _selectedConversation] sortMessagesUsingSelector:[self _sortSelector]];
 	[_messagesTableView reloadData];
 	[[_messagesTableView delegate] tableViewSelectionDidChange:NULL];
 }
