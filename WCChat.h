@@ -29,6 +29,8 @@
 #import "WCConnectionController.h"
 
 #define WCChatUsersDidChange			@"WCChatUsersDidChange"
+#define WCChatUserAppeared				@"WCChatUserAppeared"
+#define WCChatUserDisappeared			@"WCChatUserDisappeared"
 #define WCChatSelfWasKicked				@"WCChatSelfWasKicked"
 #define WCChatSelfWasBanned				@"WCChatSelfWasBanned"
 

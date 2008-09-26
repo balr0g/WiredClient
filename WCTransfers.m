@@ -525,6 +525,24 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 
 
+- (void)_invalidateTransfersForConnection:(WCServerConnection *)connection {
+	NSEnumerator		*enumerator;
+	WCTransfer			*transfer;
+	
+	enumerator = [_transfers objectEnumerator];
+	
+	while((transfer = [enumerator nextObject])) {
+		if([transfer connection] == connection) {
+			if([transfer isWorking])
+				[transfer setState:WCTransferDisconnecting];
+			
+			[transfer setConnection:NULL];
+		}
+	}
+}
+
+
+
 - (void)_finishTransfer:(WCTransfer *)transfer {
 	NSString			*path, *newPath;
 	NSDictionary		*dictionary;
@@ -1119,6 +1137,11 @@ end:
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
+		   selector:@selector(linkConnectionDidClose:)
+			   name:WCLinkConnectionDidClose];
+	
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
 		   selector:@selector(linkConnectionDidTerminate:)
 			   name:WCLinkConnectionDidTerminate];
 
@@ -1366,25 +1389,22 @@ end:
 
 
 
-- (void)linkConnectionDidTerminate:(NSNotification *)notification {
-	NSEnumerator			*enumerator;
-	WCServerConnection		*connection;
-	WCTransfer				*transfer;
-	
+- (void)linkConnectionDidClose:(NSNotification *)notification {
 	if(![[notification object] isKindOfClass:[WCServerConnection class]])
 		return;
 	
-	connection = [notification object];
-	enumerator = [_transfers objectEnumerator];
+	[self _invalidateTransfersForConnection:[notification object]];
+	
+	[self _validate];
+}
 
-	while((transfer = [enumerator nextObject])) {
-		if([transfer connection] == connection) {
-			if([transfer isWorking])
-				[transfer setState:WCTransferDisconnecting];
-			
-			[transfer setConnection:NULL];
-		}
-	}
+
+
+- (void)linkConnectionDidTerminate:(NSNotification *)notification {
+	if(![[notification object] isKindOfClass:[WCServerConnection class]])
+		return;
+	
+	[self _invalidateTransfersForConnection:[notification object]];
 	
 	[self _validate];
 }

@@ -32,10 +32,11 @@
 
 @interface WCConversation : WCServerConnectionObject {
 	NSString					*_name;
-	NSUInteger					_userID;
 	NSMutableArray				*_conversations;
 	NSMutableArray				*_messages;
 	BOOL						_expandable;
+	
+	WCUser						*_user;
 }
 
 + (id)rootConversation;
@@ -43,12 +44,12 @@
 
 - (NSString *)name;
 - (BOOL)isExpandable;
-- (NSUInteger)userID;
 
 - (NSUInteger)numberOfConversations;
 - (NSArray *)conversations;
 - (id)conversationAtIndex:(NSUInteger)index;
 - (id)conversationForUser:(WCUser *)user connection:(WCServerConnection *)connection;
+- (void)addConversations:(NSArray *)conversations;
 - (void)addConversation:(id)conversation;
 - (void)removeConversation:(id)conversation;
 - (void)removeAllConversations;
@@ -59,14 +60,17 @@
 - (NSArray *)messages;
 - (NSArray *)unreadMessages;
 - (id)messageAtIndex:(NSUInteger)index;
-- (id)previousUnreadMessageStartingAtConversation:(id)conversation message:(id)message;
-- (id)nextUnreadMessageStartingAtConversation:(id)conversation message:(id)message;
+- (id)previousUnreadMessageStartingAtConversation:(id)conversation message:(id)message forwardsInMessages:(BOOL)forwardsInMessages;
+- (id)nextUnreadMessageStartingAtConversation:(id)conversation message:(id)message forwardsInMessages:(BOOL)forwardsInMessages;
 - (void)sortMessagesUsingSelector:(SEL)selector;
 - (void)addMessage:(id)message;
 - (void)removeMessage:(id)message;
 - (void)removeAllMessages;
-- (void)invalidateMessagesForConnection:(WCServerConnection *)connection;
-- (void)revalidateMessagesForConnection:(WCServerConnection *)connection;
+
+- (void)invalidateForConnection:(WCServerConnection *)connection;
+- (void)revalidateForConnection:(WCServerConnection *)connection;
+- (void)invalidateForConnection:(WCServerConnection *)connection user:(WCUser *)user;
+- (void)revalidateForConnection:(WCServerConnection *)connection user:(WCUser *)user;
 
 @end
 

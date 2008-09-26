@@ -30,6 +30,7 @@
 
 @interface WCServerConnectionObject : WIObject <NSCoding> {
 	WCServerConnection			*_connection;
+	NSString					*_connectionName;
 	WIURL						*_url;
 	NSDictionary				*_bookmark;
 }
@@ -40,6 +41,7 @@
 
 - (void)setConnection:(WCServerConnection *)connection;
 - (WCServerConnection *)connection;
+- (NSString *)connectionName;
 - (WIURL *)URL;
 - (NSDictionary *)bookmark;
 

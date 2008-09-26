@@ -52,6 +52,8 @@
 #define WCChatUserListIconSizeLarge					1
 #define WCChatUserListIconSizeSmall					0
 
+#define WCMessageConversations					@"WCMessageConversations"
+#define WCBroadcastConversations				@"WCBroadcastConversations"
 #define WCMessagesTextColor						@"WCMessagesTextColor"
 #define WCMessagesBackgroundColor				@"WCMessagesBackgroundColor"
 #define WCMessagesFont							@"WCMessagesFont"

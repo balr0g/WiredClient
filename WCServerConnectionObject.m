@@ -42,9 +42,10 @@
 - (id)initWithConnection:(WCServerConnection *)connection {
 	self = [self init];
 	
-	_connection	= connection;
-	_url		= [[_connection URL] retain];
-	_bookmark	= [[connection bookmark] retain];
+	_connection			= connection;
+	_connectionName		= [[_connection name] retain];
+	_url				= [[_connection URL] retain];
+	_bookmark			= [[connection bookmark] retain];
 	
 	return self;
 }
@@ -60,8 +61,9 @@
 		return NULL;
 	}
 	
-	_url		= [[coder decodeObjectForKey:@"WCServerConnectionObjectURL"] retain];
-	_bookmark	= [[coder decodeObjectForKey:@"WCServerConnectionObjectBookmark"] retain];
+	_connectionName	= [[coder decodeObjectForKey:@"WCServerConnectionObjectName"] retain];
+	_url			= [[coder decodeObjectForKey:@"WCServerConnectionObjectURL"] retain];
+	_bookmark		= [[coder decodeObjectForKey:@"WCServerConnectionObjectBookmark"] retain];
 	
 	return self;
 }
@@ -70,6 +72,8 @@
 
 - (void)encodeWithCoder:(NSCoder *)coder {
 	[coder encodeInt:[[self class] version] forKey:@"WCServerConnectionObjectVersion"];
+
+	[coder encodeObject:_connectionName forKey:@"WCServerConnectionObjectName"];
 	[coder encodeObject:_url forKey:@"WCServerConnectionObjectURL"];
 	[coder encodeObject:_bookmark forKey:@"WCServerConnectionObjectBookmark"];
 }
@@ -77,6 +81,7 @@
 
 
 - (void)dealloc {
+	[_connectionName release];
 	[_url release];
 	[_bookmark release];
 	
@@ -109,6 +114,12 @@
 
 - (WCServerConnection *)connection {
 	return _connection;
+}
+
+
+
+- (NSString *)connectionName {
+	return _connectionName;
 }
 
 

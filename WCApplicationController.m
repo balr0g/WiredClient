@@ -651,9 +651,9 @@ static WCApplicationController		*sharedController;
 			
 		case WCEventsMessageReceived:
 			[GrowlApplicationBridge notifyWithTitle:NSLS(@"Message received", @"Growl event message received title")
-										description:[NSSWF:@"%@: %@", [info1 userNick], [info1 message]]
+										description:[NSSWF:@"%@: %@", [info1 nick], [info1 message]]
 								   notificationName:WCGrowlMessageReceived
-										   iconData:[[[[connection chat] userWithUserID:[info1 userID]] icon] TIFFRepresentation]
+										   iconData:[[(WCUser *) [info1 user] icon] TIFFRepresentation]
 										   priority:0.0
 										   isSticky:NO
 									   clickContext:clickContext];
@@ -671,9 +671,9 @@ static WCApplicationController		*sharedController;
 		
 		case WCEventsBroadcastReceived:
 			[GrowlApplicationBridge notifyWithTitle:NSLS(@"Broadcast received", @"Growl event broadcast received title")
-										description:[NSSWF:@"%@: %@", [info1 userNick], [info1 message]]
+										description:[NSSWF:@"%@: %@", [info1 nick], [info1 message]]
 								   notificationName:WCGrowlBroadcastReceived
-										   iconData:[[[[connection chat] userWithUserID:[info1 userID]] icon] TIFFRepresentation]
+										   iconData:[[(WCUser *) [info1 user] icon] TIFFRepresentation]
 										   priority:0.0
 										   isSticky:NO
 									   clickContext:clickContext];

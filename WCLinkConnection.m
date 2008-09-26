@@ -166,6 +166,7 @@
 
 - (void)removeObserver:(id)observer {
 	[_notificationCenter removeObserver:observer];
+	[_linkNotificationCenter removeObserver:observer];
 }
 
 

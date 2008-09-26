@@ -39,17 +39,21 @@ typedef enum _WCMessageDirection	WCMessageDirection;
 
 @interface WCMessage : WCServerConnectionObject {
 	WCMessageDirection				_direction;
-	NSUInteger						_userID;
 	BOOL							_read;
-	NSString						*_userNick;
+	NSString						*_nick;
+	NSString						*_login;
 	NSString						*_message;
 	NSDate							*_date;
+	
 	WCConversation					*_conversation;
+	WCUser							*_user;
 }
 
 - (WCMessageDirection)direction;
-- (NSUInteger)userID;
-- (NSString *)userNick;
+- (void)setUser:(WCUser *)user;
+- (WCUser *)user;
+- (NSString *)nick;
+- (NSString *)login;
 - (NSString *)message;
 - (NSDate *)date;
 

@@ -62,7 +62,7 @@
 	NSAlert		*alert;
 	NSString	*title, *nick, *server, *time;
 	
-	nick	= [message userNick];
+	nick	= [message nick];
 	server	= [[message connection] name];
 	time	= [_dialogDateFormatter stringFromDate:[message date]];
 	
@@ -294,17 +294,15 @@
 - (id)init {
 	self = [super initWithWindowNibName:@"Messages"];
 
-	_messageConversations	= [[WCMessageConversation rootConversation] retain];
-	_broadcastConversations	= [[WCBroadcastConversation rootConversation] retain];
-	_conversations			= [[WCConversation rootConversation] retain];
+	_conversationIcon	= [[NSImage imageNamed:@"Conversation"] retain];
+	
+	_messageFilter		= [[WITextFilter alloc] initWithSelectors:@selector(filterURLs:), @selector(filterWiredSmilies:), 0];
+	_userFilter			= [[WITextFilter alloc] initWithSelectors:@selector(filterWiredSmallSmilies:), 0];
 
-	[_conversations addConversation:_messageConversations];
-	[_conversations addConversation:_broadcastConversations];
-	
-	_conversationIcon		= [[NSImage imageNamed:@"Conversation"] retain];
-	
-	_messageFilter			= [[WITextFilter alloc] initWithSelectors:@selector(filterURLs:), @selector(filterWiredSmilies:), 0];
-	_userFilter				= [[WITextFilter alloc] initWithSelectors:@selector(filterWiredSmallSmilies:), 0];
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
+		   selector:@selector(applicationWillTerminate:)
+			   name:NSApplicationWillTerminateNotification];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
@@ -326,6 +324,16 @@
 		   selector:@selector(linkConnectionDidTerminate:)
 			   name:WCLinkConnectionDidTerminate];
 
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
+		   selector:@selector(chatUserAppeared:)
+			   name:WCChatUserAppeared];
+
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
+		   selector:@selector(chatUserDisappeared:)
+			   name:WCChatUserDisappeared];
+	
 	[self window];
 	
 	return self;
@@ -356,6 +364,8 @@
 
 - (void)windowDidLoad {
 	NSToolbar	*toolbar;
+	NSData		*data;
+	NSArray		*array;
 	
 	toolbar = [[NSToolbar alloc] initWithIdentifier:@"Messages"];
 	[toolbar setDelegate:self];
@@ -376,6 +386,31 @@
 	[_messagesTableView setAllowsUserCustomization:YES];
 	[_messagesTableView setDefaultHighlightedTableColumnIdentifier:@"Time"];
 	[_messagesTableView setDefaultSortOrder:WISortAscending];
+	
+	_conversations			= [[WCConversation rootConversation] retain];
+	_messageConversations	= [[WCMessageConversation rootConversation] retain];
+	_broadcastConversations	= [[WCBroadcastConversation rootConversation] retain];
+	
+	data = [WCSettings objectForKey:WCMessageConversations];
+	
+	if(data) {
+		array = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+		
+		[_messageConversations addConversations:array];
+	}
+	
+	data = [WCSettings objectForKey:WCBroadcastConversations];
+	
+	if(data) {
+		array = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+		
+		[_broadcastConversations addConversations:array];
+	}
+
+	[_conversations addConversation:_messageConversations];
+	[_conversations addConversation:_broadcastConversations];
+	
+	[_conversationsOutlineView reloadData];
 	[_conversationsOutlineView expandItem:_messageConversations];
 	[_conversationsOutlineView expandItem:_broadcastConversations];
 	
@@ -448,6 +483,13 @@
 
 
 
+- (void)applicationWillTerminate:(NSNotification *)notification {
+	[WCSettings setObject:[NSKeyedArchiver archivedDataWithRootObject:[_messageConversations conversations]] forKey:WCMessageConversations];
+	[WCSettings setObject:[NSKeyedArchiver archivedDataWithRootObject:[_broadcastConversations conversations]] forKey:WCBroadcastConversations];
+}
+
+
+
 - (void)linkConnectionLoggedIn:(NSNotification *)notification {
 	WCServerConnection		*connection;
 
@@ -456,7 +498,7 @@
 
 	connection = [notification object];
 	
-	[_conversations revalidateMessagesForConnection:connection];
+	[_conversations revalidateForConnection:connection];
 	
 	[connection addObserver:self selector:@selector(wiredMessageMessage:) messageName:@"wired.message.message"];
 	[connection addObserver:self selector:@selector(wiredMessageBroadcast:) messageName:@"wired.message.broadcast"];
@@ -467,8 +509,16 @@
 
 
 - (void)linkConnectionDidClose:(NSNotification *)notification {
+	WCServerConnection		*connection;
+	
 	if(![[notification object] isKindOfClass:[WCServerConnection class]])
 		return;
+
+	connection = [notification object];
+
+	[_conversations invalidateForConnection:connection];
+	
+	[connection removeObserver:self];
 
 	[self _validate];
 }
@@ -476,16 +526,32 @@
 
 
 - (void)linkConnectionDidTerminate:(NSNotification *)notification {
-	WCServerConnection		*connection;
-	
 	if(![[notification object] isKindOfClass:[WCServerConnection class]])
 		return;
 
-	connection = [notification object];
-	
-	[_conversations invalidateMessagesForConnection:connection];
+	[_conversations invalidateForConnection:[notification object]];
 	
 	[self _validate];
+}
+
+
+
+- (void)chatUserAppeared:(NSNotification *)notification {
+	WCUser		*user;
+	
+	user = [notification object];
+	
+	[_conversations revalidateForConnection:[user connection] user:user];
+}
+
+
+
+- (void)chatUserDisappeared:(NSNotification *)notification {
+	WCUser		*user;
+	
+	user = [notification object];
+	
+	[_conversations invalidateForConnection:[user connection] user:user];
 }
 
 
@@ -657,9 +723,9 @@
 	message = [self _selectedMessage];
 	
 	if(selector == @selector(reply:))
-		return (message != NULL && [[message connection] isConnected]);
+		return (message != NULL && [message user] && [[message connection] isConnected]);
 	else if(selector == @selector(revealInUserList:))
-		return ([[self _selectedConversation] userID] != 0);
+		return ([[[[self _selectedConversation] messages] lastObject] user] != NULL);
 	else if(selector == @selector(clearMessages:))
 		return ([_messageConversations numberOfConversations] > 0 || [_broadcastConversations numberOfConversations] > 0);
 	
@@ -673,10 +739,12 @@
 - (void)showNextUnreadMessage {
 	WCMessage		*message;
 	
-	message = [_conversations nextUnreadMessageStartingAtConversation:[self _selectedConversation] message:[self _selectedMessage]];
+	message = [_conversations nextUnreadMessageStartingAtConversation:[self _selectedConversation]
+															  message:[self _selectedMessage]
+												   forwardsInMessages:([_messagesTableView sortOrder] == WISortAscending)];
 	
 	if(!message)
-		message = [_conversations nextUnreadMessageStartingAtConversation:NULL message:NULL];
+		message = [_conversations nextUnreadMessageStartingAtConversation:NULL message:NULL forwardsInMessages:([_messagesTableView sortOrder] == WISortAscending)];
 	
 	if(message)
 		[self _selectMessage:message];
@@ -687,10 +755,12 @@
 - (void)showPreviousUnreadMessage {
 	WCMessage		*message;
 	
-	message = [_conversations previousUnreadMessageStartingAtConversation:[self _selectedConversation] message:[self _selectedMessage]];
+	message = [_conversations previousUnreadMessageStartingAtConversation:[self _selectedConversation]
+																  message:[self _selectedMessage]
+													   forwardsInMessages:([_messagesTableView sortOrder] == WISortAscending)];
 	
 	if(!message)
-		message = [_conversations previousUnreadMessageStartingAtConversation:NULL message:NULL];
+		message = [_conversations previousUnreadMessageStartingAtConversation:NULL message:NULL forwardsInMessages:([_messagesTableView sortOrder] == WISortAscending)];
 	
 	if(message)
 		[self _selectMessage:message];
@@ -763,7 +833,6 @@
 
 - (IBAction)reply:(id)sender {
 	WCMessage   *message;
-	WCUser		*user;
 	WCError		*error;
 	
 	message = [self _selectedMessage];
@@ -771,15 +840,19 @@
 	if(!message)
 		return;
 	
-	user = [[[message connection] chat] userWithUserID:[message userID]];
-	
-	if(user) {
-		[self showPrivateMessageToUser:user];
-	} else { 
-		error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientClientNotFound]; 
+	if(![[message connection] isConnected]) {
+		error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientNotConnected argument:[message connectionName]]; 
 		[[message connection] triggerEvent:WCEventsError info1:error]; 
 		[[error alert] beginSheetModalForWindow:[self window]]; 
-	} 
+	} else {
+		if([message user]) {
+			[self showPrivateMessageToUser:[message user]];
+		} else { 
+			error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientClientNotFound]; 
+			[[message connection] triggerEvent:WCEventsError info1:error]; 
+			[[error alert] beginSheetModalForWindow:[self window]]; 
+		}
+	}
 }
 
 
@@ -809,7 +882,7 @@
 		[message setConversation:conversation];
 		
 		p7Message = [WIP7Message messageWithName:@"wired.message.send_message" spec:WCP7Spec];
-		[p7Message setUInt32:[message userID] forName:@"wired.user.id"];
+		[p7Message setUInt32:[[message user] userID] forName:@"wired.user.id"];
 		[p7Message setString:[message message] forName:@"wired.message.message"];
 		[[message connection] sendMessage:p7Message];
 
@@ -836,8 +909,8 @@
 	
 	if(!conversation)
 		return;
-
-	user = [[[conversation connection] chat] userWithUserID:[conversation userID]];
+	
+	user = [(WCMessage *) [[conversation messages] lastObject] user];
 	
 	if(user) {
 		[[[conversation connection] chat] selectUser:user];
@@ -961,9 +1034,9 @@
 	
 	if(column == _userTableColumn) {
 		if([message direction] == WCMessageTo)
-			string = [NSSWF:NSLS(@"To: %@", @"Message to (nick)"), [message userNick]];
+			string = [NSSWF:NSLS(@"To: %@", @"Message to (nick)"), [message nick]];
 		else
-			string = [NSSWF:NSLS(@"From: %@", @"Message from (nick)"), [message userNick]];
+			string = [NSSWF:NSLS(@"From: %@", @"Message from (nick)"), [message nick]];
 
 		return [[NSAttributedString attributedStringWithString:string] attributedStringByApplyingFilter:_userFilter];
 	}

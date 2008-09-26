@@ -792,8 +792,9 @@ typedef enum _WCChatFormat				WCChatFormat;
 
 
 - (void)wiredChatJoinChatReply:(WIP7Message *)message {
-	WCUser		*user;
-	WCTopic		*topic;
+	WCUser			*user;
+	WCTopic			*topic;
+	NSUInteger		i, count;
 	
 	if([[message name] isEqualToString:@"wired.chat.user_list"]) {
 		user = [WCUser userWithMessage:message connection:[self connection]];
@@ -805,6 +806,11 @@ typedef enum _WCChatFormat				WCChatFormat;
 		[_shownUsers addObjectsFromArray:_allUsers];
 		[_allUsers removeAllObjects];
 		
+		count = [_shownUsers count];
+		
+		for(i = 0; i < count; i++)
+			[[self connection] postNotificationName:WCChatUserAppeared object:[_shownUsers objectAtIndex:i]];
+
 		_receivedUserList = YES;
 		
 		[[self connection] postNotificationName:WCChatUsersDidChange object:[self connection]];
@@ -838,6 +844,7 @@ typedef enum _WCChatFormat				WCChatFormat;
 	if([[WCSettings eventForTag:WCEventsUserJoined] boolForKey:WCEventsPostInChat])
 		[self _printUserJoin:user];
 	
+	[[self connection] postNotificationName:WCChatUserAppeared object:user];
 	[[self connection] postNotificationName:WCChatUsersDidChange object:[self connection]];
 
 	[[self connection] triggerEvent:WCEventsUserJoined info1:user];
@@ -865,6 +872,7 @@ typedef enum _WCChatFormat				WCChatFormat;
 		[self _printUserLeave:user];
 
 	[[self connection] triggerEvent:WCEventsUserLeft info1:user];
+	[[self connection] postNotificationName:WCChatUserDisappeared object:user];
 
 	[_shownUsers removeObject:user];
 	[_users removeObjectForKey:[NSNumber numberWithUnsignedInt:[user userID]]];
@@ -952,6 +960,8 @@ typedef enum _WCChatFormat				WCChatFormat;
 	
 	if(cid == WCPublicChatID && [victim userID] == [[self connection] userID])
 		[[self connection] postNotificationName:WCChatSelfWasKicked object:[self connection]];
+
+	[[self connection] postNotificationName:WCChatUserDisappeared object:victim];
 
 	[_shownUsers removeObject:victim];
 	[_users removeObjectForKey:[NSNumber numberWithInt:victimUserID]];
@@ -1044,6 +1054,8 @@ typedef enum _WCChatFormat				WCChatFormat;
 	
 	if([victim userID] == [[self connection] userID])
 		[[self connection] postNotificationName:WCChatSelfWasBanned object:[self connection]];
+
+	[[self connection] postNotificationName:WCChatUserDisappeared object:victim];
 
 	[_shownUsers removeObject:victim];
 	[_users removeObjectForKey:[NSNumber numberWithInt:victimUserID]];

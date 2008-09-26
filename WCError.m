@@ -70,33 +70,37 @@
 			case WCWiredClientServerDisconnected:
 				return NSLS(@"Server Disconnected", @"WCWiredClientServerDisconnected title");
 				break;
+			
+			case WCWiredClientNotConnected:
+				return NSLS(@"Not Connected", @"WCWiredClientNotConnected title");
+				break;
 				
 			case WCWiredClientOpenFailed:
-				return NSLS(@"Open Failed", @"XXX title");
+				return NSLS(@"Open Failed", @"WCWiredClientOpenFailed title");
 				break;
 				
 			case WCWiredClientCreateFailed:
-				return NSLS(@"Create Failed", @"XXX title");
+				return NSLS(@"Create Failed", @"WCWiredClientCreateFailed title");
 				break;
 				
 			case WCWiredClientFileExists:
-				return NSLS(@"File Exists", @"XXX title");
+				return NSLS(@"File Exists", @"WCWiredClientFileExists title");
 				break;
 				
 			case WCWiredClientFolderExists:
-				return NSLS(@"Folder Exists", @"XXX title");
+				return NSLS(@"Folder Exists", @"WCWiredClientFolderExists title");
 				break;
 				
 			case WCWiredClientTransferExists:
-				return NSLS(@"Transfer Exists", @"XXX title");
+				return NSLS(@"Transfer Exists", @"WCWiredClientTransferExists title");
 				break;
 				
 			case WCWiredClientTransferWithResourceFork:
-				return NSLS(@"Transfer Not Supported", @"XXX title");
+				return NSLS(@"Transfer Not Supported", @"WCWiredClientTransferWithResourceFork title");
 				break;
 				
 			case WCWiredClientTransferFailed:
-				return NSLS(@"Transfer Failed", @"XXX title");
+				return NSLS(@"Transfer Failed", @"WCWiredClientTransferFailed title");
 				break;
 				
 			case WCWiredClientClientNotFound: 
@@ -193,6 +197,11 @@
 		switch([self code]) {
 			case WCWiredClientServerDisconnected:
 				return NSLS(@"The server has unexpectedly disconnected.", @"WCWiredClientServerDisconnected description");
+				break;
+				
+			case WCWiredClientNotConnected:
+				return [NSSWF:NSLS(@"This operation can't proceed until you connect to the server \"%@\".", @"WCWiredClientNotConnected description (server name]"),
+					argument];
 				break;
 				
 			case WCWiredClientOpenFailed:

@@ -42,11 +42,13 @@
 	self = [super initWithConnection:connection];
 
 	_direction		= direction;
-	_userID			= [user userID];
-	_userNick		= [[user nick] retain];
+	_nick			= [[user nick] retain];
+	_login			= [[user login] retain];
 	_message		= [message retain];
 	_date			= [[NSDate date] retain];
 	_read			= read;
+	
+	_user			= user;
 
 	return self;
 }
@@ -56,8 +58,55 @@
 
 @implementation WCMessage
 
++ (NSInteger)version {
+	return 1;
+}
+
+
+
+#pragma mark -
+
+- (id)initWithCoder:(NSCoder *)coder {
+    self = [super initWithCoder:coder];
+	
+	if(!self)
+		return NULL;
+	
+    if([coder decodeIntForKey:@"WCMessageVersion"] != [[self class] version]) {
+        [self release];
+		
+        return NULL;
+    }
+	
+	_direction		= [coder decodeIntForKey:@"WCMessageDirection"];
+	_read			= [coder decodeBoolForKey:@"WCMessageRead"];
+	_nick			= [[coder decodeObjectForKey:@"WCMessageUserNick"] retain];
+	_login			= [[coder decodeObjectForKey:@"WCMessageUserLogin"] retain];
+	_message		= [[coder decodeObjectForKey:@"WCMessageMessage"] retain];
+	_date			= [[coder decodeObjectForKey:@"WCMessageDate"] retain];
+	
+	return self;
+}
+
+
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    [coder encodeInt:[[self class] version] forKey:@"WCMessageVersion"];
+	
+	[coder encodeInt:_direction forKey:@"WCMessageDirection"];
+	[coder encodeBool:_read forKey:@"WCMessageRead"];
+	[coder encodeObject:_nick forKey:@"WCMessageUserNick"];
+	[coder encodeObject:_login forKey:@"WCMessageUserLogin"];
+	[coder encodeObject:_message forKey:@"WCMessageMessage"];
+	[coder encodeObject:_date forKey:@"WCMessageDate"];
+	
+	[super encodeWithCoder:coder];
+}
+
+
+
 - (void)dealloc {
-	[_userNick release];
+	[_nick release];
 	[_message release];
 	[_date release];
 
@@ -80,7 +129,7 @@
 		[self className],
 		self,
 		type,
-		[self userNick],
+		[self nick],
 		[self date]];
 }
 
@@ -94,14 +143,26 @@
 
 
 
-- (NSUInteger)userID {
-	return _userID;
+- (void)setUser:(WCUser *)user {
+	_user = user;
 }
 
 
 
-- (NSString *)userNick {
-	return _userNick;
+- (WCUser *)user {
+	return _user;
+}
+
+
+
+- (NSString *)nick {
+	return _user ? [_user nick] : _nick;
+}
+
+
+
+- (NSString *)login {
+	return _user ? [_user login] : _login;
 }
 
 
@@ -149,7 +210,7 @@
 - (NSComparisonResult)compareUser:(WCMessage *)message {
 	NSComparisonResult	result;
 	
-	result = [[self userNick] compare:[message userNick] options:NSCaseInsensitiveSearch];
+	result = [[self nick] compare:[message nick] options:NSCaseInsensitiveSearch];
 	
 	if(result != NSOrderedSame)
 		return result;

@@ -32,6 +32,7 @@
 
 enum _WCWiredClientErrors {
 	WCWiredClientServerDisconnected,
+	WCWiredClientNotConnected,
 	WCWiredClientOpenFailed,
 	WCWiredClientCreateFailed,
 	WCWiredClientFileExists,
