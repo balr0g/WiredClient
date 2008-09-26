@@ -100,7 +100,7 @@
 				break;
 				
 			case WCWiredClientClientNotFound: 
-				NSLS(@"Client Not Found", @"WCWiredClientClientNotFound title"); 
+				return NSLS(@"Client Not Found", @"WCWiredClientClientNotFound title"); 
 				break; 
 
 			default:
