@@ -48,6 +48,7 @@
 - (id)_selectedMessage;
 - (void)_selectMessage:(id)message;
 - (void)_readMessages;
+- (void)_saveMessages;
 - (void)_removeAllMessages;
 
 - (void)_reselectConversation:(WCConversation *)conversation message:(WCMessage *)message;
@@ -202,6 +203,13 @@
 		: index;
 	
 	[_messagesTableView selectRow:i byExtendingSelection:NO];
+}
+
+
+
+- (void)_saveMessages {
+	[WCSettings setObject:[NSKeyedArchiver archivedDataWithRootObject:[_messageConversations conversations]] forKey:WCMessageConversations];
+	[WCSettings setObject:[NSKeyedArchiver archivedDataWithRootObject:[_broadcastConversations conversations]] forKey:WCBroadcastConversations];
 }
 
 
@@ -484,8 +492,7 @@
 
 
 - (void)applicationWillTerminate:(NSNotification *)notification {
-	[WCSettings setObject:[NSKeyedArchiver archivedDataWithRootObject:[_messageConversations conversations]] forKey:WCMessageConversations];
-	[WCSettings setObject:[NSKeyedArchiver archivedDataWithRootObject:[_broadcastConversations conversations]] forKey:WCBroadcastConversations];
+	[self _saveMessages];
 }
 
 
@@ -588,6 +595,8 @@
 	[conversation addMessage:message];
 	[message setConversation:conversation];
 
+	[self _saveMessages];
+	
 	[_conversationsOutlineView reloadData];
 	[_messagesTableView reloadData];
 	
@@ -637,6 +646,8 @@
 	
 	[conversation addMessage:message];
 	[message setConversation:conversation];
+
+	[self _saveMessages];
 
 	[_conversationsOutlineView reloadData];
 	[_messagesTableView reloadData];
@@ -881,6 +892,8 @@
 		[conversation addMessage:message];
 		[message setConversation:conversation];
 		
+		[self _saveMessages];
+
 		p7Message = [WIP7Message messageWithName:@"wired.message.send_message" spec:WCP7Spec];
 		[p7Message setUInt32:[[message user] userID] forName:@"wired.user.id"];
 		[p7Message setString:[message message] forName:@"wired.message.message"];

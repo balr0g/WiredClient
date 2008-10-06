@@ -456,10 +456,8 @@
 		message = [_messages objectAtIndex:i];
 		
 		if([message connection] == connection && ![message user]) {
-			if([[user nick] isEqualToString:[message nick]] && [[user login] isEqualToString:[message login]]) {
-				NSLog(@"reset user");
+			if([[user nick] isEqualToString:[message nick]] && [[user login] isEqualToString:[message login]])
 				[message setUser:user];
-			}
 		}
 	}
 	

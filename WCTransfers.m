@@ -79,6 +79,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 - (void)_startTransfer:(WCTransfer *)transfer first:(BOOL)first;
 - (void)_queueTransfer:(WCTransfer *)transfer; 
 - (void)_createRemainingDirectoriesForTransfer:(WCTransfer *)transfer;
+- (void)_invalidateTransfersForConnection:(WCServerConnection *)connection;
+- (void)_saveTransfers;
 - (void)_finishTransfer:(WCTransfer *)transfer;
 - (void)_removeTransfer:(WCTransfer *)transfer;
 
@@ -308,6 +310,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	
 	[_transfers addObject:transfer];
 	
+	[self _saveTransfers];
+
 	count = [self _numberOfWorkingTransfersOfClass:[transfer class] connection:[file connection]];
 
 	if(count == 1)
@@ -406,6 +410,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	
 	[_transfers addObject:transfer];
 	
+	[self _saveTransfers];
+
 	count = [self _numberOfWorkingTransfersOfClass:[transfer class] connection:[destination connection]];
 	
 	if(count == 1)
@@ -543,6 +549,24 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 
 
+- (void)_saveTransfers {
+	NSEnumerator		*enumerator;
+	NSMutableArray		*transfers;
+	WCTransfer			*transfer;
+	
+	transfers = [NSMutableArray array];
+	enumerator = [_transfers objectEnumerator];
+	
+	while((transfer = [enumerator nextObject])) {
+		if(![transfer isWorking])
+			[transfers addObject:transfer];
+	}
+	
+	[WCSettings setObject:[NSKeyedArchiver archivedDataWithRootObject:transfers] forKey:WCTransferList];
+}
+
+
+
 - (void)_finishTransfer:(WCTransfer *)transfer {
 	NSString			*path, *newPath;
 	NSDictionary		*dictionary;
@@ -640,6 +664,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	[[transfer progressIndicator] removeFromSuperview];
 
 	[_transfers removeObject:transfer];
+
+	[self _saveTransfers];
 }
 
 
@@ -1324,16 +1350,12 @@ end:
 		if([transfer isWorking]) {
 			[transfer setState:WCTransferDisconnecting];
 			
-			if([transfer waitUntilTerminatedBeforeDate:[NSDate dateWithTimeIntervalSinceNow:1.0]]) {
+			if([transfer waitUntilTerminatedBeforeDate:[NSDate dateWithTimeIntervalSinceNow:1.0]])
 				[transfer setState:WCTransferDisconnected];
-				[transfers addObject:transfer];
-			}
-		} else {
-			[transfers addObject:transfer];
 		}
 	}
 
-    [WCSettings setObject:[NSKeyedArchiver archivedDataWithRootObject:transfers] forKey:WCTransferList];
+	[self _saveTransfers];
 }
 
 
