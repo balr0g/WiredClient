@@ -290,6 +290,13 @@
 			remoteGlobalIDString = 7712BC030E5C1964001C4210;
 			remoteInfo = WiredAppKit;
 		};
+		77CB045D0E9E45E500EB2878 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A544C1B90758E0E9008446CF /* WiredAdditions.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A5C23CFF0E9AC2AB00A81F49 /* libwired.a */;
+			remoteInfo = libwired;
+		};
 		A59C7E840E64002B00FF73AD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = A544C1B90758E0E9008446CF /* WiredAdditions.xcodeproj */;
@@ -1246,6 +1253,7 @@
 				A59C7E850E64002B00FF73AD /* libWiredFoundation.a */,
 				A59C7E870E64002B00FF73AD /* libWiredAppKit.a */,
 				A59C7E890E64002B00FF73AD /* libWiredNetworking.a */,
+				77CB045E0E9E45E500EB2878 /* libwired.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1321,6 +1329,13 @@
 			fileType = wrapper.framework;
 			path = WiredAppKit.framework;
 			remoteRef = 779AB7D80E5C480A0031B6CE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		77CB045E0E9E45E500EB2878 /* libwired.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libwired.a;
+			remoteRef = 77CB045D0E9E45E500EB2878 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		A59C7E850E64002B00FF73AD /* libWiredFoundation.a */ = {
@@ -1827,77 +1842,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		A59684280B6A3F5400A59623 /* Debug/Native/64 */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = A5E8BADA08748E1C0010F2A4 /* WiredClient.xcconfig */;
-			buildSettings = {
-				ARCHS = "$(NATIVE_ARCH_64_BIT)";
-				COPY_PHASE_STRIP = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
-				IBC_NOTICES = NO;
-				PREBINDING = NO;
-				PRODUCT_IDENTIFIER = com.zanka.WiredClientDebugP7;
-			};
-			name = Debug/Native/64;
-		};
-		A596842A0B6A3F5400A59623 /* Debug/Native/64 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "\"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)\"";
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = prefix.pch;
-				HEADER_SEARCH_PATHS = "\"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/WiredNetworking.framework/Headers\"";
-				INFOPLIST_FILE = Info.plist;
-				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-DDEBUG";
-				INFOPLIST_PREPROCESS = YES;
-				PRODUCT_NAME = "Wired Client";
-				WRAPPER_EXTENSION = app;
-			};
-			name = Debug/Native/64;
-		};
-		A596842B0B6A3F5400A59623 /* Debug/Native/64 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				OTHER_CFLAGS = "-DDEVELOPMENT";
-				OTHER_LDFLAGS = "";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = Distribution;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wmost",
-					"-Wno-four-char-constants",
-					"-Wno-unknown-pragmas",
-				);
-				ZERO_LINK = YES;
-			};
-			name = Debug/Native/64;
-		};
-		A596842C0B6A3F5400A59623 /* Debug/Native/64 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				OTHER_CFLAGS = "-DDEVELOPMENT";
-				OTHER_LDFLAGS = "";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = Packaging;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wmost",
-					"-Wno-four-char-constants",
-					"-Wno-unknown-pragmas",
-				);
-				ZERO_LINK = YES;
-			};
-			name = Debug/Native/64;
-		};
 		A5DB47B9098BBAB50073564C /* Test/Universal */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1972,7 +1916,7 @@
 			};
 			name = Test/Universal;
 		};
-		A5E8BAAA08748D3B0010F2A4 /* Debug/Native/32 */ = {
+		A5E8BAAA08748D3B0010F2A4 /* Debug/Native */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "\"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)\"";
@@ -1985,7 +1929,7 @@
 				PRODUCT_NAME = "Wired Client";
 				WRAPPER_EXTENSION = app;
 			};
-			name = Debug/Native/32;
+			name = Debug/Native;
 		};
 		A5E8BAAC08748D3B0010F2A4 /* Release/Universal */ = {
 			isa = XCBuildConfiguration;
@@ -2002,7 +1946,7 @@
 			};
 			name = Release/Universal;
 		};
-		A5E8BAAF08748D3B0010F2A4 /* Debug/Native/32 */ = {
+		A5E8BAAF08748D3B0010F2A4 /* Debug/Native */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -2021,7 +1965,7 @@
 				);
 				ZERO_LINK = YES;
 			};
-			name = Debug/Native/32;
+			name = Debug/Native;
 		};
 		A5E8BAB108748D3B0010F2A4 /* Release/Universal */ = {
 			isa = XCBuildConfiguration;
@@ -2044,7 +1988,7 @@
 			};
 			name = Release/Universal;
 		};
-		A5E8BAB408748D3B0010F2A4 /* Debug/Native/32 */ = {
+		A5E8BAB408748D3B0010F2A4 /* Debug/Native */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -2063,7 +2007,7 @@
 				);
 				ZERO_LINK = YES;
 			};
-			name = Debug/Native/32;
+			name = Debug/Native;
 		};
 		A5E8BAB608748D3B0010F2A4 /* Release/Universal */ = {
 			isa = XCBuildConfiguration;
@@ -2086,7 +2030,7 @@
 			};
 			name = Release/Universal;
 		};
-		A5E8BAB908748D3B0010F2A4 /* Debug/Native/32 */ = {
+		A5E8BAB908748D3B0010F2A4 /* Debug/Native */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A5E8BADA08748E1C0010F2A4 /* WiredClient.xcconfig */;
 			buildSettings = {
@@ -2097,7 +2041,7 @@
 				PREBINDING = NO;
 				PRODUCT_IDENTIFIER = com.zanka.WiredClientDebugP7;
 			};
-			name = Debug/Native/32;
+			name = Debug/Native;
 		};
 		A5E8BABB08748D3B0010F2A4 /* Release/Universal */ = {
 			isa = XCBuildConfiguration;
@@ -2122,46 +2066,42 @@
 		A5E8BAA908748D3B0010F2A4 /* Build configuration list for PBXNativeTarget "Wired Client" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A5E8BAAA08748D3B0010F2A4 /* Debug/Native/32 */,
-				A596842A0B6A3F5400A59623 /* Debug/Native/64 */,
+				A5E8BAAA08748D3B0010F2A4 /* Debug/Native */,
 				A5DB47B9098BBAB50073564C /* Test/Universal */,
 				A5E8BAAC08748D3B0010F2A4 /* Release/Universal */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug/Native/32;
+			defaultConfigurationName = Debug/Native;
 		};
 		A5E8BAAE08748D3B0010F2A4 /* Build configuration list for PBXAggregateTarget "Localization" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A5E8BAAF08748D3B0010F2A4 /* Debug/Native/32 */,
-				A596842B0B6A3F5400A59623 /* Debug/Native/64 */,
+				A5E8BAAF08748D3B0010F2A4 /* Debug/Native */,
 				A5DB47BA098BBAB50073564C /* Test/Universal */,
 				A5E8BAB108748D3B0010F2A4 /* Release/Universal */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug/Native/32;
+			defaultConfigurationName = Debug/Native;
 		};
 		A5E8BAB308748D3B0010F2A4 /* Build configuration list for PBXAggregateTarget "Distribution" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A5E8BAB408748D3B0010F2A4 /* Debug/Native/32 */,
-				A596842C0B6A3F5400A59623 /* Debug/Native/64 */,
+				A5E8BAB408748D3B0010F2A4 /* Debug/Native */,
 				A5DB47BB098BBAB50073564C /* Test/Universal */,
 				A5E8BAB608748D3B0010F2A4 /* Release/Universal */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug/Native/32;
+			defaultConfigurationName = Debug/Native;
 		};
 		A5E8BAB808748D3B0010F2A4 /* Build configuration list for PBXProject "WiredClient" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A5E8BAB908748D3B0010F2A4 /* Debug/Native/32 */,
-				A59684280B6A3F5400A59623 /* Debug/Native/64 */,
+				A5E8BAB908748D3B0010F2A4 /* Debug/Native */,
 				A5DB47BC098BBAB50073564C /* Test/Universal */,
 				A5E8BABB08748D3B0010F2A4 /* Release/Universal */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug/Native/32;
+			defaultConfigurationName = Debug/Native;
 		};
 /* End XCConfigurationList section */
 	};
