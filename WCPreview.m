@@ -94,9 +94,10 @@
 	extension = [[path pathExtension] lowercaseString];
 
 	if([[WCPreview textFileTypes] containsObject:extension] || [extension isEqualToString:@""]) {
-		NSString	*text;
+		NSString			*text;
+		NSStringEncoding	encoding;
  
-		text = [NSString stringWithContentsOfFile:path];
+		text = [NSString stringWithContentsOfFile:path usedEncoding:&encoding error:NULL];
 
 		if(!text) {
 			*error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientOpenFailed argument:path];

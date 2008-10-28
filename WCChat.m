@@ -1388,7 +1388,7 @@ typedef enum _WCChatFormat				WCChatFormat;
 	index = [_shownUsers indexOfObject:user];
 	
 	if(index != NSNotFound) {
-		[_userListTableView selectRow:index byExtendingSelection:NO];
+		[_userListTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
 		[[self window] makeFirstResponder:_userListTableView];
 	}
 }

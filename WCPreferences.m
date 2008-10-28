@@ -1253,8 +1253,8 @@
 	[WCSettings addBookmark:bookmark];
 	[_bookmarksTableView reloadData];
 	
-	[_bookmarksTableView selectRow:[[WCSettings objectForKey:WCBookmarks] count] - 1
-			  byExtendingSelection:NO];
+	[_bookmarksTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:[[WCSettings objectForKey:WCBookmarks] count] - 1]
+					 byExtendingSelection:NO];
 
 	[[NSNotificationCenter defaultCenter] postNotificationName:WCBookmarksDidChange object:self];
 }
@@ -1327,7 +1327,7 @@
 	row = [[WCSettings objectForKey:WCHighlights] count] - 1;
 	
 	[_highlightsTableView reloadData];
-	[_highlightsTableView selectRow:row byExtendingSelection:NO];
+	[_highlightsTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
 	[_highlightsTableView editColumn:0 row:row withEvent:NULL select:YES];
 }
 
@@ -1379,7 +1379,7 @@
 	row = [[WCSettings objectForKey:WCIgnores] count] - 1;
 
 	[_ignoresTableView reloadData];
-	[_ignoresTableView selectRow:row byExtendingSelection:NO];
+	[_ignoresTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
 	[_ignoresTableView editColumn:0 row:row withEvent:NULL select:YES];
 }
 
@@ -1428,8 +1428,8 @@
 	[WCSettings addTrackerBookmark:bookmark];
 	[_trackerBookmarksTableView reloadData];
 	
-	[_trackerBookmarksTableView selectRow:[[WCSettings objectForKey:WCTrackerBookmarks] count] - 1
-					 byExtendingSelection:NO];
+	[_trackerBookmarksTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:[[WCSettings objectForKey:WCTrackerBookmarks] count] - 1]
+							byExtendingSelection:NO];
 
 	[[NSNotificationCenter defaultCenter] postNotificationName:WCTrackerBookmarksDidChange object:self];
 }
@@ -1648,7 +1648,7 @@
 		[WCSettings setObject:dictionary forKey:WCBookmarks];
 		[dictionary release];
 		
-		[tableView selectRow:index byExtendingSelection:NO];
+		[tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
 
 		[[NSNotificationCenter defaultCenter] postNotificationName:WCBookmarksDidChange object:self];
 
@@ -1679,7 +1679,7 @@
 		[WCSettings setObject:dictionary forKey:WCTrackerBookmarks];
 		[dictionary release];
 
-		[tableView selectRow:index byExtendingSelection:NO];
+		[tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
 
 		[[NSNotificationCenter defaultCenter] postNotificationName:WCTrackerBookmarksDidChange object:self];
 

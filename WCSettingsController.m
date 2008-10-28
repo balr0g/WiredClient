@@ -295,7 +295,7 @@
 	row = [_trackers count] - 1;
 	
 	[_trackersTableView reloadData];
-	[_trackersTableView selectRow:row byExtendingSelection:NO];
+	[_trackersTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
 	[_trackersTableView editColumn:0 row:row withEvent:NULL select:YES];
 
 	[self touch:self];
@@ -324,7 +324,7 @@
 	row = [_categories count] - 1;
 	
 	[_categoriesTableView reloadData];
-	[_categoriesTableView selectRow:row byExtendingSelection:NO];
+	[_categoriesTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
 	[_categoriesTableView editColumn:0 row:row withEvent:NULL select:YES];
 
 	[self touch:self];

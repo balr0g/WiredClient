@@ -94,14 +94,14 @@
 			[socket cipherName],
 			[socket cipherBits]]];
 	} else {
-		[_cipherTextField setStringValue:[NSSWF:NSLS(@"None", @"Encryption disabled")]];
+		[_cipherTextField setStringValue:NSLS(@"None", @"Encryption disabled")];
 	}
 	
 	if([socket usesCompression]) {
 		[_compressionTextField setStringValue:[NSSWF:NSLS(@"Yes, compression ratio %.2f", @"Compression enabled (ratio)"),
 			[socket compressionRatio]]];
 	} else {
-		[_compressionTextField setStringValue:[NSSWF:NSLS(@"No", @"Compression disabled")]];
+		[_compressionTextField setStringValue:NSLS(@"No", @"Compression disabled")];
 	}
 	
 	// --- resize dynamic fields

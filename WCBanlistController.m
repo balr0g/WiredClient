@@ -106,15 +106,19 @@
 
 
 - (NSArray *)_selectedBans {
-	NSEnumerator		*enumerator;
 	NSMutableArray		*array;
-	NSNumber			*row;
+	NSIndexSet			*indexes;
+	NSUInteger			index;
 	
 	array = [NSMutableArray array];
-	enumerator = [_banlistTableView selectedRowEnumerator];
+	indexes = [_banlistTableView selectedRowIndexes];
+	index = [indexes firstIndex];
 	
-	while((row = [enumerator nextObject]))
-		[array addObject:[self _banAtIndex:[row unsignedIntValue]]];
+	while(index != NSNotFound) {
+		[array addObject:[self _banAtIndex:index]];
+		
+		index = [indexes indexGreaterThanIndex:index];
+	}
 	
 	return array;
 }

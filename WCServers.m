@@ -798,7 +798,7 @@
 
 
 
-- (NSString *)outlineView:(NSTableView *)tableView stringValueForRow:(NSInteger)row {
+- (NSString *)outlineView:(NSOutlineView *)outlineView stringValueForRow:(NSInteger)row {
 	return [[self _itemAtIndex:row] name];
 }
 

@@ -174,15 +174,19 @@
 
 
 - (NSArray *)selectedFiles {
-	NSEnumerator		*enumerator;
 	NSMutableArray		*array;
-	NSNumber			*row;
+	NSIndexSet			*indexes;
+	NSUInteger			index;
 
 	array = [NSMutableArray array];
-	enumerator = [_filesTableView selectedRowEnumerator];
-
-	while((row = [enumerator nextObject]))
-		[array addObject:[self fileAtIndex:[row integerValue]]];
+	indexes = [_filesTableView selectedRowIndexes];
+	index = [indexes firstIndex];
+	
+	while(index != NSNotFound) {
+		[array addObject:[self fileAtIndex:index]];
+		
+		index = [indexes indexGreaterThanIndex:index];
+	}
 	
 	return array;
 }

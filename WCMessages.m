@@ -191,7 +191,7 @@
 	if(row < 0)
 		return;
 	
-	[_conversationsOutlineView selectRow:row byExtendingSelection:NO];
+	[_conversationsOutlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
 	
 	index = [[conversation messages] indexOfObject:message];
 	
@@ -202,7 +202,7 @@
 		? [conversation numberOfMessages] - index - 1
 		: index;
 	
-	[_messagesTableView selectRow:i byExtendingSelection:NO];
+	[_messagesTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:i] byExtendingSelection:NO];
 }
 
 
@@ -252,7 +252,7 @@
 	row = [_conversationsOutlineView rowForItem:conversation];
 	
 	if(row >= 0)
-		[_conversationsOutlineView selectRow:row byExtendingSelection:NO];
+		[_conversationsOutlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
 
 	row = [[[self _selectedConversation] messages] indexOfObject:message];
 	
@@ -262,7 +262,7 @@
 			? [[self _selectedConversation] numberOfMessages] - index - 1
 			: index;
 		
-		[_messagesTableView selectRow:i byExtendingSelection:NO];
+		[_messagesTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:i] byExtendingSelection:NO];
 	}
 }
 

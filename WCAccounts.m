@@ -467,16 +467,20 @@
 
 
 - (NSArray *)_selectedAccounts {
-	NSEnumerator		*enumerator;
 	NSMutableArray		*array;
-	NSNumber			*row;
-
+	NSIndexSet			*indexes;
+	NSUInteger			index;
+	
 	array = [NSMutableArray array];
-	enumerator = [_accountsTableView selectedRowEnumerator];
-
-	while((row = [enumerator nextObject]))
-		[array addObject:[self _accountAtIndex:[row unsignedIntValue]]];
-
+	indexes = [_accountsTableView selectedRowIndexes];
+	index = [indexes firstIndex];
+	
+	while(index != NSNotFound) {
+		[array addObject:[self _accountAtIndex:index]];
+		
+		index = [indexes indexGreaterThanIndex:index];
+	}
+	
 	return array;
 }
 
@@ -1035,7 +1039,7 @@
 		account = [_shownAccounts objectAtIndex:i];
 		
 		if([account isKindOfClass:[WCUserAccount class]] && [[account name]isEqualToString:name]) {
-			[_accountsTableView selectRow:i byExtendingSelection:NO];
+			[_accountsTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:i] byExtendingSelection:NO];
 			
 			break;
 		}
@@ -1222,7 +1226,7 @@
 		[[self window] setDocumentEdited:NO];
 
 		if(row >= 0) {
-			[_accountsTableView selectRow:row byExtendingSelection:NO];
+			[_accountsTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
 		} else {
 			[self _validateAccount:NULL];
 			[self _readFromAccount:NULL];
