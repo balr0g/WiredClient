@@ -294,7 +294,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = A544C1B90758E0E9008446CF /* WiredAdditions.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = A5C23CFF0E9AC2AB00A81F49 /* libwired.a */;
+			remoteGlobalIDString = A5C23CFF0E9AC2AB00A81F49;
 			remoteInfo = libwired;
 		};
 		A59C7E840E64002B00FF73AD /* PBXContainerItemProxy */ = {
@@ -616,8 +616,6 @@
 		A5E225D1057AB5290037C7F9 /* DeleteFile.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = DeleteFile.tiff; sourceTree = "<group>"; };
 		A5E3CAF20BFB9CE10000BAC9 /* WiredAdditions */ = {isa = PBXFileReference; lastKnownFileType = folder; path = WiredAdditions; sourceTree = "<group>"; };
 		A5E8BADA08748E1C0010F2A4 /* WiredClient.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; path = WiredClient.xcconfig; sourceTree = "<group>"; };
-		A5E8BADB08748E3C0010F2A4 /* localize.sh */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.script.sh; path = localize.sh; sourceTree = "<group>"; };
-		A5E8BADC08748E670010F2A4 /* version.pl */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.script.perl; path = version.pl; sourceTree = "<group>"; };
 		A5E8BCCF087494DB0010F2A4 /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/ReleaseNotes.rtf; sourceTree = "<group>"; };
 		A5F802960D8E378300A84685 /* WCMonitorCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCMonitorCell.h; sourceTree = "<group>"; };
 		A5F802970D8E378300A84685 /* WCMonitorCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCMonitorCell.m; sourceTree = "<group>"; };
@@ -683,7 +681,6 @@
 				77B5F96B097FDD2900C055E1 /* Additions */,
 				29B97315FDCFA39411CA2CEA /* Sources */,
 				A5E8BABF08748D6D0010F2A4 /* Config */,
-				A5E8BABE08748D4A0010F2A4 /* Scripts */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				779951B30A122D1F00600320 /* Smileys */,
 				A52B1C4806C408A80033D317 /* Images */,
@@ -1227,15 +1224,6 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
-		A5E8BABE08748D4A0010F2A4 /* Scripts */ = {
-			isa = PBXGroup;
-			children = (
-				A5E8BADB08748E3C0010F2A4 /* localize.sh */,
-				A5E8BADC08748E670010F2A4 /* version.pl */,
-			);
-			name = Scripts;
-			sourceTree = "<group>";
-		};
 		A5E8BABF08748D6D0010F2A4 /* Config */ = {
 			isa = PBXGroup;
 			children = (
@@ -1289,6 +1277,9 @@
 /* Begin PBXProject section */
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+			};
 			buildConfigurationList = A5E8BAB808748D3B0010F2A4 /* Build configuration list for PBXProject "WiredClient" */;
 			compatibilityVersion = "Xcode 3.1";
 			hasScannedForEncodings = 1;
@@ -1516,7 +1507,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "sh localize.sh . || exit 1";
+			shellScript = "rm -f \"English.lproj/Localizable.strings\"\nfind . -name \"*.[mc]\" | xargs genstrings -s NSLS -q -o \"English.lproj\" -a\n";
 		};
 		A5D97309078F0D1700CD982E /* Run Script (Zip) */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1544,7 +1535,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "PATH=\"/usr/local/bin:$PATH\" perl version.pl; exit 0";
+			shellScript = "perl WiredAdditions/version.pl";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1903,16 +1894,20 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A5E8BADA08748E1C0010F2A4 /* WiredClient.xcconfig */;
 			buildSettings = {
-				ARCHS = (
-					i386,
-					ppc,
-				);
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COPY_PHASE_STRIP = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = TEST;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				IBC_NOTICES = NO;
-				PREBINDING = NO;
+				"MACOSX_DEPLOYMENT_TARGET[arch=i386]" = 10.4;
+				"MACOSX_DEPLOYMENT_TARGET[arch=ppc64]" = 10.5;
+				"MACOSX_DEPLOYMENT_TARGET[arch=ppc]" = 10.4;
+				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
 				PRODUCT_IDENTIFIER = com.zanka.WiredClientDebugP7;
+				"SDKROOT[arch=i386]" = macosx10.4;
+				"SDKROOT[arch=ppc64]" = macosx10.5;
+				"SDKROOT[arch=ppc]" = macosx10.4;
+				"SDKROOT[arch=x86_64]" = macosx10.5;
 			};
 			name = Test/Universal;
 		};
@@ -2038,8 +2033,15 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
 				IBC_NOTICES = NO;
-				PREBINDING = NO;
+				"MACOSX_DEPLOYMENT_TARGET[arch=i386]" = 10.4;
+				"MACOSX_DEPLOYMENT_TARGET[arch=ppc64]" = 10.5;
+				"MACOSX_DEPLOYMENT_TARGET[arch=ppc]" = 10.4;
+				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
 				PRODUCT_IDENTIFIER = com.zanka.WiredClientDebugP7;
+				"SDKROOT[arch=i386]" = macosx10.4;
+				"SDKROOT[arch=ppc64]" = macosx10.5;
+				"SDKROOT[arch=ppc]" = macosx10.4;
+				"SDKROOT[arch=x86_64]" = macosx10.5;
 			};
 			name = Debug/Native;
 		};
@@ -2047,16 +2049,20 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A5E8BADA08748E1C0010F2A4 /* WiredClient.xcconfig */;
 			buildSettings = {
-				ARCHS = (
-					i386,
-					ppc,
-				);
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = RELEASE;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				IBC_NOTICES = NO;
-				PREBINDING = NO;
+				"MACOSX_DEPLOYMENT_TARGET[arch=i386]" = 10.4;
+				"MACOSX_DEPLOYMENT_TARGET[arch=ppc64]" = 10.5;
+				"MACOSX_DEPLOYMENT_TARGET[arch=ppc]" = 10.4;
+				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
 				PRODUCT_IDENTIFIER = com.zanka.WiredClient;
+				"SDKROOT[arch=i386]" = macosx10.4;
+				"SDKROOT[arch=ppc64]" = macosx10.5;
+				"SDKROOT[arch=ppc]" = macosx10.4;
+				"SDKROOT[arch=x86_64]" = macosx10.5;
 			};
 			name = Release/Universal;
 		};
