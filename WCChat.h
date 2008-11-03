@@ -94,6 +94,7 @@
 	NSMutableDictionary					*_pings;
 }
 
++ (NSString *)outputForShellCommand:(NSString *)command;
 
 - (id)initChatWithConnection:(WCServerConnection *)connection windowNibName:(NSString *)windowNibName name:(NSString *)name singleton:(BOOL)singleton;
 

@@ -415,57 +415,19 @@ typedef enum _WCChatFormat				WCChatFormat;
 		return YES;
 	}
 	else if([command isEqualToString:@"/exec"] && [argument length] > 0) {
-		NSTask				*task;
-		NSPipe				*pipe;
-		NSFileHandle		*fileHandle;
-		NSDictionary		*environment;
-		NSData				*data;
 		NSString			*output;
-		double				timeout = 10.0;
 		
-		pipe = [NSPipe pipe];
-		fileHandle = [pipe fileHandleForReading];
-		
-		environment	= [NSDictionary dictionaryWithObjectsAndKeys:
-			@"/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin",
-				@"PATH",
-			NULL];
-		
-		task = [[NSTask alloc] init];
-		[task setLaunchPath:@"/bin/sh"];
-		[task setArguments:[NSArray arrayWithObjects:@"-c", argument, NULL]];
-		[task setStandardOutput:pipe];
-		[task setStandardError:pipe];
-		[task setEnvironment:environment];
-		[task launch];
-		
-		while([task isRunning]) {
-			sleep(1);
-			timeout -= 1.0;
-			
-			if(timeout <= 0.0) {
-				[task terminate];
-				
-				break;
-			}
-		}
-
-		data = [fileHandle readDataToEndOfFile];
-		output = [NSString stringWithData:data encoding:NSUTF8StringEncoding];
+		output = [[self class] outputForShellCommand:argument];
 		
 		if(output && [output length] > 0) {
 			if([output length] > WCChatLimit)
 				output = [output substringToIndex:WCChatLimit];
-
+			
 			message = [WIP7Message messageWithName:@"wired.chat.send_say" spec:WCP7Spec];
 			[message setUInt32:[self chatID] forName:@"wired.chat.id"];
 			[message setString:output forName:@"wired.chat.say"];
 			[[self connection] sendMessage:message];
-
-			[[WCStats stats] addUnsignedLongLong:[output length] forKey:WCStatsChat];
 		}
-		
-		[task release];
 		
 		return YES;
 	}
@@ -604,6 +566,48 @@ typedef enum _WCChatFormat				WCChatFormat;
 
 @implementation WCChat
 
++ (NSString *)outputForShellCommand:(NSString *)command {
+	NSTask				*task;
+	NSPipe				*pipe;
+	NSFileHandle		*fileHandle;
+	NSDictionary		*environment;
+	NSData				*data;
+	double				timeout = 5.0;
+	
+	pipe = [NSPipe pipe];
+	fileHandle = [pipe fileHandleForReading];
+	
+	environment	= [NSDictionary dictionaryWithObject:@"/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin"
+											  forKey:@"PATH"];
+	
+	task = [[[NSTask alloc] init] autorelease];
+	[task setLaunchPath:@"/bin/sh"];
+	[task setArguments:[NSArray arrayWithObjects:@"-c", command, NULL]];
+	[task setStandardOutput:pipe];
+	[task setStandardError:pipe];
+	[task setEnvironment:environment];
+	[task launch];
+	
+	while([task isRunning]) {
+		usleep(100000);
+		timeout -= 0.1;
+		
+		if(timeout <= 0.0) {
+			[task terminate];
+			
+			break;
+		}
+	}
+	
+	data = [fileHandle readDataToEndOfFile];
+	
+	return [NSString stringWithData:data encoding:NSUTF8StringEncoding];
+}
+
+
+
+#pragma mark -
+
 + (id)allocWithZone:(NSZone *)zone {
 	if([self isEqual:[WCChat class]]) {
 		NSLog(@"*** -[%@ allocWithZone:]: attempt to instantiate abstract class", self);
@@ -715,10 +719,10 @@ typedef enum _WCChatFormat				WCChatFormat;
 
 
 - (void)windowTemplateShouldLoad:(NSMutableDictionary *)windowTemplate {
+	[super windowTemplateShouldLoad:windowTemplate];
+
 	[_userListSplitView setPropertiesFromDictionary:[windowTemplate objectForKey:@"WCChatUserListSplitView"]];
 	[_chatSplitView setPropertiesFromDictionary:[windowTemplate objectForKey:@"WCChatSplitView"]];
-	
-	[super windowTemplateShouldLoad:windowTemplate];
 }
 
 

@@ -39,6 +39,7 @@
 @interface WCMessages(Private)
 
 - (void)_showDialogForMessage:(WCMessage *)message;
+- (NSString *)_stringForMessageString:(NSString *)string;
 
 - (void)_validate;
 - (void)_update;
@@ -82,6 +83,30 @@
 	[alert runNonModal];
 	
 	[message setRead:YES];
+}
+
+
+
+- (NSString *)_stringForMessageString:(NSString *)string {
+	NSString	*command, *argument;
+	NSRange		range;
+	
+	range = [string rangeOfString:@" "];
+	
+	if(range.location == NSNotFound) {
+		command = string;
+		argument = @"";
+	} else {
+		command = [string substringToIndex:range.location];
+		argument = [string substringFromIndex:range.location + 1];
+	}
+	
+	if([command isEqualToString:@"/exec"] && [argument length] > 0)
+		return [WCChat outputForShellCommand:argument];
+	else if([command isEqualToString:@"/stats"])
+		return [[WCStats stats] stringValue];
+	
+	return string;
 }
 
 
@@ -500,11 +525,11 @@
 - (void)linkConnectionLoggedIn:(NSNotification *)notification {
 	WCServerConnection		*connection;
 
-	if(![[notification object] isKindOfClass:[WCServerConnection class]])
-		return;
-
 	connection = [notification object];
 	
+	if(![connection isKindOfClass:[WCServerConnection class]])
+		return;
+
 	[_conversations revalidateForConnection:connection];
 	
 	[connection addObserver:self selector:@selector(wiredMessageMessage:) messageName:@"wired.message.message"];
@@ -518,10 +543,10 @@
 - (void)linkConnectionDidClose:(NSNotification *)notification {
 	WCServerConnection		*connection;
 	
-	if(![[notification object] isKindOfClass:[WCServerConnection class]])
-		return;
-
 	connection = [notification object];
+	
+	if(![connection isKindOfClass:[WCServerConnection class]])
+		return;
 
 	[_conversations invalidateForConnection:connection];
 	
@@ -533,10 +558,14 @@
 
 
 - (void)linkConnectionDidTerminate:(NSNotification *)notification {
-	if(![[notification object] isKindOfClass:[WCServerConnection class]])
+	WCServerConnection		*connection;
+	
+	connection = [notification object];
+	
+	if(![connection isKindOfClass:[WCServerConnection class]])
 		return;
 
-	[_conversations invalidateForConnection:[notification object]];
+	[_conversations invalidateForConnection:connection];
 	
 	[self _validate];
 }
@@ -832,7 +861,7 @@
 	
 	if(returnCode == NSAlertDefaultReturn) {
 		message = [WIP7Message messageWithName:@"wired.message.send_broadcast" spec:WCP7Spec];
-		[message setString:[_broadcastTextView string] forName:@"wired.message.broadcast"];
+		[message setString:[self _stringForMessageString:[_broadcastTextView string]] forName:@"wired.message.broadcast"];
 		[connection sendMessage:message];
 	}
 
@@ -896,7 +925,7 @@
 
 		p7Message = [WIP7Message messageWithName:@"wired.message.send_message" spec:WCP7Spec];
 		[p7Message setUInt32:[[message user] userID] forName:@"wired.user.id"];
-		[p7Message setString:[message message] forName:@"wired.message.message"];
+		[p7Message setString:[self _stringForMessageString:[message message]] forName:@"wired.message.message"];
 		[[message connection] sendMessage:p7Message];
 
 		[[WCStats stats] addUnsignedInt:1 forKey:WCStatsMessagesSent];
