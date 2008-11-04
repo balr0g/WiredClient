@@ -100,12 +100,12 @@
 
 
 - (void)windowTemplateShouldLoad:(NSMutableDictionary *)windowTemplate {
+	[super windowTemplateShouldLoad:windowTemplate];
+
 	[_monitorController windowTemplateShouldLoad:windowTemplate];
 	[_logController windowTemplateShouldLoad:windowTemplate];
 	[_settingsController windowTemplateShouldLoad:windowTemplate];
 	[_banlistController windowTemplateShouldLoad:windowTemplate];
-
-	[super windowTemplateShouldLoad:windowTemplate];
 }
 
 

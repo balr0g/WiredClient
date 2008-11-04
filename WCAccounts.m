@@ -684,9 +684,9 @@
 
 
 - (void)windowTemplateShouldLoad:(NSMutableDictionary *)windowTemplate {
-	[_accountsTableView setPropertiesFromDictionary:[windowTemplate objectForKey:@"WCAccountsTableView"]];
-	
 	[super windowTemplateShouldLoad:windowTemplate];
+
+	[_accountsTableView setPropertiesFromDictionary:[windowTemplate objectForKey:@"WCAccountsTableView"]];
 }
 
 

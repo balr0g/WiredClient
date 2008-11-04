@@ -179,9 +179,9 @@
 
 
 - (void)windowTemplateShouldLoad:(NSMutableDictionary *)windowTemplate {
-	[_banlistTableView setPropertiesFromDictionary:[windowTemplate objectForKey:@"WCBanlistTableView"]];
-	
 	[super windowTemplateShouldLoad:windowTemplate];
+
+	[_banlistTableView setPropertiesFromDictionary:[windowTemplate objectForKey:@"WCBanlistTableView"]];
 }
 
 

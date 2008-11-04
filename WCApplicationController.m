@@ -28,6 +28,7 @@
 
 #import "WCAboutWindow.h"
 #import "WCApplicationController.h"
+#import "WCBoards.h"
 #import "WCChat.h"
 #import "WCConnect.h"
 #import "WCConsole.h"
@@ -426,6 +427,7 @@ static WCApplicationController		*sharedController;
 	[WCStats stats];
 	[WCTransfers transfers];
 	[WCMessages messages];
+	[WCBoards boards];
 	[WCSearch search];
 	
 	[_deleteMenuItem setKeyEquivalent:[NSSWF:@"%C", NSBackspaceCharacter]];
@@ -921,6 +923,12 @@ static WCApplicationController		*sharedController;
 
 - (IBAction)servers:(id)sender {
 	[[WCServers servers] showWindow:self];
+}
+
+
+
+- (IBAction)boards:(id)sender {
+	[[WCBoards boards] showWindow:self];
 }
 
 

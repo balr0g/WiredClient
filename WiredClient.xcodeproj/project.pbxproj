@@ -71,6 +71,11 @@
 		77B5F96F097FDD3B00C055E1 /* NSAlert-WCAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 77B5F96D097FDD3B00C055E1 /* NSAlert-WCAdditions.m */; };
 		77B5F973097FDD4500C055E1 /* NSString-WCAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 77B5F971097FDD4500C055E1 /* NSString-WCAdditions.m */; };
 		77C83C340B70FBD8000F8478 /* WCChatTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 77C83C320B70FBD8000F8478 /* WCChatTextView.m */; };
+		77CED3A50EC068F500123164 /* WCBoard.m in Sources */ = {isa = PBXBuildFile; fileRef = 77CED39E0EC068F500123164 /* WCBoard.m */; };
+		77CED3A60EC068F500123164 /* WCBoardPost.m in Sources */ = {isa = PBXBuildFile; fileRef = 77CED3A00EC068F500123164 /* WCBoardPost.m */; };
+		77CED3A70EC068F500123164 /* WCBoards.m in Sources */ = {isa = PBXBuildFile; fileRef = 77CED3A20EC068F500123164 /* WCBoards.m */; };
+		77CED3A80EC068F500123164 /* WCBoardThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 77CED3A40EC068F500123164 /* WCBoardThread.m */; };
+		77CED3B90EC0691E00123164 /* Boards.xib in Resources */ = {isa = PBXBuildFile; fileRef = 77CED3B70EC0691E00123164 /* Boards.xib */; };
 		77CFB9540E66D1A700F2D5F8 /* PublicChat.xib in Resources */ = {isa = PBXBuildFile; fileRef = 77CFB9520E66D1A700F2D5F8 /* PublicChat.xib */; };
 		77CFB9580E66D1B100F2D5F8 /* SaveChat.xib in Resources */ = {isa = PBXBuildFile; fileRef = 77CFB9560E66D1B100F2D5F8 /* SaveChat.xib */; };
 		77CFB95C0E66D1BB00F2D5F8 /* UserInfo.xib in Resources */ = {isa = PBXBuildFile; fileRef = 77CFB95A0E66D1BB00F2D5F8 /* UserInfo.xib */; };
@@ -390,6 +395,15 @@
 		77B5F971097FDD4500C055E1 /* NSString-WCAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString-WCAdditions.m"; sourceTree = "<group>"; };
 		77C83C310B70FBD8000F8478 /* WCChatTextView.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCChatTextView.h; sourceTree = "<group>"; };
 		77C83C320B70FBD8000F8478 /* WCChatTextView.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCChatTextView.m; sourceTree = "<group>"; };
+		77CED39D0EC068F500123164 /* WCBoard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCBoard.h; sourceTree = "<group>"; };
+		77CED39E0EC068F500123164 /* WCBoard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCBoard.m; sourceTree = "<group>"; };
+		77CED39F0EC068F500123164 /* WCBoardPost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCBoardPost.h; sourceTree = "<group>"; };
+		77CED3A00EC068F500123164 /* WCBoardPost.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCBoardPost.m; sourceTree = "<group>"; };
+		77CED3A10EC068F500123164 /* WCBoards.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCBoards.h; sourceTree = "<group>"; };
+		77CED3A20EC068F500123164 /* WCBoards.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCBoards.m; sourceTree = "<group>"; };
+		77CED3A30EC068F500123164 /* WCBoardThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCBoardThread.h; sourceTree = "<group>"; };
+		77CED3A40EC068F500123164 /* WCBoardThread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCBoardThread.m; sourceTree = "<group>"; };
+		77CED3B80EC0691E00123164 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Boards.xib; sourceTree = "<group>"; };
 		77CFB9530E66D1A700F2D5F8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/PublicChat.xib; sourceTree = "<group>"; };
 		77CFB9570E66D1B100F2D5F8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/SaveChat.xib; sourceTree = "<group>"; };
 		77CFB95B0E66D1BB00F2D5F8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/UserInfo.xib; sourceTree = "<group>"; };
@@ -778,6 +792,30 @@
 			name = Additions;
 			sourceTree = "<group>";
 		};
+		77CED3990EC068D600123164 /* Boards */ = {
+			isa = PBXGroup;
+			children = (
+				77CED3BA0EC0692100123164 /* Resources */,
+				77CED39E0EC068F500123164 /* WCBoard.m */,
+				77CED39D0EC068F500123164 /* WCBoard.h */,
+				77CED3A00EC068F500123164 /* WCBoardPost.m */,
+				77CED39F0EC068F500123164 /* WCBoardPost.h */,
+				77CED3A20EC068F500123164 /* WCBoards.m */,
+				77CED3A10EC068F500123164 /* WCBoards.h */,
+				77CED3A40EC068F500123164 /* WCBoardThread.m */,
+				77CED3A30EC068F500123164 /* WCBoardThread.h */,
+			);
+			name = Boards;
+			sourceTree = "<group>";
+		};
+		77CED3BA0EC0692100123164 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				77CED3B70EC0691E00123164 /* Boards.xib */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		A52B1C1206C4033B0033D317 /* Chat */ = {
 			isa = PBXGroup;
 			children = (
@@ -1012,11 +1050,12 @@
 				A52B1C1206C4033B0033D317 /* Chat */,
 				A52B1C2C06C404580033D317 /* Files */,
 				A52B1C2A06C404290033D317 /* News */,
-				A52B1C3306C4056F0033D317 /* Transfers */,
-				A52B1C1306C403760033D317 /* Messages */,
 				A52B1C3106C4053B0033D317 /* Accounts */,
 				A5AAD1280D86EA8B0072FFA1 /* Administration */,
 				A52B1C2E06C404FC0033D317 /* Console */,
+				77CED3990EC068D600123164 /* Boards */,
+				A52B1C3306C4056F0033D317 /* Transfers */,
+				A52B1C1306C403760033D317 /* Messages */,
 				A5492D2E0D8EAD4E002D37D7 /* Servers */,
 			);
 			name = Classes;
@@ -1363,6 +1402,7 @@
 				A5E8BCD0087494DB0010F2A4 /* ReleaseNotes.rtf in Resources */,
 				77CFB98C0E66D35800F2D5F8 /* Accounts.xib in Resources */,
 				77CFB9900E66D36900F2D5F8 /* Administration.xib in Resources */,
+				77CED3B90EC0691E00123164 /* Boards.xib in Resources */,
 				778C6A6B0E66CF7400DBF2E3 /* Connect.xib in Resources */,
 				77CFB9940E66D37E00F2D5F8 /* Console.xib in Resources */,
 				778C6A630E66B3F200DBF2E3 /* Dock.xib in Resources */,
@@ -1555,6 +1595,10 @@
 				A5DC7EC8057AAEAD00736BBF /* WCApplicationController.m in Sources */,
 				A558A4EF0E8526F7004C724C /* WCBan.m in Sources */,
 				A5D409770D897771007851BD /* WCBanlistController.m in Sources */,
+				77CED3A50EC068F500123164 /* WCBoard.m in Sources */,
+				77CED3A60EC068F500123164 /* WCBoardPost.m in Sources */,
+				77CED3A70EC068F500123164 /* WCBoards.m in Sources */,
+				77CED3A80EC068F500123164 /* WCBoardThread.m in Sources */,
 				A57512EC05E4E64D003B51D7 /* WCCache.m in Sources */,
 				A5DC64130D92AC2D00DB3B16 /* WCChat.m in Sources */,
 				77C83C340B70FBD8000F8478 /* WCChatTextView.m in Sources */,
@@ -1684,6 +1728,14 @@
 				778C6A760E66CFB800DBF2E3 /* English */,
 			);
 			name = PrivateChat.xib;
+			sourceTree = "<group>";
+		};
+		77CED3B70EC0691E00123164 /* Boards.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				77CED3B80EC0691E00123164 /* English */,
+			);
+			name = Boards.xib;
 			sourceTree = "<group>";
 		};
 		77CFB9520E66D1A700F2D5F8 /* PublicChat.xib */ = {

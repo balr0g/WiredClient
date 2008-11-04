@@ -52,5 +52,6 @@
 - (IBAction)downloading:(id)sender;
 - (IBAction)uploading:(id)sender;
 - (IBAction)search:(id)sender;
+- (IBAction)getInfo:(id)sender;
 
 @end

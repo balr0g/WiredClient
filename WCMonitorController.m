@@ -33,6 +33,7 @@
 #import "WCTransfer.h"
 #import "WCUser.h"
 #import "WCUserCell.h"
+#import "WCUserInfo.h"
 
 @interface WCMonitorController(Private)
 
@@ -40,6 +41,9 @@
 - (void)_requestUsers;
 - (BOOL)_filterIncludesUser:(WCUser *)user;
 - (void)_reloadFilter;
+
+- (WCUser *)_userAtIndex:(NSUInteger)index;
+- (WCUser *)_selectedUser;
 
 @end
 
@@ -108,6 +112,27 @@
 	}
 }
 
+
+
+#pragma mark -
+
+- (WCUser *)_userAtIndex:(NSUInteger)index {
+	return [_shownUsers objectAtIndex:index];
+}
+
+
+
+- (WCUser *)_selectedUser {
+	NSInteger		row;
+	
+	row = [_usersTableView selectedRow];
+	
+	if(row < 0)
+		return NULL;
+	
+	return [self _userAtIndex:row];
+}
+
 @end
 
 
@@ -167,6 +192,25 @@
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
 	}
+}
+
+
+
+#pragma mark -
+
+- (BOOL)validateMenuItem:(NSMenuItem *)item {
+	WCAccount	*account;
+	SEL			selector;
+	BOOL		connected;
+	
+	selector	= [item action];
+	account		= [[_administration connection] account];
+	connected	= [[_administration connection] isConnected];
+	
+	if(selector == @selector(getInfo:))
+		return ([account userGetInfo] && connected);
+	
+	return YES;
 }
 
 
@@ -235,6 +279,12 @@
 
 
 
+- (IBAction)getInfo:(id)sender {
+	[WCUserInfo userInfoWithConnection:[_administration connection] user:[self _selectedUser]];
+}
+
+
+
 #pragma mark -
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
@@ -248,7 +298,7 @@
 	NSDate			*date;
 	WCUser			*user;
 	
-	user = [_shownUsers objectAtIndex:row];
+	user = [self _userAtIndex:row];
 	
 	if(tableColumn == _iconTableColumn)
 		return [user iconWithIdleTint:YES];

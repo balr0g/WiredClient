@@ -64,6 +64,7 @@
 - (IBAction)dock:(id)sender;
 - (IBAction)servers:(id)sender;
 - (IBAction)messages:(id)sender;
+- (IBAction)boards:(id)sender;
 - (IBAction)transfers:(id)sender;
 - (IBAction)hideConnection:(id)sender;
 - (IBAction)nextConnection:(id)sender;

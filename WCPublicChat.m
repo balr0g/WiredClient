@@ -29,6 +29,7 @@
 #import "NSAlert-WCAdditions.h"
 #import "WCAccount.h"
 #import "WCApplicationController.h"
+#import "WCBoards.h"
 #import "WCFile.h"
 #import "WCFiles.h"
 #import "WCNews.h"
@@ -173,6 +174,13 @@
 												 target:self
 												 action:@selector(news:)];
 	}
+	else if([identifier isEqualToString:@"Boards"]) {
+		return [NSToolbarItem toolbarItemWithIdentifier:identifier
+												   name:NSLS(@"Boards", @"Boards toolbar item")
+												content:[NSImage imageNamed:@"Boards"]
+												 target:[WCApplicationController sharedController]
+												 action:@selector(boards:)];
+	}
 	else if([identifier isEqualToString:@"Messages"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
 												   name:NSLS(@"Messages", @"Messages toolbar item")
@@ -247,6 +255,7 @@
 		@"Banner",
 		NSToolbarSpaceItemIdentifier,
 		@"News",
+		@"Boards",
 		@"Messages",
 		@"Files",
 		@"Search",
@@ -265,6 +274,7 @@
 	return [NSArray arrayWithObjects:
 		@"Banner",
 		@"News",
+		@"Boards",
 		@"Messages",
 		@"Files",
 		@"Search",

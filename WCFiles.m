@@ -691,9 +691,9 @@
 
 
 - (void)windowTemplateShouldLoad:(NSMutableDictionary *)windowTemplate {
-	[[_filesController filesTableView] setPropertiesFromDictionary:[windowTemplate objectForKey:@"WCFilesTableView"]];
-	
 	[super windowTemplateShouldLoad:windowTemplate];
+
+	[[_filesController filesTableView] setPropertiesFromDictionary:[windowTemplate objectForKey:@"WCFilesTableView"]];
 }
 
 

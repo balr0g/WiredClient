@@ -457,6 +457,12 @@
 
 
 
+- (IBAction)board:(id)sender {
+	[[[self connection] board] showWindow:self];
+}
+
+
+
 - (IBAction)files:(id)sender {
 	[WCFiles filesWithConnection:[self connection] path:[WCFile fileWithRootDirectoryForConnection:[self connection]]];
 }

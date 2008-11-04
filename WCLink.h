@@ -34,6 +34,8 @@
 	NSTimer					*_pingTimer;
 	WIP7Message				*_pingMessage;
 	
+	NSLock					*_lock;
+	
 	id						_delegate;
 	BOOL					_delegateLinkConnected;
 	BOOL					_delegateLinkClosed;
@@ -61,7 +63,6 @@
 - (void)sendMessage:(WIP7Message *)message;
 
 @end
-
 
 
 @interface NSObject(WCLinkDelegate)

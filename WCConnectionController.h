@@ -70,6 +70,7 @@
 - (IBAction)serverInfo:(id)sender;
 - (IBAction)chat:(id)sender;
 - (IBAction)news:(id)sender;
+- (IBAction)board:(id)sender;
 - (IBAction)files:(id)sender;
 - (IBAction)accounts:(id)sender;
 - (IBAction)administration:(id)sender;

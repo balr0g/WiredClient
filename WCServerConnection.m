@@ -31,6 +31,7 @@
 #import "WCAccounts.h"
 #import "WCAdministration.h"
 #import "WCApplicationController.h"
+#import "WCBoards.h"
 #import "WCCache.h"
 #import "WCConsole.h"
 #import "WCDock.h"
@@ -111,6 +112,7 @@
 	[_console release];
 	[_accounts release];
 	[_news release];
+	[_board release];
 	[_serverInfo release];
 	[_chat release];
 	
@@ -436,6 +438,12 @@
 
 - (WCNews *)news {
 	return _news;
+}
+
+
+
+- (WCBoard *)board {
+	return _board;
 }
 
 

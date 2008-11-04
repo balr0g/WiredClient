@@ -51,7 +51,7 @@
 
 @class WCServer, WCCache, WCAccount;
 @class WCLink, WCNotificationCenter;
-@class WCAccounts, WCAdministration, WCPublicChat, WCConsole, WCNews, WCServerInfo;
+@class WCAccounts, WCAdministration, WCPublicChat, WCConsole, WCNews, WCBoard, WCServerInfo;
 
 @interface WCServerConnection : WCLinkConnection {
 	NSUInteger										_userID;
@@ -64,6 +64,7 @@
 	WCPublicChat									*_chat;
 	WCConsole										*_console;
 	WCNews											*_news;
+	WCBoard											*_board;
 	WCServerInfo									*_serverInfo;
 	
 	BOOL											_manuallyReconnecting;
@@ -95,6 +96,7 @@
 - (WCPublicChat *)chat;
 - (WCConsole *)console;
 - (WCNews *)news;
+- (WCBoard *)board;
 - (WCServerInfo *)serverInfo;
 
 @end
