@@ -1,0 +1,15 @@
+<div class="post" id="<? postid ?>">
+	<div class="postheader">
+		<div class="postfrom"><? from ?></div>
+		<div class="postsubject"><? subject ?></div>
+		<div class="postdate"><? date ?></div>
+	</div>
+
+	<div class="postbody">
+		<? body ?>
+	</div>
+
+	<form>
+		<input type="button" onclick="if(window.Boards.deletePostWithID_('<? postid ?>')) { var post = document.getElementById('<? postid ?>'); post.parentNode.removeChild(post); }" value="<? deletestring ?>" />
+	</form>
+</div>

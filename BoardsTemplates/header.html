@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>do not localize</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<style type="text/css">
+	body {
+		font: normal 13px "Helvetica", sans-serif;
+	}
+	
+	div.post {
+		margin-bottom: 10px;
+		border-bottom: 1px solid #eeeeee;
+	}
+	
+	div.postfrom:before { content: "<? fromstring ?>:"; }
+	div.postsubject:before { content: "<? subjectstring ?>:"; }
+	div.postdate:before { content: "<? datestring ?>:"; }
+
+	div.postheader {
+		font: normal 12px "Helvetica", sans-serif;
+	}
+
+	div.postheader *:before {
+		font-weight: bold;
+		color: gray;
+		text-align: right;
+		vertical-align: top;
+		float: left;
+		width: 4em;
+		padding-right: 0.5em;
+	}
+	
+	div.postsubject {
+		font-weight: bold;
+	}
+		
+	div.postbody {
+		margin: 10px 0 10px 0;
+		padding-top: 10px;
+		border-top: 1px solid #eeeeee;
+		clear: both;
+	}
+	</style>
+</head>
+<body>

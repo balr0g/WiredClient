@@ -1,0 +1,72 @@
+/* $Id$ */
+
+/*
+ *  Copyright (c) 2008 Axel Andersson
+ *  All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions
+ *  are met:
+ *  1. Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *  2. Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "WCServerConnectionObject.h"
+
+@class WCBoardThread;
+
+@interface WCBoard : WCServerConnectionObject {
+	NSString					*_name;
+	NSString					*_path;
+	NSMutableArray				*_boards;
+	NSMutableArray				*_threadsArray;
+	NSMutableDictionary			*_threadsDictionary;
+}
+
++ (id)rootBoard;
++ (id)boardWithConnection:(WCServerConnection *)connection;
++ (id)boardWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection;
+
+- (void)setName:(NSString *)name;
+- (NSString *)name;
+- (NSString *)path;
+- (BOOL)isExpandable;
+
+- (NSUInteger)numberOfBoards;
+- (NSArray *)boards;
+- (WCBoard *)boardAtIndex:(NSUInteger)index;
+- (WCBoard *)boardForConnection:(WCServerConnection *)connection;
+- (WCBoard *)boardForPath:(NSString *)path;
+- (void)addBoard:(WCBoard *)board;
+- (void)removeBoard:(WCBoard *)board;
+- (void)removeAllBoards;
+
+- (NSUInteger)numberOfThreads;
+- (NSArray *)threads;
+- (WCBoardThread *)threadAtIndex:(NSUInteger)index;
+- (WCBoardThread *)threadWithID:(NSString *)string;
+- (void)addThread:(WCBoardThread *)thread;
+- (void)removeThread:(WCBoardThread *)thread;
+- (void)removeAllThreads;
+
+- (void)invalidateForConnection:(WCServerConnection *)connection;
+- (void)revalidateForConnection:(WCServerConnection *)connection;
+
+- (NSComparisonResult)compareName:(WCBoard *)board;
+
+@end
