@@ -44,8 +44,6 @@
 - (void)_validate;
 
 - (void)_reloadEvents;
-- (void)_selectTab:(NSString *)identifier;
-- (void)_selectTabViewItem:(NSTabViewItem *)item;
 
 - (void)_loadSettings;
 - (void)_saveSettings;
@@ -237,52 +235,6 @@
 
 
 
-- (void)_selectTab:(NSString *)identifier {
-	NSTabViewItem   *item;
-
-	item = [_preferencesTabView tabViewItemWithIdentifier:identifier];
-	
-	if(item) {
-		[self _selectTabViewItem:item];
-		
-		[[[self window] toolbar] setSelectedItemIdentifier:identifier];
-	}
-}
-
-
-
-- (void)_selectTabViewItem:(NSTabViewItem *)item {
-	NSBox		*box;
-	NSRect		rect;
-
-	if(_selectedTabViewItem != item) {
-		if([[_selectedTabViewItem identifier] isEqualToString:@"Bookmarks"])
-			[self _unselectBookmark];
-		else if([[_selectedTabViewItem identifier] isEqualToString:@"Trackers"])
-			[self _unselectTrackerBookmark];
-		
-		box = [[[item view] subviews] objectAtIndex:0];
-		rect = [[self window] frameRectForContentRect:[box frame]];
-		rect.origin = [[self window] frame].origin;
-		rect.origin.y -= rect.size.height - [[self window] frame].size.height;
-
-		[box setFrameOrigin:NSMakePoint(10000.0, 0.0)];
-		[box setNeedsDisplay:YES];
-
-		[_preferencesTabView selectTabViewItem:item];
-		[[self window] setFrame:rect display:YES animate:YES];
-
-		[box setFrameOrigin:NSZeroPoint];
-		[box setNeedsDisplay:YES];
-
-		[[self window] setTitle:[item label]];
-
-		_selectedTabViewItem = item;
-	}
-}
-
-
-
 #pragma mark -
 
 - (void)_loadSettings {
@@ -390,7 +342,7 @@
 	NSString			*string;
 	NSData				*data;
 	NSInteger			tag;
-
+	
 	// --- general
 	if(![[_nickTextField stringValue] isEqualToString:[WCSettings objectForKey:WCNick]]) {
 		[WCSettings setObject:[_nickTextField stringValue] forKey:WCNick];
@@ -754,8 +706,6 @@
 - (void)dealloc {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
-	[_toolbarItems release];
-	
 	[super dealloc];
 }
 
@@ -765,17 +715,37 @@
 
 - (void)windowDidLoad {
 	NSEnumerator	*enumerator;
-	NSToolbar		*toolbar;
 	NSArray			*sounds;
 	NSString		*path;
 	
-	toolbar = [[NSToolbar alloc] initWithIdentifier:@"Preferences"];
-	[toolbar setDelegate:self];
-	[toolbar setAllowsUserCustomization:NO];
-	[toolbar setAutosavesConfiguration:NO];
-	[[self window] setToolbar:toolbar];
-	[toolbar release];
+	[self addPreferenceView:_generalView
+					   name:NSLS(@"General", @"General preferences")
+					  image:[NSImage imageNamed:@"General"]];
+	
+	[self addPreferenceView:_interfaceView
+					   name:NSLS(@"Interface", @"Interface preferences")
+					  image:[NSImage imageNamed:@"Interface"]];
 
+	[self addPreferenceView:_bookmarksView
+					   name:NSLS(@"Bookmarks", @"Bookmarks preferences")
+					  image:[NSImage imageNamed:@"Bookmarks"]];
+	
+	[self addPreferenceView:_chatView
+					   name:NSLS(@"Chat", @"Chat preferences")
+					  image:[NSImage imageNamed:@"Chat"]];
+	
+	[self addPreferenceView:_eventsView
+					   name:NSLS(@"Events", @"Events preferences")
+					  image:[NSImage imageNamed:@"Events"]];
+	
+	[self addPreferenceView:_filesView
+					   name:NSLS(@"Files", @"Files preferences")
+					  image:[NSImage imageNamed:@"Folder"]];
+	
+	[self addPreferenceView:_trackersView
+					   name:NSLS(@"Trackers", @"Trackers preferences")
+					  image:[NSImage imageNamed:@"Trackers"]];
+	
 	[_iconImageView setMaxImageSize:NSMakeSize(32.0, 32.0)];
 	[_iconImageView setDefaultImage:[NSImage imageNamed:@"DefaultIcon"]];
 
@@ -807,10 +777,11 @@
 	[self _addTouchActionsToSubviewsInView:[[self window] contentView]];
 
 	[self _loadSettings];
-	[self _selectTab:@"General"];
 	
 	[_interfaceTabView selectFirstTabViewItem:self];
 	[_chatTabView selectFirstTabViewItem:self];
+	
+	[super windowDidLoad];
 }
 
 
@@ -820,95 +791,6 @@
 	[self _unselectTrackerBookmark];
 	
 	[self _saveSettings];
-}
-
-
-
-- (NSToolbarItem *)toolbar:(NSToolbar *)toolbar itemForItemIdentifier:(NSString *)identifier willBeInsertedIntoToolbar:(BOOL)willBeInsertedIntoToolbar {
-	if([identifier isEqualToString:@"General"]) {
-		return [NSToolbarItem toolbarItemWithIdentifier:identifier
-												   name:NSLS(@"General", @"General toolbar item")
-												content:[NSImage imageNamed:@"General"]
-												 target:self
-												 action:@selector(selectToolbarItem:)];
-	}
-	else if([identifier isEqualToString:@"Interface"]) {
-		return [NSToolbarItem toolbarItemWithIdentifier:identifier
-												   name:NSLS(@"Interface", @"Interface toolbar item")
-												content:[NSImage imageNamed:@"Interface"]
-												 target:self
-												 action:@selector(selectToolbarItem:)];
-	}
-	else if([identifier isEqualToString:@"Bookmarks"]) {
-		return [NSToolbarItem toolbarItemWithIdentifier:identifier
-												   name:NSLS(@"Bookmarks", @"Bookmarks toolbar item")
-												content:[NSImage imageNamed:@"Bookmarks"]
-												 target:self
-												 action:@selector(selectToolbarItem:)];
-	}
-	else if([identifier isEqualToString:@"Sounds"]) {
-		return [NSToolbarItem toolbarItemWithIdentifier:identifier
-												   name:NSLS(@"Sounds", @"Bookmarks toolbar item")
-												content:[NSImage imageNamed:@"Sounds"]
-												 target:self
-												 action:@selector(selectToolbarItem:)];
-	}
-	else if([identifier isEqualToString:@"Chat"]) {
-		return [NSToolbarItem toolbarItemWithIdentifier:identifier
-												   name:NSLS(@"Chat", @"Chat toolbar item")
-												content:[NSImage imageNamed:@"Chat"]
-												 target:self
-												 action:@selector(selectToolbarItem:)];
-	}
-	else if([identifier isEqualToString:@"Events"]) {
-		return [NSToolbarItem toolbarItemWithIdentifier:identifier
-												   name:NSLS(@"Events", @"Events toolbar item")
-												content:[NSImage imageNamed:@"Events"]
-												 target:self
-												 action:@selector(selectToolbarItem:)];
-	}
-	else if([identifier isEqualToString:@"Files"]) {
-		return [NSToolbarItem toolbarItemWithIdentifier:identifier
-												   name:NSLS(@"Files", @"Files toolbar item")
-												content:[NSImage imageNamed:@"Folder"]
-												 target:self
-												 action:@selector(selectToolbarItem:)];
-	}
-	else if([identifier isEqualToString:@"Trackers"]) {
-		return [NSToolbarItem toolbarItemWithIdentifier:identifier
-												   name:NSLS(@"Trackers", @"Trackers toolbar item")
-												content:[NSImage imageNamed:@"Trackers"]
-												 target:self
-												 action:@selector(selectToolbarItem:)];
-	}
-	
-	return NULL;
-}
-
-
-
-- (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar {
-	return [NSArray arrayWithObjects:
-		@"General",
-		@"Interface",
-		@"Bookmarks",
-		@"Chat",
-		@"Events",
-		@"Files",
-		@"Trackers",
-		NULL];
-}
-
-
-
-- (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar *)toolbar {
-	return [self toolbarDefaultItemIdentifiers:toolbar];
-}
-
-
-
-- (NSArray *)toolbarSelectableItemIdentifiers:(NSToolbar *)toolbar {
-	return [self toolbarDefaultItemIdentifiers:toolbar];
 }
 
 
@@ -967,27 +849,6 @@
 
 
 #pragma mark -
-
-- (IBAction)showWindow:(id)sender {
-	[[self window] setTitle:[[_preferencesTabView selectedTabViewItem] label]];
-	
-	[super showWindow:self];
-}
-
-
-
-#pragma mark -
-
-- (void)selectToolbarItem:(id)sender {
-	NSTabViewItem   *item;
-
-	item = [_preferencesTabView tabViewItemWithIdentifier:[sender itemIdentifier]];
-	
-	if(item)
-		[self _selectTabViewItem:item];
-}
-
-
 
 - (void)touch:(id)sender {
 	[self _saveSettings];
@@ -1130,7 +991,7 @@
 
 
 
-- (IBAction)showColorPanel:(id)sender {
+- (void)showColorPanel:(id)sender {
 	NSColorPanel	*colorPanel;
 	NSInteger		row;
 	

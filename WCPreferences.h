@@ -34,8 +34,15 @@
 #define WCIconDidChange					@"WCIconDidChange"
 
 
-@interface WCPreferences : WIWindowController {
-	IBOutlet NSTabView					*_preferencesTabView;
+@interface WCPreferences : WIPreferencesController {
+	IBOutlet NSView						*_generalView;
+	IBOutlet NSView						*_interfaceView;
+	IBOutlet NSView						*_bookmarksView;
+	IBOutlet NSView						*_chatView;
+	IBOutlet NSView						*_eventsView;
+	IBOutlet NSView						*_filesView;
+	IBOutlet NSView						*_trackersView;
+	
 	IBOutlet NSTabView					*_interfaceTabView;
 	IBOutlet NSTabView					*_chatTabView;
 
@@ -149,10 +156,6 @@
 	IBOutlet NSTextField				*_trackerBookmarksAddressTextField;
 	IBOutlet NSTextField				*_trackerBookmarksLoginTextField;
 	IBOutlet NSSecureTextField			*_trackerBookmarksPasswordTextField;
-
-	NSMutableDictionary					*_toolbarItems;
-	
-	NSTabViewItem						*_selectedTabViewItem;
 }
 
 + (WCPreferences *)preferences;
@@ -160,7 +163,6 @@
 - (IBAction)icon:(id)sender;
 - (IBAction)showFontPanel:(id)sender;
 - (IBAction)selectEvent:(id)sender;
-- (IBAction)showColorPanel:(id)sender;
 - (IBAction)touchEvent:(id)sender;
 - (IBAction)selectSound:(id)sender;
 - (IBAction)selectDownloadFolder:(id)sender;
