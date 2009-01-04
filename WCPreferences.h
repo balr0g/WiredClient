@@ -28,6 +28,7 @@
 
 #define WCPreferencesDidChangeNotification			@"WCPreferencesDidChangeNotification"
 #define WCThemeDidChangeNotification				@"WCThemeDidChangeNotification"
+#define WCSelectedThemeDidChangeNotification		@"WCSelectedThemeDidChangeNotification"
 #define WCBookmarksDidChangeNotification			@"WCBookmarksDidChangeNotification"
 #define WCBookmarkDidChangeNotification				@"WCBookmarkDidChangeNotification"
 #define WCTrackerBookmarksDidChangeNotification		@"WCTrackerBookmarksDidChangeNotification"

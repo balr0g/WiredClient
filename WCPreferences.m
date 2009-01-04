@@ -573,6 +573,13 @@
 
 
 - (void)themeDidChange:(NSNotification *)notification {
+	NSDictionary	*theme;
+	
+	theme = [notification object];
+	
+	if([[theme objectForKey:WCThemesIdentifier] isEqualToString:[WCSettings objectForKey:WCTheme]])
+		[[NSNotificationCenter defaultCenter] postNotificationName:WCSelectedThemeDidChangeNotification object:theme];
+	
 	[_themesTableView setNeedsDisplay:YES];
 }
 

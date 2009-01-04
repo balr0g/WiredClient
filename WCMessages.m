@@ -42,7 +42,7 @@
 - (NSString *)_stringForMessageString:(NSString *)string;
 
 - (void)_validate;
-- (void)_update;
+- (void)_themeDidChange;
 
 - (id)_messageAtIndex:(NSUInteger)index;
 - (id)_selectedConversation;
@@ -119,36 +119,35 @@
 
 
 
-- (void)_update {
-/*	[_messageTextView setFont:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCMessagesFont]]];
-	[_messageTextView setTextColor:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCMessagesTextColor]]];
-	[_messageTextView setBackgroundColor:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCMessagesBackgroundColor]]];
-	[_messageTextView setNeedsDisplay:YES];
+- (void)_themeDidChange {
+	NSDictionary		*theme;
+	
+	theme = [WCSettings themeWithIdentifier:[WCSettings objectForKey:WCTheme]];
+	
+	[_messageTextView setFont:WIFontFromString([theme objectForKey:WCThemesMessagesFont])];
+	[_messageTextView setTextColor:WIColorFromString([theme objectForKey:WCThemesMessagesTextColor])];
+	[_messageTextView setBackgroundColor:WIColorFromString([theme objectForKey:WCThemesMessagesBackgroundColor])];
 
 	[_messageTextView setLinkTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
-		[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCChatURLsColor]],
+		WIColorFromString([theme objectForKey:WCThemesChatURLsColor]),
 			NSForegroundColorAttributeName,
 		[NSNumber numberWithInt:NSSingleUnderlineStyle],
 			NSUnderlineStyleAttributeName,
 		NULL]];
 	
-	[_replyTextView setFont:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCMessagesFont]]];
-	[_replyTextView setTextColor:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCMessagesTextColor]]];
-	[_replyTextView setBackgroundColor:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCMessagesBackgroundColor]]];
-	[_replyTextView setInsertionPointColor:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCMessagesTextColor]]];
-	[_replyTextView setNeedsDisplay:YES];
+	[_replyTextView setFont:WIFontFromString([theme objectForKey:WCThemesMessagesFont])];
+	[_replyTextView setTextColor:WIColorFromString([theme objectForKey:WCThemesMessagesTextColor])];
+	[_replyTextView setBackgroundColor:WIColorFromString([theme objectForKey:WCThemesMessagesBackgroundColor])];
+	[_replyTextView setInsertionPointColor:WIColorFromString([theme objectForKey:WCThemesMessagesTextColor])];
 
-	[_broadcastTextView setFont:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCMessagesFont]]];
-	[_broadcastTextView setTextColor:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCMessagesTextColor]]];
-	[_broadcastTextView setBackgroundColor:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCMessagesBackgroundColor]]];
-	[_broadcastTextView setInsertionPointColor:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCMessagesTextColor]]];
-	[_broadcastTextView setNeedsDisplay:YES];
+	[_broadcastTextView setFont:WIFontFromString([theme objectForKey:WCThemesMessagesFont])];
+	[_broadcastTextView setTextColor:WIColorFromString([theme objectForKey:WCThemesMessagesTextColor])];
+	[_broadcastTextView setBackgroundColor:WIColorFromString([theme objectForKey:WCThemesMessagesBackgroundColor])];
+	[_broadcastTextView setInsertionPointColor:WIColorFromString([theme objectForKey:WCThemesMessagesTextColor])];
 	
-	[_messageTextView setString:[[_messageTextView textStorage] string] withFilter:_messageFilter];
+//	[_messageTextView setString:[[_messageTextView textStorage] string] withFilter:_messageFilter];
 
-	[_messagesTableView setFont:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCMessagesListFont]]];
-	[_messagesTableView setUsesAlternatingRowBackgroundColors:[WCSettings boolForKey:WCMessagesListAlternateRows]];
-	[_messagesTableView setNeedsDisplay:YES];*/
+	[_messagesTableView setUsesAlternatingRowBackgroundColors:[theme boolForKey:WCThemesMessageListAlternateRows]];
 }
 
 
@@ -339,8 +338,8 @@
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
-		   selector:@selector(preferencesDidChange:)
-			   name:WCPreferencesDidChangeNotification];
+		   selector:@selector(selectedThemeDidChange:)
+			   name:WCSelectedThemeDidChangeNotification];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
@@ -458,7 +457,7 @@
 	_dialogDateFormatter = [[WIDateFormatter alloc] init];
 	[_dialogDateFormatter setTimeStyle:NSDateFormatterShortStyle];
 	
-	[self _update];
+	[self _themeDidChange];
 }
 
 
@@ -694,8 +693,8 @@
 
 
 
-- (void)preferencesDidChange:(NSNotification *)notification {
-	[self _update];
+- (void)selectedThemeDidChange:(NSNotification *)notification {
+	[self _themeDidChange];
 }
 
 
