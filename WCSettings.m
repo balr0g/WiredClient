@@ -556,27 +556,6 @@
 
 
 
-+ (void)setEvent:(NSDictionary *)event forTag:(NSUInteger)tag {
-	NSMutableArray		*events;
-	NSDictionary		*previousEvent;
-	NSUInteger			i;
-	
-	events = [[self objectForKey:WCEvents] mutableCopy];
-	previousEvent = [self eventWithTag:tag];
-	
-	if(!previousEvent) {
-		[events addObject:event];
-	} else {
-		i = [events indexOfObject:previousEvent];
-		[events replaceObjectAtIndex:i withObject:event];
-	}
-	
-	[self setObject:events forKey:WCEvents];
-	[events release];
-}
-
-
-
 #pragma mark -
 
 + (NSDictionary *)windowTemplateForKey:(NSString *)key {

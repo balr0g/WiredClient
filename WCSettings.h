@@ -158,7 +158,6 @@
 + (NSDictionary *)themeWithIdentifier:(NSString *)identifier;
 
 + (NSDictionary *)eventWithTag:(NSUInteger)tag;
-+ (void)setEvent:(NSDictionary *)event forTag:(NSUInteger)tag;
 
 + (NSDictionary *)windowTemplateForKey:(NSString *)key;
 + (void)setWindowTemplate:(NSDictionary *)windowTemplate forKey:(NSString *)key;
