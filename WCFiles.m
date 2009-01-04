@@ -1146,7 +1146,7 @@
 
 	if(count == 1) {
 		title = [NSSWF:
-			NSLS(@"Are you sure you want to delete \"%@\"?", @"Delete file dialog title (filename)"),
+			NSLS(@"Are you sure you want to delete \u201c%@\u201d?", @"Delete file dialog title (filename)"),
 			[[self _selectedFile] name]];
 	} else {
 		title = [NSSWF:

@@ -306,7 +306,7 @@
 	
 	if(count == 1) {
 		title = [NSSWF:
-			NSLS(@"Are you sure you want to delete \"%@\"?", @"Delete ban dialog title (IP)"),
+			NSLS(@"Are you sure you want to delete \u201c%@\u201d?", @"Delete ban dialog title (IP)"),
 			[[self _selectedBan] IP]];
 	} else {
 		title = [NSSWF:

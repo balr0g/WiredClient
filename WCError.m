@@ -200,38 +200,38 @@
 				break;
 				
 			case WCWiredClientNotConnected:
-				return [NSSWF:NSLS(@"This operation can't proceed until you connect to the server \"%@\".", @"WCWiredClientNotConnected description (server name]"),
+				return [NSSWF:NSLS(@"This operation can't proceed until you connect to the server \u201c%@\u201d.", @"WCWiredClientNotConnected description (server name]"),
 					argument];
 				break;
 				
 			case WCWiredClientOpenFailed:
-				return [NSSWF:NSLS(@"Could not open the file \"%@\".", @"WCWiredClientOpenFailed description (path)"),
+				return [NSSWF:NSLS(@"Could not open the file \u201c%@\u201d.", @"WCWiredClientOpenFailed description (path)"),
 					argument];
 				break;
 				
 			case WCWiredClientCreateFailed:
-				return [NSSWF:NSLS(@"Could not create the file \"%@\".", @"WCWiredClientCreateFailed description (path)"),
+				return [NSSWF:NSLS(@"Could not create the file \u201c%@\u201d.", @"WCWiredClientCreateFailed description (path)"),
 					argument];
 				break;
 				
 			case WCWiredClientFileExists:
-				return [NSSWF:NSLS(@"The file \"%@\" already exists.", @"WCWiredClientFileExists description (path)"),
+				return [NSSWF:NSLS(@"The file \u201c%@\u201d already exists.", @"WCWiredClientFileExists description (path)"),
 					argument];
 				break;
 				
 			case WCWiredClientFolderExists:
-				return [NSSWF:NSLS(@"The folder \"%@\" already exists.", @"WCWiredClientFolderExists description (path)"),
+				return [NSSWF:NSLS(@"The folder \u201c%@\u201d already exists.", @"WCWiredClientFolderExists description (path)"),
 					argument];
 				break;
 				
 			case WCWiredClientTransferExists:
-				return [NSSWF:NSLS(@"You are already transferring \"%@\".", @"WCWiredClientTransferExists description (path)"),
+				return [NSSWF:NSLS(@"You are already transferring \u201c%@\u201d.", @"WCWiredClientTransferExists description (path)"),
 					argument];
 				break;
 				
 			case WCWiredClientTransferWithResourceFork:
 				if([argument isKindOfClass:[NSString class]]) {
-					return [NSSWF:NSLS(@"The file \"%@\" has a resource fork, which is not handled by Wired. Only the data part will be uploaded, possibly resulting in a corrupted file. Please use an archiver to ensure the file will be uploaded correctly.", @"WCWiredClientTransferWithResourceFork description (path)"),
+					return [NSSWF:NSLS(@"The file \u201c%@\u201d has a resource fork, which is not handled by Wired. Only the data part will be uploaded, possibly resulting in a corrupted file. Please use an archiver to ensure the file will be uploaded correctly.", @"WCWiredClientTransferWithResourceFork description (path)"),
 						argument];
 				}
 				else if([argument isKindOfClass:[NSNumber class]]) {
@@ -241,7 +241,7 @@
 				break;
 
 			case WCWiredClientTransferFailed:
-				return [NSSWF:NSLS(@"The transfer of \"%@\" failed.", @"WCWiredClientTransferFailed description (name)"),
+				return [NSSWF:NSLS(@"The transfer of \u201c%@\u201d failed.", @"WCWiredClientTransferFailed description (name)"),
 					argument];
 				break;
 				

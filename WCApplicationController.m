@@ -117,7 +117,7 @@ static NSInteger _WCCompareSmileyLength(id object1, id object2, void *context) {
 		if(path)
 			[_smileys setObject:path forKey:[smiley lowercaseString]];
 		else
-			NSLog(@"*** -[%@ %@]: could not find image \"%@\"", [self class], NSStringFromSelector(_cmd), file);
+			NSLog(@"*** -[%@ %@]: could not find image \u201c%@\u201d", [self class], NSStringFromSelector(_cmd), file);
 	}
 	
 	array = [NSMutableArray arrayWithObjects:

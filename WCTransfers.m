@@ -269,7 +269,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 										defaultButton:NSLS(@"Cancel", @"Transfers overwrite alert button")
 									  alternateButton:NSLS(@"Overwrite", @"Transfers overwrite alert button")
 										  otherButton:NULL
-							informativeTextWithFormat:[NSSWF:NSLS(@"The file \"%@\" already exists. Overwrite?", @"Transfers overwrite alert title"), path]];
+							informativeTextWithFormat:[NSSWF:NSLS(@"The file \u201c%@\u201d already exists. Overwrite?", @"Transfers overwrite alert title"), path]];
 				
 				if([alert runModal] == NSAlertDefaultReturn)
 					return NO;

@@ -89,7 +89,7 @@
 		name = [_nameTextField stringValue];
 		
 		if([name length] > 0) {
-			alert = [NSAlert alertWithMessageText:[NSSWF:NSLS(@"Save changes to the \"%@\" account?", @"Save account dialog title (name)"), name]
+			alert = [NSAlert alertWithMessageText:[NSSWF:NSLS(@"Save changes to the \u201c%@\u201d account?", @"Save account dialog title (name)"), name]
 									defaultButton:NSLS(@"Save", @"Save account dialog button")
 								  alternateButton:NSLS(@"Don't Save", @"Save account dialog button")
 									  otherButton:NSLS(@"Cancel", @"Save account dialog button")
@@ -1099,7 +1099,7 @@
 
 	if(count == 1) {
 		title = [NSSWF:
-			NSLS(@"Are you sure you want to delete \"%@\"?", @"Delete account dialog title (filename)"),
+			NSLS(@"Are you sure you want to delete \u201c%@\u201d?", @"Delete account dialog title (filename)"),
 			[[self _selectedAccount] name]];
 	} else {
 		title = [NSSWF:
