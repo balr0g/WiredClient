@@ -26,154 +26,163 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define WCPreferencesDidChange			@"WCPreferencesDidChange"
-#define WCBookmarksDidChange			@"WCBookmarksDidChange"
-#define WCTrackerBookmarksDidChange		@"WCTrackerBookmarksDidChange"
-#define WCNickDidChange					@"WCNickDidChange"
-#define WCStatusDidChange				@"WCStatusDidChange"
-#define WCIconDidChange					@"WCIconDidChange"
+#define WCPreferencesDidChangeNotification			@"WCPreferencesDidChangeNotification"
+#define WCThemeDidChangeNotification				@"WCThemeDidChangeNotification"
+#define WCBookmarksDidChangeNotification			@"WCBookmarksDidChangeNotification"
+#define WCBookmarkDidChangeNotification				@"WCBookmarkDidChangeNotification"
+#define WCTrackerBookmarksDidChangeNotification		@"WCTrackerBookmarksDidChangeNotification"
+#define WCTrackerBookmarkDidChangeNotification		@"WCTrackerBookmarkDidChangeNotification"
+#define WCNickDidChangeNotification					@"WCNickDidChangeNotification"
+#define WCStatusDidChangeNotification				@"WCStatusDidChangeNotification"
+#define WCIconDidChangeNotification					@"WCIconDidChangeNotification"
 
 
 @interface WCPreferences : WIPreferencesController {
-	IBOutlet NSView						*_generalView;
-	IBOutlet NSView						*_interfaceView;
-	IBOutlet NSView						*_bookmarksView;
-	IBOutlet NSView						*_chatView;
-	IBOutlet NSView						*_eventsView;
-	IBOutlet NSView						*_filesView;
-	IBOutlet NSView						*_trackersView;
+	IBOutlet NSView									*_generalView;
+	IBOutlet NSView									*_themesView;
+	IBOutlet NSView									*_bookmarksView;
+	IBOutlet NSView									*_chatView;
+	IBOutlet NSView									*_eventsView;
+	IBOutlet NSView									*_filesView;
+	IBOutlet NSView									*_trackersView;
 	
-	IBOutlet NSTabView					*_interfaceTabView;
-	IBOutlet NSTabView					*_chatTabView;
+	IBOutlet NSTabView								*_chatTabView;
 
-	IBOutlet NSTextField				*_nickTextField;
-	IBOutlet NSTextField				*_statusTextField;
-	IBOutlet WIImageViewWithImagePicker	*_iconImageView;
-	IBOutlet NSButton					*_checkForUpdateButton;
-	IBOutlet NSButton					*_showConnectAtStartupButton;
-	IBOutlet NSButton					*_showDockAtStartupButton;
-	IBOutlet NSButton					*_showTrackersAtStartupButton;
-	IBOutlet NSButton					*_autoHideOnSwitchButton;
-	IBOutlet NSButton					*_preventMultipleConnectionsButton;
-	IBOutlet NSButton					*_confirmDisconnectButton;
-	IBOutlet NSButton					*_autoReconnectButton;
+	IBOutlet NSTextField							*_nickTextField;
+	IBOutlet NSTextField							*_statusTextField;
+	IBOutlet WIImageViewWithImagePicker				*_iconImageView;
+	IBOutlet NSButton								*_checkForUpdateButton;
+	IBOutlet NSButton								*_showConnectAtStartupButton;
+	IBOutlet NSButton								*_showServersAtStartupButton;
+	IBOutlet NSButton								*_confirmDisconnectButton;
+	IBOutlet NSButton								*_autoReconnectButton;
 	
-	IBOutlet NSColorWell				*_chatTextColorWell;
-	IBOutlet NSColorWell				*_chatBackgroundColorWell;
-	IBOutlet NSColorWell				*_chatURLsColorWell;
-	IBOutlet NSColorWell				*_chatEventsColorWell;
-	IBOutlet NSTextField				*_chatFontTextField;
-	IBOutlet NSButton					*_chatFontButton;
-	IBOutlet NSTextField				*_chatUserListFontTextField;
-	IBOutlet NSButton					*_chatUserListFontButton;
-	IBOutlet NSMatrix					*_chatUserListIconSizeMatrix;
-	IBOutlet NSButton					*_chatUserListAlternateRowsButton;
+	IBOutlet NSTableView							*_themesTableView;
+	IBOutlet NSTableColumn							*_themesNameTableColumn;
+	IBOutlet NSButton								*_addThemeButton;
+	IBOutlet NSButton								*_deleteThemeButton;
+	IBOutlet NSButton								*_selectThemeButton;
+	
+	IBOutlet NSTextField							*_themesChatFontTextField;
+	IBOutlet NSButton								*_themesChatFontButton;
+	IBOutlet NSColorWell							*_themesChatTextColorWell;
+	IBOutlet NSColorWell							*_themesChatBackgroundColorWell;
+	IBOutlet NSColorWell							*_themesChatURLsColorWell;
+	IBOutlet NSColorWell							*_themesChatEventsColorWell;
+	IBOutlet NSTextField							*_themesMessagesFontTextField;
+	IBOutlet NSButton								*_themesMessagesFontButton;
+	IBOutlet NSColorWell							*_themesMessagesTextColorWell;
+	IBOutlet NSColorWell							*_themesMessagesBackgroundColorWell;
+	IBOutlet NSTextField							*_themesNewsFontTextField;
+	IBOutlet NSButton								*_themesNewsFontButton;
+	IBOutlet NSColorWell							*_themesNewsTextColorWell;
+	IBOutlet NSColorWell							*_themesNewsBackgroundColorWell;
+	
+	IBOutlet NSMatrix								*_themesUserListIconSizeMatrix;
+	IBOutlet NSButton								*_themesUserListAlternateRowsButton;
+	IBOutlet NSButton								*_themesMessageListAlternateRowsButton;
+	IBOutlet NSButton								*_themesFileListAlternateRowsButton;
+	IBOutlet NSButton								*_themesTransferListShowProgressBarButton;
+	IBOutlet NSButton								*_themesTransferListAlternateRowsButton;
+	IBOutlet NSButton								*_themesTrackerListAlternateRowsButton;
+	
+	IBOutlet NSTableView							*_bookmarksTableView;
+	IBOutlet NSTableColumn							*_bookmarksNameTableColumn;
+	IBOutlet NSButton								*_addBookmarkButton;
+	IBOutlet NSButton								*_deleteBookmarkButton;
+	
+	IBOutlet NSTextField							*_bookmarksAddressTextField;
+	IBOutlet NSTextField							*_bookmarksLoginTextField;
+	IBOutlet NSSecureTextField						*_bookmarksPasswordTextField;
+	IBOutlet NSPopUpButton							*_bookmarksThemePopUpButton;
+	IBOutlet NSButton								*_bookmarksAutoConnectButton;
+	IBOutlet NSButton								*_bookmarksAutoReconnectButton;
+	IBOutlet NSTextField							*_bookmarksNickTextField;
+	IBOutlet NSTextField							*_bookmarksStatusTextField;
+	
+	IBOutlet NSButton								*_chatHistoryScrollbackButton;
+	IBOutlet NSPopUpButton							*_chatHistoryScrollbackModifierPopUpButton;
+	IBOutlet NSButton								*_chatTabCompleteNicksButton;
+	IBOutlet NSTextField							*_chatTabCompleteNicksTextField;
+	IBOutlet NSButton								*_chatTimestampChatButton;
+	IBOutlet NSTextField							*_chatTimestampChatIntervalTextField;
+	IBOutlet NSButton								*_chatTimestampEveryLineButton;
+	IBOutlet NSColorWell							*_chatTimestampEveryLineColorWell;
+	IBOutlet NSButton								*_chatShowSmileysButton;
+	
+	IBOutlet NSTableView							*_highlightsTableView;
+	IBOutlet NSButton								*_addHighlightButton;
+	IBOutlet NSButton								*_deleteHighlightButton;
+	IBOutlet NSTableColumn							*_highlightsPatternTableColumn;
+	IBOutlet NSTableColumn							*_highlightsColorTableColumn;
+	
+	IBOutlet NSTableView							*_ignoresTableView;
+	IBOutlet NSButton								*_addIgnoreButton;
+	IBOutlet NSButton								*_deleteIgnoreButton;
+	IBOutlet NSTableColumn							*_ignoresNickTableColumn;
+	IBOutlet NSTableColumn							*_ignoresLoginTableColumn;
+	
+	IBOutlet NSSlider								*_eventsVolumeSlider;
+	IBOutlet NSPopUpButton							*_eventsEventPopUpButton;
+	IBOutlet NSButton								*_eventsPlaySoundButton;
+	IBOutlet NSPopUpButton							*_eventsSoundsPopUpButton;
+	IBOutlet NSButton								*_eventsBounceInDockButton;
+	IBOutlet NSButton								*_eventsPostInChatButton;
+	IBOutlet NSButton								*_eventsShowDialogButton;
+	
+	IBOutlet NSPopUpButton							*_filesDownloadFolderPopUpButton;
+	IBOutlet NSMenuItem								*_filesDownloadFolderMenuItem;
+	IBOutlet NSButton								*_filesOpenFoldersInNewWindowsButton;
+	IBOutlet NSButton								*_filesQueueTransfersButton;
+	IBOutlet NSButton								*_filesEncryptTransfersButton;
+	IBOutlet NSButton								*_filesCheckForResourceForksButton;
+	IBOutlet NSButton								*_filesRemoveTransfersButton;
 
-	IBOutlet NSColorWell				*_messagesTextColorWell;
-	IBOutlet NSColorWell				*_messagesBackgroundColorWell;
-	IBOutlet NSTextField				*_messagesFontTextField;
-	IBOutlet NSButton					*_messagesFontButton;
-	IBOutlet NSTextField				*_messagesListFontTextField;
-	IBOutlet NSButton					*_messagesListFontButton;
-	IBOutlet NSButton					*_messagesListAlternateRowsButton;
+	IBOutlet NSTableView							*_trackerBookmarksTableView;
+	IBOutlet NSTableColumn							*_trackerBookmarksNameTableColumn;
+	IBOutlet NSButton								*_addTrackerBookmarkButton;
+	IBOutlet NSButton								*_deleteTrackerBookmarkButton;
 	
-	IBOutlet NSColorWell				*_newsTextColorWell;
-	IBOutlet NSColorWell				*_newsBackgroundColorWell;
-	IBOutlet NSColorWell				*_newsTitlesColorWell;
-	IBOutlet NSTextField				*_newsFontTextField;
-	IBOutlet NSButton					*_newsFontButton;
-
-	IBOutlet NSTextField				*_filesFontTextField;
-	IBOutlet NSButton					*_filesFontButton;
-	IBOutlet NSButton					*_filesAlternateRowsButton;
-
-	IBOutlet NSButton					*_transfersShowProgressBarButton;
-	IBOutlet NSButton					*_transfersAlternateRowsButton;
-
-	IBOutlet NSColorWell				*_previewTextColorWell;
-	IBOutlet NSColorWell				*_previewBackgroundColorWell;
-	IBOutlet NSTextField				*_previewFontTextField;
-	IBOutlet NSButton					*_previewFontButton;
+	IBOutlet NSTextField							*_trackerBookmarksAddressTextField;
+	IBOutlet NSTextField							*_trackerBookmarksLoginTextField;
+	IBOutlet NSSecureTextField						*_trackerBookmarksPasswordTextField;
 	
-	IBOutlet NSButton					*_trackersAlternateRowsButton;
-
-	IBOutlet NSTableView				*_bookmarksTableView;
-	IBOutlet NSButton					*_addBookmarkButton;
-	IBOutlet NSButton					*_deleteBookmarkButton;
-	IBOutlet NSTableColumn				*_bookmarksNameTableColumn;
-	IBOutlet NSTextField				*_bookmarksNameTextField;
-	IBOutlet NSTextField				*_bookmarksAddressTextField;
-	IBOutlet NSTextField				*_bookmarksLoginTextField;
-	IBOutlet NSSecureTextField			*_bookmarksPasswordTextField;
-	IBOutlet NSButton					*_bookmarksAutoConnectButton;
-	IBOutlet NSButton					*_bookmarksAutoReconnectButton;
-	IBOutlet NSTextField				*_bookmarksNickTextField;
-	IBOutlet NSTextField				*_bookmarksStatusTextField;
-	
-	IBOutlet NSMatrix					*_chatStyleMatrix;
-	IBOutlet NSButton					*_historyScrollbackButton;
-	IBOutlet NSPopUpButton				*_historyScrollbackModifierPopUpButton;
-	IBOutlet NSButton					*_tabCompleteNicksButton;
-	IBOutlet NSTextField				*_tabCompleteNicksTextField;
-	IBOutlet NSButton					*_timestampChatButton;
-	IBOutlet NSTextField				*_timestampChatIntervalTextField;
-	IBOutlet NSButton					*_timestampEveryLineButton;
-	IBOutlet NSColorWell				*_timestampEveryLineColorWell;
-	IBOutlet NSButton					*_showSmileysButton;
-	
-	IBOutlet NSTableView				*_highlightsTableView;
-	IBOutlet NSButton					*_addHiglightButton;
-	IBOutlet NSButton					*_deleteHiglightButton;
-	IBOutlet NSTableColumn				*_highlightsPatternTableColumn;
-	IBOutlet NSTableColumn				*_highlightsColorTableColumn;
-	
-	IBOutlet NSTableView				*_ignoresTableView;
-	IBOutlet NSButton					*_addIgnoreButton;
-	IBOutlet NSButton					*_deleteIgnoreButton;
-	IBOutlet NSTableColumn				*_ignoresNickTableColumn;
-	IBOutlet NSTableColumn				*_ignoresLoginTableColumn;
-	IBOutlet NSTableColumn				*_ignoresAddressTableColumn;
-	
-	IBOutlet NSPopUpButton				*_eventsPopUpButton;
-	IBOutlet NSButton					*_playSoundButton;
-	IBOutlet NSPopUpButton				*_soundsPopUpButton;
-	IBOutlet NSButton					*_bounceInDockButton;
-	IBOutlet NSButton					*_postInChatButton;
-	IBOutlet NSButton					*_showDialogButton;
-	
-	IBOutlet NSTextField				*_downloadFolderTextField;
-	IBOutlet NSButton					*_openFoldersInNewWindowsButton;
-	IBOutlet NSButton					*_queueTransfersButton;
-	IBOutlet NSButton					*_encryptTransfersButton;
-	IBOutlet NSButton					*_checkForResourceForksButton;
-	IBOutlet NSButton					*_removeTransfersButton;
-
-	IBOutlet NSTableView				*_trackerBookmarksTableView;
-	IBOutlet NSButton					*_addTrackerBookmarkButton;
-	IBOutlet NSButton					*_deleteTrackerBookmarkButton;
-	IBOutlet NSTableColumn				*_trackerBookmarksNameTableColumn;
-	IBOutlet NSTextField				*_trackerBookmarksNameTextField;
-	IBOutlet NSTextField				*_trackerBookmarksAddressTextField;
-	IBOutlet NSTextField				*_trackerBookmarksLoginTextField;
-	IBOutlet NSSecureTextField			*_trackerBookmarksPasswordTextField;
+	NSString										*_bookmarksPassword;
+	NSString										*_trackerBookmarksPassword;
 }
 
 + (WCPreferences *)preferences;
 
-- (IBAction)icon:(id)sender;
-- (IBAction)showFontPanel:(id)sender;
-- (IBAction)selectEvent:(id)sender;
-- (IBAction)touchEvent:(id)sender;
-- (IBAction)selectSound:(id)sender;
-- (IBAction)selectDownloadFolder:(id)sender;
+- (IBAction)changePreferences:(id)sender;
+
+- (IBAction)addTheme:(id)sender;
+- (IBAction)deleteTheme:(id)sender;
+- (IBAction)duplicateTheme:(id)sender;
+- (IBAction)importTheme:(id)sender;
+- (IBAction)exportTheme:(id)sender;
+- (IBAction)selectTheme:(id)sender;
+- (IBAction)changeTheme:(id)sender;
+- (IBAction)changeThemeFont:(id)sender;
 
 - (IBAction)addBookmark:(id)sender;
 - (IBAction)deleteBookmark:(id)sender;
+- (IBAction)duplicateBookmark:(id)sender;
+- (IBAction)changeBookmark:(id)sender;
+
 - (IBAction)addHighlight:(id)sender;
 - (IBAction)deleteHighlight:(id)sender;
+
 - (IBAction)addIgnore:(id)sender;
 - (IBAction)deleteIgnore:(id)sender;
+
+- (IBAction)selectEvent:(id)sender;
+- (IBAction)changeEvent:(id)sender;
+
+- (IBAction)otherDownloadFolder:(id)sender;
+
 - (IBAction)addTrackerBookmark:(id)sender;
 - (IBAction)deleteTrackerBookmark:(id)sender;
+- (IBAction)duplicateTrackerBookmark:(id)sender;
+- (IBAction)changeTrackerBookmark:(id)sender;
 
 @end

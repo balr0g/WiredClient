@@ -45,6 +45,7 @@
 
 - (void)windowTemplateShouldLoad:(NSMutableDictionary *)windowTemplate;
 - (void)windowTemplateShouldSave:(NSMutableDictionary *)windowTemplate;
+- (void)themeDidChange:(NSDictionary *)theme;
 - (void)linkConnectionDidTerminate:(NSNotification *)notification;
 - (void)linkConnectionDidClose:(NSNotification *)notification;
 - (void)linkConnectionLoggedIn:(NSNotification *)notification;

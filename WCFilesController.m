@@ -76,10 +76,10 @@
 #pragma mark -
 
 - (void)update {
-	[_filesTableView setFont:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCFilesFont]]];
+/*	[_filesTableView setFont:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCFilesFont]]];
 	
 	[_filesTableView setUsesAlternatingRowBackgroundColors:[WCSettings boolForKey:WCFilesAlternateRows]];
-	[_filesTableView setNeedsDisplay:YES];
+	[_filesTableView setNeedsDisplay:YES];*/
 }
 
 

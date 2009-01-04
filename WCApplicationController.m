@@ -274,17 +274,15 @@ static NSInteger _WCCompareSmileyLength(id object1, id object2, void *context) {
 - (BOOL)_openConnectionWithURL:(WIURL *)url {
 	WCServerConnection		*connection;
 	
-	if([WCSettings boolForKey:WCPreventMultipleConnections]) {
-		connection = [[WCDock dock] connectionWithURL:url];
+	connection = [[WCDock dock] connectionWithURL:url];
+	
+	if(connection) {
+		[[WCDock dock] openConnection:connection];
 		
-		if(connection) {
-			[[WCDock dock] openConnection:connection];
-			
-			if(![connection isConnected])
-				[connection reconnect];
-			
-			return YES;
-		}
+		if(![connection isConnected])
+			[connection reconnect];
+		
+		return YES;
 	}
 	
 	return NO;
@@ -317,12 +315,12 @@ static WCApplicationController		*sharedController;
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(preferencesDidChange:)
-			   name:WCPreferencesDidChange];
+			   name:WCPreferencesDidChangeNotification];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(bookmarksDidChange:)
-			   name:WCBookmarksDidChange];
+			   name:WCBookmarksDidChangeNotification];
 	
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
@@ -436,12 +434,9 @@ static WCApplicationController		*sharedController;
 	[self _update];
 	[self _updateBookmarksMenu];
 
-	if([WCSettings boolForKey:WCShowTrackersAtStartup])
+	if([WCSettings boolForKey:WCShowServersAtStartup])
 		[[WCServers servers] showWindow:self];
 
-	if([WCSettings boolForKey:WCShowDockAtStartup])
-		[[WCDock dock] showWindow:self];
-	
 	if([WCSettings boolForKey:WCShowConnectAtStartup])
 		[[WCConnect connect] showWindow:self];
 	
@@ -782,6 +777,7 @@ static WCApplicationController		*sharedController;
 
 
 - (void)handleAppleEvent:(NSAppleEventDescriptor *)event withReplyEvent:(NSAppleEventDescriptor *)replyEvent {
+	NSDictionary	*bookmark;
 	NSString		*string;
 	WIURL			*url;
 	WCConnect		*connect;
@@ -797,12 +793,14 @@ static WCApplicationController		*sharedController;
 		}
 	}
 	else if([[url scheme] isEqualToString:@"wiredtracker"]) {
-		[WCSettings addTrackerBookmark:[NSDictionary dictionaryWithObjectsAndKeys:
+		bookmark = [NSDictionary dictionaryWithObjectsAndKeys:
 			[url host],					WCTrackerBookmarksName,
 			[url hostpair],				WCTrackerBookmarksAddress,
 			@"",						WCTrackerBookmarksLogin,
 			[NSString UUIDString],		WCTrackerBookmarksIdentifier,
-			NULL]];
+			NULL];
+		
+		[WCSettings addObject:bookmark toArrayForKey:WCTrackerBookmarks];
 
 		[[WCServers servers] showWindow:self];
 	}

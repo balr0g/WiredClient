@@ -28,25 +28,26 @@
 
 #import "WCLinkConnection.h"
 
-#define WCServerConnectionWillReconnect				@"WCServerConnectionWillReconnect"
+#define WCServerConnectionWillReconnect					@"WCServerConnectionWillReconnect"
 
-#define WCServerConnectionShouldHide				@"WCServerConnectionShouldHide"
-#define WCServerConnectionShouldUnhide				@"WCServerConnectionShouldUnhide"
-#define WCServerConnectionTriggeredEvent			@"WCServerConnectionTriggeredEvent"
+#define WCServerConnectionShouldHide					@"WCServerConnectionShouldHide"
+#define WCServerConnectionShouldUnhide					@"WCServerConnectionShouldUnhide"
+#define WCServerConnectionTriggeredEvent				@"WCServerConnectionTriggeredEvent"
 
-#define WCServerConnectionShouldLoadWindowTemplate	@"WCServerConnectionShouldLoadWindowTemplate"
-#define WCServerConnectionShouldSaveWindowTemplate	@"WCServerConnectionShouldSaveWindowTemplate"
+#define WCServerConnectionShouldLoadWindowTemplate		@"WCServerConnectionShouldLoadWindowTemplate"
+#define WCServerConnectionShouldSaveWindowTemplate		@"WCServerConnectionShouldSaveWindowTemplate"
+#define WCServerConnectionThemeDidChangeNotification	@"WCServerConnectionThemeDidChangeNotification"
 
-#define WCServerConnectionServerInfoDidChange		@"WCServerConnectionServerInfoDidChange"
-#define WCServerConnectionPrivilegesDidChange		@"WCServerConnectionPrivilegesDidChange"
+#define WCServerConnectionServerInfoDidChange			@"WCServerConnectionServerInfoDidChange"
+#define WCServerConnectionPrivilegesDidChange			@"WCServerConnectionPrivilegesDidChange"
 
-#define WCServerConnectionReceivedServerInfo		@"WCServerConnectionReceivedServerInfo"
-#define WCServerConnectionReceivedPing				@"WCServerConnectionReceivedPing"
-#define WCServerConnectionReceivedBanner			@"WCServerConnectionReceivedBanner"
+#define WCServerConnectionReceivedServerInfo			@"WCServerConnectionReceivedServerInfo"
+#define WCServerConnectionReceivedPing					@"WCServerConnectionReceivedPing"
+#define WCServerConnectionReceivedBanner				@"WCServerConnectionReceivedBanner"
 
-#define WCServerConnectionEventConnectionKey		@"WCServerConnectionEventConnectionKey"
-#define WCServerConnectionEventInfo1Key				@"WCServerConnectionEventInfo1Key"
-#define WCServerConnectionEventInfo2Key				@"WCServerConnectionEventInfo2Key"
+#define WCServerConnectionEventConnectionKey			@"WCServerConnectionEventConnectionKey"
+#define WCServerConnectionEventInfo1Key					@"WCServerConnectionEventInfo1Key"
+#define WCServerConnectionEventInfo2Key					@"WCServerConnectionEventInfo2Key"
 
 
 @class WCServer, WCCache, WCAccount;
@@ -54,23 +55,25 @@
 @class WCAccounts, WCAdministration, WCPublicChat, WCConsole, WCNews, WCBoard, WCServerInfo;
 
 @interface WCServerConnection : WCLinkConnection {
-	NSUInteger										_userID;
+	NSDictionary										*_theme;
 	
-	WCServer										*_server;
-	WCCache											*_cache;
+	NSUInteger											_userID;
 	
-	WCAccounts										*_accounts;
-	WCAdministration								*_administration;
-	WCPublicChat									*_chat;
-	WCConsole										*_console;
-	WCNews											*_news;
-	WCBoard											*_board;
-	WCServerInfo									*_serverInfo;
+	WCServer											*_server;
+	WCCache												*_cache;
 	
-	BOOL											_manuallyReconnecting;
-	BOOL											_shouldAutoReconnect;
-	BOOL											_autoReconnecting;
-	BOOL											_hidden;
+	WCAccounts											*_accounts;
+	WCAdministration									*_administration;
+	WCPublicChat										*_chat;
+	WCConsole											*_console;
+	WCNews												*_news;
+	WCBoard												*_board;
+	WCServerInfo										*_serverInfo;
+	
+	BOOL												_manuallyReconnecting;
+	BOOL												_shouldAutoReconnect;
+	BOOL												_autoReconnecting;
+	BOOL												_hidden;
 }
 
 - (void)reconnect;
@@ -80,6 +83,9 @@
 - (void)triggerEvent:(int)event;
 - (void)triggerEvent:(int)event info1:(id)info1;
 - (void)triggerEvent:(int)event info1:(id)info1 info2:(id)info2;
+
+- (void)setTheme:(NSDictionary *)theme;
+- (NSDictionary *)theme;
 
 - (BOOL)isReconnecting;
 - (BOOL)isManuallyReconnecting;

@@ -120,7 +120,7 @@
 
 
 - (void)_update {
-	[_messageTextView setFont:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCMessagesFont]]];
+/*	[_messageTextView setFont:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCMessagesFont]]];
 	[_messageTextView setTextColor:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCMessagesTextColor]]];
 	[_messageTextView setBackgroundColor:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCMessagesBackgroundColor]]];
 	[_messageTextView setNeedsDisplay:YES];
@@ -148,7 +148,7 @@
 
 	[_messagesTableView setFont:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCMessagesListFont]]];
 	[_messagesTableView setUsesAlternatingRowBackgroundColors:[WCSettings boolForKey:WCMessagesListAlternateRows]];
-	[_messagesTableView setNeedsDisplay:YES];
+	[_messagesTableView setNeedsDisplay:YES];*/
 }
 
 
@@ -340,7 +340,7 @@
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(preferencesDidChange:)
-			   name:WCPreferencesDidChange];
+			   name:WCPreferencesDidChangeNotification];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
@@ -631,7 +631,7 @@
 	
 	[self _reselectConversation:selectedConversation message:selectedMessage];
 
-	if([[WCSettings eventForTag:WCEventsMessageReceived] boolForKey:WCEventsShowDialog])
+	if([[WCSettings eventWithTag:WCEventsMessageReceived] boolForKey:WCEventsShowDialog])
 		[self _showDialogForMessage:message];
 
 	[[WCStats stats] addUnsignedInt:1 forKey:WCStatsMessagesReceived];
@@ -683,7 +683,7 @@
 	
 	[self _reselectConversation:selectedConversation message:selectedMessage];
 
-	if([[WCSettings eventForTag:WCEventsBroadcastReceived] boolForKey:WCEventsShowDialog])
+	if([[WCSettings eventWithTag:WCEventsBroadcastReceived] boolForKey:WCEventsShowDialog])
 		[self _showDialogForMessage:message];
 
 	[connection postNotificationName:WCMessagesDidAddMessage object:message];

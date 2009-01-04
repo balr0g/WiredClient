@@ -168,7 +168,7 @@ WIP7Spec							*WCP7Spec;
 	NSData			*icon;
 	WIP7Message		*message;
 
-	icon = [NSData dataWithBase64EncodedString:[WCSettings objectForKey:WCCustomIcon]];
+	icon = [NSData dataWithBase64EncodedString:[WCSettings objectForKey:WCIcon]];
 	message = [WIP7Message messageWithName:@"wired.user.set_icon" spec:WCP7Spec];
 	[message setData:icon forName:@"wired.user.icon"];
 	

@@ -115,8 +115,8 @@
 
 
 - (void)_update {
-	[_serversOutlineView setUsesAlternatingRowBackgroundColors:[WCSettings boolForKey:WCTrackersAlternateRows]];
-	[_serversOutlineView setNeedsDisplay:YES];
+/*	[_serversOutlineView setUsesAlternatingRowBackgroundColors:[WCSettings boolForKey:WCTrackersAlternateRows]];
+	[_serversOutlineView setNeedsDisplay:YES];*/
 }
 
 
@@ -278,12 +278,12 @@
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(preferencesDidChange:)
-			   name:WCPreferencesDidChange];
+			   name:WCPreferencesDidChangeNotification];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(trackerBookmarksDidChange:)
-			   name:WCTrackerBookmarksDidChange];
+			   name:WCTrackerBookmarksDidChangeNotification];
 
 	[self window];
 	
@@ -639,17 +639,20 @@
 
 
 - (IBAction)addTracker:(id)sender {
-	id		item;
+	NSDictionary	*bookmark;
+	id				item;
 	
 	item = [self _selectedItem];
 	
 	if([item isKindOfClass:[WCServerTrackerServer class]] && [item isTracker]) {
-		[WCSettings addTrackerBookmark:[NSDictionary dictionaryWithObjectsAndKeys:
+		bookmark = [NSDictionary dictionaryWithObjectsAndKeys:
 			[item name],						WCTrackerBookmarksName,
 			[(WIURL *) [item URL] hostpair],	WCTrackerBookmarksAddress,
 			@"",								WCTrackerBookmarksLogin,
 			[NSString UUIDString],				WCTrackerBookmarksIdentifier,
-			NULL]];
+			NULL];
+		
+		[WCSettings addObject:bookmark toArrayForKey:WCTrackerBookmarks];
 		
 		[self _reloadTrackers];
 	}
@@ -680,7 +683,7 @@
 		}
 		
 		if(index != NSNotFound) {
-			[WCSettings removeTrackerBookmarkAtIndex:index];
+			[WCSettings removeObjectAtIndex:index fromArrayForKey:WCTrackerBookmarks];
 
 			[self _reloadTrackers];
 		}

@@ -57,22 +57,27 @@
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(nickDidChange:)
-			   name:WCNickDidChange];
+			   name:WCNickDidChangeNotification];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(statusDidChange:)
-			   name:WCStatusDidChange];
+			   name:WCStatusDidChangeNotification];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(iconDidChange:)
-			   name:WCIconDidChange];
+			   name:WCIconDidChangeNotification];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
-		   selector:@selector(bookmarksDidChange:)
-			   name:WCBookmarksDidChange];
+		   selector:@selector(themeDidChange:)
+			   name:WCThemeDidChangeNotification];
+
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
+		   selector:@selector(bookmarkDidChange:)
+			   name:WCBookmarkDidChangeNotification];
 
 	[self addObserver:self
 			 selector:@selector(serverConnectionShouldHide:)
@@ -141,12 +146,44 @@
 
 
 
-- (void)bookmarksDidChange:(NSNotification *)notification {
-	NSDictionary	*bookmark;
+- (void)themeDidChange:(NSNotification *)notification {
+	NSDictionary	*theme;
+	NSString		*identifier;
 	
-	bookmark = [notification userInfo];
+	theme		= [notification object];
+	identifier	= [theme objectForKey:WCThemesIdentifier];
 	
-	if([[bookmark objectForKey:WCBookmarksIdentifier] isEqualToString:[[self bookmark] objectForKey:WCBookmarksIdentifier]]) {
+	if([identifier isEqualToString:[[self theme] objectForKey:WCThemesIdentifier]] ||
+	   (![[self bookmark] objectForKey:WCBookmarksTheme] && [identifier isEqualToString:[WCSettings objectForKey:WCTheme]])) {
+		[self setTheme:theme];
+		
+		[self postNotificationName:WCServerConnectionThemeDidChangeNotification object:self];
+	}
+}
+
+
+
+- (void)bookmarkDidChange:(NSNotification *)notification {
+	NSDictionary	*bookmark, *theme;
+	NSString		*identifier;
+	
+	bookmark	= [notification object];
+	identifier	= [bookmark objectForKey:WCBookmarksIdentifier];
+	
+	if([identifier isEqualToString:[[self bookmark] objectForKey:WCBookmarksIdentifier]]) {
+		theme = [WCSettings themeWithIdentifier:[bookmark objectForKey:WCBookmarksTheme]];
+		
+		if(!theme)
+			theme = [WCSettings themeWithIdentifier:[WCSettings objectForKey:WCTheme]];
+		
+		if(![[[self theme] objectForKey:WCThemesIdentifier] isEqualToString:[theme objectForKey:WCThemesIdentifier]]) {
+			[self setTheme:theme];
+			
+			[self postNotificationName:WCServerConnectionThemeDidChangeNotification object:self];
+		}
+		
+		[self setBookmark:bookmark];
+		
 		[self sendMessage:[self setNickMessage]];
 		[self sendMessage:[self setStatusMessage]];
 	}
@@ -334,7 +371,7 @@
 	NSMutableDictionary	*userInfo;
 	NSDictionary		*event;
 	
-	event = [WCSettings eventForTag:tag];
+	event = [WCSettings eventWithTag:tag];
 	userInfo = [NSMutableDictionary dictionaryWithObject:self forKey:WCServerConnectionEventConnectionKey];
 	
 	if(info1)
@@ -344,6 +381,21 @@
 		[userInfo setObject:info2 forKey:WCServerConnectionEventInfo2Key];
 	
 	[self postNotificationName:WCServerConnectionTriggeredEvent object:event userInfo:userInfo];
+}
+
+
+
+#pragma mark -
+
+- (void)setTheme:(NSDictionary *)theme {
+	[_theme release];
+	_theme = [theme copy];
+}
+
+
+
+- (NSDictionary *)theme {
+	return _theme;
 }
 
 

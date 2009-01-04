@@ -115,9 +115,12 @@
 		A526D7D80D5F00B200F30E6F /* WCNotificationCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A526D7D70D5F00B200F30E6F /* WCNotificationCenter.m */; };
 		A52B301C05E6F0A300C651A4 /* WCServerInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A52B301A05E6F0A300C651A4 /* WCServerInfo.m */; };
 		A52F1A550750F19A006E11EA /* Events.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A52F1A540750F19A006E11EA /* Events.tiff */; };
-		A52F1A620750F383006E11EA /* Interface.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A52F1A610750F383006E11EA /* Interface.tiff */; };
+		A52F1A620750F383006E11EA /* Themes.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A52F1A610750F383006E11EA /* Themes.tiff */; };
 		A52F1D71075120D4006E11EA /* EventOn.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A52F1D6F075120D4006E11EA /* EventOn.tiff */; };
 		A52F1D72075120D4006E11EA /* EventOff.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A52F1D70075120D4006E11EA /* EventOff.tiff */; };
+		A541A3870F10501800D1EE94 /* Action.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A541A3860F10501800D1EE94 /* Action.tiff */; };
+		A541A3D30F10E05000D1EE94 /* VolumeQuiet.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A541A3D10F10E05000D1EE94 /* VolumeQuiet.tiff */; };
+		A541A3D40F10E05000D1EE94 /* VolumeLoud.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A541A3D20F10E05000D1EE94 /* VolumeLoud.tiff */; };
 		A541FF760784DCAD00B1E699 /* Search.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A541FF750784DCAD00B1E699 /* Search.tiff */; };
 		A545380705FA4246005C82FE /* Transfers.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A545380605FA4246005C82FE /* Transfers.tiff */; };
 		A545380F05FA75DF005C82FE /* Messages.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A545380E05FA75DF005C82FE /* Messages.tiff */; };
@@ -446,9 +449,12 @@
 		A52B301905E6F0A300C651A4 /* WCServerInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCServerInfo.h; sourceTree = "<group>"; };
 		A52B301A05E6F0A300C651A4 /* WCServerInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCServerInfo.m; sourceTree = "<group>"; };
 		A52F1A540750F19A006E11EA /* Events.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Events.tiff; sourceTree = "<group>"; };
-		A52F1A610750F383006E11EA /* Interface.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Interface.tiff; sourceTree = "<group>"; };
+		A52F1A610750F383006E11EA /* Themes.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Themes.tiff; sourceTree = "<group>"; };
 		A52F1D6F075120D4006E11EA /* EventOn.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = EventOn.tiff; sourceTree = "<group>"; };
 		A52F1D70075120D4006E11EA /* EventOff.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = EventOff.tiff; sourceTree = "<group>"; };
+		A541A3860F10501800D1EE94 /* Action.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Action.tiff; sourceTree = "<group>"; };
+		A541A3D10F10E05000D1EE94 /* VolumeQuiet.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = VolumeQuiet.tiff; sourceTree = "<group>"; };
+		A541A3D20F10E05000D1EE94 /* VolumeLoud.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = VolumeLoud.tiff; sourceTree = "<group>"; };
 		A541FF750784DCAD00B1E699 /* Search.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Search.tiff; sourceTree = "<group>"; };
 		A544C1B90758E0E9008446CF /* WiredAdditions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = WiredAdditions.xcodeproj; path = WiredAdditions/WiredAdditions.xcodeproj; sourceTree = SOURCE_ROOT; };
 		A545380605FA4246005C82FE /* Transfers.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Transfers.tiff; sourceTree = "<group>"; };
@@ -1065,6 +1071,7 @@
 			isa = PBXGroup;
 			children = (
 				A5DE6F1D0D7AFF690003B897 /* Accounts.tiff */,
+				A541A3860F10501800D1EE94 /* Action.tiff */,
 				A54933430D8FEC07002D37D7 /* AddTracker.tiff */,
 				A5DB1BB30D7406B800EBD9D9 /* AliasBadge.icns */,
 				A5D4072A0D88FC35007851BD /* Back.tiff */,
@@ -1100,7 +1107,6 @@
 				77E555BB075346E4009A7557 /* GreenDrop.tiff */,
 				A5E225AE057AB5290037C7F9 /* Group.tiff */,
 				A59C41B0075BC01700D9B295 /* Hide.tiff */,
-				A52F1A610750F383006E11EA /* Interface.tiff */,
 				A5E225C3057AB5290037C7F9 /* Kick.tiff */,
 				A5E225B4057AB5290037C7F9 /* LargerText.tiff */,
 				A5D407310D88FC4F007851BD /* ListView.tiff */,
@@ -1143,6 +1149,7 @@
 				A57618BB0609F1C100C4850E /* Sounds.tiff */,
 				A545381405FA7C7A005C82FE /* Start.tiff */,
 				A545381605FA7C82005C82FE /* Stop.tiff */,
+				A52F1A610750F383006E11EA /* Themes.tiff */,
 				A5FF1B130616783900BE536C /* Trackers.tiff */,
 				A545380605FA4246005C82FE /* Transfers.tiff */,
 				A545398A05FB6300005C82FE /* Unlocked.tiff */,
@@ -1150,6 +1157,8 @@
 				A5DB1B0C0D73FA8100EBD9D9 /* UploadsBadge.icns */,
 				A5E225C0057AB5290037C7F9 /* User.tiff */,
 				A5E225CE057AB5290037C7F9 /* UserInfo.tiff */,
+				A541A3D20F10E05000D1EE94 /* VolumeLoud.tiff */,
+				A541A3D10F10E05000D1EE94 /* VolumeQuiet.tiff */,
 				77E555C4075346F3009A7557 /* YellowDrop.tiff */,
 			);
 			name = Images;
@@ -1452,7 +1461,7 @@
 				A5E225E4057AB52A0037C7F9 /* Group.tiff in Resources */,
 				A59C41B1075BC01700D9B295 /* Hide.tiff in Resources */,
 				779951850A122BBB00600320 /* Innocent.tiff in Resources */,
-				A52F1A620750F383006E11EA /* Interface.tiff in Resources */,
+				A52F1A620750F383006E11EA /* Themes.tiff in Resources */,
 				A5E225F9057AB52A0037C7F9 /* Kick.tiff in Resources */,
 				779951870A122BBB00600320 /* Kiss.tiff in Resources */,
 				A5E225EA057AB52A0037C7F9 /* LargerText.tiff in Resources */,
@@ -1529,6 +1538,9 @@
 				A54933440D8FEC07002D37D7 /* AddTracker.tiff in Resources */,
 				A54933A50D9027BC002D37D7 /* DeleteTracker.tiff in Resources */,
 				A558A6440E8589E4004C724C /* Banlist.tiff in Resources */,
+				A541A3870F10501800D1EE94 /* Action.tiff in Resources */,
+				A541A3D30F10E05000D1EE94 /* VolumeQuiet.tiff in Resources */,
+				A541A3D40F10E05000D1EE94 /* VolumeLoud.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1548,6 +1560,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "rm -f \"English.lproj/Localizable.strings\"\nfind . -name \"*.[mc]\" | xargs genstrings -s NSLS -q -o \"English.lproj\" -a\n";
+			showEnvVarsInLog = 0;
 		};
 		A5D97309078F0D1700CD982E /* Run Script (Zip) */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1562,6 +1575,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "cd \"$BUILT_PRODUCTS_DIR\"\nrm -f \"$BUILD_DIR/WiredClient.zip\"\nzip -ry \"$BUILD_DIR/WiredClient.zip\" \"Wired Client.app\" || exit 1";
+			showEnvVarsInLog = 0;
 		};
 		A5DC7E2A057AA99B00736BBF /* Run Script (Version) */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1576,6 +1590,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "perl WiredAdditions/version.pl";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1920,6 +1935,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PREPROCESSOR_DEFINITIONS = TEST;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				IBC_NOTICES = NO;
@@ -1998,6 +2014,7 @@
 			baseConfigurationReference = A5E8BADA08748E1C0010F2A4 /* WiredClient.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
 				IBC_NOTICES = NO;
@@ -2018,6 +2035,7 @@
 			baseConfigurationReference = A5E8BADA08748E1C0010F2A4 /* WiredClient.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = RELEASE;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;

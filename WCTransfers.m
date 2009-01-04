@@ -102,7 +102,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 
 - (void)_update {
-	if([WCSettings boolForKey:WCTransfersShowProgressBar]) {
+/*	if([WCSettings boolForKey:WCTransfersShowProgressBar]) {
 		[_transfersTableView setRowHeight:46.0];
 		[[_infoTableColumn dataCell] setDrawsProgressIndicator:YES];
 	} else {
@@ -112,7 +112,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	
 	[_transfersTableView setUsesAlternatingRowBackgroundColors:[WCSettings boolForKey:WCTransfersAlternateRows]];
 
-	[_transfersTableView setNeedsDisplay:YES];
+	[_transfersTableView setNeedsDisplay:YES];*/
 }
 
 
@@ -1149,7 +1149,7 @@ end:
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(preferencesDidChange:)
-			   name:WCPreferencesDidChange];
+			   name:WCPreferencesDidChangeNotification];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self

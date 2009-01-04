@@ -92,7 +92,7 @@
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(preferencesDidChange:)
-			   name:WCPreferencesDidChange];
+			   name:WCPreferencesDidChangeNotification];
 
 	[[self connection] addObserver:self selector:@selector(wiredFileDirectoryChanged:) messageName:@"wired.file.directory_changed"];
 

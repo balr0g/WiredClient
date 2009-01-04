@@ -60,7 +60,7 @@
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(preferencesDidChange:)
-			   name:WCPreferencesDidChange];
+			   name:WCPreferencesDidChangeNotification];
 	
 	[[self connection] addObserver:self selector:@selector(wiredNewsPost:) messageName:@"wired.news.post"];
 	
@@ -74,7 +74,7 @@
 #pragma mark -
 
 - (void)_update {
-	[_newsTextView setBackgroundColor:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCNewsBackgroundColor]]];
+/*	[_newsTextView setBackgroundColor:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCNewsBackgroundColor]]];
 	[_newsTextView setNeedsDisplay:YES];
 	
 	[_newsTextView setLinkTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
@@ -88,7 +88,7 @@
 	[_postTextView setTextColor:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCNewsTextColor]]];
 	[_postTextView setBackgroundColor:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCNewsBackgroundColor]]];
 	[_postTextView setInsertionPointColor:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCNewsTextColor]]];
-	[_postTextView setNeedsDisplay:YES];
+	[_postTextView setNeedsDisplay:YES];*/
 }
 
 
@@ -127,10 +127,10 @@
 	NSString					*string;
 	
 	attributes = [NSDictionary dictionaryWithObjectsAndKeys:
-				  [NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCNewsTitlesFont]],
-				  NSFontAttributeName,
-				  [NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCNewsTitlesColor]],
-				  NSForegroundColorAttributeName,
+//				  [NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCNewsTitlesFont]],
+//				  NSFontAttributeName,
+//				  [NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCNewsTitlesColor]],
+//				  NSForegroundColorAttributeName,
 				  NULL];
 	string = [NSSWF:NSLS(@"From %@ (%@):\n", @"News header (nick, time)"),
 			  [post userNick],
@@ -138,10 +138,10 @@
 	header = [NSAttributedString attributedStringWithString:string attributes:attributes];
 	
 	attributes = [NSDictionary dictionaryWithObjectsAndKeys:
-				  [NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCNewsFont]],
-				  NSFontAttributeName,
-				  [NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCNewsTextColor]],
-				  NSForegroundColorAttributeName,
+//				  [NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCNewsFont]],
+//				  NSFontAttributeName,
+//				  [NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCNewsTextColor]],
+//				  NSForegroundColorAttributeName,
 				  NULL];
 	entry = [NSAttributedString attributedStringWithString:[post message] attributes:attributes];
 	
@@ -470,7 +470,7 @@
 	
 	[_postPanel close];
 	[_postTextView setString:@""];
-	[_postTextView setFont:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCNewsFont]]];
+//	[_postTextView setFont:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCNewsFont]]];
 }
 
 

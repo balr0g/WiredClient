@@ -92,9 +92,11 @@ typedef enum _WCChatFormat				WCChatFormat;
 @implementation WCChat(Private)
 
 - (void)_update {
-	NSFont		*font;
+/*	NSFont		*font;
 	NSColor		*color;
-
+	
+	return;
+	
 	font = [NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCChatFont]];
 
 	if(![[_chatOutputTextView font] isEqualTo:font]) {
@@ -150,7 +152,7 @@ typedef enum _WCChatFormat				WCChatFormat;
 	[_chatOutputTextView setNeedsDisplay:YES];
 	[_chatInputTextView setNeedsDisplay:YES];
 	[_setTopicTextView setNeedsDisplay:YES];
-	[_userListTableView setNeedsDisplay:YES];
+	[_userListTableView setNeedsDisplay:YES];*/
 }
 
 
@@ -239,7 +241,7 @@ typedef enum _WCChatFormat				WCChatFormat;
 	if(!_timestamp)
 		_timestamp = [[NSDate date] retain];
 	
-	interval = [[WCSettings objectForKey:WCTimestampChatInterval] doubleValue];
+	interval = [[WCSettings objectForKey:WCChatTimestampChatInterval] doubleValue];
 	date = [NSDate dateWithTimeIntervalSinceNow:-interval];
 	
 	if([date compare:_timestamp] == NSOrderedDescending) {
@@ -332,7 +334,7 @@ typedef enum _WCChatFormat				WCChatFormat;
 	NSString	*output, *nick;
 	NSInteger	offset, length;
 	
-	offset = [WCSettings boolForKey:WCTimestampEveryLine] ? WCChatPrepend - 4 : WCChatPrepend;
+	offset = [WCSettings boolForKey:WCChatTimestampEveryLine] ? WCChatPrepend - 4 : WCChatPrepend;
 	nick = [user nick];
 	length = offset - [nick length];
 
@@ -345,7 +347,7 @@ typedef enum _WCChatFormat				WCChatFormat;
 	if(length > 0)
 		output = [NSSWF:@"%*s%@", length, " ", output];
 	
-	if([WCSettings boolForKey:WCTimestampEveryLine])
+	if([WCSettings boolForKey:WCChatTimestampEveryLine])
 		output = [NSSWF:@"%@ %@", [_timestampEveryLineDateFormatter stringFromDate:[NSDate date]], output];
 
 	[self _printString:output];
@@ -359,7 +361,7 @@ typedef enum _WCChatFormat				WCChatFormat;
 	output = [NSSWF:NSLS(@" *** %@ %@", @"Action chat message, Wired style (nick, message)"),
 		[user nick], chat];
 
-	if([WCSettings boolForKey:WCTimestampEveryLine])
+	if([WCSettings boolForKey:WCChatTimestampEveryLine])
 		output = [NSSWF:@"%@ %@", [_timestampEveryLineDateFormatter stringFromDate:[NSDate date]], output];
 	
 	[self _printString:output];
@@ -524,7 +526,7 @@ typedef enum _WCChatFormat				WCChatFormat;
 	if(matches == 1) {
 		if(matchingSet == nicks) {
 			return [prefix stringByAppendingString:
-				[WCSettings objectForKey:WCTabCompleteNicksString]];
+				[WCSettings objectForKey:WCChatTabCompleteNicksString]];
 		}
 		else if(matchingSet == commands) {
 			return [prefix stringByAppendingString:@" "];
@@ -632,7 +634,7 @@ typedef enum _WCChatFormat				WCChatFormat;
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(preferencesDidChange:)
-			   name:WCPreferencesDidChange];
+			   name:WCPreferencesDidChangeNotification];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
@@ -732,6 +734,76 @@ typedef enum _WCChatFormat				WCChatFormat;
 	[windowTemplate setObject:[_chatSplitView propertiesDictionary] forKey:@"WCChatSplitView"];
 	
 	[super windowTemplateShouldSave:windowTemplate];
+}
+
+
+
+- (void)themeDidChange:(NSDictionary *)theme {
+	NSFont		*font;
+	NSColor		*color;
+	
+	font = WIFontFromString([theme objectForKey:WCThemesChatFont]);
+
+	if(![[_chatOutputTextView font] isEqualTo:font]) {
+		[_chatOutputTextView setFont:font];
+		[_chatInputTextView setFont:font];
+		[_setTopicTextView setFont:font];
+	}
+	
+	color = WIColorFromString([theme objectForKey:WCThemesChatBackgroundColor]);
+
+	if(![[_chatOutputTextView backgroundColor] isEqualTo:color]) {
+		[_chatOutputTextView setBackgroundColor:color];
+		[_chatInputTextView setBackgroundColor:color];
+		[_setTopicTextView setBackgroundColor:color];
+	}
+
+	color = WIColorFromString([theme objectForKey:WCThemesChatTextColor]);
+
+	if(![[_chatOutputTextView textColor] isEqualTo:color]) {
+		[_chatOutputTextView setTextColor:color];
+		[_chatInputTextView setTextColor:color];
+		[_chatInputTextView setInsertionPointColor:color];
+		[_setTopicTextView setTextColor:color];
+		[_setTopicTextView setInsertionPointColor:color];
+
+		[_chatOutputTextView setString:[_chatOutputTextView string] withFilter:_chatFilter];
+	}
+	
+	[_chatOutputTextView setLinkTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
+		WIColorFromString([theme objectForKey:WCThemesChatURLsColor]),
+			NSForegroundColorAttributeName,
+		[NSNumber numberWithInt:NSSingleUnderlineStyle],
+			NSUnderlineStyleAttributeName,
+		NULL]];
+
+//	[_userListTableView setFont: [NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCChatUserListFont]]];
+	[_userListTableView setUsesAlternatingRowBackgroundColors:[[theme objectForKey:WCThemesUserListAlternateRows] boolValue]];
+	
+	switch([[theme objectForKey:WCThemesUserListIconSize] integerValue]) {
+		case WCThemesUserListIconSizeLarge:
+			[_userListTableView setRowHeight:35.0];
+			
+			[[_nickTableColumn dataCell] setControlSize:NSRegularControlSize];
+			break;
+
+		case WCThemesUserListIconSizeSmall:
+			[_userListTableView setRowHeight:17.0];
+
+			[[_nickTableColumn dataCell] setControlSize:NSSmallControlSize];
+			break;
+	}
+	
+	[_chatOutputTextView setNeedsDisplay:YES];
+	[_chatInputTextView setNeedsDisplay:YES];
+	[_setTopicTextView setNeedsDisplay:YES];
+	[_userListTableView setNeedsDisplay:YES];
+}
+
+
+
+- (void)serverConnectionThemeDidChange:(NSNotification *)notification {
+	[self _update];
 }
 
 
@@ -845,7 +917,7 @@ typedef enum _WCChatFormat				WCChatFormat;
 	[_shownUsers addObject:user];
 	[_users setObject:user forKey:[NSNumber numberWithUnsignedInt:[user userID]]];
 
-	if([[WCSettings eventForTag:WCEventsUserJoined] boolForKey:WCEventsPostInChat])
+	if([[WCSettings eventWithTag:WCEventsUserJoined] boolForKey:WCEventsPostInChat])
 		[self _printUserJoin:user];
 	
 	[[self connection] postNotificationName:WCChatUserAppeared object:user];
@@ -872,7 +944,7 @@ typedef enum _WCChatFormat				WCChatFormat;
 	if(!user)
 		return;
 
-	if([[WCSettings eventForTag:WCEventsUserLeft] boolForKey:WCEventsPostInChat])
+	if([[WCSettings eventWithTag:WCEventsUserLeft] boolForKey:WCEventsPostInChat])
 		[self _printUserLeave:user];
 
 	[[self connection] triggerEvent:WCEventsUserLeft info1:user];
@@ -918,7 +990,7 @@ typedef enum _WCChatFormat				WCChatFormat;
 	if(!user || [user isIgnored])
 		return;
 
-	if([WCSettings boolForKey:WCTimestampChat])
+	if([WCSettings boolForKey:WCChatTimestampChat])
 		[self _printTimestamp];
 
 	name = [message name];
@@ -994,14 +1066,14 @@ typedef enum _WCChatFormat				WCChatFormat;
 	status = [message stringForName:@"wired.user.status"];
 
 	if(![nick isEqualToString:[user nick]]) {
-		if([[WCSettings eventForTag:WCEventsUserChangedNick] boolForKey:WCEventsPostInChat])
+		if([[WCSettings eventWithTag:WCEventsUserChangedNick] boolForKey:WCEventsPostInChat])
 			[self _printUserChange:user nick:nick];
 
 		[[self connection] triggerEvent:WCEventsUserChangedNick info1:user info2:nick];
 	}
 
 	if(![status isEqualToString:[user status]]) {
-		if([[WCSettings eventForTag:WCEventsUserChangedStatus] boolForKey:WCEventsPostInChat])
+		if([[WCSettings eventWithTag:WCEventsUserChangedStatus] boolForKey:WCEventsPostInChat])
 			[self _printUserChange:user status:status];
 		
 		[[self connection] triggerEvent:WCEventsUserChangedStatus info1:user info2:status];
@@ -1140,8 +1212,8 @@ typedef enum _WCChatFormat				WCChatFormat;
 	optionKey	= [[NSApp currentEvent] alternateKeyModifier];
 	controlKey	= [[NSApp currentEvent] controlKeyModifier];
 
-	historyScrollback = [WCSettings boolForKey:WCHistoryScrollback];
-	historyModifier = [WCSettings integerForKey:WCHistoryScrollbackModifier];
+	historyScrollback = [WCSettings boolForKey:WCChatHistoryScrollback];
+	historyModifier = [WCSettings integerForKey:WCChatHistoryScrollbackModifier];
 	
 	// --- user pressed the return/enter key
 	if(selector == @selector(insertNewline:) ||
@@ -1183,7 +1255,7 @@ typedef enum _WCChatFormat				WCChatFormat;
 	}
 	// --- user pressed tab key
 	else if(selector == @selector(insertTab:)) {
-		if([WCSettings boolForKey:WCTabCompleteNicks]) {
+		if([WCSettings boolForKey:WCChatTabCompleteNicks]) {
 			[_chatInputTextView setString:[self _stringByCompletingString:[_chatInputTextView string]]];
 			
 			return YES;
@@ -1198,15 +1270,15 @@ typedef enum _WCChatFormat				WCChatFormat;
 	// --- user pressed configured history up key
 	else if(historyScrollback &&
 			((selector == @selector(moveUp:) &&
-			  historyModifier == WCHistoryScrollbackModifierNone) ||
+			  historyModifier == WCChatHistoryScrollbackModifierNone) ||
 			 (selector == @selector(moveToBeginningOfDocument:) &&
-			  historyModifier == WCHistoryScrollbackModifierCommand &&
+			  historyModifier == WCChatHistoryScrollbackModifierCommand &&
 			  commandKey) ||
 			 (selector == @selector(moveToBeginningOfParagraph:) &&
-			  historyModifier == WCHistoryScrollbackModifierOption &&
+			  historyModifier == WCChatHistoryScrollbackModifierOption &&
 			  optionKey) ||
 			 (selector == @selector(scrollPageUp:) &&
-			  historyModifier == WCHistoryScrollbackModifierControl &&
+			  historyModifier == WCChatHistoryScrollbackModifierControl &&
 			  controlKey))) {
 		if(_currentCommand > 0) {
 			if(_currentCommand == [_commandHistory count]) {
@@ -1223,15 +1295,15 @@ typedef enum _WCChatFormat				WCChatFormat;
 	// --- user pressed the arrow down key
 	else if(historyScrollback &&
 			((selector == @selector(moveDown:) &&
-			  historyModifier == WCHistoryScrollbackModifierNone) ||
+			  historyModifier == WCChatHistoryScrollbackModifierNone) ||
 			 (selector == @selector(moveToEndOfDocument:) &&
-			  historyModifier == WCHistoryScrollbackModifierCommand &&
+			  historyModifier == WCChatHistoryScrollbackModifierCommand &&
 			  commandKey) ||
 			 (selector == @selector(moveToEndOfParagraph:) &&
-			  historyModifier == WCHistoryScrollbackModifierOption &&
+			  historyModifier == WCChatHistoryScrollbackModifierOption &&
 			  optionKey) ||
 			 (selector == @selector(scrollPageDown:) &&
-			  historyModifier == WCHistoryScrollbackModifierControl &&
+			  historyModifier == WCChatHistoryScrollbackModifierControl &&
 			  controlKey))) {
 		if(_currentCommand + 1 < [_commandHistory count]) {
 			[_chatInputTextView setString:[_commandHistory objectAtIndex:++_currentCommand]];
@@ -1269,11 +1341,13 @@ typedef enum _WCChatFormat				WCChatFormat;
 
 	if(textView == _setTopicTextView) {
 		value = [self topicTextView:textView doCommandBySelector:selector];
-		[_setTopicTextView setFont:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCChatFont]]];
+		
+		[_setTopicTextView setFont:WIFontFromString([[[self connection] theme] objectForKey:WCThemesChatFont])];
 	}
 	else if(textView == _chatInputTextView) {
 		value = [self chatTextView:textView doCommandBySelector:selector];
-		[_chatInputTextView setFont:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCChatFont]]];
+		
+		[_chatInputTextView setFont:WIFontFromString([[[self connection] theme] objectForKey:WCThemesChatFont])];
 	}
 	
 	return value;
@@ -1418,7 +1492,7 @@ typedef enum _WCChatFormat				WCChatFormat;
 
 	output = [NSSWF:NSLS(@"<<< %@ >>>", @"Chat event (message)"), message];
 
-	if([WCSettings boolForKey:WCTimestampEveryLine])
+	if([WCSettings boolForKey:WCChatTimestampEveryLine])
 		output = [NSSWF:@"%@ %@", [_timestampEveryLineDateFormatter stringFromDate:[NSDate date]], output];
 
 	[self _printString:output];
@@ -1642,7 +1716,8 @@ typedef enum _WCChatFormat				WCChatFormat;
 				[user nick],	WCIgnoresNick,
 				[user login],	WCIgnoresLogin,
 				NULL];
-	[WCSettings addIgnore:ignore];
+	
+	[WCSettings addObject:ignore toArrayForKey:WCIgnores];
 
 	[_userListTableView setNeedsDisplay:YES];
 }
@@ -1677,7 +1752,7 @@ typedef enum _WCChatFormat				WCChatFormat;
 				login = YES;
 
 			if(nick && login)
-				[WCSettings removeIgnoreAtIndex:i];
+				[WCSettings removeObjectAtIndex:i fromArrayForKey:WCIgnores];
 			
 			i++;
 		}

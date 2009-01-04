@@ -34,7 +34,7 @@
 - (id)init {
 	self = [super init];
 	
-	[self setFont:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCFilesFont]]];
+//	[self setFont:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCFilesFont]]];
 	
 	return self;
 }

@@ -119,6 +119,12 @@
 
 
 
+- (void)_serverConnectionThemeDidChange:(NSNotification *)notification {
+	[self themeDidChange:[[self connection] theme]];
+}
+
+
+
 - (void)_disconnectSheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
 	if(returnCode == NSAlertDefaultReturn)
 		[[self connection] disconnect];
@@ -183,6 +189,10 @@
 					selector:@selector(_serverConnectionShouldSaveWindowTemplate:)
 						name:WCServerConnectionShouldSaveWindowTemplate];
 
+	[_connection addObserver:self
+					selector:@selector(_serverConnectionThemeDidChange:)
+						name:WCServerConnectionThemeDidChangeNotification];
+
 	if([self respondsToSelector:@selector(serverConnectionWillReconnect:)]) {
 		[_connection addObserver:self
 						selector:@selector(serverConnectionWillReconnect:)
@@ -223,6 +233,7 @@
 	if(!_singleton)
 		[self windowTemplate];
 	
+	[self themeDidChange:[[self connection] theme]];
 	[self validate];
 }
 
@@ -241,6 +252,11 @@
 - (void)windowTemplateShouldSave:(NSMutableDictionary *)windowTemplate {
 	if(_singleton)
 		[windowTemplate setObject:[[self window] propertiesDictionary] forKey:NSStringFromClass([self class])];
+}
+
+
+
+- (void)themeDidChange:(NSDictionary *)theme {
 }
 
 
@@ -515,14 +531,15 @@
 			@"",						WCBookmarksStatus,
 			[NSString UUIDString],		WCBookmarksIdentifier,
 			NULL];
-		[WCSettings addBookmark:bookmark];
+		
+		[WCSettings addObject:bookmark toArrayForKey:WCBookmarks];
 		
 		[[WCKeychain keychain] setPassword:password forBookmark:bookmark];
 
 		[connection setBookmark:bookmark];
 		[connection postNotificationName:WCServerConnectionShouldSaveWindowTemplate];
 		
-		[[NSNotificationCenter defaultCenter] postNotificationName:WCBookmarksDidChange];
+		[[NSNotificationCenter defaultCenter] postNotificationName:WCBookmarksDidChangeNotification];
 	}
 }
 

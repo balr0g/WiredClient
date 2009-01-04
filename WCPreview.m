@@ -57,7 +57,7 @@
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(preferencesDidChange:)
-			   name:WCPreferencesDidChange];
+			   name:WCPreferencesDidChangeNotification];
 	
 	[self window];
 
@@ -79,9 +79,9 @@
 #pragma mark -
 
 - (void)_update {
-	[_textView setFont:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCPreviewFont]]];
+/*	[_textView setFont:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCPreviewFont]]];
 	[_textView setTextColor:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCPreviewTextColor]]];
-	[_textView setBackgroundColor:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCPreviewBackgroundColor]]];
+	[_textView setBackgroundColor:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCPreviewBackgroundColor]]];*/
 }
 
 

@@ -40,6 +40,8 @@
 @implementation WCConnect(Private)
 
 - (id)_initConnectWithURL:(WIURL *)url bookmark:(NSDictionary *)bookmark {
+	NSDictionary		*theme;
+	
 	self = [super initWithWindowNibName:@"Connect"];
 	
 	_url = [url retain];
@@ -47,6 +49,13 @@
 	_connection = [[WCServerConnection connection] retain];
 	[_connection setURL:url];
 	[_connection setBookmark:bookmark];
+	
+	theme = [WCSettings themeWithIdentifier:[bookmark objectForKey:WCBookmarksTheme]];
+	
+	if(!theme)
+		theme = [WCSettings themeWithIdentifier:[WCSettings objectForKey:WCTheme]];
+	
+	[_connection setTheme:theme];
 	
 	[_connection addObserver:self
 					selector:@selector(linkConnectionDidClose:)

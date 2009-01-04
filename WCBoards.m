@@ -180,7 +180,7 @@
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(preferencesDidChange:)
-			   name:WCPreferencesDidChange];
+			   name:WCPreferencesDidChangeNotification];
 	
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self

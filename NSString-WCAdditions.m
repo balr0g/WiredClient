@@ -57,8 +57,10 @@
 		nonHighlightSet		= [[NSCharacterSet alphanumericCharacterSet] retain];
 	}
 
-	eventsTextColor			= [NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCChatEventsColor]];
-	timestampEveryLineColor	= [NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCTimestampEveryLineColor]];
+	eventsTextColor			= [NSColor whiteColor];
+//	eventsTextColor			= [NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCChatEventsColor]];
+	timestampEveryLineColor	= [NSColor redColor];
+//	timestampEveryLineColor	= [NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCTimestampEveryLineColor]];
 
 	highlightPatterns		= [NSMutableArray array];
 	highlightStrings		= [NSMutableArray array];
@@ -149,7 +151,7 @@
 						color = [highlightColors objectAtIndex:i];
 						
 						if(![color isKindOfClass:[NSColor class]]) {
-							color = NSColorFromString([highlightStrings objectAtIndex:i]);
+							color = WIColorFromString([highlightStrings objectAtIndex:i]);
 							[highlightColors replaceObjectAtIndex:i withObject:color];
 						}
 						
@@ -181,7 +183,7 @@
 	NSUInteger					length, options;
 	BOOL						found;
 	
-	if(![WCSettings boolForKey:WCShowSmileys])
+	if(![WCSettings boolForKey:WCChatShowSmileys])
 		return;
 	
 	if(!whitespaceSet)

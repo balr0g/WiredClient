@@ -29,29 +29,187 @@
 #import "WCKeychain.h"
 #import "WCPreferences.h"
 
+#define _WCAutoHideOnSwitch						@"WCAutoHideOnSwitch"
+#define _WCPreventMultipleConnections			@"WCPreventMultipleConnections"
+
+#define _WCChatTextColor						@"WCChatTextColor"
+#define _WCChatBackgroundColor					@"WCChatBackgroundColor"
+#define _WCChatEventsColor						@"WCChatEventsColor"
+#define _WCChatURLsColor						@"WCChatURLsColor"
+#define _WCChatFont								@"WCChatFont"
+#define _WCChatUserListAlternateRows			@"WCChatUserListAlternateRows"
+#define _WCChatUserListIconSize					@"WCChatUserListIconSize"
+#define _WCChatUserListIconSizeLarge				1
+#define _WCChatUserListIconSizeSmall				0
+
+#define _WCTimestampEveryLineColor				@"WCTimestampEveryLineColor"
+
+#define _WCMessagesTextColor					@"WCMessagesTextColor"
+#define _WCMessagesBackgroundColor				@"WCMessagesBackgroundColor"
+#define _WCMessagesFont							@"WCMessagesFont"
+#define _WCMessagesListAlternateRows			@"WCMessagesListAlternateRows"
+
+#define _WCNewsTextColor						@"WCNewsTextColor"
+#define _WCNewsBackgroundColor					@"WCNewsBackgroundColor"
+#define _WCNewsFont								@"WCNewsFont"
+
+#define _WCFilesAlternateRows					@"WCFilesAlternateRows"
+
+#define _WCTransfersShowProgressBar				@"WCTransfersShowProgressBar"
+#define _WCTransfersAlternateRows				@"WCTransfersAlternateRows"
+
+#define _WCTrackersAlternateRows				@"WCTrackersAlternateRows"
+
+#define _WCBookmarksPassword						@"Password"
+
+
 @interface WCSettings(Private)
 
-+ (void)_convert;
++ (void)_upgrade;
 
 @end
 
 
 @implementation WCSettings(Private)
 
-+ (void)_convert {
++ (void)_upgrade {
 	NSEnumerator			*enumerator;
+	NSDictionary			*defaultTheme;
+	NSMutableDictionary		*theme;
 	NSArray					*bookmarks;
 	NSMutableArray			*newBookmarks;
 	NSDictionary			*bookmark;
 	NSMutableDictionary		*newBookmark;
 	NSString				*password;
 	
-	bookmarks = [self objectForKey:WCBookmarks];
-	newBookmarks = [NSMutableArray array];
-	enumerator = [bookmarks objectEnumerator];
+	/* Convert font/color settings */
+	defaultTheme = [[[self defaults] objectForKey:WCThemes] objectAtIndex:0];
+	
+	if([[self objectForKey:WCThemes] isEqualToArray:[NSArray arrayWithObject:defaultTheme]]) {
+		theme = [[defaultTheme mutableCopy] autorelease];
+			
+		if([self objectForKey:_WCChatTextColor]) {
+			[theme setObject:WIStringFromColor([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCChatTextColor]])
+					  forKey:WCThemesChatTextColor];
+		}
+		
+		if([self objectForKey:_WCChatBackgroundColor]) {
+			[theme setObject:WIStringFromColor([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCChatBackgroundColor]])
+					  forKey:WCThemesChatBackgroundColor];
+		}
+
+		if([self objectForKey:_WCChatEventsColor]) {
+			[theme setObject:WIStringFromColor([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCChatEventsColor]])
+					  forKey:WCThemesChatEventsColor];
+		}
+
+		if([self objectForKey:_WCChatURLsColor]) {
+			[theme setObject:WIStringFromColor([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCChatURLsColor]])
+					  forKey:WCThemesChatURLsColor];
+		}
+
+		if([self objectForKey:_WCChatFont]) {
+			[theme setObject:WIStringFromFont([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCChatFont]])
+					  forKey:WCThemesChatFont];
+		}
+
+		if([self objectForKey:_WCMessagesTextColor]) {
+			[theme setObject:WIStringFromColor([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCMessagesTextColor]])
+					  forKey:WCThemesMessagesTextColor];
+		}
+		
+		if([self objectForKey:_WCMessagesBackgroundColor]) {
+			[theme setObject:WIStringFromColor([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCMessagesBackgroundColor]])
+					  forKey:WCThemesMessagesBackgroundColor];
+		}
+		
+		if([self objectForKey:_WCMessagesFont]) {
+			[theme setObject:WIStringFromFont([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCMessagesFont]])
+					  forKey:WCThemesMessagesFont];
+		}
+		
+		if([self objectForKey:_WCMessagesListAlternateRows]) {
+			[theme setObject:[self objectForKey:_WCMessagesListAlternateRows]
+					  forKey:WCThemesMessageListAlternateRows];
+		}
+		
+		if([self objectForKey:_WCNewsTextColor]) {
+			[theme setObject:WIStringFromColor([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCNewsTextColor]])
+					  forKey:WCThemesNewsTextColor];
+		}
+		
+		if([self objectForKey:_WCNewsBackgroundColor]) {
+			[theme setObject:WIStringFromColor([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCNewsBackgroundColor]])
+					  forKey:WCThemesNewsBackgroundColor];
+		}
+		
+		if([self objectForKey:_WCNewsFont]) {
+			[theme setObject:WIStringFromFont([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCNewsFont]])
+					  forKey:WCThemesNewsFont];
+		}
+		
+		if([self objectForKey:_WCFilesAlternateRows]) {
+			[theme setObject:[self objectForKey:_WCFilesAlternateRows]
+					  forKey:WCThemesFileListAlternateRows];
+		}
+
+		if([self objectForKey:_WCTransfersShowProgressBar]) {
+			[theme setObject:[self objectForKey:_WCTransfersShowProgressBar]
+					  forKey:WCThemesTransferListShowProgressBar];
+		}
+
+		if([self objectForKey:_WCTransfersAlternateRows]) {
+			[theme setObject:[self objectForKey:_WCTransfersAlternateRows]
+					  forKey:WCThemesTransferListAlternateRows];
+		}
+
+		if([self objectForKey:_WCTrackersAlternateRows]) {
+			[theme setObject:[self objectForKey:_WCTrackersAlternateRows]
+					  forKey:WCThemesTrackerListAlternateRows];
+		}
+
+		if(![theme isEqualToDictionary:defaultTheme]) {
+			[theme setObject:@"Wired Client 1.x" forKey:WCThemesName];
+			[theme setObject:[NSString UUIDString] forKey:WCThemesIdentifier];
+			
+			[self addObject:theme toArrayForKey:WCThemes];
+		}
+
+/*		[self removeObjectForKey:_WCChatTextColor];
+		[self removeObjectForKey:_WCChatBackgroundColor];
+		[self removeObjectForKey:_WCChatEventsColor];
+		[self removeObjectForKey:_WCChatURLsColor];
+		[self removeObjectForKey:_WCChatFont];
+		[self removeObjectForKey:_WCMessagesTextColor];
+		[self removeObjectForKey:_WCMessagesBackgroundColor];
+		[self removeObjectForKey:_WCMessagesFont];
+		[self removeObjectForKey:_WCMessagesListAlternateRows];
+		[self removeObjectForKey:_WCNewsTextColor];
+		[self removeObjectForKey:_WCNewsBackgroundColor];
+		[self removeObjectForKey:_WCNewsFont];
+		[self removeObjectForKey:_WCFilesAlternateRows];
+		[self removeObjectForKey:_WCTransfersShowProgressBar];
+		[self removeObjectForKey:_WCTransfersAlternateRows];
+		[self removeObjectForKey:_WCTrackersAlternateRows];*/
+	}
+	
+	if([self objectForKey:_WCTimestampEveryLineColor]) {
+		[self setObject:WIStringFromColor([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCTimestampEveryLineColor]])
+				 forKey:WCChatTimestampEveryLineColor];
+		
+		[self removeObjectForKey:_WCTimestampEveryLineColor];
+	}
+	
+	if(![self themeWithIdentifier:[self objectForKey:WCTheme]])
+		[self setObject:[[[self objectForKey:WCThemes] objectAtIndex:0] objectForKey:WCThemesIdentifier] forKey:WCTheme];
+	
+	/* Convert bookmarks */
+	bookmarks		= [self objectForKey:WCBookmarks];
+	newBookmarks	= [NSMutableArray array];
+	enumerator		= [bookmarks objectEnumerator];
 	
 	while((bookmark = [enumerator nextObject])) {
-		newBookmark = [NSMutableDictionary dictionaryWithDictionary:bookmark];
+		newBookmark = [[bookmark mutableCopy] autorelease];
 		
 		if(![newBookmark objectForKey:WCBookmarksIdentifier])
 			[newBookmark setObject:[NSString UUIDString] forKey:WCBookmarksIdentifier];
@@ -62,24 +220,27 @@
 		if(![newBookmark objectForKey:WCBookmarksStatus])
 			[newBookmark setObject:@"" forKey:WCBookmarksStatus];
 		
-		password = [newBookmark objectForKey:WCBookmarksPassword];
+		password = [newBookmark objectForKey:_WCBookmarksPassword];
 
 		if(password) {
 			if([password length] > 0)
 				[[WCKeychain keychain] setPassword:password forBookmark:newBookmark];
 			
-			[newBookmark removeObjectForKey:WCBookmarksPassword];
+			[newBookmark removeObjectForKey:_WCBookmarksPassword];
 		}
 	
 		[newBookmarks addObject:newBookmark];
 	}
 	
-	bookmarks = [self objectForKey:WCTrackerBookmarks];
-	newBookmarks = [NSMutableArray array];
-	enumerator = [bookmarks objectEnumerator];
+	[self setObject:newBookmarks forKey:WCBookmarks];
+
+	/* Convert tracker bookmarks */
+	bookmarks		= [self objectForKey:WCTrackerBookmarks];
+	newBookmarks	= [NSMutableArray array];
+	enumerator		= [bookmarks objectEnumerator];
 	
 	while((bookmark = [enumerator nextObject])) {
-		newBookmark = [NSMutableDictionary dictionaryWithDictionary:bookmark];
+		newBookmark = [[bookmark mutableCopy] autorelease];
 		
 		if(![newBookmark objectForKey:WCTrackerBookmarksIdentifier])
 			[newBookmark setObject:[NSString UUIDString] forKey:WCTrackerBookmarksIdentifier];
@@ -118,35 +279,17 @@
 	
 	[super loadWithIdentifier:identifier];
 	
-	[self _convert];
+	[self _upgrade];
 }
 
 
 	
 + (NSDictionary *)defaults {
-	NSEnumerator	*enumerator;
-	NSString		*key, *downloadFolder = @"~";
+	static NSString		*themesIdentifier;
+	
+	if(!themesIdentifier)
+		themesIdentifier = [[NSString UUIDString] retain];
 
-	// --- try to be really clever and guess the download folder
-	enumerator = [[NSArray arrayWithObjects:
-		@"~/Downloads",
-		@"~/Download",
-		@"~/Incoming",
-		@"~/Desktop/Downloads",
-		@"~/Desktop/Download",
-		@"~/Desktop/Incoming",
-		@"~/Desktop",
-		@"~",
-		NULL] objectEnumerator];
-	
-	while((key = [enumerator nextObject])) {
-		if([[NSFileManager defaultManager] directoryExistsAtPath:[key stringByStandardizingPath]]) {
-			downloadFolder = key;
-			
-			break;
-		}
-	}
-	
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 		// --- general
 		NSUserName(),
@@ -196,19 +339,13 @@
 		@"jJPAJVPGDHjEd8gjac+Z4h17GaxQUl1d/dj/Bb9WixcvrrmS+MvOnFlzNrW1taX8"
 		@"N3m/8o/JunXrfrhn9577G5saJ3V2dPps21Zp6WnniscVH5k2fdp7U6ZM2ThjxozY"
 		@"Vy/xW31D+jfvNtPdS+ASBQAAAABJRU5ErkJggg==",
-			WCCustomIcon,
+			WCIcon,
 		
-		[NSNumber numberWithBool:YES],
+		[NSNumber numberWithBool:NO],
 			WCShowConnectAtStartup,
-		[NSNumber numberWithBool:NO],
-			WCShowDockAtStartup,
-		[NSNumber numberWithBool:NO],
-			WCShowTrackersAtStartup,
-		
-		[NSNumber numberWithBool:NO],
-			WCAutoHideOnSwitch,
 		[NSNumber numberWithBool:YES],
-			WCPreventMultipleConnections,
+			WCShowServersAtStartup,
+		
 		[NSNumber numberWithBool:YES],
 			WCConfirmDisconnect,
 		[NSNumber numberWithBool:NO],
@@ -216,72 +353,35 @@
 		
 		[NSNumber numberWithBool:YES],
 			WCCheckForUpdate,
-
-		// --- interface/chat
-		[NSArchiver archivedDataWithRootObject:[NSColor blackColor]],
-			WCChatTextColor,
-		[NSArchiver archivedDataWithRootObject:[NSColor whiteColor]],
-			WCChatBackgroundColor,
-		[NSArchiver archivedDataWithRootObject:[NSColor redColor]],
-			WCChatEventsColor,
-		[NSArchiver archivedDataWithRootObject:[NSColor blueColor]],
-			WCChatURLsColor,
-		[NSArchiver archivedDataWithRootObject:[NSFont userFixedPitchFontOfSize:9.0]],
-			WCChatFont,
-		[NSArchiver archivedDataWithRootObject:[NSFont systemFontOfSize:12.0]],
-			WCChatUserListFont,
-		[NSNumber numberWithInt:WCChatUserListIconSizeLarge],
-			WCChatUserListIconSize,
-		[NSNumber numberWithBool:NO],
-			WCChatUserListAlternateRows,
-		
-		// --- interface/messages
-		[NSArchiver archivedDataWithRootObject:[NSColor blackColor]],
-			WCMessagesTextColor,
-		[NSArchiver archivedDataWithRootObject:[NSColor whiteColor]],
-			WCMessagesBackgroundColor,
-		[NSArchiver archivedDataWithRootObject:[NSFont userFixedPitchFontOfSize:9.0]],
-			WCMessagesFont,
-		[NSArchiver archivedDataWithRootObject:[NSFont systemFontOfSize:12.0]],
-			WCMessagesListFont,
-		[NSNumber numberWithBool:NO],
-			WCMessagesListAlternateRows,
-		
-		// --- interface/news
-		[NSArchiver archivedDataWithRootObject:[NSColor blackColor]],
-			WCNewsTextColor,
-		[NSArchiver archivedDataWithRootObject:[NSColor whiteColor]],
-			WCNewsBackgroundColor,
-		[NSArchiver archivedDataWithRootObject:[NSColor grayColor]],
-			WCNewsTitlesColor,
-		[NSArchiver archivedDataWithRootObject:[NSFont fontWithName:@"Helvetica" size:12.0]],
-			WCNewsFont,
-		[NSArchiver archivedDataWithRootObject:[NSFont fontWithName:@"Helvetica-Bold" size:12.0]],
-			WCNewsTitlesFont,
-		
-		// --- interface/files
-		[NSArchiver archivedDataWithRootObject:[NSFont systemFontOfSize:12.0]],
-			WCFilesFont,
-		[NSNumber numberWithBool:NO],
-			WCFilesAlternateRows,
-		
-		// --- interface/transfers
-		[NSNumber numberWithBool:YES],
-			WCTransfersShowProgressBar,
-		[NSNumber numberWithBool:NO],
-			WCTransfersAlternateRows,
-
-		// --- interface/preview
-		[NSArchiver archivedDataWithRootObject:[NSColor blackColor]],
-			WCPreviewTextColor,
-		[NSArchiver archivedDataWithRootObject:[NSColor whiteColor]],
-			WCPreviewBackgroundColor,
-		[NSArchiver archivedDataWithRootObject:[NSFont fontWithName:@"Helvetica" size:12.0]],
-			WCPreviewFont,
-		
-		// --- interface/trackers
-		[NSNumber numberWithBool:NO],
-			WCTrackersAlternateRows,
+			
+		// --- themes
+		themesIdentifier,
+			WCTheme,
+		[NSArray arrayWithObjects:
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				NSLS(@"Basic", @"Theme"),										WCThemesName,
+				themesIdentifier,												WCThemesIdentifier,
+				WIStringFromFont([NSFont userFixedPitchFontOfSize:9.0]),		WCThemesChatFont,
+				WIStringFromColor([NSColor blackColor]),						WCThemesChatTextColor,
+				WIStringFromColor([NSColor whiteColor]),						WCThemesChatBackgroundColor,
+				WIStringFromColor([NSColor blueColor]),							WCThemesChatURLsColor,
+				WIStringFromColor([NSColor redColor]),							WCThemesChatEventsColor,
+				WIStringFromFont([NSFont userFixedPitchFontOfSize:9.0]),		WCThemesMessagesFont,
+				WIStringFromColor([NSColor blackColor]),						WCThemesMessagesTextColor,
+				WIStringFromColor([NSColor whiteColor]),						WCThemesMessagesBackgroundColor,
+				WIStringFromFont([NSFont fontWithName:@"Helvetica" size:12.0]),	WCThemesNewsFont,
+				WIStringFromColor([NSColor blackColor]),						WCThemesNewsTextColor,
+				WIStringFromColor([NSColor whiteColor]),						WCThemesNewsBackgroundColor,
+				[NSNumber numberWithInteger:WCThemesUserListIconSizeLarge],		WCThemesUserListIconSize,
+				[NSNumber numberWithBool:NO],									WCThemesUserListAlternateRows,
+				[NSNumber numberWithBool:NO],									WCThemesMessageListAlternateRows,
+				[NSNumber numberWithBool:NO],									WCThemesFileListAlternateRows,
+				[NSNumber numberWithBool:YES],									WCThemesTransferListShowProgressBar,
+				[NSNumber numberWithBool:NO],									WCThemesTransferListAlternateRows,
+				[NSNumber numberWithBool:NO],									WCThemesTrackerListAlternateRows,
+				NULL],
+			NULL],
+			WCThemes,
 
 		// --- bookmarks
 		[NSArray array],
@@ -289,23 +389,23 @@
 		
 		// --- chat/settings
 		[NSNumber numberWithBool:NO],
-			WCHistoryScrollback,
-		[NSNumber numberWithInt:WCHistoryScrollbackModifierNone],
-			WCHistoryScrollbackModifier,
+			WCChatHistoryScrollback,
+		[NSNumber numberWithInt:WCChatHistoryScrollbackModifierNone],
+			WCChatHistoryScrollbackModifier,
 		[NSNumber numberWithBool:YES],
-			WCTabCompleteNicks,
+			WCChatTabCompleteNicks,
 		@": ",
-			WCTabCompleteNicksString,
+			WCChatTabCompleteNicksString,
 		[NSNumber numberWithBool:NO],
-			WCTimestampChat,
+			WCChatTimestampChat,
 		[NSNumber numberWithInt:300],
-			WCTimestampChatInterval,
+			WCChatTimestampChatInterval,
 		[NSNumber numberWithBool:NO],
-			WCTimestampEveryLine,
-		[NSArchiver archivedDataWithRootObject:[NSColor redColor]],
-			WCTimestampEveryLineColor,
+			WCChatTimestampEveryLine,
+		WIStringFromColor([NSColor redColor]),
+			WCChatTimestampEveryLineColor,
 		[NSNumber numberWithBool:NO],
-			WCShowSmileys,
+			WCChatShowSmileys,
 
 		// --- chat/highlights
 		[NSArray array],
@@ -366,11 +466,13 @@
 			[NSDictionary dictionaryWithObjectsAndKeys:
 				[NSNumber numberWithInt:WCEventsChatInvitationReceived],	WCEventsEvent,
 				NULL],
-		 NULL],
+			NULL],
 			WCEvents,
+		[NSNumber numberWithFloat:1.0],
+			WCEventsVolume,
 
 		// --- files
-		[downloadFolder stringByStandardizingPath],
+		[@"~/Downloads" stringByExpandingTildeInPath],
 			WCDownloadFolder,
 		[NSNumber numberWithBool:NO],
 			WCOpenFoldersInNewWindows,
@@ -388,8 +490,10 @@
 		// --- trackers
 		[NSArray arrayWithObject:
 			[NSDictionary dictionaryWithObjectsAndKeys:
-				@"Zanka Tracker",				@"Name",
-				@"wired.zankasoftware.com",		@"Address",
+				@"Zanka Tracker",				WCTrackerBookmarksName,
+				@"wired.zankasoftware.com",		WCTrackerBookmarksAddress,
+				@"",							WCTrackerBookmarksLogin,
+				[NSString UUIDString],			WCTrackerBookmarksIdentifier,
 				NULL]],
 			WCTrackerBookmarks,
 		
@@ -418,7 +522,25 @@
 
 #pragma mark -
 
-+ (NSDictionary *)eventForTag:(NSUInteger)tag {
++ (NSDictionary *)themeWithIdentifier:(NSString *)identifier {
+	NSEnumerator	*enumerator;
+	NSDictionary	*theme;
+	
+	enumerator = [[self objectForKey:WCThemes] objectEnumerator];
+	
+	while((theme = [enumerator nextObject])) {
+		if([[theme objectForKey:WCThemesIdentifier] isEqualToString:identifier])
+			return theme;
+	}
+	
+	return NULL;
+}
+
+
+
+#pragma mark -
+
++ (NSDictionary *)eventWithTag:(NSUInteger)tag {
 	NSEnumerator	*enumerator;
 	NSDictionary	*event;
 	
@@ -440,7 +562,7 @@
 	NSUInteger			i;
 	
 	events = [[self objectForKey:WCEvents] mutableCopy];
-	previousEvent = [self eventForTag:tag];
+	previousEvent = [self eventWithTag:tag];
 	
 	if(!previousEvent) {
 		[events addObject:event];
@@ -451,170 +573,6 @@
 	
 	[self setObject:events forKey:WCEvents];
 	[events release];
-}
-
-
-
-#pragma mark -
-
-+ (NSDictionary *)bookmarkAtIndex:(NSUInteger)index {
-	return [[self objectForKey:WCBookmarks] objectAtIndex:index];
-}
-
-
-
-+ (void)addBookmark:(NSDictionary *)bookmark {
-	NSMutableArray		*bookmarks;
-	
-	bookmarks = [[self objectForKey:WCBookmarks] mutableCopy];
-	[bookmarks addObject:bookmark];
-	[self setObject:bookmarks forKey:WCBookmarks];
-	[bookmarks release];
-}
-
-
-
-+ (void)setBookmark:(NSDictionary *)bookmark atIndex:(NSUInteger)index {
-	NSMutableArray		*bookmarks;
-	
-	bookmarks = [[self objectForKey:WCBookmarks] mutableCopy];
-	[bookmarks replaceObjectAtIndex:index withObject:bookmark];
-	[self setObject:bookmarks forKey:WCBookmarks];
-	[bookmarks release];
-}
-
-
-
-+ (void)removeBookmarkAtIndex:(NSUInteger)index {
-	NSMutableArray		*bookmarks;
-	
-	bookmarks = [[self objectForKey:WCBookmarks] mutableCopy];
-	[bookmarks removeObjectAtIndex:index];
-	[self setObject:bookmarks forKey:WCBookmarks];
-	[bookmarks release];
-}
-
-
-
-#pragma mark -
-
-+ (NSDictionary *)trackerBookmarkAtIndex:(NSUInteger)index {
-	return [[self objectForKey:WCTrackerBookmarks] objectAtIndex:index];
-}
-
-
-
-+ (void)addTrackerBookmark:(NSDictionary *)bookmark {
-	NSMutableArray		*bookmarks;
-	
-	bookmarks = [[self objectForKey:WCTrackerBookmarks] mutableCopy];
-	[bookmarks addObject:bookmark];
-	[self setObject:bookmarks forKey:WCTrackerBookmarks];
-	[bookmarks release];
-}
-
-
-
-+ (void)setTrackerBookmark:(NSDictionary *)bookmark atIndex:(NSUInteger)index {
-	NSMutableArray		*bookmarks;
-	
-	bookmarks = [[self objectForKey:WCTrackerBookmarks] mutableCopy];
-	[bookmarks replaceObjectAtIndex:index withObject:bookmark];
-	[self setObject:bookmarks forKey:WCTrackerBookmarks];
-	[bookmarks release];
-}
-
-
-
-+ (void)removeTrackerBookmarkAtIndex:(NSUInteger)index {
-	NSMutableArray		*bookmarks;
-	
-	bookmarks = [[self objectForKey:WCTrackerBookmarks] mutableCopy];
-	[bookmarks removeObjectAtIndex:index];
-	[self setObject:bookmarks forKey:WCTrackerBookmarks];
-	[bookmarks release];
-}
-
-
-
-#pragma mark -
-
-+ (NSDictionary *)highlightAtIndex:(NSUInteger)index {
-	return [[self objectForKey:WCHighlights] objectAtIndex:index];
-}
-
-
-
-+ (void)addHighlight:(NSDictionary *)highlight {
-	NSMutableArray		*highlights;
-	
-	highlights = [[self objectForKey:WCHighlights] mutableCopy];
-	[highlights addObject:highlight];
-	[self setObject:highlights forKey:WCHighlights];
-	[highlights release];
-}
-
-
-
-+ (void)setHighlight:(NSDictionary *)highlight atIndex:(NSUInteger)index {
-	NSMutableArray		*highlights;
-	
-	highlights = [[self objectForKey:WCHighlights] mutableCopy];
-	[highlights replaceObjectAtIndex:index withObject:highlight];
-	[self setObject:highlights forKey:WCHighlights];
-	[highlights release];
-}
-
-
-
-+ (void)removeHighlightAtIndex:(NSUInteger)index {
-	NSMutableArray		*highlights;
-	
-	highlights = [[self objectForKey:WCHighlights] mutableCopy];
-	[highlights removeObjectAtIndex:index];
-	[self setObject:highlights forKey:WCHighlights];
-	[highlights release];
-}
-
-
-
-#pragma mark -
-
-+ (NSDictionary *)ignoreAtIndex:(NSUInteger)index {
-	return [[self objectForKey:WCIgnores] objectAtIndex:index];
-}
-
-
-
-+ (void)addIgnore:(NSDictionary *)ignore {
-	NSMutableArray		*ignores;
-	
-	ignores = [[self objectForKey:WCIgnores] mutableCopy];
-	[ignores addObject:ignore];
-	[self setObject:ignores forKey:WCIgnores];
-	[ignores release];
-}
-
-
-
-+ (void)setIgnore:(NSDictionary *)ignore atIndex:(NSUInteger)index {
-	NSMutableArray		*ignores;
-	
-	ignores = [[self objectForKey:WCIgnores] mutableCopy];
-	[ignores replaceObjectAtIndex:index withObject:ignore];
-	[self setObject:ignores forKey:WCIgnores];
-	[ignores release];
-}
-
-
-
-+ (void)removeIgnoreAtIndex:(NSUInteger)index {
-	NSMutableArray		*ignores;
-	
-	ignores = [[self objectForKey:WCIgnores] mutableCopy];
-	[ignores removeObjectAtIndex:index];
-	[self setObject:ignores forKey:WCIgnores];
-	[ignores release];
 }
 
 

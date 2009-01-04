@@ -119,7 +119,7 @@
 	if(!connection)
 		return;
 
-	if([WCSettings boolForKey:WCAutoHideOnSwitch]) {
+	if(NO) {
 		enumerator = [_shownConnections objectEnumerator];
 		
 		while((eachConnection = [enumerator nextObject])) {
@@ -169,7 +169,7 @@
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(preferencesDidChange:)
-			   name:WCPreferencesDidChange];
+			   name:WCPreferencesDidChangeNotification];
 	
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
@@ -290,7 +290,7 @@
 	if(![_shownConnections containsObject:connection])
 		[_shownConnections addObject:connection];
 
-	if([WCSettings boolForKey:WCAutoHideOnSwitch]) {
+	if(NO) {
 		enumerator = [_shownConnections objectEnumerator];
 		
 		while((eachConnection = [enumerator nextObject])) {
