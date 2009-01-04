@@ -40,8 +40,6 @@
 
 - (id)_initPreviewWithConnection:(WCServerConnection *)connection path:(NSString *)path error:(WCError **)error;
 
-- (void)_update;
-
 - (BOOL)_openFileAtPath:(NSString *)path error:(WCError **)error;
 
 @end
@@ -54,11 +52,6 @@
 	
 	_path = [path retain];
 
-	[[NSNotificationCenter defaultCenter]
-		addObserver:self
-		   selector:@selector(preferencesDidChange:)
-			   name:WCPreferencesDidChangeNotification];
-	
 	[self window];
 
 	if(![self _openFileAtPath:_path error:error]) {
@@ -72,16 +65,6 @@
 	[self showWindow:self];
 	
 	return self;
-}
-
-
-
-#pragma mark -
-
-- (void)_update {
-/*	[_textView setFont:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCPreviewFont]]];
-	[_textView setTextColor:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCPreviewTextColor]]];
-	[_textView setBackgroundColor:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCPreviewBackgroundColor]]];*/
 }
 
 
@@ -359,22 +342,6 @@
 	[[NSFileManager defaultManager] removeFileAtPath:_path handler:NULL];
 
 	[super dealloc];
-}
-
-
-
-#pragma mark -
-
-- (void)windowDidLoad {
-	[self _update];
-	
-	[super windowDidLoad];
-}
-
-
-
-- (void)preferencesDidChange:(NSNotification *)notification {
-	[self _update];
 }
 
 @end

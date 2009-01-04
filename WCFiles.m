@@ -49,7 +49,6 @@
 - (WCFile *)_selectedFile;
 - (NSArray *)_selectedFiles;
 
-- (void)_update;
 - (void)_updateStatus;
 - (void)_updateMenu;
 - (void)_updateFiles;
@@ -89,15 +88,9 @@
 	
 	[self _setSelectPath:selectPath];
 
-	[[NSNotificationCenter defaultCenter]
-		addObserver:self
-		   selector:@selector(preferencesDidChange:)
-			   name:WCPreferencesDidChangeNotification];
-
 	[[self connection] addObserver:self selector:@selector(wiredFileDirectoryChanged:) messageName:@"wired.file.directory_changed"];
 
 	[self window];
-	[self _update];
 	[self showWindow:self];
 
 	return self;
@@ -182,14 +175,6 @@
 
 
 #pragma mark -
-
-- (void)_update {
-	[_filesBrowser setNeedsDisplay:YES];
-	
-	[_filesController update];
-}
-
-
 
 - (void)_updateStatus {
 	if([self _validateUpload])
@@ -706,6 +691,12 @@
 
 
 
+- (void)themeDidChange:(NSDictionary *)theme {
+	[_filesController themeDidChange:theme];
+}
+
+
+
 - (void)linkConnectionLoggedIn:(NSNotification *)notification {
 	[self validate];
 	
@@ -781,12 +772,6 @@
 - (void)wiredFileDirectoryChanged:(WIP7Message *)message {
 	if([[message stringForName:@"wired.file.path"] isEqualToString:[[self _currentPath] path]])
 		[self _reloadFiles];
-}
-
-
-
-- (void)preferencesDidChange:(NSNotification *)notification {
-	[self _update];
 }
 
 

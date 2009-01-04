@@ -36,7 +36,7 @@
 
 @interface WCBoards(Private)
 
-- (void)_update;
+- (void)_themeDidChange;
 - (void)_validate;
 - (void)_getBoardsForConnection:(WCServerConnection *)connection;
 
@@ -50,7 +50,7 @@
 
 @implementation WCBoards(Private)
 
-- (void)_update {
+- (void)_themeDidChange {
 }
 
 
@@ -179,8 +179,8 @@
 	
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
-		   selector:@selector(preferencesDidChange:)
-			   name:WCPreferencesDidChangeNotification];
+		   selector:@selector(selectedThemeDidChange:)
+			   name:WCSelectedThemeDidChangeNotification];
 	
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
@@ -252,7 +252,7 @@
 	[_dateFormatter setDateStyle:NSDateFormatterMediumStyle];
 	[_dateFormatter setNaturalLanguageStyle:WIDateFormatterCapitalizedNaturalLanguageStyle];
 	
-	[self _update];
+	[self _themeDidChange];
 	
 	[super windowDidLoad];
 }
@@ -436,8 +436,8 @@
 
 
 
-- (void)preferencesDidChange:(NSNotification *)notification {
-	[self _update];
+- (void)selectedThemeDidChange:(NSNotification *)notification {
+	[self _themeDidChange];
 }
 
 

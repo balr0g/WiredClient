@@ -32,7 +32,6 @@
 #import "WCChat.h"
 #import "WCConnect.h"
 #import "WCConsole.h"
-#import "WCDock.h"
 #import "WCKeychain.h"
 #import "WCMessage.h"
 #import "WCMessages.h"
@@ -272,17 +271,20 @@ static NSInteger _WCCompareSmileyLength(id object1, id object2, void *context) {
 
 
 - (BOOL)_openConnectionWithURL:(WIURL *)url {
-	WCServerConnection		*connection;
+	NSEnumerator            *enumerator;
+	WCServerConnection      *connection;
 	
-	connection = [[WCDock dock] connectionWithURL:url];
+	enumerator = [_connections objectEnumerator];
 	
-	if(connection) {
-		[[WCDock dock] openConnection:connection];
-		
-		if(![connection isConnected])
-			[connection reconnect];
-		
-		return YES;
+	while((connection = [enumerator nextObject])) {
+		if([url isEqual:[connection URL]]) {
+			[[connection chat] showWindow:self];
+
+			if(![connection isConnected])
+				[connection reconnect];
+			
+			return YES;
+		}
 	}
 	
 	return NO;
@@ -311,6 +313,8 @@ static WCApplicationController		*sharedController;
 #ifndef RELEASE
 	[[WIExceptionHandler sharedExceptionHandler] enable];
 #endif
+	
+	_connections = [[NSMutableArray alloc] init];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
@@ -321,6 +325,16 @@ static WCApplicationController		*sharedController;
 		addObserver:self
 		   selector:@selector(bookmarksDidChange:)
 			   name:WCBookmarksDidChangeNotification];
+	
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
+		   selector:@selector(linkConnectionDidTerminate:)
+			   name:WCLinkConnectionDidTerminateNotification];
+	
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
+		   selector:@selector(linkConnectionLoggedIn:)
+			   name:WCLinkConnectionLoggedInNotification];
 	
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
@@ -421,7 +435,6 @@ static WCApplicationController		*sharedController;
 		[NSApp terminate:self];
 	}
 
-	[WCDock dock];
 	[WCStats stats];
 	[WCTransfers transfers];
 	[WCMessages messages];
@@ -454,8 +467,20 @@ static WCApplicationController		*sharedController;
 
 #pragma mark -
 
-- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender {
-	if([WCSettings boolForKey:WCConfirmDisconnect] && [[WCDock dock] connectedConnections] > 0)
+- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)application {
+	NSEnumerator		*enumerator;
+	WCServerConnection	*connection;
+	NSUInteger			count;
+	
+	enumerator = [_connections objectEnumerator];
+	count = 0;
+	
+	while((connection = [enumerator nextObject])) {
+		if([connection isConnected])
+			count++;
+	}
+	
+	if([WCSettings boolForKey:WCConfirmDisconnect] && count > 0)
 		return [(WIApplication *) NSApp runTerminationDelayPanelWithTimeInterval:30.0];
 
 	return NSTerminateNow;
@@ -479,6 +504,32 @@ static WCApplicationController		*sharedController;
 
 - (void)bookmarksDidChange:(NSNotification *)notification {
 	[self _updateBookmarksMenu];
+}
+
+
+
+- (void)linkConnectionDidTerminate:(NSNotification *)notification {
+	WCServerConnection	*connection;
+
+	connection = [notification object];
+	
+	if(![connection isKindOfClass:[WCServerConnection class]])
+		return;
+
+	[_connections removeObject:connection];
+}
+
+
+
+- (void)linkConnectionLoggedIn:(NSNotification *)notification {
+	WCServerConnection	*connection;
+	
+	connection = [notification object];
+	
+	if(![connection isKindOfClass:[WCServerConnection class]])
+		return;
+
+	[_connections addObject:connection];
 }
 
 
@@ -539,7 +590,7 @@ static WCApplicationController		*sharedController;
 	if([event boolForKey:WCEventsBounceInDock])
 		[NSApp requestUserAttention:NSInformationalRequest];
 	
-	clickContext = [NSNumber numberWithUnsignedInteger:[[WCDock dock] indexOfConnection:connection]];
+	clickContext = [NSNumber numberWithUnsignedInteger:[_connections indexOfObject:connection]];
 	
 	switch([event intForKey:WCEventsEvent]) {
 		case WCEventsServerConnected:
@@ -721,7 +772,7 @@ static WCApplicationController		*sharedController;
 			WCGrowlTransferStarted,
 			WCGrowlTransferFinished,
 			NULL],
-		GROWL_NOTIFICATIONS_ALL,
+			GROWL_NOTIFICATIONS_ALL,
 		[NSArray arrayWithObjects:
 			WCGrowlServerDisconnected,
 			WCGrowlHighlightedChatReceived,
@@ -730,7 +781,7 @@ static WCApplicationController		*sharedController;
 			WCGrowlBroadcastReceived,
 			WCGrowlTransferFinished,
 			NULL],
-		GROWL_NOTIFICATIONS_DEFAULT,
+			GROWL_NOTIFICATIONS_DEFAULT,
 		NULL];
 }
 
@@ -741,9 +792,9 @@ static WCApplicationController		*sharedController;
 	
 	[NSApp activateIgnoringOtherApps:YES];
 	
-	connection = [[WCDock dock] connectionAtIndex:[clickContext unsignedIntegerValue]];
+	connection = [_connections objectAtIndex:[clickContext unsignedIntegerValue]];
 
-	[[WCDock dock] openConnection:connection];
+	[[connection chat] showWindow:self];
 }
 
 
@@ -763,14 +814,17 @@ static WCApplicationController		*sharedController;
 
 	selector = [item action];
 	
-	if(selector == @selector(hideConnection:) ||
-	   selector == @selector(nextConnection:) ||
-	   selector == @selector(previousConnection:) ||
-	   selector == @selector(makeLayoutDefault:) ||
-	   selector == @selector(restoreLayoutToDefault:) ||
-	   selector == @selector(restoreAllLayoutsToDefault:))
-		return [[WCDock dock] validateMenuItem:item];
-	
+	if(selector == @selector(nextConnection:) ||
+			selector == @selector(previousConnection:))
+		return ([_connections count] > 0);
+	else if(selector == @selector(makeLayoutDefault:))
+		return [[[NSApp keyWindow] windowController] isKindOfClass:[WCConnectionController class]];
+	else if(selector == @selector(restoreLayoutToDefault:))
+		return ([[[NSApp keyWindow] windowController] isKindOfClass:[WCConnectionController class]] &&
+				[WCSettings windowTemplateForKey:WCWindowTemplatesDefault] != NULL);
+	else if(selector == @selector(restoreAllLayoutsToDefault:))
+		return ([_connections count] > 0 && [WCSettings windowTemplateForKey:WCWindowTemplatesDefault] != NULL);
+
 	return YES;
 }
 
@@ -844,15 +898,12 @@ static WCApplicationController		*sharedController;
 	NSData						*rtf;
 	NSString					*string;
 	
-	if((GetCurrentKeyModifiers() & optionKey) != 0) {
-		// --- go custom about window
+	if([[NSApp currentEvent] alternateKeyModifier]) {
 		[[WCAboutWindow aboutWindow] makeKeyAndOrderFront:self];
 	} else {
-		// --- read in Credits.rtf
 		rtf = [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Credits" ofType:@"rtf"]];
 		credits = [[[NSMutableAttributedString alloc] initWithRTF:rtf documentAttributes:NULL] autorelease];
 
-		// --- create "Stats" header
 		style = [[[NSMutableParagraphStyle alloc] init] autorelease];
 		[style setAlignment:NSCenterTextAlignment];
 		attributes = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -863,7 +914,6 @@ static WCApplicationController		*sharedController;
 		string = [NSSWF:@"%@\n", NSLS(@"Stats", @"About box title")];
 		header = [NSAttributedString attributedStringWithString:string attributes:attributes];
 
-		// --- create stats string
 		attributes = [NSDictionary dictionaryWithObjectsAndKeys:
 			[NSFont systemFontOfSize:11.0],			NSFontAttributeName,
 			style,									NSParagraphStyleAttributeName,
@@ -913,12 +963,6 @@ static WCApplicationController		*sharedController;
 
 #pragma mark -
 
-- (IBAction)dock:(id)sender {
-	[[WCDock dock] showWindow:self];
-}
-
-
-
 - (IBAction)servers:(id)sender {
 	[[WCServers servers] showWindow:self];
 }
@@ -943,38 +987,121 @@ static WCApplicationController		*sharedController;
 
 
 
-- (IBAction)hideConnection:(id)sender {
-	[[WCDock dock] hideConnection:sender];
-}
-
-
-
 - (IBAction)nextConnection:(id)sender {
-	[[WCDock dock] nextConnection:sender];
+/*	WCServerConnection	*connection, *nextConnection;
+	NSUInteger			i;
+	
+	if([[[NSApp keyWindow] windowController] isKindOfClass:[WCConnectionController class]]) {
+		connection = [(WCConnectionController *) [[NSApp keyWindow] windowController] connection];
+
+		i = [_shownConnections indexOfObject:connection] + 1;
+		
+		if(i >= [_shownConnections count])
+			i = 0;
+			
+		nextConnection = [self _connectionAtIndex:i];
+	} else {
+		connection = NULL;
+
+		nextConnection = [self _connectionAtIndex:0];
+	}
+	
+	if(nextConnection && connection != nextConnection)
+		[self _openConnection:nextConnection];*/
 }
 
 
 
 - (IBAction)previousConnection:(id)sender {
-	[[WCDock dock] previousConnection:sender];
+/*	WCServerConnection	*connection, *previousConnection;
+	NSInteger			i;
+	
+	if([[[NSApp keyWindow] windowController] isKindOfClass:[WCConnectionController class]]) {
+		connection = [(WCConnectionController *) [[NSApp keyWindow] windowController] connection];
+
+		i = [_shownConnections indexOfObject:connection] - 1;
+		
+		if(i < 0)
+			i = [_shownConnections count] - 1;
+
+		previousConnection = [self _connectionAtIndex:i];
+	} else {
+		connection = NULL;
+
+		previousConnection = [_shownConnections lastObject];
+	}
+
+	if(previousConnection && connection != previousConnection)
+		[self _openConnection:previousConnection];*/
 }
 
 
 
 - (IBAction)makeLayoutDefault:(id)sender {
-	[[WCDock dock] makeLayoutDefault:sender];
+	NSAlert				*alert;
+	WCServerConnection	*connection;
+	
+	alert = [NSAlert alertWithMessageText:NSLS(@"Make Current Layout Default?", @"Make layout default dialog title")
+							defaultButton:NSLS(@"OK", @"Make layout default dialog button title")
+						  alternateButton:NULL
+							  otherButton:NSLS(@"Cancel", @"Make layout default dialog button title")
+				informativeTextWithFormat:NSLS(@"This will set the windows for the currently shown connection as the default layout.", @"Make layout default dialog button description")];
+	
+	if([alert runModal] == NSAlertDefaultReturn) {
+		connection = [(WCConnectionController *) [[NSApp keyWindow] windowController] connection];
+		
+		[connection postNotificationName:WCServerConnectionShouldSaveWindowTemplateNotification];
+		
+		[WCSettings setWindowTemplate:[WCSettings windowTemplateForKey:[connection identifier]]
+							   forKey:WCWindowTemplatesDefault];
+	}
 }
 
 
 
 - (IBAction)restoreLayoutToDefault:(id)sender {
-	[[WCDock dock] restoreLayoutToDefault:sender];
+	NSAlert				*alert;
+	WCServerConnection	*connection;
+	
+	alert = [NSAlert alertWithMessageText:NSLS(@"Restore Layout To Default?", @"Restore layout to default dialog title")
+							defaultButton:NSLS(@"OK", @"Restore layout to default dialog button title")
+						  alternateButton:NULL
+							  otherButton:NSLS(@"Cancel", @"Restore layout to default dialog button title")
+				informativeTextWithFormat:NSLS(@"This will restore all windows for the currently shown connection to the previously saved default layout.", @"Restore layout to default dialog button description")];
+
+	if([alert runModal] == NSAlertDefaultReturn) {
+		connection = [(WCConnectionController *) [[NSApp keyWindow] windowController] connection];
+		
+		[WCSettings setWindowTemplate:[WCSettings windowTemplateForKey:WCWindowTemplatesDefault]
+							   forKey:[connection identifier]];
+		
+		[connection postNotificationName:WCServerConnectionShouldLoadWindowTemplateNotification];
+	}
 }
 
 
 
 - (IBAction)restoreAllLayoutsToDefault:(id)sender {
-	[[WCDock dock] restoreAllLayoutsToDefault:sender];
+	NSEnumerator		*enumerator;
+	NSAlert				*alert;
+	WCServerConnection	*connection;
+	
+	alert = [NSAlert alertWithMessageText:NSLS(@"Restore All Layouts To Default?", @"Restore all layouts to default dialog title")
+							defaultButton:NSLS(@"OK", @"Restore all layouts to default dialog button title")
+						  alternateButton:NULL
+							  otherButton:NSLS(@"Cancel", @"Restore all layouts to default dialog button title")
+				informativeTextWithFormat:NSLS(@"This will restore all windows for all connections to the previously saved default layout.", @"Restore all layouts to default dialog button description")];
+
+	if([alert runModal] == NSAlertDefaultReturn) {
+		enumerator = [_connections objectEnumerator];
+		
+		while((connection = [enumerator nextObject])) {
+			[WCSettings setWindowTemplate:[WCSettings windowTemplateForKey:WCWindowTemplatesDefault]
+								   forKey:[connection identifier]];
+			
+			[connection postNotificationName:WCServerConnectionShouldLoadWindowTemplateNotification];
+		}
+	}
 }
 
 

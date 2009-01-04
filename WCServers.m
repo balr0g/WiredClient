@@ -41,7 +41,8 @@
 - (NSArray *)_filteredItems:(NSArray *)items;
 
 - (void)_validate;
-- (void)_update;
+- (void)_themeDidChange;
+
 - (void)_updateStatus;
 - (void)_reloadTrackers;
 - (void)_sortServers;
@@ -114,12 +115,17 @@
 
 
 
-- (void)_update {
-/*	[_serversOutlineView setUsesAlternatingRowBackgroundColors:[WCSettings boolForKey:WCTrackersAlternateRows]];
-	[_serversOutlineView setNeedsDisplay:YES];*/
+- (void)_themeDidChange {
+	NSDictionary		*theme;
+	
+	theme = [WCSettings themeWithIdentifier:[WCSettings objectForKey:WCTheme]];
+	
+	[_serversOutlineView setUsesAlternatingRowBackgroundColors:[theme boolForKey:WCThemesTrackerListAlternateRows]];
 }
 
 
+
+#pragma mark -
 
 - (void)_updateStatus {
 	id				item;
@@ -277,8 +283,8 @@
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
-		   selector:@selector(preferencesDidChange:)
-			   name:WCPreferencesDidChangeNotification];
+		   selector:@selector(selectedThemeDidChange:)
+			   name:WCSelectedThemeDidChangeNotification];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
@@ -327,7 +333,7 @@
 	[_serversOutlineView setAutosaveName:@"Servers"];
 	[_serversOutlineView setAutosaveTableColumns:YES];
 	
-	[self _update];
+	[self _themeDidChange];
 	[self _updateStatus];
 	[self _reloadTrackers];
 	
@@ -413,8 +419,8 @@
 }
 
 
-- (void)preferencesDidChange:(NSNotification *)notification {
-	[self _update];
+- (void)selectedThemeDidChange:(NSNotification *)notification {
+	[self _themeDidChange];
 }
 
 

@@ -31,6 +31,7 @@
 #import "WCFileInfo.h"
 #import "WCFiles.h"
 #import "WCFilesController.h"
+#import "WCPreferences.h"
 #import "WCSearch.h"
 #import "WCServerConnection.h"
 #import "WCTransfers.h"
@@ -47,6 +48,7 @@
 + (NSSet *)_movieFileTypes;
 
 - (void)_validate;
+- (void)_themeDidChange;
 - (void)_reloadServersMenu;
 
 @end
@@ -110,6 +112,16 @@
 
 
 
+- (void)_themeDidChange {
+	NSDictionary		*theme;
+	
+	theme = [WCSettings themeWithIdentifier:[WCSettings objectForKey:WCTheme]];
+	
+	[_filesController themeDidChange:theme];
+}
+
+
+
 - (void)_reloadServersMenu {
 	NSEnumerator		*enumerator;
 	WCServerConnection	*connection;
@@ -166,6 +178,11 @@
 		   selector:@selector(linkConnectionDidTerminate:)
 			   name:WCLinkConnectionDidTerminateNotification];
 
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
+		   selector:@selector(selectedThemeDidChange:)
+			   name:WCSelectedThemeDidChangeNotification];
+
 	[self window];
 
 	return self;
@@ -174,6 +191,8 @@
 
 
 - (void)dealloc {
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	
 	[_files release];
 	[_receivedFiles release];
 	[_connections release];
@@ -196,6 +215,8 @@
 		[NSArray arrayWithObjects:@"Name", @"Server", @"Size", NULL]];
 
 	[_filesController updateStatus];
+
+	[self _themeDidChange];
 	[self _validate];
 }
 
@@ -322,6 +343,12 @@
 	
 	[self _validate];
 	[self _reloadServersMenu];
+}
+
+
+
+- (void)selectedThemeDidChange:(NSNotification *)notification {
+	[self _themeDidChange];
 }
 
 

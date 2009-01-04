@@ -31,7 +31,7 @@
 @implementation WCAboutWindow
 
 + (WCAboutWindow *)aboutWindow {
-	static id	sharedAboutWindow;
+	static WCAboutWindow	*sharedAboutWindow;
 	
 	if(!sharedAboutWindow)
 		sharedAboutWindow = [[self alloc] init];
@@ -55,12 +55,10 @@
 
 	while((screen = [enumerator nextObject])) {
 		if(!last) {
-		    // --- add first screen
 		    width += [screen frame].size.width;
 		} else {
 		    if(NSEqualSizes([screen frame].size, [last frame].size) &&
 		       [screen frame].origin.y == [last frame].origin.y) {
-		        // --- add another screen of equal size and along the same boundary
 		        width += [screen frame].size.width;
 		    }
 		}
@@ -68,7 +66,6 @@
 		last = screen;
 	}
 
-	// --- set window size
 	height = width / 11.0;
 	viewRect = [[NSScreen mainScreen] frame];
 	viewRect.origin.x = 0;
@@ -76,7 +73,6 @@
 	viewRect.size.height = height;
 	viewRect.size.width = width;
 
-	// --- create window
 	self = [super initWithContentRect:viewRect
 		                    styleMask:NSBorderlessWindowMask
 		                      backing:NSBackingStoreBuffered
@@ -92,27 +88,25 @@
 	[self setLevel:NSScreenSaverWindowLevel];
 	[self setContentView:view];
 
-	// --- create strings
 	attributes = [NSDictionary dictionaryWithObjectsAndKeys:
-		[NSFont fontWithName:@"Helvetica-Bold" size:width / 14.60], NSFontAttributeName,
-		[NSColor blackColor], NSForegroundColorAttributeName,
+		[NSFont fontWithName:@"Helvetica-Bold" size:width / 14.60],
+			NSFontAttributeName,
+		[NSColor blackColor],
+			NSForegroundColorAttributeName,
 		NULL];
 
 	leftString = [NSMutableAttributedString attributedStringWithString:@"Close the world," attributes:attributes];
 	rightString = [NSMutableAttributedString attributedStringWithString:@"Open the nExt" attributes:attributes];
 
-	// --- red 'E'
 	[rightString addAttribute:NSForegroundColorAttributeName
 		                value:[[NSColor redColor] shadowWithLevel:0.5]
 		                range:[[rightString string] rangeOfString:@"E"]];
 
-	// --- create images
 	leftRect = NSMakeRect(0, 0, viewRect.size.width * 0.53, viewRect.size.height);
 	leftImage = [[[NSImage alloc] initWithSize:leftRect.size] autorelease];
 	rightRect = NSMakeRect(leftRect.size.width, 0, viewRect.size.width - leftRect.size.width, viewRect.size.height);
 	rightImage = [[[NSImage alloc] initWithSize:rightRect.size] autorelease];
 
-	// --- draw strings in images
 	[leftImage lockFocus];
 	[leftString drawInRect:leftRect];
 	[leftImage unlockFocus];
@@ -121,16 +115,13 @@
 	[rightString drawInRect:leftRect];
 	[rightImage unlockFocus];
 
-	// --- display window
 	[self display];
 
-	// --- draw images in view
 	[view lockFocus];
 	[leftImage compositeToPoint:leftRect.origin operation:NSCompositeSourceOver];
 	[[rightImage mirroredImage] compositeToPoint:rightRect.origin operation:NSCompositeSourceOver];
 	[view unlockFocus];
 
-	// --- subscribe to these
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(applicationDidChangeActive:)
@@ -140,6 +131,16 @@
 }
 
 
+
+- (void)dealloc {
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	
+	[super dealloc];
+}
+
+
+
+#pragma mark -
 
 - (void)applicationDidChangeActive:(NSNotification *)notification {
 	[self close];
@@ -152,6 +153,8 @@
 }
 
 
+
+#pragma mark -
 
 - (void)keyDown:(NSEvent *)event {
 	[self close];

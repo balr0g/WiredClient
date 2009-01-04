@@ -60,7 +60,6 @@ typedef enum _WCChatFormat				WCChatFormat;
 
 @interface WCChat(Private)
 
-- (void)_update;
 - (void)_updateSaveChatForPanel:(NSSavePanel *)savePanel;
 
 - (void)_setTopic:(WCTopic *)topic;
@@ -90,72 +89,6 @@ typedef enum _WCChatFormat				WCChatFormat;
 
 
 @implementation WCChat(Private)
-
-- (void)_update {
-/*	NSFont		*font;
-	NSColor		*color;
-	
-	return;
-	
-	font = [NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCChatFont]];
-
-	if(![[_chatOutputTextView font] isEqualTo:font]) {
-		[_chatOutputTextView setFont:font];
-		[_chatInputTextView setFont:font];
-		[_setTopicTextView setFont:font];
-	}
-	
-	color = [NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCChatBackgroundColor]];
-
-	if(![[_chatOutputTextView backgroundColor] isEqualTo:color]) {
-		[_chatOutputTextView setBackgroundColor:color];
-		[_chatInputTextView setBackgroundColor:color];
-		[_setTopicTextView setBackgroundColor:color];
-	}
-
-	color = [NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCChatTextColor]];
-
-	if(![[_chatOutputTextView textColor] isEqualTo:color]) {
-		[_chatOutputTextView setTextColor:color];
-		[_chatInputTextView setTextColor:color];
-		[_chatInputTextView setInsertionPointColor:color];
-		[_setTopicTextView setTextColor:color];
-		[_setTopicTextView setInsertionPointColor:color];
-
-		[_chatOutputTextView setString:[_chatOutputTextView string] withFilter:_chatFilter];
-	}
-	
-	[_chatOutputTextView setLinkTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
-		[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCChatURLsColor]],
-			NSForegroundColorAttributeName,
-		[NSNumber numberWithInt:NSSingleUnderlineStyle],
-			NSUnderlineStyleAttributeName,
-		NULL]];
-
-	[_userListTableView setFont:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCChatUserListFont]]];
-	[_userListTableView setUsesAlternatingRowBackgroundColors:[WCSettings boolForKey:WCChatUserListAlternateRows]];
-	
-	switch([WCSettings intForKey:WCChatUserListIconSize]) {
-		case WCChatUserListIconSizeLarge:
-			[_userListTableView setRowHeight:35.0];
-			
-			[[_nickTableColumn dataCell] setControlSize:NSRegularControlSize];
-			break;
-
-		case WCChatUserListIconSizeSmall:
-			[_userListTableView setRowHeight:17.0];
-
-			[[_nickTableColumn dataCell] setControlSize:NSSmallControlSize];
-			break;
-	}
-	
-	[_chatOutputTextView setNeedsDisplay:YES];
-	[_chatInputTextView setNeedsDisplay:YES];
-	[_setTopicTextView setNeedsDisplay:YES];
-	[_userListTableView setNeedsDisplay:YES];*/
-}
-
-
 
 - (void)_updateSaveChatForPanel:(NSSavePanel *)savePanel {
 	WCChatFormat		format;
@@ -633,11 +566,6 @@ typedef enum _WCChatFormat				WCChatFormat;
 	
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
-		   selector:@selector(preferencesDidChange:)
-			   name:WCPreferencesDidChangeNotification];
-
-	[[NSNotificationCenter defaultCenter]
-		addObserver:self
 		   selector:@selector(dateDidChange:)
 			   name:WCDateDidChangeNotification];
 
@@ -706,8 +634,6 @@ typedef enum _WCChatFormat				WCChatFormat;
 	[_topicDateFormatter setTimeStyle:NSDateFormatterShortStyle];
 	[_topicDateFormatter setDateStyle:NSDateFormatterMediumStyle];
 	[_topicDateFormatter setNaturalLanguageStyle:WIDateFormatterCapitalizedNaturalLanguageStyle];
-	
-	[self _update];
 	
 	[super windowDidLoad];
 }
@@ -802,12 +728,6 @@ typedef enum _WCChatFormat				WCChatFormat;
 
 
 
-- (void)serverConnectionThemeDidChange:(NSNotification *)notification {
-	[self _update];
-}
-
-
-
 - (void)serverConnectionServerInfoDidChange:(NSNotification *)notification {
 	if([[self connection] isReconnecting])
 		[self _setTopic:NULL];
@@ -845,12 +765,6 @@ typedef enum _WCChatFormat				WCChatFormat;
 		
 		[_pings removeObjectForKey:number];
 	}
-}
-
-
-
-- (void)preferencesDidChange:(NSNotification *)notification {
-	[self _update];
 }
 
 

@@ -62,7 +62,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 @interface WCTransfers(Private)
 
 - (void)_validate;
-- (void)_update;
+- (void)_themeDidChange;
 - (void)_reload;
 
 - (void)_presentError:(WCError *)error forConnection:(WCServerConnection *)connection;
@@ -101,8 +101,12 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 
 
-- (void)_update {
-/*	if([WCSettings boolForKey:WCTransfersShowProgressBar]) {
+- (void)_themeDidChange {
+	NSDictionary		*theme;
+	
+	theme = [WCSettings themeWithIdentifier:[WCSettings objectForKey:WCTheme]];
+	
+	if([theme boolForKey:WCThemesTransferListShowProgressBar]) {
 		[_transfersTableView setRowHeight:46.0];
 		[[_infoTableColumn dataCell] setDrawsProgressIndicator:YES];
 	} else {
@@ -110,9 +114,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		[[_infoTableColumn dataCell] setDrawsProgressIndicator:NO];
 	}
 	
-	[_transfersTableView setUsesAlternatingRowBackgroundColors:[WCSettings boolForKey:WCTransfersAlternateRows]];
-
-	[_transfersTableView setNeedsDisplay:YES];*/
+	[_transfersTableView setUsesAlternatingRowBackgroundColors:[theme boolForKey:WCThemesTransferListAlternateRows]];
 }
 
 
@@ -1148,8 +1150,8 @@ end:
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
-		   selector:@selector(preferencesDidChange:)
-			   name:WCPreferencesDidChangeNotification];
+		   selector:@selector(selectedThemeDidChange:)
+			   name:WCSelectedThemeDidChangeNotification];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
@@ -1235,7 +1237,7 @@ end:
 	
 	[_transfersTableView reloadData];
 
-	[self _update];
+	[self _themeDidChange];
 }
 
 
@@ -1451,8 +1453,8 @@ end:
 
 
 
-- (void)preferencesDidChange:(NSNotification *)notification {
-	[self _update];
+- (void)selectedThemeDidChange:(NSNotification *)notification {
+	[self _themeDidChange];
 }
 
 

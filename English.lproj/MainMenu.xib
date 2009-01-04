@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.02">
+<archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.03">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">9F33</string>
-		<string key="IBDocument.InterfaceBuilderVersion">672</string>
-		<string key="IBDocument.AppKitVersion">949.34</string>
-		<string key="IBDocument.HIToolboxVersion">352.00</string>
+		<string key="IBDocument.SystemVersion">9G55</string>
+		<string key="IBDocument.InterfaceBuilderVersion">677</string>
+		<string key="IBDocument.AppKitVersion">949.43</string>
+		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<integer value="24"/>
@@ -13,6 +13,15 @@
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+		</object>
+		<object class="NSMutableDictionary" key="IBDocument.Metadata">
+			<bool key="EncodedWithXMLCoder">YES</bool>
+			<object class="NSArray" key="dict.sortedKeys">
+				<bool key="EncodedWithXMLCoder">YES</bool>
+			</object>
+			<object class="NSMutableArray" key="dict.values">
+				<bool key="EncodedWithXMLCoder">YES</bool>
+			</object>
 		</object>
 		<object class="NSMutableArray" key="IBDocument.RootObjects" id="1059549026">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -797,15 +806,6 @@
 							</object>
 							<object class="NSMutableArray" key="NSMenuItems">
 								<bool key="EncodedWithXMLCoder">YES</bool>
-								<object class="NSMenuItem" id="932066483">
-									<reference key="NSMenu" ref="498709328"/>
-									<string key="NSTitle">Dock</string>
-									<string key="NSKeyEquiv">D</string>
-									<int key="NSKeyEquivModMask">1048576</int>
-									<int key="NSMnemonicLoc">2147483647</int>
-									<reference key="NSOnImage" ref="393497551"/>
-									<reference key="NSMixedImage" ref="410793182"/>
-								</object>
 								<object class="NSMenuItem" id="541401415">
 									<reference key="NSMenu" ref="498709328"/>
 									<string key="NSTitle">Servers</string>
@@ -848,15 +848,6 @@
 									<bool key="NSIsSeparator">YES</bool>
 									<string key="NSTitle"/>
 									<string key="NSKeyEquiv"/>
-									<int key="NSKeyEquivModMask">1048576</int>
-									<int key="NSMnemonicLoc">2147483647</int>
-									<reference key="NSOnImage" ref="393497551"/>
-									<reference key="NSMixedImage" ref="410793182"/>
-								</object>
-								<object class="NSMenuItem" id="20836061">
-									<reference key="NSMenu" ref="498709328"/>
-									<string key="NSTitle">Hide Connection</string>
-									<string key="NSKeyEquiv">H</string>
 									<int key="NSKeyEquivModMask">1048576</int>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="393497551"/>
@@ -1284,14 +1275,6 @@
 					<int key="connectionID">753</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">hideConnection:</string>
-						<reference key="source" ref="569324035"/>
-						<reference key="destination" ref="20836061"/>
-					</object>
-					<int key="connectionID">761</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">_debugMenu</string>
 						<reference key="source" ref="569324035"/>
@@ -1589,14 +1572,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label">dock:</string>
-						<reference key="source" ref="569324035"/>
-						<reference key="destination" ref="932066483"/>
-					</object>
-					<int key="connectionID">829</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
 						<string key="label">servers:</string>
 						<reference key="source" ref="569324035"/>
 						<reference key="destination" ref="541401415"/>
@@ -1695,12 +1670,10 @@
 							<reference ref="550741876"/>
 							<reference ref="431406539"/>
 							<reference ref="541401415"/>
-							<reference ref="932066483"/>
 							<reference ref="717011862"/>
 							<reference ref="534083971"/>
 							<reference ref="800961890"/>
 							<reference ref="364514845"/>
-							<reference ref="20836061"/>
 							<reference ref="590500143"/>
 							<reference ref="437285876"/>
 							<reference ref="212743592"/>
@@ -1742,11 +1715,6 @@
 						<reference key="parent" ref="498709328"/>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">742</int>
-						<reference key="object" ref="932066483"/>
-						<reference key="parent" ref="498709328"/>
-					</object>
-					<object class="IBObjectRecord">
 						<int key="objectID">743</int>
 						<reference key="object" ref="717011862"/>
 						<reference key="parent" ref="498709328"/>
@@ -1764,11 +1732,6 @@
 					<object class="IBObjectRecord">
 						<int key="objectID">751</int>
 						<reference key="object" ref="364514845"/>
-						<reference key="parent" ref="498709328"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">759</int>
-						<reference key="object" ref="20836061"/>
 						<reference key="parent" ref="498709328"/>
 					</object>
 					<object class="IBObjectRecord">
@@ -2577,8 +2540,6 @@
 					<string>738.ImportedFromIB2</string>
 					<string>741.IBPluginDependency</string>
 					<string>741.ImportedFromIB2</string>
-					<string>742.IBPluginDependency</string>
-					<string>742.ImportedFromIB2</string>
 					<string>743.IBPluginDependency</string>
 					<string>743.ImportedFromIB2</string>
 					<string>749.IBPluginDependency</string>
@@ -2587,8 +2548,6 @@
 					<string>750.ImportedFromIB2</string>
 					<string>751.IBPluginDependency</string>
 					<string>751.ImportedFromIB2</string>
-					<string>759.IBPluginDependency</string>
-					<string>759.ImportedFromIB2</string>
 					<string>788.IBPluginDependency</string>
 					<string>788.ImportedFromIB2</string>
 					<string>789.IBPluginDependency</string>
@@ -2695,7 +2654,7 @@
 					<reference ref="5"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
-					<string>{{514, 599}, {317, 343}}</string>
+					<string>{{514, 639}, {317, 303}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2780,10 +2739,6 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
 					<string>{{12, 739}, {235, 203}}</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -3272,8 +3227,6 @@
 							<string>boards:</string>
 							<string>bookmark:</string>
 							<string>connect:</string>
-							<string>dock:</string>
-							<string>hideConnection:</string>
 							<string>makeLayoutDefault:</string>
 							<string>manual:</string>
 							<string>messages:</string>
@@ -3288,8 +3241,6 @@
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -3543,68 +3494,6 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">WCConnectionController.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">WCDock</string>
-					<string key="superclassName">WIWindowController</string>
-					<object class="NSMutableDictionary" key="actions">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSMutableArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>addBookmark:</string>
-							<string>disconnect:</string>
-							<string>hide:</string>
-							<string>hideConnection:</string>
-							<string>makeLayoutDefault:</string>
-							<string>nextConnection:</string>
-							<string>open:</string>
-							<string>previousConnection:</string>
-							<string>restoreAllLayoutsToDefault:</string>
-							<string>restoreLayoutToDefault:</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="outlets">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSMutableArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>_disconnectMenuItem</string>
-							<string>_dockTableView</string>
-							<string>_hideButton</string>
-							<string>_nameTableColumn</string>
-							<string>_openButton</string>
-							<string>_statusTableColumn</string>
-							<string>_statusTextField</string>
-							<string>_usersTableColumn</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>NSMenuItem</string>
-							<string>WITableView</string>
-							<string>NSButton</string>
-							<string>NSTableColumn</string>
-							<string>NSButton</string>
-							<string>NSTableColumn</string>
-							<string>NSTextField</string>
-							<string>NSTableColumn</string>
-						</object>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">WCDock.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -3874,7 +3763,7 @@
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">WCPreferences</string>
-					<string key="superclassName">WIWindowController</string>
+					<string key="superclassName">WIPreferencesController</string>
 					<object class="NSMutableDictionary" key="actions">
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSMutableArray" key="dict.sortedKeys">
@@ -3882,21 +3771,39 @@
 							<string>addBookmark:</string>
 							<string>addHighlight:</string>
 							<string>addIgnore:</string>
+							<string>addTheme:</string>
 							<string>addTrackerBookmark:</string>
+							<string>changeBookmark:</string>
+							<string>changeEvent:</string>
+							<string>changePreferences:</string>
+							<string>changeTheme:</string>
+							<string>changeThemeFont:</string>
+							<string>changeTrackerBookmark:</string>
 							<string>deleteBookmark:</string>
 							<string>deleteHighlight:</string>
 							<string>deleteIgnore:</string>
+							<string>deleteTheme:</string>
 							<string>deleteTrackerBookmark:</string>
-							<string>icon:</string>
-							<string>selectDownloadFolder:</string>
+							<string>duplicateBookmark:</string>
+							<string>duplicateTheme:</string>
+							<string>duplicateTrackerBookmark:</string>
+							<string>exportTheme:</string>
+							<string>importTheme:</string>
+							<string>otherDownloadFolder:</string>
 							<string>selectEvent:</string>
-							<string>selectSound:</string>
-							<string>showColorPanel:</string>
-							<string>showFontPanel:</string>
-							<string>touchEvent:</string>
+							<string>selectTheme:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -3919,104 +3826,99 @@
 						<object class="NSMutableArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>_addBookmarkButton</string>
-							<string>_addHiglightButton</string>
+							<string>_addHighlightButton</string>
 							<string>_addIgnoreButton</string>
+							<string>_addThemeButton</string>
 							<string>_addTrackerBookmarkButton</string>
-							<string>_autoHideOnSwitchButton</string>
 							<string>_autoReconnectButton</string>
 							<string>_bookmarksAddressTextField</string>
 							<string>_bookmarksAutoConnectButton</string>
 							<string>_bookmarksAutoReconnectButton</string>
 							<string>_bookmarksLoginTextField</string>
 							<string>_bookmarksNameTableColumn</string>
-							<string>_bookmarksNameTextField</string>
 							<string>_bookmarksNickTextField</string>
 							<string>_bookmarksPasswordTextField</string>
 							<string>_bookmarksStatusTextField</string>
 							<string>_bookmarksTableView</string>
-							<string>_bounceInDockButton</string>
-							<string>_chatBackgroundColorWell</string>
-							<string>_chatEventsColorWell</string>
-							<string>_chatFontButton</string>
-							<string>_chatFontTextField</string>
-							<string>_chatStyleMatrix</string>
+							<string>_bookmarksThemePopUpButton</string>
+							<string>_bookmarksView</string>
+							<string>_chatHistoryScrollbackButton</string>
+							<string>_chatHistoryScrollbackModifierPopUpButton</string>
+							<string>_chatShowSmileysButton</string>
+							<string>_chatTabCompleteNicksButton</string>
+							<string>_chatTabCompleteNicksTextField</string>
 							<string>_chatTabView</string>
-							<string>_chatTextColorWell</string>
-							<string>_chatURLsColorWell</string>
-							<string>_chatUserListAlternateRowsButton</string>
-							<string>_chatUserListFontButton</string>
-							<string>_chatUserListFontTextField</string>
-							<string>_chatUserListIconSizeMatrix</string>
-							<string>_checkForResourceForksButton</string>
+							<string>_chatTimestampChatButton</string>
+							<string>_chatTimestampChatIntervalTextField</string>
+							<string>_chatTimestampEveryLineButton</string>
+							<string>_chatTimestampEveryLineColorWell</string>
+							<string>_chatView</string>
 							<string>_checkForUpdateButton</string>
 							<string>_confirmDisconnectButton</string>
 							<string>_deleteBookmarkButton</string>
-							<string>_deleteHiglightButton</string>
+							<string>_deleteHighlightButton</string>
 							<string>_deleteIgnoreButton</string>
+							<string>_deleteThemeButton</string>
 							<string>_deleteTrackerBookmarkButton</string>
-							<string>_downloadFolderTextField</string>
-							<string>_encryptTransfersButton</string>
-							<string>_eventsPopUpButton</string>
-							<string>_filesAlternateRowsButton</string>
-							<string>_filesFontButton</string>
-							<string>_filesFontTextField</string>
+							<string>_eventsBounceInDockButton</string>
+							<string>_eventsEventPopUpButton</string>
+							<string>_eventsPlaySoundButton</string>
+							<string>_eventsPostInChatButton</string>
+							<string>_eventsShowDialogButton</string>
+							<string>_eventsSoundsPopUpButton</string>
+							<string>_eventsView</string>
+							<string>_eventsVolumeSlider</string>
+							<string>_filesCheckForResourceForksButton</string>
+							<string>_filesDownloadFolderMenuItem</string>
+							<string>_filesDownloadFolderPopUpButton</string>
+							<string>_filesEncryptTransfersButton</string>
+							<string>_filesOpenFoldersInNewWindowsButton</string>
+							<string>_filesQueueTransfersButton</string>
+							<string>_filesRemoveTransfersButton</string>
+							<string>_filesView</string>
+							<string>_generalView</string>
 							<string>_highlightsColorTableColumn</string>
 							<string>_highlightsPatternTableColumn</string>
 							<string>_highlightsTableView</string>
-							<string>_historyScrollbackButton</string>
-							<string>_historyScrollbackModifierPopUpButton</string>
 							<string>_iconImageView</string>
-							<string>_ignoresAddressTableColumn</string>
 							<string>_ignoresLoginTableColumn</string>
 							<string>_ignoresNickTableColumn</string>
 							<string>_ignoresTableView</string>
-							<string>_interfaceTabView</string>
-							<string>_messagesBackgroundColorWell</string>
-							<string>_messagesFontButton</string>
-							<string>_messagesFontTextField</string>
-							<string>_messagesListAlternateRowsButton</string>
-							<string>_messagesListFontButton</string>
-							<string>_messagesListFontTextField</string>
-							<string>_messagesTextColorWell</string>
-							<string>_newsBackgroundColorWell</string>
-							<string>_newsFontButton</string>
-							<string>_newsFontTextField</string>
-							<string>_newsTextColorWell</string>
-							<string>_newsTitlesColorWell</string>
 							<string>_nickTextField</string>
-							<string>_openFoldersInNewWindowsButton</string>
-							<string>_playSoundButton</string>
-							<string>_postInChatButton</string>
-							<string>_preferencesTabView</string>
-							<string>_preventMultipleConnectionsButton</string>
-							<string>_previewBackgroundColorWell</string>
-							<string>_previewFontButton</string>
-							<string>_previewFontTextField</string>
-							<string>_previewTextColorWell</string>
-							<string>_queueTransfersButton</string>
-							<string>_removeTransfersButton</string>
+							<string>_selectThemeButton</string>
 							<string>_showConnectAtStartupButton</string>
-							<string>_showDialogButton</string>
-							<string>_showDockAtStartupButton</string>
-							<string>_showSmileysButton</string>
-							<string>_showTrackersAtStartupButton</string>
-							<string>_soundsPopUpButton</string>
+							<string>_showServersAtStartupButton</string>
 							<string>_statusTextField</string>
-							<string>_tabCompleteNicksButton</string>
-							<string>_tabCompleteNicksTextField</string>
-							<string>_timestampChatButton</string>
-							<string>_timestampChatIntervalTextField</string>
-							<string>_timestampEveryLineButton</string>
-							<string>_timestampEveryLineColorWell</string>
+							<string>_themesChatBackgroundColorWell</string>
+							<string>_themesChatEventsColorWell</string>
+							<string>_themesChatFontButton</string>
+							<string>_themesChatFontTextField</string>
+							<string>_themesChatTextColorWell</string>
+							<string>_themesChatURLsColorWell</string>
+							<string>_themesFileListAlternateRowsButton</string>
+							<string>_themesMessageListAlternateRowsButton</string>
+							<string>_themesMessagesBackgroundColorWell</string>
+							<string>_themesMessagesFontButton</string>
+							<string>_themesMessagesFontTextField</string>
+							<string>_themesMessagesTextColorWell</string>
+							<string>_themesNameTableColumn</string>
+							<string>_themesNewsBackgroundColorWell</string>
+							<string>_themesNewsFontButton</string>
+							<string>_themesNewsFontTextField</string>
+							<string>_themesNewsTextColorWell</string>
+							<string>_themesTableView</string>
+							<string>_themesTrackerListAlternateRowsButton</string>
+							<string>_themesTransferListAlternateRowsButton</string>
+							<string>_themesTransferListShowProgressBarButton</string>
+							<string>_themesUserListAlternateRowsButton</string>
+							<string>_themesUserListIconSizeMatrix</string>
+							<string>_themesView</string>
 							<string>_trackerBookmarksAddressTextField</string>
 							<string>_trackerBookmarksLoginTextField</string>
 							<string>_trackerBookmarksNameTableColumn</string>
-							<string>_trackerBookmarksNameTextField</string>
 							<string>_trackerBookmarksPasswordTextField</string>
 							<string>_trackerBookmarksTableView</string>
-							<string>_trackersAlternateRowsButton</string>
-							<string>_transfersAlternateRowsButton</string>
-							<string>_transfersShowProgressBarButton</string>
+							<string>_trackersView</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -4032,50 +3934,55 @@
 							<string>NSTextField</string>
 							<string>NSTableColumn</string>
 							<string>NSTextField</string>
-							<string>NSTextField</string>
 							<string>NSSecureTextField</string>
 							<string>NSTextField</string>
 							<string>NSTableView</string>
-							<string>NSButton</string>
-							<string>NSColorWell</string>
-							<string>NSColorWell</string>
-							<string>NSButton</string>
-							<string>NSTextField</string>
-							<string>NSMatrix</string>
-							<string>NSTabView</string>
-							<string>NSColorWell</string>
-							<string>NSColorWell</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSTextField</string>
-							<string>NSMatrix</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSTextField</string>
+							<string>NSPopUpButton</string>
+							<string>NSView</string>
 							<string>NSButton</string>
 							<string>NSPopUpButton</string>
 							<string>NSButton</string>
 							<string>NSButton</string>
 							<string>NSTextField</string>
+							<string>NSTabView</string>
+							<string>NSButton</string>
+							<string>NSTextField</string>
+							<string>NSButton</string>
+							<string>NSColorWell</string>
+							<string>NSView</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSPopUpButton</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSPopUpButton</string>
+							<string>NSView</string>
+							<string>NSSlider</string>
+							<string>NSButton</string>
+							<string>NSMenuItem</string>
+							<string>NSPopUpButton</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSView</string>
+							<string>NSView</string>
 							<string>NSTableColumn</string>
 							<string>NSTableColumn</string>
 							<string>NSTableView</string>
-							<string>NSButton</string>
-							<string>NSPopUpButton</string>
 							<string>WIImageViewWithImagePicker</string>
 							<string>NSTableColumn</string>
 							<string>NSTableColumn</string>
-							<string>NSTableColumn</string>
 							<string>NSTableView</string>
-							<string>NSTabView</string>
-							<string>NSColorWell</string>
-							<string>NSButton</string>
 							<string>NSTextField</string>
+							<string>NSButton</string>
 							<string>NSButton</string>
 							<string>NSButton</string>
 							<string>NSTextField</string>
@@ -4085,40 +3992,30 @@
 							<string>NSTextField</string>
 							<string>NSColorWell</string>
 							<string>NSColorWell</string>
-							<string>NSTextField</string>
 							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSTabView</string>
 							<string>NSButton</string>
 							<string>NSColorWell</string>
 							<string>NSButton</string>
 							<string>NSTextField</string>
 							<string>NSColorWell</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSPopUpButton</string>
-							<string>NSTextField</string>
-							<string>NSButton</string>
-							<string>NSTextField</string>
-							<string>NSButton</string>
-							<string>NSTextField</string>
-							<string>NSButton</string>
+							<string>NSTableColumn</string>
 							<string>NSColorWell</string>
+							<string>NSButton</string>
+							<string>NSTextField</string>
+							<string>NSColorWell</string>
+							<string>NSTableView</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSMatrix</string>
+							<string>NSView</string>
 							<string>NSTextField</string>
 							<string>NSTextField</string>
 							<string>NSTableColumn</string>
-							<string>NSTextField</string>
 							<string>NSSecureTextField</string>
 							<string>NSTableView</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
+							<string>NSView</string>
 						</object>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">

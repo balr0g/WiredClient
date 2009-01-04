@@ -50,7 +50,7 @@
 	IBOutlet id						delegate;
 }
 
-- (void)update;
+- (void)themeDidChange:(NSDictionary *)theme;
 - (void)updateStatus;
 - (void)updateStatusWithFree:(WIFileOffset)free;
 - (void)showFiles;

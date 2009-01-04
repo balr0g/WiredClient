@@ -34,7 +34,6 @@
 #import "WCBoards.h"
 #import "WCCache.h"
 #import "WCConsole.h"
-#import "WCDock.h"
 #import "WCLink.h"
 #import "WCMessages.h"
 #import "WCNews.h"

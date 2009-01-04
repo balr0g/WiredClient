@@ -40,6 +40,8 @@
 	IBOutlet NSMenuItem					*_deleteMenuItem;
 	
 	IBOutlet SUUpdater					*_updater;
+	
+	NSMutableArray						*_connections;
 
 	NSString							*_clientVersion;
 	NSMutableDictionary					*_smileys;
@@ -61,12 +63,10 @@
 
 - (IBAction)bookmark:(id)sender;
 
-- (IBAction)dock:(id)sender;
 - (IBAction)servers:(id)sender;
 - (IBAction)messages:(id)sender;
 - (IBAction)boards:(id)sender;
 - (IBAction)transfers:(id)sender;
-- (IBAction)hideConnection:(id)sender;
 - (IBAction)nextConnection:(id)sender;
 - (IBAction)previousConnection:(id)sender;
 - (IBAction)makeLayoutDefault:(id)sender;

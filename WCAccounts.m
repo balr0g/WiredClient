@@ -35,7 +35,6 @@
 
 - (id)_initAccountsWithConnection:(WCServerConnection *)connection;
 
-- (void)_update;
 - (BOOL)_verifyUnsavedAndSelectRow:(NSInteger)row;
 - (void)_saveAndClear:(BOOL)clear;
 
@@ -75,11 +74,6 @@
 
 
 #pragma mark -
-
-- (void)_update {
-}
-
-
 
 - (BOOL)_verifyUnsavedAndSelectRow:(NSInteger)row {
 	NSAlert		*alert;
@@ -668,7 +662,6 @@
 		}
 	}
 
-	[self _update];
 	[self _validateAccount:NULL];
 	[self _readFromAccount:NULL];
 	
@@ -782,12 +775,6 @@
 	}
 	
 	[super serverConnectionPrivilegesDidChange:notification];
-}
-
-
-
-- (void)preferencesDidChange:(NSNotification *)notification {
-	[self _update];
 }
 
 

@@ -75,11 +75,8 @@
 
 #pragma mark -
 
-- (void)update {
-/*	[_filesTableView setFont:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCFilesFont]]];
-	
-	[_filesTableView setUsesAlternatingRowBackgroundColors:[WCSettings boolForKey:WCFilesAlternateRows]];
-	[_filesTableView setNeedsDisplay:YES];*/
+- (void)themeDidChange:(NSDictionary *)theme {
+	[_filesTableView setUsesAlternatingRowBackgroundColors:[theme boolForKey:WCThemesFileListAlternateRows]];
 }
 
 
