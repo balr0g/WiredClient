@@ -79,14 +79,6 @@
 			   name:WCBookmarkDidChangeNotification];
 
 	[self addObserver:self
-			 selector:@selector(serverConnectionShouldHide:)
-				 name:WCServerConnectionShouldHideNotification];
-
-	[self addObserver:self
-			 selector:@selector(serverConnectionShouldUnhide:)
-				 name:WCServerConnectionShouldUnhideNotification];
-
-	[self addObserver:self
 			 selector:@selector(chatSelfWasKicked:)
 				 name:WCChatSelfWasKickedNotification];
 
@@ -267,18 +259,6 @@
 
 
 
-- (void)serverConnectionShouldHide:(NSNotification *)notification {
-	_hidden = YES;
-}
-
-
-
-- (void)serverConnectionShouldUnhide:(NSNotification *)notification {
-	_hidden = NO;
-}
-
-
-
 - (void)chatSelfWasKicked:(NSNotification *)notification {
 	_shouldAutoReconnect = NO;
 }
@@ -336,18 +316,6 @@
 
 		[self connect];
 	}
-}
-
-
-
-- (void)hide {
-	[self postNotificationName:WCServerConnectionShouldHideNotification object:self];
-}
-
-
-
-- (void)unhide {
-	[self postNotificationName:WCServerConnectionShouldUnhideNotification object:self];
 }
 
 
@@ -421,12 +389,6 @@
 
 - (BOOL)isAutoReconnecting {
 	return _autoReconnecting;
-}
-
-
-
-- (BOOL)isHidden {
-	return _hidden;
 }
 
 

@@ -300,32 +300,6 @@
 
 
 
-- (void)serverConnectionShouldHide:(NSNotification *)notification {
-	NSWindow	*sheet;
-	
-	sheet = [[self window] attachedSheet];
-	
-	if(sheet == _postPanel)
-		_hiddenNews = [[_postTextView string] copy];
-	
-	[super serverConnectionShouldHide:notification];
-}
-
-
-
-- (void)serverConnectionShouldUnhide:(NSNotification *)notification {
-	[super serverConnectionShouldUnhide:notification];
-	
-	if(_hiddenNews) {
-		[self showPost:_hiddenNews];
-		
-		[_hiddenNews release];
-		_hiddenNews = NULL;
-	}
-}
-
-
-
 - (void)wiredNewsGetNewsReply:(WIP7Message *)message {
 	WCNewsPost		*post;
 	

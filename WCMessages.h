@@ -68,9 +68,6 @@
 	
 	WIDateFormatter								*_tableDateFormatter;
 	WIDateFormatter								*_dialogDateFormatter;
-	
-	NSString									*_hiddenMessage;
-	NSString									*_hiddenBroadcast;
 }
 
 + (id)messages;

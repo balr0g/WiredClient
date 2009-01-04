@@ -35,8 +35,6 @@
 	NSMutableDictionary		*_windowTemplate;
 	
 	BOOL					_singleton;
-	BOOL					_hidden;
-	BOOL					_wasVisible;
 	BOOL					_releasedWhenClosed;
 }
 
@@ -51,15 +49,12 @@
 - (void)linkConnectionLoggedIn:(NSNotification *)notification;
 - (void)serverConnectionServerInfoDidChange:(NSNotification *)notification;
 - (void)serverConnectionPrivilegesDidChange:(NSNotification *)notification;
-- (void)serverConnectionShouldHide:(NSNotification *)notification;
-- (void)serverConnectionShouldUnhide:(NSNotification *)notification;
 
 - (void)setName:(NSString *)name;
 - (NSString *)name;
 - (void)setConnection:(WCServerConnection *)connection;
 - (WCServerConnection *)connection;
 - (NSDictionary *)windowTemplate;
-- (BOOL)isHidden;
 
 - (BOOL)beginConfirmDisconnectSheetModalForWindow:(NSWindow *)window modalDelegate:(id)delegate didEndSelector:(SEL)selector contextInfo:(void *)contextInfo;
 

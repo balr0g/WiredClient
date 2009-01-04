@@ -44,7 +44,6 @@
 
 - (id)_initPublicChatWithConnection:(WCServerConnection *)connection;
 
-- (void)_showChatWindow;
 - (void)_updateNewsIcon;
 
 @end
@@ -76,13 +75,6 @@
 
 
 #pragma mark -
-
-- (void)_showChatWindow {
-	if(![self isHidden])
-		[self showWindow:self];
-}
-
-
 
 - (void)_updateNewsIcon {
 	NSToolbarItem	*item;
@@ -141,7 +133,7 @@
 - (void)windowTemplateShouldLoad:(NSMutableDictionary *)windowTemplate {
 	[[self window] setPropertiesFromDictionary:[windowTemplate objectForKey:NSStringFromClass([self class])]
 								   restoreSize:YES
-									visibility:_isShown ? ![self isHidden] : NO];
+									visibility:_isShown];
 }
 
 
@@ -348,7 +340,7 @@
 	[message setUInt32:[self chatID] forName:@"wired.chat.id"];
 	[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredChatJoinChatReply:)];
 
-	[self performSelector:@selector(_showChatWindow) afterDelay:0.0];
+	[self performSelector:@selector(showWindow:) withObject:self afterDelay:0.0];
 	
 	_isShown = YES;
 }

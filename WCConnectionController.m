@@ -174,14 +174,6 @@
 						name:WCServerConnectionPrivilegesDidChangeNotification];
 
 	[_connection addObserver:self
-					selector:@selector(serverConnectionShouldHide:)
-						name:WCServerConnectionShouldHideNotification];
-	
-	[_connection addObserver:self
-					selector:@selector(serverConnectionShouldUnhide:)
-						name:WCServerConnectionShouldUnhideNotification];
-
-	[_connection addObserver:self
 					selector:@selector(_serverConnectionShouldLoadWindowTemplate:)
 						name:WCServerConnectionShouldLoadWindowTemplateNotification];
 
@@ -243,7 +235,7 @@
 	if(_singleton) {
 		[[self window] setPropertiesFromDictionary:[windowTemplate objectForKey:NSStringFromClass([self class])]
 									   restoreSize:YES
-										visibility:![self isHidden]];
+										visibility:YES];
 	}
 }
 
@@ -304,33 +296,6 @@
 
 
 
-- (void)serverConnectionShouldHide:(NSNotification *)notification {
-	NSWindow	*sheet;
-		
-	_wasVisible = [[self window] isVisible];
-	_hidden = YES;
-	
-	if(_wasVisible) {
-		sheet = [[self window] attachedSheet];
-		
-		if(sheet)
-			[NSApp endSheet:sheet returnCode:NSAlertAlternateReturn];
-		
-		[[self window] orderOut:self];
-	}
-}
-
-
-
-- (void)serverConnectionShouldUnhide:(NSNotification *)notification {
-	if(_wasVisible)
-		[[self window] orderFront:self];
-		
-	_hidden = NO;
-}
-
-
-
 #pragma mark -
 
 - (void)setName:(NSString *)name {
@@ -368,12 +333,6 @@
 		[self _loadWindowTemplate];
 	
 	return _windowTemplate;
-}
-
-
-
-- (BOOL)isHidden {
-	return _hidden;
 }
 
 

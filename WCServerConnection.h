@@ -30,8 +30,6 @@
 
 #define WCServerConnectionWillReconnectNotification				@"WCServerConnectionWillReconnectNotification"
 
-#define WCServerConnectionShouldHideNotification				@"WCServerConnectionShouldHideNotification"
-#define WCServerConnectionShouldUnhideNotification				@"WCServerConnectionShouldUnhideNotification"
 #define WCServerConnectionTriggeredEventNotification			@"WCServerConnectionTriggeredEventNotification"
 
 #define WCServerConnectionShouldLoadWindowTemplateNotification	@"WCServerConnectionShouldLoadWindowTemplatNotificatione"
@@ -73,12 +71,9 @@
 	BOOL														_manuallyReconnecting;
 	BOOL														_shouldAutoReconnect;
 	BOOL														_autoReconnecting;
-	BOOL														_hidden;
 }
 
 - (void)reconnect;
-- (void)hide;
-- (void)unhide;
 
 - (void)triggerEvent:(int)event;
 - (void)triggerEvent:(int)event info1:(id)info1;
@@ -90,7 +85,6 @@
 - (BOOL)isReconnecting;
 - (BOOL)isManuallyReconnecting;
 - (BOOL)isAutoReconnecting;
-- (BOOL)isHidden;
 - (NSUInteger)userID;
 - (NSString *)name;
 - (WCAccount *)account;

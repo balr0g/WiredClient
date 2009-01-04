@@ -192,7 +192,7 @@
 - (void)windowTemplateShouldLoad:(NSMutableDictionary *)windowTemplate {
 	[[self window] setPropertiesFromDictionary:[windowTemplate objectForKey:NSStringFromClass([self class])]
 								   restoreSize:NO
-									visibility:![self isHidden]];
+									visibility:YES];
 }
 
 

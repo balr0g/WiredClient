@@ -43,7 +43,6 @@
 	WIDateFormatter						*_dateFormatter;
 	NSUInteger							_unread;
 	
-	NSString							*_hiddenNews;
 	BOOL								_receivedNews;
 }
 
