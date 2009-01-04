@@ -174,42 +174,42 @@
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(linkConnectionDidClose:)
-			   name:WCLinkConnectionDidClose];
+			   name:WCLinkConnectionDidCloseNotification];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(linkConnectionDidTerminate:)
-			   name:WCLinkConnectionDidTerminate];
+			   name:WCLinkConnectionDidTerminateNotification];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(linkConnectionLoggedIn:)
-			   name:WCLinkConnectionLoggedIn];
+			   name:WCLinkConnectionLoggedInNotification];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(chatUsersDidChange:)
-			   name:WCChatUsersDidChange];
+			   name:WCChatUsersDidChangeNotification];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(messagesDidChangeMessages:)
-			   name:WCMessagesDidAddMessage];
+			   name:WCMessagesDidAddMessageNotification];
 	
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(messagesDidChangeMessages:)
-			   name:WCMessagesDidReadMessage];
+			   name:WCMessagesDidReadMessageNotification];
 	
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(newsDidChangePosts:)
-			   name:WCNewsDidAddPost];
+			   name:WCNewsDidAddPostNotification];
 	
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(newsDidChangePosts:)
-			   name:WCNewsDidReadPost];
+			   name:WCNewsDidReadPostNotification];
 
 	return self;
 }
@@ -523,7 +523,7 @@
 	
 	if([alert runModal] == NSAlertDefaultReturn) {
 		connection = [(WCConnectionController *) [[NSApp keyWindow] windowController] connection];
-		[connection postNotificationName:WCServerConnectionShouldSaveWindowTemplate];
+		[connection postNotificationName:WCServerConnectionShouldSaveWindowTemplateNotification];
 		
 		[WCSettings setWindowTemplate:[WCSettings windowTemplateForKey:[connection identifier]]
 							   forKey:WCWindowTemplatesDefault];
@@ -548,7 +548,7 @@
 		[WCSettings setWindowTemplate:[WCSettings windowTemplateForKey:WCWindowTemplatesDefault]
 							   forKey:[connection identifier]];
 		
-		[connection postNotificationName:WCServerConnectionShouldLoadWindowTemplate];
+		[connection postNotificationName:WCServerConnectionShouldLoadWindowTemplateNotification];
 	}
 }
 
@@ -574,7 +574,7 @@
 			[WCSettings setWindowTemplate:[WCSettings windowTemplateForKey:WCWindowTemplatesDefault]
 								   forKey:[connection identifier]];
 			
-			[connection postNotificationName:WCServerConnectionShouldLoadWindowTemplate];
+			[connection postNotificationName:WCServerConnectionShouldLoadWindowTemplateNotification];
 		}
 	}
 }

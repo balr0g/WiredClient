@@ -639,11 +639,11 @@ typedef enum _WCChatFormat				WCChatFormat;
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(dateDidChange:)
-			   name:WCDateDidChange];
+			   name:WCDateDidChangeNotification];
 
 	[[self connection] addObserver:self
 						  selector:@selector(chatUsersDidChange:)
-							  name:WCChatUsersDidChange];
+							  name:WCChatUsersDidChangeNotification];
 
 	[[self connection] addObserver:self selector:@selector(wiredChatUserJoin:) messageName:@"wired.chat.user_join"];
 	[[self connection] addObserver:self selector:@selector(wiredChatUserLeave:) messageName:@"wired.chat.user_leave"];
@@ -885,11 +885,11 @@ typedef enum _WCChatFormat				WCChatFormat;
 		count = [_shownUsers count];
 		
 		for(i = 0; i < count; i++)
-			[[self connection] postNotificationName:WCChatUserAppeared object:[_shownUsers objectAtIndex:i]];
+			[[self connection] postNotificationName:WCChatUserAppearedNotification object:[_shownUsers objectAtIndex:i]];
 
 		_receivedUserList = YES;
 		
-		[[self connection] postNotificationName:WCChatUsersDidChange object:[self connection]];
+		[[self connection] postNotificationName:WCChatUsersDidChangeNotification object:[self connection]];
 	}
 	else if([[message name] isEqualToString:@"wired.chat.topic"]) {
 		topic = [WCTopic topicWithMessage:message];
@@ -920,8 +920,8 @@ typedef enum _WCChatFormat				WCChatFormat;
 	if([[WCSettings eventWithTag:WCEventsUserJoined] boolForKey:WCEventsPostInChat])
 		[self _printUserJoin:user];
 	
-	[[self connection] postNotificationName:WCChatUserAppeared object:user];
-	[[self connection] postNotificationName:WCChatUsersDidChange object:[self connection]];
+	[[self connection] postNotificationName:WCChatUserAppearedNotification object:user];
+	[[self connection] postNotificationName:WCChatUsersDidChangeNotification object:[self connection]];
 
 	[[self connection] triggerEvent:WCEventsUserJoined info1:user];
 }
@@ -948,12 +948,12 @@ typedef enum _WCChatFormat				WCChatFormat;
 		[self _printUserLeave:user];
 
 	[[self connection] triggerEvent:WCEventsUserLeft info1:user];
-	[[self connection] postNotificationName:WCChatUserDisappeared object:user];
+	[[self connection] postNotificationName:WCChatUserDisappearedNotification object:user];
 
 	[_shownUsers removeObject:user];
 	[_users removeObjectForKey:[NSNumber numberWithUnsignedInt:[user userID]]];
 	
-	[[self connection] postNotificationName:WCChatUsersDidChange object:[self connection]];
+	[[self connection] postNotificationName:WCChatUsersDidChangeNotification object:[self connection]];
 }
 
 
@@ -1035,14 +1035,14 @@ typedef enum _WCChatFormat				WCChatFormat;
 	[self _printUserKick:victim by:killer message:disconnectMessage];
 	
 	if(cid == WCPublicChatID && [victim userID] == [[self connection] userID])
-		[[self connection] postNotificationName:WCChatSelfWasKicked object:[self connection]];
+		[[self connection] postNotificationName:WCChatSelfWasKickedNotification object:[self connection]];
 
-	[[self connection] postNotificationName:WCChatUserDisappeared object:victim];
+	[[self connection] postNotificationName:WCChatUserDisappearedNotification object:victim];
 
 	[_shownUsers removeObject:victim];
 	[_users removeObjectForKey:[NSNumber numberWithInt:victimUserID]];
 	
-	[[self connection] postNotificationName:WCChatUsersDidChange object:[self connection]];
+	[[self connection] postNotificationName:WCChatUsersDidChangeNotification object:[self connection]];
 }
 
 
@@ -1129,14 +1129,14 @@ typedef enum _WCChatFormat				WCChatFormat;
 	[self _printUserBan:victim by:killer message:disconnectMessage];
 	
 	if([victim userID] == [[self connection] userID])
-		[[self connection] postNotificationName:WCChatSelfWasBanned object:[self connection]];
+		[[self connection] postNotificationName:WCChatSelfWasBannedNotification object:[self connection]];
 
-	[[self connection] postNotificationName:WCChatUserDisappeared object:victim];
+	[[self connection] postNotificationName:WCChatUserDisappearedNotification object:victim];
 
 	[_shownUsers removeObject:victim];
 	[_users removeObjectForKey:[NSNumber numberWithInt:victimUserID]];
 	
-	[[self connection] postNotificationName:WCChatUsersDidChange object:[self connection]];
+	[[self connection] postNotificationName:WCChatUsersDidChangeNotification object:[self connection]];
 }
 
 

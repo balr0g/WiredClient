@@ -155,39 +155,39 @@
 
 	[_connection addObserver:self
 					selector:@selector(linkConnectionDidTerminate:)
-						name:WCLinkConnectionDidTerminate];
+						name:WCLinkConnectionDidTerminateNotification];
 
 	[_connection addObserver:self
 					selector:@selector(linkConnectionDidClose:)
-						name:WCLinkConnectionDidClose];
+						name:WCLinkConnectionDidCloseNotification];
 	
 	[_connection addObserver:self
 					selector:@selector(linkConnectionLoggedIn:)
-						name:WCLinkConnectionLoggedIn];
+						name:WCLinkConnectionLoggedInNotification];
 		
 	[_connection addObserver:self
 					selector:@selector(serverConnectionServerInfoDidChange:)
-						name:WCServerConnectionServerInfoDidChange];
+						name:WCServerConnectionServerInfoDidChangeNotification];
 
 	[_connection addObserver:self
 					selector:@selector(serverConnectionPrivilegesDidChange:)
-						name:WCServerConnectionPrivilegesDidChange];
+						name:WCServerConnectionPrivilegesDidChangeNotification];
 
 	[_connection addObserver:self
 					selector:@selector(serverConnectionShouldHide:)
-						name:WCServerConnectionShouldHide];
+						name:WCServerConnectionShouldHideNotification];
 	
 	[_connection addObserver:self
 					selector:@selector(serverConnectionShouldUnhide:)
-						name:WCServerConnectionShouldUnhide];
+						name:WCServerConnectionShouldUnhideNotification];
 
 	[_connection addObserver:self
 					selector:@selector(_serverConnectionShouldLoadWindowTemplate:)
-						name:WCServerConnectionShouldLoadWindowTemplate];
+						name:WCServerConnectionShouldLoadWindowTemplateNotification];
 
 	[_connection addObserver:self
 					selector:@selector(_serverConnectionShouldSaveWindowTemplate:)
-						name:WCServerConnectionShouldSaveWindowTemplate];
+						name:WCServerConnectionShouldSaveWindowTemplateNotification];
 
 	[_connection addObserver:self
 					selector:@selector(_serverConnectionThemeDidChange:)
@@ -196,7 +196,7 @@
 	if([self respondsToSelector:@selector(serverConnectionWillReconnect:)]) {
 		[_connection addObserver:self
 						selector:@selector(serverConnectionWillReconnect:)
-							name:WCServerConnectionWillReconnect];
+							name:WCServerConnectionWillReconnectNotification];
 	}
 	
 	[self retain];
@@ -537,7 +537,7 @@
 		[[WCKeychain keychain] setPassword:password forBookmark:bookmark];
 
 		[connection setBookmark:bookmark];
-		[connection postNotificationName:WCServerConnectionShouldSaveWindowTemplate];
+		[connection postNotificationName:WCServerConnectionShouldSaveWindowTemplateNotification];
 		
 		[[NSNotificationCenter defaultCenter] postNotificationName:WCBookmarksDidChangeNotification];
 	}

@@ -111,7 +111,7 @@
 
 - (BOOL)writeMessage:(WIP7Message *)message timeout:(NSTimeInterval)timeout error:(WIError **)error {
 	if([_p7Socket writeMessage:message timeout:timeout error:error]) {
-		[[_transfer connection] postNotificationName:WCLinkConnectionSentMessage object:message];
+		[[_transfer connection] postNotificationName:WCLinkConnectionSentMessageNotification object:message];
 
 		return YES;
 	}
@@ -128,9 +128,9 @@
 	
 	if(message) {
 		if([[message name] isEqualToString:@"wired.error"])
-			[[_transfer connection] postNotificationName:WCLinkConnectionReceivedErrorMessage object:message];
+			[[_transfer connection] postNotificationName:WCLinkConnectionReceivedErrorMessageNotification object:message];
 		else
-			[[_transfer connection] postNotificationName:WCLinkConnectionReceivedMessage object:message];
+			[[_transfer connection] postNotificationName:WCLinkConnectionReceivedMessageNotification object:message];
 	}
 	
 	return message;

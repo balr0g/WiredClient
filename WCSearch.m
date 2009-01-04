@@ -154,17 +154,17 @@
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(linkConnectionLoggedIn:)
-			   name:WCLinkConnectionLoggedIn];
+			   name:WCLinkConnectionLoggedInNotification];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(linkConnectionDidClose:)
-			   name:WCLinkConnectionDidClose];
+			   name:WCLinkConnectionDidCloseNotification];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(linkConnectionDidTerminate:)
-			   name:WCLinkConnectionDidTerminate];
+			   name:WCLinkConnectionDidTerminateNotification];
 
 	[self window];
 

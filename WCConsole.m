@@ -48,19 +48,19 @@
 	
 	[[self connection] addObserver:self
 						  selector:@selector(linkConnectionReceivedMessage:)
-							  name:WCLinkConnectionReceivedMessage];
+							  name:WCLinkConnectionReceivedMessageNotification];
 	
 	[[self connection] addObserver:self
 						  selector:@selector(linkConnectionReceivedErrorMessage:)
-							  name:WCLinkConnectionReceivedErrorMessage];
+							  name:WCLinkConnectionReceivedErrorMessageNotification];
 	
 	[[self connection] addObserver:self
 						  selector:@selector(linkConnectionReceivedInvalidMessage:)
-							  name:WCLinkConnectionReceivedInvalidMessage];
+							  name:WCLinkConnectionReceivedInvalidMessageNotification];
 	
 	[[self connection] addObserver:self
 						  selector:@selector(linkConnectionSentMessage:)
-							  name:WCLinkConnectionSentMessage];
+							  name:WCLinkConnectionSentMessageNotification];
 	
 	[self window];
 	

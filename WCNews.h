@@ -28,8 +28,8 @@
 
 #import "WCConnectionController.h"
 
-#define WCNewsDidAddPost				@"WCNewsDidAddPost"
-#define WCNewsDidReadPost				@"WCNewsDidReadPost"
+#define WCNewsDidAddPostNotification	@"WCNewsDidAddPostNotification"
+#define WCNewsDidReadPostNotification	@"WCNewsDidReadPostNotification"
 
 
 @interface WCNews : WCConnectionController {

@@ -60,11 +60,11 @@
 
 	[[self connection] addObserver:self
 						  selector:@selector(newsDidChangePosts:)
-							  name:WCNewsDidAddPost];
+							  name:WCNewsDidAddPostNotification];
 	
 	[[self connection] addObserver:self
 						  selector:@selector(newsDidChangePosts:)
-							  name:WCNewsDidReadPost];
+							  name:WCNewsDidReadPostNotification];
 	
 	[[self connection] addObserver:self selector:@selector(wiredChatInvitation:) messageName:@"wired.chat.invitation"];
 	

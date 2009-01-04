@@ -26,7 +26,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define WCDateDidChange					@"WCDateDidChange"
+#define WCDateDidChangeNotification		@"WCDateDidChangeNotification"
 
 #define WCApplicationSupportPath		@"~/Library/Application Support/Wired Client"
 

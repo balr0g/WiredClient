@@ -61,15 +61,15 @@
 	
 	[self addObserver:self
 			 selector:@selector(linkConnectionDidConnect:)
-				 name:WCLinkConnectionDidConnect];
+				 name:WCLinkConnectionDidConnectNotification];
 
 	[self addObserver:self
 			 selector:@selector(linkConnectionDidTerminate:)
-				 name:WCLinkConnectionDidTerminate];
+				 name:WCLinkConnectionDidTerminateNotification];
 	
 	[self addObserver:self
 			 selector:@selector(linkConnectionDidClose:)
-				 name:WCLinkConnectionDidClose];
+				 name:WCLinkConnectionDidCloseNotification];
 
 	[self addObserver:self selector:@selector(wiredSendPing:) messageName:@"wired.send_ping"];
 	[self addObserver:self selector:@selector(wiredServerInfo:) messageName:@"wired.server_info"];
@@ -138,7 +138,7 @@
 
 - (void)wiredLoginReply:(WIP7Message *)message {
 	if([[message name] isEqualToString:@"wired.login"]) {
-		[self postNotificationName:WCLinkConnectionLoggedIn object:self];
+		[self postNotificationName:WCLinkConnectionLoggedInNotification object:self];
 	}
 	if([[message name] isEqualToString:@"wired.banned"]) {
 //		handle banned
@@ -253,7 +253,7 @@
 #pragma mark -
 
 - (void)linkConnected:(WCLink *)link {
-	[self postNotificationName:WCLinkConnectionDidConnect object:self];
+	[self postNotificationName:WCLinkConnectionDidConnectNotification object:self];
 }
 
 
@@ -262,19 +262,19 @@
 	[_error release];
 	_error = [error retain];
 	
-	[self postNotificationName:WCLinkConnectionDidClose object:self];
+	[self postNotificationName:WCLinkConnectionDidCloseNotification object:self];
 }
 
 
 
 - (void)linkTerminated:(WCLink *)link {
-	[self postNotificationName:WCLinkConnectionDidTerminate object:self];
+	[self postNotificationName:WCLinkConnectionDidTerminateNotification object:self];
 }
 
 
 
 - (void)link:(WCLink *)link sentMessage:(WIP7Message *)message {
-	[_notificationCenter postNotificationName:WCLinkConnectionSentMessage object:message];
+	[_notificationCenter postNotificationName:WCLinkConnectionSentMessageNotification object:message];
 }
 
 
@@ -287,16 +287,16 @@
 	
 	if([WCP7Spec verifyMessage:message error:&error]) {
 		if([[message name] isEqualToString:@"wired.error"])
-			[_notificationCenter postNotificationName:WCLinkConnectionReceivedErrorMessage object:message];
+			[_notificationCenter postNotificationName:WCLinkConnectionReceivedErrorMessageNotification object:message];
 		else
-			[_notificationCenter postNotificationName:WCLinkConnectionReceivedMessage object:message];
+			[_notificationCenter postNotificationName:WCLinkConnectionReceivedMessageNotification object:message];
 
 		if([message getUInt32:&transaction forName:@"wired.transaction"])
 			[_linkNotificationCenter postTransaction:transaction message:message];
 		else
 			[_linkNotificationCenter postMessageName:[message name] message:message];
 	} else {
-		[_notificationCenter postNotificationName:WCLinkConnectionReceivedInvalidMessage
+		[_notificationCenter postNotificationName:WCLinkConnectionReceivedInvalidMessageNotification
 										   object:message
 										 userInfo:[NSDictionary dictionaryWithObject:error forKey:@"WCError"]];
 	}
@@ -315,7 +315,7 @@
 - (void)disconnect {
 	_disconnecting = YES;
 	
-	[self postNotificationName:WCLinkConnectionWillDisconnect object:self];
+	[self postNotificationName:WCLinkConnectionWillDisconnectNotification object:self];
 
 	[_link disconnect];
 }
@@ -326,7 +326,7 @@
 	if(_link && [_link isReading])
 		[_link terminate];
 	else
-		[self postNotificationName:WCLinkConnectionDidTerminate object:self];
+		[self postNotificationName:WCLinkConnectionDidTerminateNotification object:self];
 }
 
 

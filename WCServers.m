@@ -232,15 +232,15 @@
 
 	[connection addObserver:self
 				   selector:@selector(linkConnectionLoggedIn:)
-					   name:WCLinkConnectionLoggedIn];
+					   name:WCLinkConnectionLoggedInNotification];
 
 	[connection addObserver:self
 				   selector:@selector(linkConnectionDidClose:)
-					   name:WCLinkConnectionDidClose];
+					   name:WCLinkConnectionDidCloseNotification];
 
 	[connection addObserver:self
 				   selector:@selector(linkConnectionDidTerminate:)
-					   name:WCLinkConnectionDidTerminate];
+					   name:WCLinkConnectionDidTerminateNotification];
 
 	[connection connect];
 }

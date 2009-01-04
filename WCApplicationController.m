@@ -325,27 +325,27 @@ static WCApplicationController		*sharedController;
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		  selector:@selector(messagesDidAddMessage:)
-			   name:WCMessagesDidAddMessage];
+			   name:WCMessagesDidAddMessageNotification];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(messagesDidReadMessage:)
-			   name:WCMessagesDidReadMessage];
+			   name:WCMessagesDidReadMessageNotification];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(newsDidAddPost:)
-			   name:WCNewsDidAddPost];
+			   name:WCNewsDidAddPostNotification];
 	
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(newsDidReadPost:)
-			   name:WCNewsDidReadPost];
+			   name:WCNewsDidReadPostNotification];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(serverConnectionTriggeredEvent:)
-			   name:WCServerConnectionTriggeredEvent];
+			   name:WCServerConnectionTriggeredEventNotification];
 	
 	[[NSAppleEventManager sharedAppleEventManager]
 		setEventHandler:self
@@ -809,7 +809,7 @@ static WCApplicationController		*sharedController;
 
 
 - (void)dailyTimer:(NSTimer *)timer {
-	[[NSNotificationCenter defaultCenter] postNotificationName:WCDateDidChange];
+	[[NSNotificationCenter defaultCenter] postNotificationName:WCDateDidChangeNotification];
 }
 
 

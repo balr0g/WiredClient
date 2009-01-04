@@ -28,26 +28,26 @@
 
 #import "WCLinkConnection.h"
 
-#define WCServerConnectionWillReconnect					@"WCServerConnectionWillReconnect"
+#define WCServerConnectionWillReconnectNotification				@"WCServerConnectionWillReconnectNotification"
 
-#define WCServerConnectionShouldHide					@"WCServerConnectionShouldHide"
-#define WCServerConnectionShouldUnhide					@"WCServerConnectionShouldUnhide"
-#define WCServerConnectionTriggeredEvent				@"WCServerConnectionTriggeredEvent"
+#define WCServerConnectionShouldHideNotification				@"WCServerConnectionShouldHideNotification"
+#define WCServerConnectionShouldUnhideNotification				@"WCServerConnectionShouldUnhideNotification"
+#define WCServerConnectionTriggeredEventNotification			@"WCServerConnectionTriggeredEventNotification"
 
-#define WCServerConnectionShouldLoadWindowTemplate		@"WCServerConnectionShouldLoadWindowTemplate"
-#define WCServerConnectionShouldSaveWindowTemplate		@"WCServerConnectionShouldSaveWindowTemplate"
-#define WCServerConnectionThemeDidChangeNotification	@"WCServerConnectionThemeDidChangeNotification"
+#define WCServerConnectionShouldLoadWindowTemplateNotification	@"WCServerConnectionShouldLoadWindowTemplatNotificatione"
+#define WCServerConnectionShouldSaveWindowTemplateNotification	@"WCServerConnectionShouldSaveWindowTemplateNotification"
+#define WCServerConnectionThemeDidChangeNotification			@"WCServerConnectionThemeDidChangeNotification"
 
-#define WCServerConnectionServerInfoDidChange			@"WCServerConnectionServerInfoDidChange"
-#define WCServerConnectionPrivilegesDidChange			@"WCServerConnectionPrivilegesDidChange"
+#define WCServerConnectionServerInfoDidChangeNotification		@"WCServerConnectionServerInfoDidChangeNotification"
+#define WCServerConnectionPrivilegesDidChangeNotification		@"WCServerConnectionPrivilegesDidChangeNotification"
 
-#define WCServerConnectionReceivedServerInfo			@"WCServerConnectionReceivedServerInfo"
-#define WCServerConnectionReceivedPing					@"WCServerConnectionReceivedPing"
-#define WCServerConnectionReceivedBanner				@"WCServerConnectionReceivedBanner"
+#define WCServerConnectionReceivedServerInfoNotification		@"WCServerConnectionReceivedServerInfoNotification"
+#define WCServerConnectionReceivedPingNotification				@"WCServerConnectionReceivedPingNotification"
+#define WCServerConnectionReceivedBannerNotification			@"WCServerConnectionReceivedBannerNotification"
 
-#define WCServerConnectionEventConnectionKey			@"WCServerConnectionEventConnectionKey"
-#define WCServerConnectionEventInfo1Key					@"WCServerConnectionEventInfo1Key"
-#define WCServerConnectionEventInfo2Key					@"WCServerConnectionEventInfo2Key"
+#define	WCServerConnectionEventConnectionKey					@"WCServerConnectionEventConnectionKey"
+#define WCServerConnectionEventInfo1Key							@"WCServerConnectionEventInfo1Key"
+#define WCServerConnectionEventInfo2Key							@"WCServerConnectionEventInfo2Key"
 
 
 @class WCServer, WCCache, WCAccount;
@@ -55,25 +55,25 @@
 @class WCAccounts, WCAdministration, WCPublicChat, WCConsole, WCNews, WCBoard, WCServerInfo;
 
 @interface WCServerConnection : WCLinkConnection {
-	NSDictionary										*_theme;
+	NSDictionary												*_theme;
 	
-	NSUInteger											_userID;
+	NSUInteger													_userID;
 	
-	WCServer											*_server;
-	WCCache												*_cache;
+	WCServer													*_server;
+	WCCache														*_cache;
 	
-	WCAccounts											*_accounts;
-	WCAdministration									*_administration;
-	WCPublicChat										*_chat;
-	WCConsole											*_console;
-	WCNews												*_news;
-	WCBoard												*_board;
-	WCServerInfo										*_serverInfo;
+	WCAccounts													*_accounts;
+	WCAdministration											*_administration;
+	WCPublicChat												*_chat;
+	WCConsole													*_console;
+	WCNews														*_news;
+	WCBoard														*_board;
+	WCServerInfo												*_serverInfo;
 	
-	BOOL												_manuallyReconnecting;
-	BOOL												_shouldAutoReconnect;
-	BOOL												_autoReconnecting;
-	BOOL												_hidden;
+	BOOL														_manuallyReconnecting;
+	BOOL														_shouldAutoReconnect;
+	BOOL														_autoReconnecting;
+	BOOL														_hidden;
 }
 
 - (void)reconnect;

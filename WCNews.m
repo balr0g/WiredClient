@@ -112,7 +112,7 @@
 	while(_unread > 0) {
 		_unread--;
 		
-		[[self connection] postNotificationName:WCNewsDidReadPost object:[self connection]];
+		[[self connection] postNotificationName:WCNewsDidReadPostNotification object:[self connection]];
 	}
 }
 
@@ -368,7 +368,7 @@
 	if(![[self window] isVisible]) {
 		_unread++;
 		
-		[[self connection] postNotificationName:WCNewsDidAddPost object:[self connection]];
+		[[self connection] postNotificationName:WCNewsDidAddPostNotification object:[self connection]];
 	}
 	
 	[[self connection] triggerEvent:WCEventsNewsPosted info1:[post userNick] info2:[post message]];

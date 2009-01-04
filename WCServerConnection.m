@@ -81,19 +81,19 @@
 
 	[self addObserver:self
 			 selector:@selector(serverConnectionShouldHide:)
-				 name:WCServerConnectionShouldHide];
+				 name:WCServerConnectionShouldHideNotification];
 
 	[self addObserver:self
 			 selector:@selector(serverConnectionShouldUnhide:)
-				 name:WCServerConnectionShouldUnhide];
+				 name:WCServerConnectionShouldUnhideNotification];
 
 	[self addObserver:self
 			 selector:@selector(chatSelfWasKicked:)
-				 name:WCChatSelfWasKicked];
+				 name:WCChatSelfWasKickedNotification];
 
 	[self addObserver:self
 			 selector:@selector(chatSelfWasKicked:)
-				 name:WCChatSelfWasBanned];
+				 name:WCChatSelfWasBannedNotification];
 
 	[self addObserver:self selector:@selector(wiredAccountPrivileges:) messageName:@"wired.account.privileges"];
 	
@@ -234,7 +234,7 @@
 			[self name]]];
 	}
 
-	[self postNotificationName:WCServerConnectionServerInfoDidChange object:self];
+	[self postNotificationName:WCServerConnectionServerInfoDidChangeNotification object:self];
 }
 
 
@@ -252,7 +252,7 @@
 	else if([[message name] isEqualToString:@"wired.account.privileges"]) {
 		[_server setAccount:[WCUserAccount accountWithMessage:message]];
 
-		[self postNotificationName:WCServerConnectionPrivilegesDidChange object:self];
+		[self postNotificationName:WCServerConnectionPrivilegesDidChangeNotification object:self];
 	}
 	
 	[super wiredLoginReply:message];
@@ -263,7 +263,7 @@
 - (void)wiredAccountPrivileges:(WIP7Message *)message {
 	[_server setAccount:[WCUserAccount accountWithMessage:message]];
 
-	[self postNotificationName:WCServerConnectionPrivilegesDidChange object:self];
+	[self postNotificationName:WCServerConnectionPrivilegesDidChangeNotification object:self];
 }
 
 
@@ -320,7 +320,7 @@
 		[[self chat] printEvent:[NSSWF:NSLS(@"Reconnecting to %@...", @"Reconnecting chat message"),
 			[self name]]];
 		
-		[self postNotificationName:WCServerConnectionWillReconnect object:self];
+		[self postNotificationName:WCServerConnectionWillReconnectNotification object:self];
 
 		[self connect];
 	}
@@ -333,7 +333,7 @@
 		_autoReconnecting		= YES;
 		_manuallyReconnecting	= NO;
 		
-		[self postNotificationName:WCServerConnectionWillReconnect object:self];
+		[self postNotificationName:WCServerConnectionWillReconnectNotification object:self];
 
 		[self connect];
 	}
@@ -342,13 +342,13 @@
 
 
 - (void)hide {
-	[self postNotificationName:WCServerConnectionShouldHide object:self];
+	[self postNotificationName:WCServerConnectionShouldHideNotification object:self];
 }
 
 
 
 - (void)unhide {
-	[self postNotificationName:WCServerConnectionShouldUnhide object:self];
+	[self postNotificationName:WCServerConnectionShouldUnhideNotification object:self];
 }
 
 
@@ -380,7 +380,7 @@
 	if(info2)
 		[userInfo setObject:info2 forKey:WCServerConnectionEventInfo2Key];
 	
-	[self postNotificationName:WCServerConnectionTriggeredEvent object:event userInfo:userInfo];
+	[self postNotificationName:WCServerConnectionTriggeredEventNotification object:event userInfo:userInfo];
 }
 
 

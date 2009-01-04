@@ -250,7 +250,7 @@
 	for(i = 0; i < count; i++) {
 		message = [messages objectAtIndex:i];
 		[message setRead:YES];
-		[[message connection] postNotificationName:WCMessagesDidReadMessage];
+		[[message connection] postNotificationName:WCMessagesDidReadMessageNotification];
 	}
 }
 
@@ -345,27 +345,27 @@
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(linkConnectionLoggedIn:)
-			   name:WCLinkConnectionLoggedIn];
+			   name:WCLinkConnectionLoggedInNotification];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(linkConnectionDidClose:)
-			   name:WCLinkConnectionDidClose];
+			   name:WCLinkConnectionDidCloseNotification];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(linkConnectionDidTerminate:)
-			   name:WCLinkConnectionDidTerminate];
+			   name:WCLinkConnectionDidTerminateNotification];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(chatUserAppeared:)
-			   name:WCChatUserAppeared];
+			   name:WCChatUserAppearedNotification];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(chatUserDisappeared:)
-			   name:WCChatUserDisappeared];
+			   name:WCChatUserDisappearedNotification];
 	
 	[self window];
 	
@@ -636,7 +636,7 @@
 
 	[[WCStats stats] addUnsignedInt:1 forKey:WCStatsMessagesReceived];
 
-	[connection postNotificationName:WCMessagesDidAddMessage object:message];
+	[connection postNotificationName:WCMessagesDidAddMessageNotification object:message];
 	[connection triggerEvent:WCEventsMessageReceived info1:message];
 	
 	[self _validate];
@@ -686,7 +686,7 @@
 	if([[WCSettings eventWithTag:WCEventsBroadcastReceived] boolForKey:WCEventsShowDialog])
 		[self _showDialogForMessage:message];
 
-	[connection postNotificationName:WCMessagesDidAddMessage object:message];
+	[connection postNotificationName:WCMessagesDidAddMessageNotification object:message];
 	[connection triggerEvent:WCEventsBroadcastReceived info1:message];
 	
 	[self _validate];
@@ -1126,7 +1126,7 @@
 			[_conversationsOutlineView setNeedsDisplay:YES];
 			[_messagesTableView setNeedsDisplay:YES];
 					
-			[[message connection] postNotificationName:WCMessagesDidReadMessage];
+			[[message connection] postNotificationName:WCMessagesDidReadMessageNotification];
 		}
 		
 		[_messageTextView setString:[message message] withFilter:_messageFilter];

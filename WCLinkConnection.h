@@ -28,31 +28,31 @@
 
 #import "WCConnection.h"
 
-#define WCLinkConnectionDidConnect					@"WCLinkConnectionDidConnect"
-#define WCLinkConnectionWillDisconnect				@"WCLinkConnectionWillDisconnect"
-#define WCLinkConnectionDidClose					@"WCLinkConnectionDidClose"
-#define WCLinkConnectionDidTerminate				@"WCLinkConnectionDidTerminate"
+#define WCLinkConnectionDidConnectNotification				@"WCLinkConnectionDidConnectNotification"
+#define WCLinkConnectionWillDisconnectNotification			@"WCLinkConnectionWillDisconnectNotification"
+#define WCLinkConnectionDidCloseNotification				@"WCLinkConnectionDidCloseNotification"
+#define WCLinkConnectionDidTerminateNotification			@"WCLinkConnectionDidTerminateNotification"
 
-#define WCLinkConnectionReceivedMessage				@"WCLinkConnectionReceivedMessage"
-#define WCLinkConnectionReceivedErrorMessage		@"WCLinkConnectionReceivedErrorMessage"
-#define WCLinkConnectionReceivedInvalidMessage		@"WCLinkConnectionReceivedInvalidMessage"
-#define WCLinkConnectionSentMessage					@"WCLinkConnectionSentMessage"
+#define WCLinkConnectionReceivedMessageNotification			@"WCLinkConnectionReceivedMessageNotification"
+#define WCLinkConnectionReceivedErrorMessageNotification	@"WCLinkConnectionReceivedErrorMessageNotification"
+#define WCLinkConnectionReceivedInvalidMessageNotification	@"WCLinkConnectionReceivedInvalidMessageNotification"
+#define WCLinkConnectionSentMessageNotification				@"WCLinkConnectionSentMessageNotification"
 
-#define WCLinkConnectionLoggedIn					@"WCLinkConnectionLoggedIn"
+#define WCLinkConnectionLoggedInNotification				@"WCLinkConnectionLoggedInNotification"
 
 
 @class WCLink, WCNotificationCenter;
 
 @interface WCLinkConnection : WCConnection {
-	WCLink											*_link;
-	NSNotificationCenter							*_notificationCenter;
-	WCNotificationCenter							*_linkNotificationCenter;
-	WIP7UInt32										_transaction;
+	WCLink													*_link;
+	NSNotificationCenter									*_notificationCenter;
+	WCNotificationCenter									*_linkNotificationCenter;
+	WIP7UInt32												_transaction;
 	
-	WCError											*_error;
+	WCError													*_error;
 	
-	BOOL											_sentLogin;
-	BOOL											_disconnecting;
+	BOOL													_sentLogin;
+	BOOL													_disconnecting;
 }
 
 - (void)linkConnectionDidTerminate:(NSNotification *)notification;

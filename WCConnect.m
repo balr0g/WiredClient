@@ -59,15 +59,15 @@
 	
 	[_connection addObserver:self
 					selector:@selector(linkConnectionDidClose:)
-						name:WCLinkConnectionDidClose];
+						name:WCLinkConnectionDidCloseNotification];
 	
 	[_connection addObserver:self
 					selector:@selector(linkConnectionDidTerminate:)
-						name:WCLinkConnectionDidTerminate];
+						name:WCLinkConnectionDidTerminateNotification];
 	
 	[_connection addObserver:self
 					selector:@selector(linkConnectionLoggedIn:)
-						name:WCLinkConnectionLoggedIn];
+						name:WCLinkConnectionLoggedInNotification];
 	
 	[self window];
 	
@@ -124,7 +124,7 @@
 
 - (void)windowWillClose:(NSNotification *)notification {
 	if(!_dismissingWindow) {
-		[_connection removeObserver:self name:WCLinkConnectionDidTerminate];
+		[_connection removeObserver:self name:WCLinkConnectionDidTerminateNotification];
 		[_connection terminate];
 	}
 

@@ -181,17 +181,17 @@ static OSStatus _WCStatsEventSystemTimeDateChanged(EventHandlerCallRef nextHandl
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(linkConnectionDidClose:)
-			   name:WCLinkConnectionDidClose];
+			   name:WCLinkConnectionDidCloseNotification];
 	
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(linkConnectionDidTerminate:)
-			   name:WCLinkConnectionDidTerminate];
+			   name:WCLinkConnectionDidTerminateNotification];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(linkConnectionLoggedIn:)
-			   name:WCLinkConnectionLoggedIn];
+			   name:WCLinkConnectionLoggedInNotification];
 
 	eventHandlerUPP				= NewEventHandlerUPP(_WCStatsEventSystemTimeDateChanged);
 	eventTypeSpec.eventClass	= kEventClassSystem;
