@@ -1187,6 +1187,8 @@
 
 - (IBAction)deleteHighlight:(id)sender {
 	NSInteger	row;
+	
+	row = [_highlightsTableView selectedRow];
 
 	if(row < 0)
 		return;
