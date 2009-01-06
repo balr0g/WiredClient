@@ -260,7 +260,7 @@
 @implementation WCSettings
 
 + (void)loadWithIdentifier:(NSString *)identifier {
-#ifndef RELEASE
+#ifndef WCConfigurationRelease
 	NSUserDefaults	*defaults;
 	NSDictionary	*persistentDomain;
 	

@@ -310,7 +310,7 @@ static WCApplicationController		*sharedController;
 
 	sharedController = self = [super init];
 	
-#ifndef RELEASE
+#ifndef WCConfigurationRelease
 	[[WIExceptionHandler sharedExceptionHandler] enable];
 #endif
 	
@@ -407,7 +407,7 @@ static WCApplicationController		*sharedController;
 	NSDictionary		*bookmark;
 	WIError				*error;
 	
-#ifdef RELEASE
+#ifdef WCConfigurationRelease
 	if(![WCSettings boolForKey:WCDebug])
 		[[NSApp mainMenu] removeItemAtIndex:[[NSApp mainMenu] indexOfItemWithSubmenu:_debugMenu]];
 #endif
@@ -416,13 +416,13 @@ static WCApplicationController		*sharedController;
 	[NSNumberFormatter setDefaultFormatterBehavior:NSNumberFormatterBehavior10_4];
 	
 	[GrowlApplicationBridge setGrowlDelegate:self];
-		
-	[_updater setDelegate:self];
+	
+	[_updater setSendsSystemProfile:YES];
 
-#ifdef RELEASE
-	[_updater setFeedURL:[NSURL URLWithString:@"http://www.zankasoftware.com/sparkle/wiredclient.xml"]];
+#ifdef WCConfigurationRelease
+	[_updater setFeedURL:[NSURL URLWithString:@"http://www.zankasoftware.com/sparkle/sparkle.pl?file=wiredclient.xml"]];
 #else
-	[_updater setFeedURL:[NSURL URLWithString:@"http://www.zankasoftware.com/sparkle/wiredclient-nightly.xml"]];
+	[_updater setFeedURL:[NSURL URLWithString:@"http://www.zankasoftware.com/sparkle/sparkle.pl?file=wiredclient-nightly.xml"]];
 #endif
 	
 	WCP7Spec = [[WIP7Spec alloc] initWithPath:[[NSBundle mainBundle] pathForResource:@"wired" ofType:@"xml"]

@@ -273,7 +273,7 @@
 		@"Transfers",
 		@"Accounts",
 		@"Administration",
-#ifndef RELEASE
+#ifndef WCConfigurationRelease
 		@"Console",
 #endif
 		@"Reconnect",
