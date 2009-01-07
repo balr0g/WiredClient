@@ -26,7 +26,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-// --- Frameworks
 #import <Carbon/Carbon.h>
 #import <Cocoa/Cocoa.h>
 #import <ExceptionHandling/NSExceptionHandler.h>
@@ -34,15 +33,13 @@
 #import <Security/SecKeychainItem.h>
 #import <WebKit/WebKit.h>
 #import <Growl/Growl.h>
+#import <PSMTabBarControl/PSMTabBarControl.h>
 #import <Sparkle/Sparkle.h>
 #import <WiredFoundation/WiredFoundation.h>
 #import <WiredAppKit/WiredAppKit.h>
 #import <WiredNetworking/WiredNetworking.h>
 
-// --- mach layer
 #import <mach-o/arch.h>
-
-// --- BSD layer
 #import <sys/types.h>
 #import <sys/param.h>
 #import <sys/time.h>
@@ -54,20 +51,14 @@
 #import <unistd.h>
 #import <fcntl.h>
 #import <pthread.h>
-
-// --- OpenSSL
 #import <openssl/err.h>
 #import <openssl/sha.h>
 #import <openssl/ssl.h>
 
-// --- Macros
-#define NSLS		NSLocalizedString
-#define NSSWF		NSString stringWithFormat
-
-// --- Wired core data classes
+#import "WCConnectionController.h"
 #import "WCError.h"
 #import "WCServerConnection.h"
 #import "WCSettings.h"
 
-// --- Wired core controllers
-#import "WCConnectionController.h"
+#define NSLS		NSLocalizedString
+#define NSSWF		NSString stringWithFormat

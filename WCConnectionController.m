@@ -38,84 +38,15 @@
 
 @interface WCConnectionController(Private)
 
-- (void)_loadWindowTemplate;
-- (void)_saveWindowTemplate;
-
 @end
 
 
 @implementation WCConnectionController(Private)
 
-- (void)_loadWindowTemplate {
-	NSDictionary	*windowTemplate;
-	
-	_identifier = [[[self connection] identifier] retain];
-	
-	windowTemplate = [WCSettings windowTemplateForKey:_identifier];
-	
-	if(!windowTemplate)
-		windowTemplate = [WCSettings windowTemplateForKey:WCWindowTemplatesDefault];
-	
-	if(windowTemplate)
-		_windowTemplate = [[windowTemplate objectForKey:[self windowNibName]] mutableCopy];
-
-	if(!_windowTemplate)
-		_windowTemplate = [[NSMutableDictionary alloc] init];
-	
-	[self windowTemplateShouldLoad:_windowTemplate];
-}
-
-
-
-- (void)_saveWindowTemplate {
-	NSMutableDictionary		*windowTemplate;
-	
-	if(_windowTemplate) {
-		[self windowTemplateShouldSave:_windowTemplate];
-		
-		windowTemplate = [[WCSettings windowTemplateForKey:_identifier] mutableCopy];
-		
-		if(!windowTemplate)
-			windowTemplate = [[NSMutableDictionary alloc] init];
-		
-		[windowTemplate setObject:_windowTemplate forKey:[self windowNibName]];
-		
-		[WCSettings setWindowTemplate:windowTemplate forKey:_identifier];
-		
-		[windowTemplate release];
-	}
-}
-
-
-
-#pragma mark -
-
-- (void)_WC_applicationWillTerminate:(NSNotification *)notification {
-	[self _saveWindowTemplate];
-}
-
-
-
 - (void)_WC_windowWillClose:(NSNotification *)notification {
-	if(!_singleton && [notification object] == [self window]) {
-		[self _saveWindowTemplate];
-		
+	if(!_singleton && [notification object] == [self window])
 		[self autorelease];
-	}
 }
-
-
-
-- (void)_serverConnectionShouldLoadWindowTemplate:(NSNotification *)notification {
-	[self _loadWindowTemplate];
-}
-
-
-
-- (void)_serverConnectionShouldSaveWindowTemplate:(NSNotification *)notification {
-	[self _saveWindowTemplate];
-}
-
 
 
 
@@ -144,15 +75,10 @@
 - (id)initWithWindowNibName:(NSString *)nibName name:(NSString *)name connection:(WCServerConnection *)connection singleton:(BOOL)singleton {
 	self = [super initWithWindowNibName:nibName];
 
-	_name = [name retain];
-	_connection = connection;
-	_singleton = singleton;
+	_name			= [name retain];
+	_connection		= connection;
+	_singleton		= singleton;
 	
-	[[NSNotificationCenter defaultCenter]
-		addObserver:self
-		   selector:@selector(_WC_applicationWillTerminate:)
-			   name:NSApplicationWillTerminateNotification];
-
 	[_connection addObserver:self
 					selector:@selector(linkConnectionDidTerminate:)
 						name:WCLinkConnectionDidTerminateNotification];
@@ -172,14 +98,6 @@
 	[_connection addObserver:self
 					selector:@selector(serverConnectionPrivilegesDidChange:)
 						name:WCServerConnectionPrivilegesDidChangeNotification];
-
-	[_connection addObserver:self
-					selector:@selector(_serverConnectionShouldLoadWindowTemplate:)
-						name:WCServerConnectionShouldLoadWindowTemplateNotification];
-
-	[_connection addObserver:self
-					selector:@selector(_serverConnectionShouldSaveWindowTemplate:)
-						name:WCServerConnectionShouldSaveWindowTemplateNotification];
 
 	[_connection addObserver:self
 					selector:@selector(_serverConnectionThemeDidChange:)
@@ -206,8 +124,6 @@
 
 	[_connection removeObserver:self];
 	_connection = NULL;
-	
-	[_windowTemplate release];
 
 	[super dealloc];
 }
@@ -221,9 +137,6 @@
 		addObserver:self
 		   selector:@selector(_WC_windowWillClose:)
 			   name:NSWindowWillCloseNotification];
-	
-	if(!_singleton)
-		[self windowTemplate];
 	
 	[self themeDidChange:[[self connection] theme]];
 	[self validate];
@@ -254,10 +167,7 @@
 
 
 - (void)linkConnectionDidTerminate:(NSNotification *)notification {
-	[self _saveWindowTemplate];
-	
-	if(![self isKindOfClass:[WCPublicChat class]])
-		[self close];
+	[self close];
 
 	if(_singleton)
 		[self autorelease];
@@ -275,9 +185,6 @@
 
 
 - (void)linkConnectionLoggedIn:(NSNotification *)notification {
-	if(_singleton)
-		[self windowTemplate];
-	
 	[self validate];
 }
 
@@ -298,41 +205,14 @@
 
 #pragma mark -
 
-- (void)setName:(NSString *)name {
-	[name retain];
-	[_name release];
-
-	_name = name;
-}
-
-
-
 - (NSString *)name {
 	return _name;
 }
 
 
 
-- (void)setConnection:(WCServerConnection *)connection {
-	[connection retain];
-	[_connection release];
-
-	_connection = connection;
-}
-
-
-
 - (WCServerConnection *)connection {
 	return _connection;
-}
-
-
-
-- (NSDictionary *)windowTemplate {
-	if(!_windowTemplate)
-		[self _loadWindowTemplate];
-	
-	return _windowTemplate;
 }
 
 
@@ -363,151 +243,6 @@
 #pragma mark -
 
 - (void)validate {
-}
-
-
-
-- (BOOL)validateAction:(SEL)selector {
-	BOOL		connected;
-
-	if(![self connection])
-		return NO;
-	
-	connected = [[self connection] isConnected];
-	
-	if(selector == @selector(disconnect:))
-		return (connected && ![[self connection] isDisconnecting]);
-	else if(selector == @selector(reconnect:))
-		return (!connected && ![[self connection] isManuallyReconnecting]);
-	else if(selector == @selector(files:) || selector == @selector(postNews:) || selector == @selector(broadcast:))
-		return connected;
-	
-	return YES;
-}
-
-
-
-#pragma mark -
-
-- (BOOL)validateMenuItem:(NSMenuItem *)item {
-	return [self validateAction:[item action]];
-}
-
-
-
-- (IBAction)disconnect:(id)sender {
-	if(![[self connection] isDisconnecting]) {
-		if([self beginConfirmDisconnectSheetModalForWindow:[[[self connection] chat] window]
-											 modalDelegate:self
-											didEndSelector:@selector(_disconnectSheetDidEnd:returnCode:contextInfo:)
-											   contextInfo:NULL]) {
-			[[self connection] disconnect];
-		}
-	}
-}
-
-
-
-- (IBAction)reconnect:(id)sender {
-	[[self connection] reconnect];
-}
-
-
-
-- (IBAction)serverInfo:(id)sender {
-	[[[self connection] serverInfo] showWindow:self];
-}
-
-
-
-- (IBAction)chat:(id)sender {
-	[[[self connection] chat] showWindow:self];
-}
-
-
-
-- (IBAction)news:(id)sender {
-	[[[self connection] news] showWindow:self];
-}
-
-
-
-- (IBAction)board:(id)sender {
-	[[[self connection] board] showWindow:self];
-}
-
-
-
-- (IBAction)files:(id)sender {
-	[WCFiles filesWithConnection:[self connection] path:[WCFile fileWithRootDirectoryForConnection:[self connection]]];
-}
-
-
-
-- (IBAction)accounts:(id)sender {
-	[[[self connection] accounts] showWindow:self];
-}
-
-
-
-- (IBAction)administration:(id)sender {
-	[[[self connection] administration] showWindow:self];
-}
-
-
-
-- (IBAction)postNews:(id)sender {
-	[[[self connection] news] postNews:self];
-}
-
-
-
-- (IBAction)broadcast:(id)sender {
-	[[WCMessages messages] showBroadcastForConnection:[self connection]];
-}
-
-
-
-#pragma mark -
-
-- (IBAction)addBookmark:(id)sender {
-	NSDictionary		*bookmark;
-	NSString			*login, *password;
-	WIURL				*url;
-	WCServerConnection	*connection;
-	
-	connection = [self connection];
-	url = [connection URL];
-	
-	if(url) {
-		login		= [url user] ? [url user] : @"";
-		password	= [url password] ? [url password] : @"";
-		bookmark	= [NSDictionary dictionaryWithObjectsAndKeys:
-			[connection name],			WCBookmarksName,
-			[url hostpair],				WCBookmarksAddress,
-			login,						WCBookmarksLogin,
-			@"",						WCBookmarksNick,
-			@"",						WCBookmarksStatus,
-			[NSString UUIDString],		WCBookmarksIdentifier,
-			NULL];
-		
-		[WCSettings addObject:bookmark toArrayForKey:WCBookmarks];
-		
-		[[WCKeychain keychain] setPassword:password forBookmark:bookmark];
-
-		[connection setBookmark:bookmark];
-		[connection postNotificationName:WCServerConnectionShouldSaveWindowTemplateNotification];
-		
-		[[NSNotificationCenter defaultCenter] postNotificationName:WCBookmarksDidChangeNotification];
-	}
-}
-
-
-
-#pragma mark -
-
-- (IBAction)console:(id)sender {
-	[[[self connection] console] showWindow:self];
 }
 
 @end

@@ -1,18 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.02">
+<archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.03">
 	<data>
 		<int key="IBDocument.SystemTarget">1040</int>
-		<string key="IBDocument.SystemVersion">9F33</string>
-		<string key="IBDocument.InterfaceBuilderVersion">672</string>
-		<string key="IBDocument.AppKitVersion">949.34</string>
-		<string key="IBDocument.HIToolboxVersion">352.00</string>
+		<string key="IBDocument.SystemVersion">9G55</string>
+		<string key="IBDocument.InterfaceBuilderVersion">677</string>
+		<string key="IBDocument.AppKitVersion">949.43</string>
+		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="89"/>
+			<integer value="11"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+		</object>
+		<object class="NSMutableDictionary" key="IBDocument.Metadata">
+			<bool key="EncodedWithXMLCoder">YES</bool>
+			<object class="NSArray" key="dict.sortedKeys">
+				<bool key="EncodedWithXMLCoder">YES</bool>
+			</object>
+			<object class="NSMutableArray" key="dict.values">
+				<bool key="EncodedWithXMLCoder">YES</bool>
+			</object>
 		</object>
 		<object class="NSMutableArray" key="IBDocument.RootObjects" id="613301208">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -2102,7 +2111,7 @@
 												<bool key="EncodedWithXMLCoder">YES</bool>
 												<object class="NSTableColumn" id="631419829">
 													<string key="NSIdentifier">Name</string>
-													<double key="NSWidth">1.740000e+02</double>
+													<double key="NSWidth">1.420000e+02</double>
 													<double key="NSMinWidth">2.500000e+01</double>
 													<double key="NSMaxWidth">1.000000e+03</double>
 													<object class="NSTableHeaderCell" key="NSHeaderCell">
@@ -2136,7 +2145,7 @@
 												</object>
 												<object class="NSTableColumn" id="368971162">
 													<string key="NSIdentifier">Type</string>
-													<double key="NSWidth">2.500000e+01</double>
+													<double key="NSWidth">5.700000e+01</double>
 													<double key="NSMinWidth">2.500000e+01</double>
 													<double key="NSMaxWidth">8.000000e+01</double>
 													<object class="NSTableHeaderCell" key="NSHeaderCell">
@@ -2184,8 +2193,8 @@
 												</object>
 											</object>
 											<double key="NSRowHeight">1.700000e+01</double>
-											<int key="NSTvFlags">-633307136</int>
-											<int key="NSColumnAutoresizingStyle">1</int>
+											<int key="NSTvFlags">-633339904</int>
+											<int key="NSColumnAutoresizingStyle">3</int>
 											<int key="NSDraggingSourceMaskForLocal">15</int>
 											<int key="NSDraggingSourceMaskForNonLocal">0</int>
 											<bool key="NSAllowsTypeSelect">YES</bool>
@@ -4893,7 +4902,6 @@
 					<string>436.IBPluginDependency</string>
 					<string>436.ImportedFromIB2</string>
 					<string>5.IBEditorWindowLastContentRect</string>
-					<string>5.IBPluginDependency</string>
 					<string>5.IBWindowTemplateEditedContentRect</string>
 					<string>5.ImportedFromIB2</string>
 					<string>5.windowTemplate.hasMaxSize</string>
@@ -5018,7 +5026,6 @@
 					<string>6.IBPluginDependency</string>
 					<string>6.ImportedFromIB2</string>
 					<string>612.IBEditorWindowLastContentRect</string>
-					<string>612.IBPluginDependency</string>
 					<string>612.IBWindowTemplateEditedContentRect</string>
 					<string>612.ImportedFromIB2</string>
 					<string>612.windowTemplate.hasMaxSize</string>
@@ -5332,7 +5339,6 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
 					<string>{{357, 144}, {765, 460}}</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{{357, 144}, {765, 460}}</string>
 					<reference ref="5"/>
 					<integer value="0"/>
@@ -5457,7 +5463,6 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
 					<string>{{378, 479}, {381, 102}}</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{{378, 479}, {381, 102}}</string>
 					<reference ref="5"/>
 					<reference ref="5"/>
@@ -5682,6 +5687,13 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBUserSource</string>
 						<string key="minorKey"/>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">NSObject</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">PSMTabBarControl/PSMTabBarControl.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -5923,39 +5935,6 @@
 				<object class="IBPartialClassDescription">
 					<string key="className">WCConnectionController</string>
 					<string key="superclassName">WIWindowController</string>
-					<object class="NSMutableDictionary" key="actions">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSMutableArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>accounts:</string>
-							<string>addBookmark:</string>
-							<string>administration:</string>
-							<string>broadcast:</string>
-							<string>chat:</string>
-							<string>console:</string>
-							<string>disconnect:</string>
-							<string>files:</string>
-							<string>news:</string>
-							<string>postNews:</string>
-							<string>reconnect:</string>
-							<string>serverInfo:</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-						</object>
-					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">WCConnectionController.h</string>

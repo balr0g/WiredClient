@@ -62,6 +62,9 @@
 
 #define _WCBookmarksPassword						@"Password"
 
+#define _WCWindowTemplates						@"WCWindowTemplates"
+#define _WCWindowTemplatesDefault					@"WCWindowTemplatesDefault"
+
 
 @interface WCSettings(Private)
 
@@ -291,7 +294,6 @@
 		themesIdentifier = [[NSString UUIDString] retain];
 
 	return [NSDictionary dictionaryWithObjectsAndKeys:
-		// --- general
 		NSUserName(),
 			WCNick,
 		@"",
@@ -353,8 +355,7 @@
 		
 		[NSNumber numberWithBool:YES],
 			WCCheckForUpdate,
-			
-		// --- themes
+		
 		themesIdentifier,
 			WCTheme,
 		[NSArray arrayWithObjects:
@@ -383,11 +384,9 @@
 			NULL],
 			WCThemes,
 
-		// --- bookmarks
 		[NSArray array],
 			WCBookmarks,
 		
-		// --- chat/settings
 		[NSNumber numberWithBool:NO],
 			WCChatHistoryScrollback,
 		[NSNumber numberWithInt:WCChatHistoryScrollbackModifierNone],
@@ -407,15 +406,12 @@
 		[NSNumber numberWithBool:NO],
 			WCChatShowSmileys,
 
-		// --- chat/highlights
 		[NSArray array],
 			WCHighlights,
 
-		// --- chat/ignores
 		[NSArray array],
 			WCIgnores,
 
-		// --- events
 		[NSArray arrayWithObjects:
 			[NSDictionary dictionaryWithObjectsAndKeys:
 				[NSNumber numberWithInt:WCEventsServerConnected],			WCEventsEvent,
@@ -471,7 +467,6 @@
 		[NSNumber numberWithFloat:1.0],
 			WCEventsVolume,
 
-		// --- files
 		[@"~/Downloads" stringByExpandingTildeInPath],
 			WCDownloadFolder,
 		[NSNumber numberWithBool:NO],
@@ -487,7 +482,6 @@
 		[NSNumber numberWithInt:WCFilesStyleList],
 			WCFilesStyle,
 		
-		// --- trackers
 		[NSArray arrayWithObject:
 			[NSDictionary dictionaryWithObjectsAndKeys:
 				@"Zanka Tracker",				WCTrackerBookmarksName,
@@ -496,25 +490,12 @@
 				[NSString UUIDString],			WCTrackerBookmarksIdentifier,
 				NULL]],
 			WCTrackerBookmarks,
-		
-		// --- window templates
+			
 		[NSDictionary dictionary],
-			WCWindowTemplates,
+			WCWindowProperties,
 		
-		// -- SSL
-		@"ALL:!LOW:!EXP:!MD5",
-			WCSSLControlCiphers,
-		@"NULL:ALL:!LOW:!EXP:!MD5",
-			WCSSLNullControlCiphers,
-		@"RC4:ALL:!LOW:!EXP:!MD5",
-			WCSSLTransferCiphers,
-		@"NULL:RC4:ALL:!LOW:!EXP:!MD5",
-			WCSSLNullTransferCiphers,
-		
-		// --- debug
 		[NSNumber numberWithBool:NO],
 			WCDebug,
-		
 		NULL];
 }
 
@@ -552,25 +533,6 @@
 	}
 	
 	return NULL;
-}
-
-
-
-#pragma mark -
-
-+ (NSDictionary *)windowTemplateForKey:(NSString *)key {
-	return [[self objectForKey:WCWindowTemplates] objectForKey:key];
-}
-
-
-
-+ (void)setWindowTemplate:(NSDictionary *)windowTemplate forKey:(NSString *)key {
-	NSMutableDictionary		*windowTemplates;
-	
-	windowTemplates = [[self objectForKey:WCWindowTemplates] mutableCopy];
-	[windowTemplates setObject:windowTemplate forKey:key];
-	[self setObject:windowTemplates forKey:WCWindowTemplates];
-	[windowTemplates release];
 }
 
 @end

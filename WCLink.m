@@ -221,8 +221,6 @@
 
 	pool = [[NSAutoreleasePool alloc] init];
 	
-	[_delegate retain];
-	
 	address = [WIAddress addressWithString:[_url host] error:&error];
 	
 	if(address) {
@@ -273,7 +271,6 @@
 	
 	[_lock unlock];
 	
-	[_delegate release];
 	[loopPool release];
 	[pool release];
 }

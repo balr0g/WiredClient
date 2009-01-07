@@ -39,12 +39,55 @@
 #import "WCNews.h"
 #import "WCNotificationCenter.h"
 #import "WCPreferences.h"
-#import "WCPublicChat.h"
+#import "WCPublicChatController.h"
 #import "WCSearch.h"
 #import "WCServer.h"
 #import "WCServerConnection.h"
 #import "WCServerInfo.h"
 #import "WCTransfers.h"
+
+@interface WCServerConnection(Private)
+
+- (void)_triggerAutoReconnect;
+- (void)_autoReconnect;
+
+@end
+
+
+@implementation WCServerConnection(Private)
+
+- (void)_triggerAutoReconnect {
+	if(_shouldAutoReconnect && ([WCSettings boolForKey:WCAutoReconnect] || [[self bookmark] boolForKey:WCBookmarksAutoReconnect])) {
+		_autoReconnectAttempts++;
+	
+		if(_autoReconnectAttempts <= 10) {
+			[[self chatController] printEvent:
+				[NSSWF:NSLS(@"Reconnecting to %@ in %.0f seconds...", @"Auto-reconnecting chat message (server, time)"), [self name], 10.0]];
+			
+			[self performSelector:@selector(_autoReconnect) afterDelay:10.0];
+		} else {
+			[[self chatController] printEvent:
+				[NSSWF:NSLS(@"Stopping automatic reconnects: Too many tries", @"Stopping auto-reconnecting chat message")]];
+		}
+	}
+}
+
+
+
+- (void)_autoReconnect {
+	if(![self isConnected] && !_autoReconnecting) {
+		_autoReconnecting		= YES;
+		_manuallyReconnecting	= NO;
+		
+		[self postNotificationName:WCServerConnectionWillReconnectNotification object:self];
+
+		[self connect];
+	}
+}
+
+@end
+
+
 
 @implementation WCServerConnection
 
@@ -88,29 +131,32 @@
 
 	[self addObserver:self selector:@selector(wiredAccountPrivileges:) messageName:@"wired.account.privileges"];
 	
-	[self retain];
-	
 	return self;
 }
 
 
 
+- (void)release {
+	[super release];
+}
+
+
+
 - (void)dealloc {
-	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	[self removeObserver:self];
+	NSLog(@"%@ dealloc", self);
+	
+	[_identifier release];
+	[_theme release];
 	
 	[_server release];
 	[_cache release];
 	
-	[_notificationCenter release];
-	[_linkNotificationCenter release];
-
 	[_console release];
 	[_accounts release];
 	[_news release];
 	[_board release];
 	[_serverInfo release];
-	[_chat release];
+	[_chatController release];
 	
 	[super dealloc];
 }
@@ -183,7 +229,8 @@
 
 
 - (void)linkConnectionDidTerminate:(NSNotification *)notification {
-	[[self class] cancelPreviousPerformRequestsWithTarget:self selector:@selector(autoReconnect) object:NULL];
+	[[self class] cancelPreviousPerformRequestsWithTarget:self selector:@selector(_autoReconnect) object:NULL];
+	[[self class] cancelPreviousPerformRequestsWithTarget:self selector:@selector(_triggerAutoReconnect) object:NULL];
 	
 	[super linkConnectionDidTerminate:notification];
 }
@@ -191,19 +238,34 @@
 
 
 - (void)linkConnectionDidClose:(NSNotification *)notification {
-	NSTimeInterval		time;
+	NSString	*reason;
 	
 	[super linkConnectionDidClose:notification];
 	
-	[self triggerEvent:WCEventsServerDisconnected];
+	if(_hasConnected) {
+		[self triggerEvent:WCEventsServerDisconnected];
+		
+		reason = [_error localizedFailureReason];
+		
+		if([reason length] > 0)
+			reason = [reason substringToIndex:[reason length] - 1];
+		
+		if([self isReconnecting]) {
+			[_chatController printEvent:reason];
+		} else {
+			if([reason length] > 0) {
+				[_chatController printEvent:[NSSWF:NSLS(@"Disconnected from %@: %@", @"Disconnected chat message (server, error)"),
+					[self name], reason]];
+			} else {
+				[_chatController printEvent:[NSSWF:NSLS(@"Disconnected from %@", @"Disconnected chat message (server)"),
+					[self name], reason]];
+			}
+		}
+		
+		if(!_manuallyReconnecting && !_disconnecting)
+			[self performSelector:@selector(_triggerAutoReconnect) afterDelay:1.0];
 
-	if(_shouldAutoReconnect && ([WCSettings boolForKey:WCAutoReconnect])) {
-		time = (100.0 + (random() % 200)) / 10.0;
-
-		[[self chat] printEvent:[NSSWF:NSLS(@"Reconnecting to %@ in %.1f seconds...", @"Auto-reconnecting chat message"),
-			[self name], time]];
-
-		[self performSelector:@selector(autoReconnect) afterDelay:time];
+		_manuallyReconnecting = _autoReconnecting = NO;
 	}
 }
 
@@ -221,7 +283,7 @@
 	[_server setWithMessage:message];
 	
 	if([self isReconnecting]) {
-		[[self chat] printEvent:[NSSWF:NSLS(@"Reconnected to %@", @"Reconnected chat message"),
+		[[self chatController] printEvent:[NSSWF:NSLS(@"Reconnected to %@", @"Reconnected chat message"),
 			[self name]]];
 	}
 
@@ -237,6 +299,10 @@
 		_manuallyReconnecting	= NO;
 		_autoReconnecting		= NO;
 		_shouldAutoReconnect	= YES;
+
+		_autoReconnectAttempts	= 0;
+		
+		_hasConnected			= YES;
 		
 		[self triggerEvent:WCEventsServerConnected];
 	}
@@ -271,7 +337,7 @@
 	if(!_cache) {
 		_cache			= [[WCCache alloc] initWithCapacity:100];
 
-#if defined(DEBUG) || defined(TEST)
+#if defined(WCConfigurationDebug) || defined(WCConfigurationTest)
 		_console		= [[WCConsole consoleWithConnection:self] retain];
 #endif
 		
@@ -280,7 +346,7 @@
 		_news			= [[WCNews newsWithConnection:self] retain];
 		_serverInfo		= [[WCServerInfo serverInfoWithConnection:self] retain];
 
-		_chat			= [[WCPublicChat publicChatWithConnection:self] retain];
+		_chatController	= [[WCPublicChatController publicChatControllerWithConnection:self] retain];
 	}
 	
 	[super connect];
@@ -296,21 +362,8 @@
 		
 		[[self class] cancelPreviousPerformRequestsWithTarget:self selector:@selector(autoReconnect) object:NULL];
 		
-		[[self chat] printEvent:[NSSWF:NSLS(@"Reconnecting to %@...", @"Reconnecting chat message"),
+		[[self chatController] printEvent:[NSSWF:NSLS(@"Reconnecting to %@...", @"Reconnecting chat message"),
 			[self name]]];
-		
-		[self postNotificationName:WCServerConnectionWillReconnectNotification object:self];
-
-		[self connect];
-	}
-}
-
-
-
-- (void)autoReconnect {
-	if(![self isConnected] && !_autoReconnecting) {
-		_autoReconnecting		= YES;
-		_manuallyReconnecting	= NO;
 		
 		[self postNotificationName:WCServerConnectionWillReconnectNotification object:self];
 
@@ -353,6 +406,21 @@
 
 
 #pragma mark -
+
+- (void)setIdentifier:(NSString *)identifier {
+	[identifier retain];
+	[_identifier release];
+	
+	_identifier = identifier;
+}
+
+
+
+- (NSString *)identifier {
+	return _identifier;
+}
+
+
 
 - (void)setTheme:(NSDictionary *)theme {
 	[_theme release];
@@ -437,8 +505,8 @@
 
 
 
-- (WCPublicChat *)chat {
-	return _chat;
+- (WCPublicChatController *)chatController {
+	return _chatController;
 }
 
 

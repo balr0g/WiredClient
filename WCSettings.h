@@ -30,13 +30,13 @@
 #define WCStatus								@"WCStatus"
 #define WCIcon									@"WCCustomIcon"
 
+#define WCCheckForUpdate						@"WCCheckForUpdate"
+
 #define WCShowConnectAtStartup					@"WCShowConnectAtStartup"
 #define WCShowServersAtStartup					@"WCShowTrackersAtStartup"
 
 #define WCConfirmDisconnect						@"WCConfirmDisconnect"
 #define WCAutoReconnect							@"WCAutoReconnect"
-
-#define WCCheckForUpdate						@"WCCheckForUpdate"
 
 #define WCTheme									@"WCTheme"
 
@@ -142,13 +142,7 @@
 #define WCTrackerBookmarksLogin						@"Login"
 #define WCTrackerBookmarksIdentifier				@"Identifier"
 
-#define WCWindowTemplates						@"WCWindowTemplates"
-#define WCWindowTemplatesDefault					@"WCWindowTemplatesDefault"
-
-#define WCSSLControlCiphers						@"WCSSLControlCiphers"
-#define WCSSLNullControlCiphers					@"WCSSLNullControlCiphers"
-#define WCSSLTransferCiphers					@"WCSSLTransferCiphers"
-#define WCSSLNullTransferCiphers				@"WCSSLNullTransferCiphers"
+#define WCWindowProperties						@"WCWindowProperties"
 
 #define WCDebug									@"WCDebug"
 
@@ -158,8 +152,5 @@
 + (NSDictionary *)themeWithIdentifier:(NSString *)identifier;
 
 + (NSDictionary *)eventWithTag:(NSUInteger)tag;
-
-+ (NSDictionary *)windowTemplateForKey:(NSString *)key;
-+ (void)setWindowTemplate:(NSDictionary *)windowTemplate forKey:(NSString *)key;
 
 @end

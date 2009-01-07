@@ -26,15 +26,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WCChat.h"
+#import "WCConnectionController.h"
 
-@class WCUser;
+@class WCPrivateChatController, WCUser;
 
-@interface WCPrivateChat : WCChat {
-	WCUser				*_user;
-	NSUInteger			_cid;
+@interface WCPrivateChat : WCConnectionController {
+	IBOutlet WCPrivateChatController	*_chatController;
 }
-
 
 + (id)privateChatWithConnection:(WCServerConnection *)connection;
 + (id)privateChatWithConnection:(WCServerConnection *)connection chatID:(NSUInteger)cid;

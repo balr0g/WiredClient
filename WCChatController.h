@@ -1,7 +1,7 @@
 /* $Id$ */
 
 /*
- *  Copyright (c) 2003-2007 Axel Andersson
+ *  Copyright (c) 2003-2009 Axel Andersson
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -26,8 +26,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WCConnectionController.h"
-
 #define WCChatUsersDidChangeNotification	@"WCChatUsersDidChangeNotification"
 #define WCChatUserAppearedNotification		@"WCChatUserAppearedNotification"
 #define WCChatUserDisappearedNotification	@"WCChatUserDisappearedNotification"
@@ -37,9 +35,9 @@
 #define WCUserPboardType					@"WCUserPboardType"
 
 
-@class WCUser, WCTopic;
+@class WCChatWindow, WCServerConnection, WCTopic, WCUser;
 
-@interface WCChat : WCConnectionController {
+@interface WCChatController : WIObject {
 	IBOutlet WISplitView					*_userListSplitView;
 
 	IBOutlet NSView							*_chatView;
@@ -73,15 +71,17 @@
 	IBOutlet NSView							*_saveChatView;
 	IBOutlet NSPopUpButton					*_saveChatFileFormatPopUpButton;
 	IBOutlet NSPopUpButton					*_saveChatPlainTextEncodingPopUpButton;
+	
+	WCServerConnection						*_connection;
 
 	NSMutableArray							*_commandHistory;
 	NSUInteger								_currentCommand;
 	NSString								*_currentString;
-
+	
 	NSMutableDictionary						*_users;
 	NSMutableArray							*_allUsers, *_shownUsers;
 	BOOL									_receivedUserList;
-
+	
 	WITextFilter							*_chatFilter;
 	WITextFilter							*_topicFilter;
 	NSDate									*_timestamp;
@@ -92,13 +92,24 @@
 	WIDateFormatter							*_topicDateFormatter;
 	
 	NSMutableDictionary						*_pings;
+	
+	BOOL									_loadedNib;
 }
 
 + (NSString *)outputForShellCommand:(NSString *)command;
 
-- (id)initChatWithConnection:(WCServerConnection *)connection windowNibName:(NSString *)windowNibName name:(NSString *)name singleton:(BOOL)singleton;
-
+- (void)linkConnectionLoggedIn:(NSNotification *)notification;
+- (void)linkConnectionDidTerminate:(NSNotification *)notification;
 - (void)wiredChatJoinChatReply:(WIP7Message *)message;
+
+- (void)validate;
+
+- (void)setConnection:(WCServerConnection *)connection;
+- (WCServerConnection *)connection;
+
+- (NSView *)view;
+- (void)loadWindowProperties;
+- (void)saveWindowProperties;
 
 - (WCUser *)selectedUser;
 - (NSArray *)selectedUsers;
@@ -108,6 +119,7 @@
 - (WCUser *)userWithUserID:(NSUInteger)uid;
 - (void)selectUser:(WCUser *)user;
 - (NSUInteger)chatID;
+- (NSTextView *)insertionTextView;
 
 - (void)printEvent:(NSString *)message;
 
@@ -122,5 +134,7 @@
 - (IBAction)unignore:(id)sender;
 
 - (IBAction)fileFormat:(id)sender;
+
+- (IBAction)insertSmiley:(id)sender;
 
 @end

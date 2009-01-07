@@ -32,8 +32,6 @@
 
 #define WCServerConnectionTriggeredEventNotification			@"WCServerConnectionTriggeredEventNotification"
 
-#define WCServerConnectionShouldLoadWindowTemplateNotification	@"WCServerConnectionShouldLoadWindowTemplatNotificatione"
-#define WCServerConnectionShouldSaveWindowTemplateNotification	@"WCServerConnectionShouldSaveWindowTemplateNotification"
 #define WCServerConnectionThemeDidChangeNotification			@"WCServerConnectionThemeDidChangeNotification"
 
 #define WCServerConnectionServerInfoDidChangeNotification		@"WCServerConnectionServerInfoDidChangeNotification"
@@ -50,9 +48,10 @@
 
 @class WCServer, WCCache, WCAccount;
 @class WCLink, WCNotificationCenter;
-@class WCAccounts, WCAdministration, WCPublicChat, WCConsole, WCNews, WCBoard, WCServerInfo;
+@class WCAccounts, WCAdministration, WCPublicChatController, WCConsole, WCNews, WCBoard, WCServerInfo;
 
 @interface WCServerConnection : WCLinkConnection {
+	NSString													*_identifier;
 	NSDictionary												*_theme;
 	
 	NSUInteger													_userID;
@@ -62,7 +61,7 @@
 	
 	WCAccounts													*_accounts;
 	WCAdministration											*_administration;
-	WCPublicChat												*_chat;
+	WCPublicChatController										*_chatController;
 	WCConsole													*_console;
 	WCNews														*_news;
 	WCBoard														*_board;
@@ -71,6 +70,10 @@
 	BOOL														_manuallyReconnecting;
 	BOOL														_shouldAutoReconnect;
 	BOOL														_autoReconnecting;
+	
+	BOOL														_hasConnected;
+	
+	NSUInteger													_autoReconnectAttempts;
 }
 
 - (void)reconnect;
@@ -79,6 +82,8 @@
 - (void)triggerEvent:(int)event info1:(id)info1;
 - (void)triggerEvent:(int)event info1:(id)info1 info2:(id)info2;
 
+- (void)setIdentifier:(NSString *)identifier;
+- (NSString *)identifier;
 - (void)setTheme:(NSDictionary *)theme;
 - (NSDictionary *)theme;
 
@@ -93,7 +98,7 @@
 
 - (WCAccounts *)accounts;
 - (WCAdministration *)administration;
-- (WCPublicChat *)chat;
+- (WCPublicChatController *)chatController;
 - (WCConsole *)console;
 - (WCNews *)news;
 - (WCBoard *)board;

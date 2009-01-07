@@ -573,6 +573,12 @@
 	[[self window] setToolbar:toolbar];
 	[toolbar release];
 
+	[self setShouldCascadeWindows:YES];
+	[self setWindowFrameAutosaveName:@"Accounts"];
+
+	[_accountsTableView setPropertiesFromDictionary:
+		[[WCSettings objectForKey:WCWindowProperties] objectForKey:@"WCAccountsTableView"]];
+
 	[_accountsTableView setDoubleAction:@selector(edit:)];
 	[_accountsTableView setDeleteAction:@selector(delete:)];
 	[_accountsTableView setDefaultHighlightedTableColumnIdentifier:@"Name"];
@@ -670,24 +676,16 @@
 
 
 
+- (void)windowWillClose:(NSWindow *)window {
+	[WCSettings setObject:[_accountsTableView propertiesDictionary]
+				   forKey:@"WCAccountsTableView"
+	   inDictionaryForKey:WCWindowProperties];
+}
+
+
+
 - (BOOL)windowShouldClose:(NSWindow *)window {
 	return [self _verifyUnsavedAndSelectRow:-2];
-}
-
-
-
-- (void)windowTemplateShouldLoad:(NSMutableDictionary *)windowTemplate {
-	[super windowTemplateShouldLoad:windowTemplate];
-
-	[_accountsTableView setPropertiesFromDictionary:[windowTemplate objectForKey:@"WCAccountsTableView"]];
-}
-
-
-
-- (void)windowTemplateShouldSave:(NSMutableDictionary *)windowTemplate {
-	[windowTemplate setObject:[_accountsTableView propertiesDictionary] forKey:@"WCAccountsTableView"];
-	
-	[super windowTemplateShouldSave:windowTemplate];
 }
 
 

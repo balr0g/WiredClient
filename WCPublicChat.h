@@ -26,22 +26,43 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WCChat.h"
+@class WCPublicChatController, WCServerConnection;
 
-@interface WCPublicChat : WCChat {
-	IBOutlet NSButton			*_privateChatButton;
-	IBOutlet NSButton			*_banButton;
+@interface WCPublicChat : WIWindowController {
+	IBOutlet NSTabView					*_chatTabView;
 
-	IBOutlet NSPanel			*_banMessagePanel;
-	IBOutlet NSTextField		*_banMessageTextField;
-	IBOutlet NSPopUpButton		*_banMessagePopUpButton;
-
-	BOOL						_isShown;
+	IBOutlet NSTextField				*_noConnectionTextField;
+	
+	PSMTabBarControl					*_tabBarControl;
+	
+	NSMutableDictionary					*_chatControllers;
 }
 
-+ (id)publicChatWithConnection:(WCServerConnection *)connection;
++ (id)publicChat;
 
-- (IBAction)startPrivateChat:(id)sender;
-- (IBAction)ban:(id)sender;
+- (IBAction)disconnect:(id)sender;
+- (IBAction)reconnect:(id)sender;
+- (IBAction)serverInfo:(id)sender;
+- (IBAction)news:(id)sender;
+- (IBAction)files:(id)sender;
+- (IBAction)accounts:(id)sender;
+- (IBAction)administration:(id)sender;
+- (IBAction)getInfo:(id)sender;
+- (IBAction)saveChat:(id)sender;
+- (IBAction)setTopic:(id)sender;
+- (IBAction)postNews:(id)sender;
+- (IBAction)broadcast:(id)sender;
+
+- (IBAction)addBookmark:(id)sender;
+
+- (IBAction)console:(id)sender;
+
+- (IBAction)nextConnection:(id)sender;
+- (IBAction)previousConnection:(id)sender;
+
+- (void)addChatController:(WCPublicChatController *)chatController;
+- (void)selectChatController:(WCPublicChatController *)chatController;
+- (WCPublicChatController *)selectedChatController;
+- (NSArray *)chatControllers;
 
 @end

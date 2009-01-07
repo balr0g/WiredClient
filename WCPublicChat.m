@@ -32,9 +32,13 @@
 #import "WCBoards.h"
 #import "WCFile.h"
 #import "WCFiles.h"
+#import "WCKeychain.h"
+#import "WCMessages.h"
 #import "WCNews.h"
+#import "WCPreferences.h"
 #import "WCPrivateChat.h"
 #import "WCPublicChat.h"
+#import "WCPublicChatController.h"
 #import "WCServer.h"
 #import "WCServerConnection.h"
 #import "WCServerInfo.h"
@@ -42,48 +46,107 @@
 
 @interface WCPublicChat(Private)
 
-- (id)_initPublicChatWithConnection:(WCServerConnection *)connection;
+- (void)_updateToolbarForConnection:(WCServerConnection *)connection;
 
-- (void)_updateNewsIcon;
+- (BOOL)_beginConfirmDisconnectSheetModalForWindow:(NSWindow *)window connection:(WCServerConnection *)connection modalDelegate:(id)delegate didEndSelector:(SEL)selector contextInfo:(void *)contextInfo;
+
+- (void)_closeSelectedTabViewItem;
 
 @end
 
 
 @implementation WCPublicChat(Private)
 
-- (id)_initPublicChatWithConnection:(WCServerConnection *)connection {
-	self = [super initChatWithConnection:connection
-						   windowNibName:@"PublicChat"
-									name:NSLS(@"Chat", @"Chat window title")
-							   singleton:YES];
-
-	[[self connection] addObserver:self
-						  selector:@selector(newsDidChangePosts:)
-							  name:WCNewsDidAddPostNotification];
+- (void)_updateToolbarForConnection:(WCServerConnection *)connection {
+	NSToolbarItem		*item;
+	NSImage				*image;
+	NSSize				size;
 	
-	[[self connection] addObserver:self
-						  selector:@selector(newsDidChangePosts:)
-							  name:WCNewsDidReadPostNotification];
+	item = [[[self window] toolbar] itemWithIdentifier:@"Banner"];
 	
-	[[self connection] addObserver:self selector:@selector(wiredChatInvitation:) messageName:@"wired.chat.invitation"];
+	if(connection) {
+		[item setLabel:[connection name]];
+		[item setPaletteLabel:[connection name]];
+		[item setToolTip:[connection name]];
+	} else {
+		[item setLabel:NSLS(@"Banner", @"Banner toolbar item")];
+		[item setPaletteLabel:NSLS(@"Banner", @"Banner toolbar item")];
+		[item setToolTip:NSLS(@"Banner", @"Banner toolbar item")];
+	}
 	
-	[self window];
+	image = [[connection server] banner];
 	
-	return self;
+	if(image) {
+		[(NSButton *) [item view] setImage:image];
+		
+		size = [image size];
+		
+		if(size.width <= 200.0 && size.height <= 32.0) {
+			[item setMinSize:size];
+			[item setMaxSize:size];
+		} else {
+			[item setMinSize:NSMakeSize(32.0 * (size.width / size.height), 32.0)];
+			[item setMaxSize:NSMakeSize(32.0 * (size.width / size.height), 32.0)];
+		}
+	} else {
+		[(NSButton *) [item view] setImage:[NSImage imageNamed:@"Banner"]];
+		
+		size = NSMakeSize(32.0, 32.0);
+		
+		[item setMinSize:size];
+		[item setMaxSize:size];
+	}
 }
 
 
 
 #pragma mark -
 
-- (void)_updateNewsIcon {
-	NSToolbarItem	*item;
-	NSUInteger		count;
+- (BOOL)_beginConfirmDisconnectSheetModalForWindow:(NSWindow *)window connection:(WCServerConnection *)connection modalDelegate:(id)delegate didEndSelector:(SEL)selector contextInfo:(void *)contextInfo {
+	if([WCSettings boolForKey:WCConfirmDisconnect] && [connection isConnected]) {
+		NSBeginAlertSheet(NSLS(@"Are you sure you want to disconnect?", @"Disconnect dialog title"),
+						  NSLS(@"Disconnect", @"Disconnect dialog button"),
+						  NSLS(@"Cancel", @"Disconnect dialog button title"),
+						  NULL,
+						  window,
+						  delegate,
+						  selector,
+						  NULL,
+						  contextInfo,
+						  NSLS(@"Disconnecting will close any ongoing file transfers.", @"Disconnect dialog description"));
+		
+		return NO;
+	}
 	
-	count = [[[self connection] news] numberOfUnreadPosts];
+	return YES;
+}
 
-	item = [[[self window] toolbar] itemWithIdentifier:@"News"];
-	[item setImage:[[NSImage imageNamed:@"News"] badgedImageWithInt:count]];
+
+
+#pragma mark -
+
+- (void)_closeSelectedTabViewItem {
+	NSTabViewItem			*tabViewItem;
+	NSString				*identifier;
+	WCPublicChatController	*chatController;
+	
+	tabViewItem			= [_chatTabView selectedTabViewItem];
+	identifier			= [tabViewItem identifier];
+	chatController		= [_chatControllers objectForKey:identifier];
+	
+	[chatController saveWindowProperties];
+	
+	[[chatController connection] terminate];
+	
+	[_chatControllers removeObjectForKey:identifier];
+	
+	[_chatTabView removeTabViewItem:tabViewItem];
+	
+	if([_chatControllers count] == 0) {
+		[self _updateToolbarForConnection:NULL];
+		
+		[_noConnectionTextField setHidden:NO];
+	}
 }
 
 @end
@@ -92,8 +155,40 @@
 
 @implementation WCPublicChat
 
-+ (id)publicChatWithConnection:(WCServerConnection *)connection {
-	return [[[self alloc] _initPublicChatWithConnection:connection] autorelease];
++ (id)publicChat {
+	static WCPublicChat			*publicChat;
+	
+	if(!publicChat)
+		publicChat = [[self alloc] init];
+	
+	return publicChat;
+}
+
+
+
+- (id)init {
+	self = [super initWithWindowNibName:@"PublicChatWindow"];
+	
+	_chatControllers = [[NSMutableDictionary alloc] init];
+	
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
+		   selector:@selector(serverConnectionServerInfoDidChange:)
+			   name:WCServerConnectionServerInfoDidChangeNotification];
+	
+	[self window];
+	
+	return self;
+}
+
+
+
+- (void)dealloc {
+	[_tabBarControl release];
+	
+	[_chatControllers release];
+	
+	[super dealloc];
 }
 
 
@@ -101,13 +196,31 @@
 #pragma mark -
 
 - (void)windowDidLoad {
-	NSToolbar		*toolbar;
+	NSToolbar			*toolbar;
+	NSRect				frame;
 	
 	toolbar = [[NSToolbar alloc] initWithIdentifier:@"PublicChat"];
 	[toolbar setDelegate:self];
 	[toolbar setAllowsUserCustomization:YES];
+	[toolbar setShowsBaselineSeparator:NO];
 	[[self window] setToolbar:toolbar];
 	[toolbar release];
+	
+	[self setShouldCascadeWindows:NO];
+	[self setWindowFrameAutosaveName:@"PublicChat"];
+
+	frame				= [[[self window] contentView] frame];
+	frame.origin.y		= frame.size.height - 23.0;
+	frame.size.height	= 23.0;
+	
+	_tabBarControl = [[PSMTabBarControl alloc] initWithFrame:frame];
+	[_tabBarControl setTabView:_chatTabView];
+	[_tabBarControl setStyleNamed:@"Wired"];
+	[_tabBarControl setDelegate:self];
+	[_tabBarControl setAutoresizingMask:NSViewWidthSizable | NSViewMinYMargin]; 
+	[_tabBarControl setCanCloseOnlyTab:YES];
+	[[[self window] contentView] addSubview:_tabBarControl];
+	[_chatTabView setDelegate:_tabBarControl];
 	
 	[super windowDidLoad];
 }
@@ -115,41 +228,11 @@
 
 
 
-- (BOOL)windowShouldClose:(id)sender {
-	return [self beginConfirmDisconnectSheetModalForWindow:[self window]
-											 modalDelegate:self
-											didEndSelector:@selector(terminateSheetDidEnd:returnCode:contextInfo:)
-											   contextInfo:NULL];
-}
-
-
-
-- (void)windowWillClose:(NSNotification *)notification {
-	[[self connection] terminate];
-}
-
-
-
-- (void)windowTemplateShouldLoad:(NSMutableDictionary *)windowTemplate {
-	[[self window] setPropertiesFromDictionary:[windowTemplate objectForKey:NSStringFromClass([self class])]
-								   restoreSize:YES
-									visibility:_isShown];
-}
-
-
-
-- (void)windowTemplateShouldSave:(NSMutableDictionary *)windowTemplate {
-	[windowTemplate setObject:[[self window] propertiesDictionary] forKey:NSStringFromClass([self class])];
-}
-
-
-
 - (NSToolbarItem *)toolbar:(NSToolbar *)toolbar itemForItemIdentifier:(NSString *)identifier willBeInsertedIntoToolbar:(BOOL)willBeInsertedIntoToolbar {
 	NSButton		*button;
 	
 	if([identifier isEqualToString:@"Banner"]) {
-		button = [[[NSButton alloc] init] autorelease];
-		[button setFrame:NSMakeRect(0.0, 0.0, 32.0, 32.0)];
+		button = [[[NSButton alloc] initWithFrame:NSMakeRect(0.0, 0.0, 32.0, 32.0)] autorelease];
 		[button setBordered:NO];
 		[button setImage:[NSImage imageNamed:@"Banner"]];
 		
@@ -157,7 +240,7 @@
 												   name:NSLS(@"Banner", @"Banner toolbar item")
 												content:button
 												 target:self
-												 action:@selector(banner:)];
+												 action:@selector(serverInfo:)];
 	}
 	else if([identifier isEqualToString:@"News"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
@@ -287,322 +370,397 @@
 
 
 
-- (void)linkConnectionDidClose:(NSNotification *)notification {
-	NSString	*reason;
-	WCError		*error;
-	
-	[[self window] setTitle:[[self connection] name] withSubtitle:[NSSWF:@"%@ %C %@",
-		NSLS(@"Chat", @"Chat window title"),
-		0x2014,
-		NSLS(@"Disconnected", "Chat window title")]];
-	
-	error = [[self connection] error];
-	reason = [error localizedFailureReason];
-		
-	if([reason length] > 0)
-		reason = [reason substringWithRange:NSMakeRange(0, [reason length] - 1)];
-
-	if([[self connection] isReconnecting]) {
-		[self printEvent:reason];
-	} else {
-		if([[self window] isMiniaturized])
-			[self showWindow:self];
-		
-		if([[self window] isVisible]) {
-			if(![WCSettings boolForKey:WCAutoReconnect] && ![[[self connection] bookmark] boolForKey:WCBookmarksAutoReconnect]) {
-				if(![[self connection] isDisconnecting]) {
-					[self printEvent:[NSSWF:NSLS(@"Lost connection to %@: %@", @"Disconnected chat message (server, error)"),
-						[[self connection] name], reason]];
-				}
-			}
-		}
-	}
-	
-	[super linkConnectionDidClose:notification];
-}
-
-
-
-- (void)serverConnectionDidTerminate:(NSNotification *)notification {
-	[_userListTableView setDataSource:NULL];
-	
-	[super linkConnectionDidTerminate:notification];
-}
-
-
-
-- (void)linkConnectionLoggedIn:(NSNotification *)notification {
-	WIP7Message		*message;
-	
-	[super linkConnectionLoggedIn:notification];
-	
-	message = [WIP7Message messageWithName:@"wired.chat.join_chat" spec:WCP7Spec];
-	[message setUInt32:[self chatID] forName:@"wired.chat.id"];
-	[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredChatJoinChatReply:)];
-
-	[self performSelector:@selector(showWindow:) withObject:self afterDelay:0.0];
-	
-	_isShown = YES;
-}
-
-
-
 - (void)serverConnectionServerInfoDidChange:(NSNotification *)notification {
-	NSToolbarItem	*item;
-	NSImage			*image;
-	NSSize			size;
-
-	item = [[[self window] toolbar] itemWithIdentifier:@"Banner"];
-	[item setLabel:[[self connection] name]];
-	[item setPaletteLabel:[[self connection] name]];
-	[item setToolTip:[[self connection] name]];
+	WCServerConnection		*connection;
 	
-	image = [[[self connection] server] banner];
+	connection = [notification object];
+
+	[[_chatTabView tabViewItemWithIdentifier:[connection identifier]] setLabel:[connection name]];
 	
-	if(image) {
-		[(NSButton *) [item view] setImage:image];
-
-		size = [image size];
-
-		if(size.width <= 200.0 && size.height <= 32.0) {
-			[item setMinSize:size];
-			[item setMaxSize:size];
-		} else {
-			[item setMinSize:NSMakeSize(32.0 * (size.width / size.height), 32.0)];
-			[item setMaxSize:NSMakeSize(32.0 * (size.width / size.height), 32.0)];
-		}
-	} else {
-		[(NSButton *) [item view] setImage:[NSImage imageNamed:@"Banner"]];
-		
-		size = NSMakeSize(32.0, 32.0);
-		
-		[item setMinSize:size];
-		[item setMaxSize:size];
-	}
-
-	[super serverConnectionServerInfoDidChange:notification];
+	[self _updateToolbarForConnection:connection];
 }
 
 
 
-- (void)wiredChatInvitation:(WIP7Message *)message {
-	NSEnumerator	*enumerator;
-	NSString		*title, *description;
-	NSPanel			*panel;
-	NSControl		*control;
-	WCUser			*user;
-	NSUInteger		i = 0;
-	WIP7UInt32		uid, cid;
-
-	[message getUInt32:&cid forName:@"wired.chat.id"];
-	[message getUInt32:&uid forName:@"wired.user.id"];
-
-	user = [self userWithUserID:uid];
-
-	if(!user || [user isIgnored])
-		return;
-
-	title = [NSSWF:
-		NSLS(@"%@ has invited you to a private chat.", @"Private chat invite dialog title (nick)"),
-		[user nick]];
-	description	= [NSSWF:
-		NSLS(@"Join to open a separate private chat with %@.", @"Private chat invite dialog description (nick)"),
-		[user nick]];
-	panel = NSGetAlertPanel(title, description,
-		NSLS(@"Join", @"Private chat invite button title"),
-		NSLS(@"Ignore", @"Private chat invite button title"),
-		NSLS(@"Decline", @"Private chat invite button title"));
-
-	enumerator = [[[panel contentView] subviews] objectEnumerator];
-
-	while((control = [enumerator nextObject])) {
-		if([control isKindOfClass:[NSButton class]]) {
-			[control setTarget:self];
-			[control setTag:cid];
-
-			switch(i++) {
-				case 0:
-					[control setAction:@selector(joinChat:)];
-					break;
-
-				case 1:
-					[control setAction:@selector(ignoreChat:)];
-					break;
-
-				case 2:
-					[control setAction:@selector(declineChat:)];
-					break;
-			}
-		}
-	}
-
-	[panel makeKeyAndOrderFront:self];
-
-	[[self connection] triggerEvent:WCEventsChatInvitationReceived info1:user];
+- (void)tabView:(NSTabView *)tabView willSelectTabViewItem:(NSTabViewItem *)tabViewItem {
+	WCPublicChatController		*chatController;
+	
+	chatController = [_chatControllers objectForKey:[tabViewItem identifier]];
+	
+	[self _updateToolbarForConnection:[chatController connection]];
 }
 
 
 
-- (void)newsDidChangePosts:(NSNotification *)notification {
-	[self performSelector:@selector(_updateNewsIcon) withObject:NULL afterDelay:0.0];
-}
-
-
-
-- (void)terminateSheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-	if(returnCode == NSAlertDefaultReturn)
-		[self close];
-}
-
-
-
-- (CGFloat)splitView:(NSSplitView *)splitView constrainMaxCoordinate:(CGFloat)proposedMax ofSubviewAt:(NSInteger)offset {
-	if(splitView == _userListSplitView)
-		return proposedMax - 176.0;
-	else if(splitView == _chatSplitView)
-		return proposedMax - 15.0;
-
-	return proposedMax;
+- (BOOL)tabView:(NSTabView *)tabView shouldCloseTabViewItem:(NSTabViewItem *)tabViewItem {
+	WCPublicChatController		*chatController;
+	
+	chatController = [_chatControllers objectForKey:[tabViewItem identifier]];
+	
+	return [self _beginConfirmDisconnectSheetModalForWindow:[self window]
+												 connection:[chatController connection]
+											  modalDelegate:self
+											 didEndSelector:@selector(closeTabSheetDidEnd:returnCode:contextInfo:)
+												contextInfo:NULL];
 }
 
 
 
 #pragma mark -
 
-- (void)validate {
-	BOOL	connected;
-
-	connected = [[self connection] isConnected];
-
-	if([_userListTableView selectedRow] < 0) {
-		[_privateChatButton setEnabled:NO];
-		[_banButton setEnabled:NO];
-	} else {
-		[_privateChatButton setEnabled:connected];
-		[_banButton setEnabled:([[[self connection] account] userBanUsers] && connected)];
-	}
-
-	[[[self window] toolbar] validateVisibleItems];
-
-	[super validate];
-}
-
-
-
 - (BOOL)validateMenuItem:(NSMenuItem *)item {
-	SEL			selector;
-	BOOL		connected;
+	WCPublicChatController	*chatController;
+	WCServerConnection		*connection;
+	SEL						selector;
 	
-	selector = [item action];
-	connected = [[self connection] isConnected];
+	chatController	= [self selectedChatController];
+	connection		= [[self selectedChatController] connection];
+	selector		= [item action];
 	
-	if(selector == @selector(startPrivateChat:))
-		return connected;
-	else if(selector == @selector(ban:))
-		return ([[[self connection] account] userBanUsers] && connected);
-	else if(selector == @selector(setTopic:))
-		return ([[[self connection] account] chatSetTopic] && connected);
-
-	return [super validateMenuItem:item];
+	if(selector == @selector(disconnect:))
+		return ([connection isConnected] && ![connection isDisconnecting]);
+	else if(selector == @selector(reconnect:))
+		return (connection != NULL && ![connection isConnected] && ![connection isManuallyReconnecting]);
+	else if(selector == @selector(files:) || selector == @selector(postNews:) ||
+			selector == @selector(broadcast:))
+		return [connection isConnected];
+	else if(selector == @selector(serverInfo:) || selector == @selector(news:) ||
+			selector == @selector(accounts:) || selector == @selector(administration:) ||
+			selector == @selector(console:))
+		return (connection != NULL);
+	else if(selector == @selector(saveChat:) || selector == @selector(setTopic:))
+		return [chatController validateMenuItem:item];
+	else if(selector == @selector(nextConnection:) || selector == @selector(previousConnection:))
+		return ([_chatControllers count] > 1);
+	
+	return YES;
 }
 
 
 
 - (BOOL)validateToolbarItem:(NSToolbarItem *)item {
-	return [super validateAction:[item action]];
+	WCPublicChatController	*chatController;
+	WCServerConnection		*connection;
+	SEL						selector;
+	
+	chatController	= [self selectedChatController];
+	connection		= [[self selectedChatController] connection];
+	selector		= [item action];
+	
+	if(selector == @selector(disconnect:))
+		return (connection != NULL && [connection isConnected] && ![connection isDisconnecting]);
+	else if(selector == @selector(reconnect:))
+		return (connection != NULL && ![connection isConnected] && ![connection isManuallyReconnecting]);
+	else if(selector == @selector(files:))
+		return (connection != NULL && [connection isConnected]);
+	else if(selector == @selector(serverInfo:) || selector == @selector(news:) ||
+			selector == @selector(accounts:) || selector == @selector(administration:) ||
+			selector == @selector(console:))
+		return (connection != NULL);
+	
+	return YES;
 }
 
 
 
 #pragma mark -
 
-- (IBAction)startPrivateChat:(id)sender {
-	WCUser		*user;
+- (IBAction)disconnect:(id)sender {
+	WCServerConnection		*connection;
 	
-	user = [self selectedUser];
-	
-	if([user userID] == [[self connection] userID])
-		user = NULL;
-	
-	[WCPrivateChat privateChatWithConnection:[self connection] inviteUser:user];
-}
+	connection = [[self selectedChatController] connection];
 
-
-
-- (IBAction)ban:(id)sender {
-	[NSApp beginSheet:_banMessagePanel
-	   modalForWindow:[self window]
-		modalDelegate:self
-	   didEndSelector:@selector(banSheetDidEnd:returnCode:contextInfo:)
-		  contextInfo:[[self selectedUser] retain]];
-}
-
-
-
-- (void)banSheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-	WIP7Message		*message;
-	WCUser			*user = contextInfo;
-
-	if(returnCode == NSAlertDefaultReturn) {
-		message = [WIP7Message messageWithName:@"wired.user.ban_user" spec:WCP7Spec];
-		[message setUInt32:[user userID] forName:@"wired.user.id"];
-		[message setString:[_banMessageTextField stringValue] forName:@"wired.user.disconnect_message"];
-
-		if([_banMessagePopUpButton tagOfSelectedItem] > 0) {
-			[message setDate:[NSDate dateWithTimeIntervalSinceNow:[_banMessagePopUpButton tagOfSelectedItem]]
-					 forName:@"wired.banlist.expiration_date"];
-		}
-		
-		[[self connection] sendMessage:message];
+	if([self _beginConfirmDisconnectSheetModalForWindow:[self window]
+											 connection:connection
+										  modalDelegate:self
+										 didEndSelector:@selector(disconnectSheetDidEnd:returnCode:contextInfo:)
+											contextInfo:[connection retain]]) {
+		[connection disconnect];
 	}
+}
 
-	[user release];
 
-	[_banMessagePanel close];
-	[_banMessageTextField setStringValue:@""];
+
+- (void)disconnectSheetDidEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo {
+	WCServerConnection		*connection = contextInfo;
+	
+	if(returnCode == NSAlertDefaultReturn)
+		[connection disconnect];
+	
+	[connection release];
+}
+
+
+
+- (IBAction)reconnect:(id)sender {
+	WCServerConnection		*connection;
+	
+	connection = [[self selectedChatController] connection];
+	
+	[connection reconnect];
+}
+
+
+
+- (IBAction)serverInfo:(id)sender {
+	WCServerConnection		*connection;
+	
+	connection = [[self selectedChatController] connection];
+	
+	[[connection serverInfo] showWindow:self];
+}
+
+
+
+- (IBAction)news:(id)sender {
+	WCServerConnection		*connection;
+	
+	connection = [[self selectedChatController] connection];
+	
+	[[connection news] showWindow:self];
+}
+
+
+
+- (IBAction)files:(id)sender {
+	WCServerConnection		*connection;
+	
+	connection = [[self selectedChatController] connection];
+	
+	[WCFiles filesWithConnection:connection path:[WCFile fileWithRootDirectoryForConnection:connection]];
+}
+
+
+
+- (IBAction)accounts:(id)sender {
+	WCServerConnection		*connection;
+	
+	connection = [[self selectedChatController] connection];
+	
+	[[connection accounts] showWindow:self];
+}
+
+
+
+- (IBAction)administration:(id)sender {
+	WCServerConnection		*connection;
+	
+	connection = [[self selectedChatController] connection];
+	
+	[[connection administration] showWindow:self];
+}
+
+
+
+- (IBAction)getInfo:(id)sender {
+	[[self selectedChatController] getInfo:sender];
+}
+
+
+
+- (IBAction)saveChat:(id)sender {
+	[[self selectedChatController] saveChat:sender];
+}
+
+
+- (IBAction)setTopic:(id)sender {
+	[[self selectedChatController] setTopic:sender];
+}
+
+
+
+- (IBAction)postNews:(id)sender {
+	WCServerConnection		*connection;
+	
+	connection = [[self selectedChatController] connection];
+	
+	[[connection news] postNews:self];
+}
+
+
+
+- (IBAction)broadcast:(id)sender {
+	WCServerConnection		*connection;
+	
+	connection = [[self selectedChatController] connection];
+	
+	[[WCMessages messages] showBroadcastForConnection:connection];
 }
 
 
 
 #pragma mark -
 
-- (void)joinChat:(id)sender {
-	WCPrivateChat	*chat;
-	NSUInteger		cid;
-
-	cid = [sender tag];
-	chat = [WCPrivateChat privateChatWithConnection:[self connection] chatID:cid];
-	[chat showWindow:self];
-
-	[[sender window] orderOut:self];
-	NSReleaseAlertPanel([sender window]);
-}
-
-
-
-- (void)declineChat:(id)sender {
-	WIP7Message		*message;
+- (IBAction)addBookmark:(id)sender {
+	NSDictionary		*bookmark;
+	NSString			*login, *password;
+	WIURL				*url;
+	WCServerConnection	*connection;
 	
-	message = [WIP7Message messageWithName:@"wired.chat.decline_invitation" spec:WCP7Spec];
-	[message setUInt32:[sender tag] forName:@"wired.chat.id"];
-	[[self connection] sendMessage:message];
-
-	[[sender window] orderOut:self];
-	NSReleaseAlertPanel([sender window]);
+	connection	= [[self selectedChatController] connection];
+	url			= [connection URL];
+	
+	if(url) {
+		login		= [url user] ? [url user] : @"";
+		password	= [url password] ? [url password] : @"";
+		bookmark	= [NSDictionary dictionaryWithObjectsAndKeys:
+		   [connection name],			WCBookmarksName,
+		   [url hostpair],				WCBookmarksAddress,
+		   login,						WCBookmarksLogin,
+		   @"",							WCBookmarksNick,
+		   @"",							WCBookmarksStatus,
+		   [NSString UUIDString],		WCBookmarksIdentifier,
+		   NULL];
+		
+		[WCSettings addObject:bookmark toArrayForKey:WCBookmarks];
+		
+		[[WCKeychain keychain] setPassword:password forBookmark:bookmark];
+		
+		[connection setBookmark:bookmark];
+		
+		[[NSNotificationCenter defaultCenter] postNotificationName:WCBookmarksDidChangeNotification];
+	}
 }
 
 
 
-- (void)ignoreChat:(id)sender {
-	[[sender window] orderOut:self];
+#pragma mark -
 
-	NSReleaseAlertPanel([sender window]);
+- (IBAction)console:(id)sender {
+	WCServerConnection		*connection;
+	
+	connection = [[self selectedChatController] connection];
+	
+	[[connection console] showWindow:self];
 }
 
 
 
-- (void)banner:(id)sender {
-	[[[self connection] serverInfo] showWindow:self];
+#pragma mark -
+
+- (IBAction)nextConnection:(id)sender {
+	NSArray				*items;
+	NSUInteger			index, newIndex;
+	
+	items = [_chatTabView tabViewItems];
+	index = [items indexOfObject:[_chatTabView selectedTabViewItem]];
+	
+	if([items count] > 0) {
+		if(index == [items count] - 1)
+			newIndex = 0;
+		else
+			newIndex = index + 1;
+		
+		[_chatTabView selectTabViewItemAtIndex:newIndex];
+
+		[[self window] makeFirstResponder:[[self selectedChatController] insertionTextView]];
+	}
+}
+
+
+
+- (IBAction)previousConnection:(id)sender {
+	NSArray				*items;
+	NSUInteger			index, newIndex;
+	
+	items = [_chatTabView tabViewItems];
+	index = [items indexOfObject:[_chatTabView selectedTabViewItem]];
+	
+	if([items count] > 0) {
+		if(index == 0)
+			newIndex = [items count] - 1;
+		else
+			newIndex = index - 1;
+		
+		[_chatTabView selectTabViewItemAtIndex:newIndex];
+
+		[[self window] makeFirstResponder:[[self selectedChatController] insertionTextView]];
+	}
+}
+
+
+
+- (IBAction)closeTab:(id)sender {
+	WCServerConnection		*connection;
+	
+	connection = [[self selectedChatController] connection];
+	
+	if([self _beginConfirmDisconnectSheetModalForWindow:[self window]
+											 connection:connection
+										  modalDelegate:self
+										 didEndSelector:@selector(closeTabSheetDidEnd:returnCode:contextInfo:)
+											contextInfo:NULL]) {
+		[self _closeSelectedTabViewItem];
+	}
+}
+
+
+
+- (void)closeTabSheetDidEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo {
+	if(returnCode == NSAlertDefaultReturn)
+		[self _closeSelectedTabViewItem];
+}
+
+
+
+#pragma mark -
+
+- (NSTextView *)insertionTextView {
+	return [[self selectedChatController] insertionTextView];
+}
+
+
+
+#pragma mark -
+
+- (void)addChatController:(WCPublicChatController *)chatController {
+	NSTabViewItem		*tabViewItem;
+	NSString			*identifier;
+	
+	if([_chatControllers objectForKey:[[chatController connection] identifier]] != NULL)
+		return;
+	
+	identifier = [NSString UUIDString];
+	
+	[[chatController connection] setIdentifier:identifier];
+	
+	[_chatControllers setObject:chatController forKey:identifier];
+	
+	if([_chatControllers count] == 1)
+		[_noConnectionTextField setHidden:YES];
+	
+	tabViewItem = [[[NSTabViewItem alloc] initWithIdentifier:identifier] autorelease];
+	[tabViewItem setLabel:NSLS(@"Connecting...", @"Chat tab title")];
+	[tabViewItem setView:[chatController view]];
+	
+	[_chatTabView addTabViewItem:tabViewItem];
+	[_chatTabView selectTabViewItem:tabViewItem];
+	
+	[chatController loadWindowProperties];
+}
+
+
+
+- (void)selectChatController:(WCPublicChatController *)chatController {
+	[_chatTabView selectTabViewItemWithIdentifier:[[chatController connection] identifier]];
+
+	[[self window] makeFirstResponder:[[self selectedChatController] insertionTextView]];
+}
+
+
+
+- (WCPublicChatController *)selectedChatController {
+	NSString			*identifier;
+	
+	identifier = [[_chatTabView selectedTabViewItem] identifier];
+	
+	return [_chatControllers objectForKey:identifier];
+}
+
+
+
+- (NSArray *)chatControllers {
+	return [_chatControllers allValues];
 }
 
 @end

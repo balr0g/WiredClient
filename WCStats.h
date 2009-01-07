@@ -35,8 +35,6 @@
 #define WCStatsMessagesSent				@"Messages Sent"
 #define WCStatsMessagesReceived			@"Messages Received"
 
-#define WCStatsPath						@"~/Library/Application Support/Wired Client/Stats.plist"
-
 
 @interface WCStats : WIObject {
 	NSMutableDictionary					*_stats;

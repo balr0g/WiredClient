@@ -28,45 +28,31 @@
 
 #import "WCAccount.h"
 #import "WCPrivateChat.h"
-#import "WCPublicChat.h"
+#import "WCPrivateChatController.h"
 #import "WCServerConnection.h"
 #import "WCUser.h"
 
 @interface WCPrivateChat(Private)
 
-- (id)_initPrivateChatWithConnection:(WCServerConnection *)connection chatID:(NSUInteger)cid inviteUser:(WCUser *)user;
+- (id)_initPrivateChatWithConnection:(WCServerConnection *)connection chatID:(NSUInteger)chatID inviteUser:(WCUser *)user;
 
 @end
 
 
 @implementation WCPrivateChat(Private)
 
-- (id)_initPrivateChatWithConnection:(WCServerConnection *)connection chatID:(NSUInteger)cid inviteUser:(WCUser *)user {
-	WIP7Message		*message;
-	
-	self = [super initChatWithConnection:connection
-						   windowNibName:@"PrivateChat"
-									name:NSLS(@"Private Chat", @"Chat window title")
-							   singleton:NO];
-	
-	_cid = cid;
-	_user = [user retain];
-
-	if([self chatID] == 0) {
-		message = [WIP7Message messageWithName:@"wired.chat.create_chat" spec:WCP7Spec];
-		[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredChatCreateChatReply:)];
-	} else {
-		message = [WIP7Message messageWithName:@"wired.chat.join_chat" spec:WCP7Spec];
-		[message setUInt32:[self chatID] forName:@"wired.chat.id"];
-		[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredChatJoinChatReply:)];
-	}
-
-	[[self connection] addObserver:self
-						  selector:@selector(wiredChatUserDeclineInvitation:)
-					   messageName:@"wired.chat.user_decline_invitation"];
+- (id)_initPrivateChatWithConnection:(WCServerConnection *)connection chatID:(NSUInteger)chatID inviteUser:(WCUser *)user {
+	self = [super initWithWindowNibName:@"PrivateChat"
+								   name:NSLS(@"Private Chat", @"Chat window title")
+							 connection:connection
+							  singleton:NO];
 	
 	[self window];
 	
+	[_chatController setConnection:connection];
+	[_chatController setChatID:chatID];
+	[_chatController setInviteUser:user];
+
 	return self;
 }
 
@@ -81,8 +67,8 @@
 
 
 
-+ (id)privateChatWithConnection:(WCServerConnection *)connection chatID:(NSUInteger)cid {
-	return [[[self alloc] _initPrivateChatWithConnection:connection chatID:cid inviteUser:NULL] autorelease];
++ (id)privateChatWithConnection:(WCServerConnection *)connection chatID:(NSUInteger)chatID {
+	return [[[self alloc] _initPrivateChatWithConnection:connection chatID:chatID inviteUser:NULL] autorelease];
 }
 
 
@@ -93,7 +79,7 @@
 
 
 
-+ (id)privateChatWithConnection:(WCServerConnection *)connection chatID:(NSUInteger)cid inviteUser:(WCUser *)user {
++ (id)privateChatWithConnection:(WCServerConnection *)connection chatID:(NSUInteger)chatID inviteUser:(WCUser *)user {
 	return [[[self alloc] _initPrivateChatWithConnection:connection chatID:0 inviteUser:user] autorelease];
 }
 
@@ -102,7 +88,7 @@
 #pragma mark -
 
 - (void)dealloc {
-	[_user release];
+	NSLog(@"%@ dealloc", self);
 	
 	[super dealloc];
 }
@@ -113,12 +99,10 @@
 
 - (void)windowDidLoad {
 	[self setShouldCascadeWindows:YES];
-	[self setWindowFrameAutosaveName:@"Private Chat"];
+	[self setWindowFrameAutosaveName:@"PrivateChat"];
 
 	[[self window] setTitle:[_connection name] withSubtitle:[self name]];
 
-	[_userListTableView registerForDraggedTypes:[NSArray arrayWithObject:WCUserPboardType]];
-	
 	[super windowDidLoad];
 }
 
@@ -128,120 +112,24 @@
 	WIP7Message		*message;
 	
 	message = [WIP7Message messageWithName:@"wired.chat.leave_chat" spec:WCP7Spec];
-	[message setUInt32:[self chatID] forName:@"wired.chat.id"];
+	[message setUInt32:[_chatController chatID] forName:@"wired.chat.id"];
 	[[self connection] sendMessage:message];
 }
 
 
 
-- (void)connectionServerInfoDidChange:(NSNotification *)notification {
+- (void)serverConnectionServerInfoDidChange:(NSNotification *)notification {
 	[[self window] setTitle:[_connection name] withSubtitle:[self name]];
-}
-
-
-
-- (void)wiredChatCreateChatReply:(WIP7Message *)message {
-	WIP7Message		*reply;
-
-	[message getUInt32:&_cid forName:@"wired.chat.id"];
 	
-	reply = [WIP7Message messageWithName:@"wired.chat.join_chat" spec:WCP7Spec];
-	[reply setUInt32:[self chatID] forName:@"wired.chat.id"];
-	[[self connection] sendMessage:reply fromObserver:self selector:@selector(wiredChatJoinChatReply:)];
-
-	[self showWindow:self];
-
-}
-
-
-
-- (void)wiredChatJoinChatReply:(WIP7Message *)message {
-	WIP7Message		*reply;
-
-	[super wiredChatJoinChatReply:message];
-	
-	if([[message name] isEqualToString:@"wired.chat.user_list.done"]) {
-		if(_user) {
-			reply = [WIP7Message messageWithName:@"wired.chat.invite_user" spec:WCP7Spec];
-			[reply setUInt32:[self chatID] forName:@"wired.chat.id"];
-			[reply setUInt32:[_user userID] forName:@"wired.user.id"];
-			[[self connection] sendMessage:reply];
-
-			[_user release];
-			_user = NULL;
-		}
-	}
-}
-
-
-
-- (void)wiredChatUserDeclineInvitation:(WIP7Message *)message {
-	WCUser		*user;
-	WIP7UInt32	uid, cid;
-
-	[message getUInt32:&cid forName:@"wired.chat.id"];
-	
-	if(cid != [self chatID])
-		return;
-	
-	[message getUInt32:&uid forName:@"wired.user.id"];
-
-	user = [[[self connection] chat] userWithUserID:uid];
-	
-	if(!user)
-		return;
-
-	[self printEvent:[NSSWF:
-		NSLS(@"%@ has declined invitation", @"Private chat decline message (nick)"),
-		[user nick]]];
-}
-
-
-
-- (CGFloat)splitView:(NSSplitView *)splitView constrainMaxCoordinate:(CGFloat)proposedMax ofSubviewAt:(NSInteger)offset {
-	if(splitView == _userListSplitView)
-		return proposedMax - 64.0;
-	else if(splitView == _chatSplitView)
-		return proposedMax - 15.0;
-
-	return proposedMax;
+	[super serverConnectionServerInfoDidChange:notification];
 }
 
 
 
 #pragma mark -
 
-- (NSUInteger)chatID {
-	return _cid;
-}
-
-
-
-#pragma mark -
-
-- (NSDragOperation)tableView:(NSTableView *)tableView validateDrop:(id <NSDraggingInfo>)info proposedRow:(NSInteger)row proposedDropOperation:(NSTableViewDropOperation)operation {
-	if(row >= 0)
-		[tableView setDropRow:-1 dropOperation:NSTableViewDropOn];
-
-	return NSDragOperationGeneric;
-}
-
-
-
-- (BOOL)tableView:(NSTableView *)tableView acceptDrop:(id <NSDraggingInfo>)info row:(NSInteger)row dropOperation:(NSTableViewDropOperation)operation {
-	NSPasteboard		*pasteboard;
-	WIP7Message			*message;
-	NSUInteger			userID;
-
-	pasteboard = [info draggingPasteboard];
-	userID = [[pasteboard stringForType:WCUserPboardType] integerValue];
-
-	message = [WIP7Message messageWithName:@"wired.chat.invite_user" spec:WCP7Spec];
-	[message setUInt32:[self chatID] forName:@"wired.chat.id"];
-	[message setUInt32:userID forName:@"wired.user.id"];
-	[[self connection] sendMessage:message];
-	
-	return YES;
+- (NSTextView *)insertionTextView {
+	return [_chatController insertionTextView];
 }
 
 @end

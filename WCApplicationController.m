@@ -29,7 +29,6 @@
 #import "WCAboutWindow.h"
 #import "WCApplicationController.h"
 #import "WCBoards.h"
-#import "WCChat.h"
 #import "WCConnect.h"
 #import "WCConsole.h"
 #import "WCKeychain.h"
@@ -37,12 +36,15 @@
 #import "WCMessages.h"
 #import "WCNews.h"
 #import "WCPreferences.h"
+#import "WCPublicChat.h"
 #import "WCSearch.h"
 #import "WCServerConnection.h"
 #import "WCServers.h"
 #import "WCStats.h"
 #import "WCTransfers.h"
 #import "WCUser.h"
+
+#define WCApplicationSupportPath		@"~/Library/Application Support/Wired Client"
 
 #define WCGrowlServerConnected			@"Connected to server"
 #define WCGrowlServerDisconnected		@"Disconnected from server"
@@ -223,6 +225,7 @@ static NSInteger _WCCompareSmileyLength(id object1, id object2, void *context) {
 
 	while((bookmark = [enumerator nextObject])) {
 		item = [NSMenuItem itemWithTitle:[bookmark objectForKey:WCBookmarksName] action:@selector(bookmark:)];
+		[item setTarget:self];
 		[item setRepresentedObject:bookmark];
 		
 		if(i <= 10) {
@@ -271,21 +274,21 @@ static NSInteger _WCCompareSmileyLength(id object1, id object2, void *context) {
 
 
 - (BOOL)_openConnectionWithURL:(WIURL *)url {
-	NSEnumerator            *enumerator;
+/*	NSEnumerator            *enumerator;
 	WCServerConnection      *connection;
 	
 	enumerator = [_connections objectEnumerator];
 	
 	while((connection = [enumerator nextObject])) {
 		if([url isEqual:[connection URL]]) {
-			[[connection chat] showWindow:self];
+			[[WCPublicChat publicChat] showWindow:self];
 
 			if(![connection isConnected])
 				[connection reconnect];
 			
 			return YES;
 		}
-	}
+	}*/
 	
 	return NO;
 }
@@ -314,8 +317,6 @@ static WCApplicationController		*sharedController;
 	[[WIExceptionHandler sharedExceptionHandler] enable];
 #endif
 	
-	_connections = [[NSMutableArray alloc] init];
-
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(preferencesDidChange:)
@@ -325,16 +326,6 @@ static WCApplicationController		*sharedController;
 		addObserver:self
 		   selector:@selector(bookmarksDidChange:)
 			   name:WCBookmarksDidChangeNotification];
-	
-	[[NSNotificationCenter defaultCenter]
-		addObserver:self
-		   selector:@selector(linkConnectionDidTerminate:)
-			   name:WCLinkConnectionDidTerminateNotification];
-	
-	[[NSNotificationCenter defaultCenter]
-		addObserver:self
-		   selector:@selector(linkConnectionLoggedIn:)
-			   name:WCLinkConnectionLoggedInNotification];
 	
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
@@ -468,15 +459,15 @@ static WCApplicationController		*sharedController;
 #pragma mark -
 
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)application {
-	NSEnumerator		*enumerator;
-	WCServerConnection	*connection;
-	NSUInteger			count;
+	NSEnumerator			*enumerator;
+	WCPublicChatController	*chatController;
+	NSUInteger				count;
 	
-	enumerator = [_connections objectEnumerator];
+	enumerator = [[[WCPublicChat publicChat] chatControllers] objectEnumerator];
 	count = 0;
 	
-	while((connection = [enumerator nextObject])) {
-		if([connection isConnected])
+	while((chatController = [enumerator nextObject])) {
+		if([(WCPublicChatController *) [chatController connection] isConnected])
 			count++;
 	}
 	
@@ -496,6 +487,21 @@ static WCApplicationController		*sharedController;
 
 
 
+
+- (void)menuNeedsUpdate:(NSMenu *)menu {
+	if(menu == _windowMenu) {
+		if([NSApp keyWindow] == [[WCPublicChat publicChat] window] && [[WCPublicChat publicChat] selectedChatController] != NULL) {
+			[_closeWindowMenuItem setAction:@selector(closeTab:)];
+			[_closeWindowMenuItem setTitle:NSLS(@"Close Tab", @"Close tab menu item")];
+		} else {
+			[_closeWindowMenuItem setAction:@selector(performClose:)];
+			[_closeWindowMenuItem setTitle:NSLS(@"Close Window", @"Close window menu item")];
+		}
+	}
+}
+
+
+
 - (void)preferencesDidChange:(NSNotification *)notification {
 	[self _update];
 }
@@ -504,32 +510,6 @@ static WCApplicationController		*sharedController;
 
 - (void)bookmarksDidChange:(NSNotification *)notification {
 	[self _updateBookmarksMenu];
-}
-
-
-
-- (void)linkConnectionDidTerminate:(NSNotification *)notification {
-	WCServerConnection	*connection;
-
-	connection = [notification object];
-	
-	if(![connection isKindOfClass:[WCServerConnection class]])
-		return;
-
-	[_connections removeObject:connection];
-}
-
-
-
-- (void)linkConnectionLoggedIn:(NSNotification *)notification {
-	WCServerConnection	*connection;
-	
-	connection = [notification object];
-	
-	if(![connection isKindOfClass:[WCServerConnection class]])
-		return;
-
-	[_connections addObject:connection];
 }
 
 
@@ -569,16 +549,15 @@ static WCApplicationController		*sharedController;
 
 
 - (void)serverConnectionTriggeredEvent:(NSNotification *)notification {
-	NSDictionary		*event;
-	NSString			*sound;
-	NSNumber			*clickContext;
-	WCServerConnection	*connection;
-	id					info1, info2;
+	NSDictionary			*event;
+	NSString				*sound;
+	WCServerConnection		*connection;
+	id						info1, info2;
 	
-	event = [notification object];
-	connection = [[notification userInfo] objectForKey:WCServerConnectionEventConnectionKey];
-	info1 = [[notification userInfo] objectForKey:WCServerConnectionEventInfo1Key];
-	info2 = [[notification userInfo] objectForKey:WCServerConnectionEventInfo2Key];
+	event		= [notification object];
+	connection	= [[notification userInfo] objectForKey:WCServerConnectionEventConnectionKey];
+	info1		= [[notification userInfo] objectForKey:WCServerConnectionEventInfo1Key];
+	info2		= [[notification userInfo] objectForKey:WCServerConnectionEventInfo2Key];
 	
 	if([event boolForKey:WCEventsPlaySound]) {
 		sound = [event objectForKey:WCEventsSound];
@@ -590,8 +569,6 @@ static WCApplicationController		*sharedController;
 	if([event boolForKey:WCEventsBounceInDock])
 		[NSApp requestUserAttention:NSInformationalRequest];
 	
-	clickContext = [NSNumber numberWithUnsignedInteger:[_connections indexOfObject:connection]];
-	
 	switch([event intForKey:WCEventsEvent]) {
 		case WCEventsServerConnected:
 			[GrowlApplicationBridge notifyWithTitle:NSLS(@"Connected", @"Growl event connected title")
@@ -601,7 +578,7 @@ static WCApplicationController		*sharedController;
 										   iconData:NULL
 										   priority:0.0
 										   isSticky:NO
-									   clickContext:NULL];
+									   clickContext:[connection identifier]];
 			break;
 
 		case WCEventsServerDisconnected:
@@ -612,7 +589,7 @@ static WCApplicationController		*sharedController;
 										   iconData:NULL
 										   priority:0.0
 										   isSticky:NO
-									   clickContext:clickContext];
+									   clickContext:[connection identifier]];
 			break;
 		
 		case WCEventsError:
@@ -622,7 +599,7 @@ static WCApplicationController		*sharedController;
 										   iconData:NULL
 										   priority:0.0
 										   isSticky:NO
-									   clickContext:clickContext];
+									   clickContext:[connection identifier]];
 			break;
 		
 		case WCEventsUserJoined:
@@ -632,7 +609,7 @@ static WCApplicationController		*sharedController;
 										   iconData:[[info1 icon] TIFFRepresentation]
 										   priority:0.0
 										   isSticky:NO
-									   clickContext:clickContext];
+									   clickContext:[connection identifier]];
 			break;
 		
 		case WCEventsUserChangedNick:
@@ -643,7 +620,7 @@ static WCApplicationController		*sharedController;
 										   iconData:[[info1 icon] TIFFRepresentation]
 										   priority:0.0
 										   isSticky:NO
-									   clickContext:clickContext];
+									   clickContext:[connection identifier]];
 			break;
 		
 		case WCEventsUserChangedStatus:
@@ -654,7 +631,7 @@ static WCApplicationController		*sharedController;
 										   iconData:[[info1 icon] TIFFRepresentation]
 										   priority:0.0
 										   isSticky:NO
-									   clickContext:clickContext];
+									   clickContext:[connection identifier]];
 			break;
 		
 		case WCEventsUserLeft:
@@ -664,7 +641,7 @@ static WCApplicationController		*sharedController;
 										   iconData:[[info1 icon] TIFFRepresentation]
 										   priority:0.0
 										   isSticky:NO
-									   clickContext:clickContext];
+									   clickContext:[connection identifier]];
 			break;
 		
 		case WCEventsChatReceived:
@@ -674,7 +651,7 @@ static WCApplicationController		*sharedController;
 										   iconData:[[info1 icon] TIFFRepresentation]
 										   priority:0.0
 										   isSticky:NO
-									   clickContext:clickContext];
+									   clickContext:[connection identifier]];
 			break;
 		
 		case WCEventsHighlightedChatReceived:
@@ -684,7 +661,7 @@ static WCApplicationController		*sharedController;
 										   iconData:[[info1 icon] TIFFRepresentation]
 										   priority:0.0
 										   isSticky:NO
-									   clickContext:clickContext];
+									   clickContext:[connection identifier]];
 			break;
 		
 		case WCEventsChatInvitationReceived:
@@ -694,7 +671,7 @@ static WCApplicationController		*sharedController;
 										   iconData:[[info1 icon] TIFFRepresentation]
 										   priority:0.0
 										   isSticky:NO
-									   clickContext:clickContext];
+									   clickContext:[connection identifier]];
 			break;
 			
 		case WCEventsMessageReceived:
@@ -704,7 +681,7 @@ static WCApplicationController		*sharedController;
 										   iconData:[[(WCUser *) [info1 user] icon] TIFFRepresentation]
 										   priority:0.0
 										   isSticky:NO
-									   clickContext:clickContext];
+									   clickContext:[connection identifier]];
 			break;
 		
 		case WCEventsNewsPosted:
@@ -714,7 +691,7 @@ static WCApplicationController		*sharedController;
 										   iconData:NULL
 										   priority:0.0
 										   isSticky:NO
-									   clickContext:clickContext];
+									   clickContext:[connection identifier]];
 			break;
 		
 		case WCEventsBroadcastReceived:
@@ -724,7 +701,7 @@ static WCApplicationController		*sharedController;
 										   iconData:[[(WCUser *) [info1 user] icon] TIFFRepresentation]
 										   priority:0.0
 										   isSticky:NO
-									   clickContext:clickContext];
+									   clickContext:[connection identifier]];
 			break;
 		
 		case WCEventsTransferStarted:
@@ -734,7 +711,7 @@ static WCApplicationController		*sharedController;
 										   iconData:[[info1 icon] TIFFRepresentation]
 										   priority:0.0
 										   isSticky:NO
-									   clickContext:clickContext];
+									   clickContext:[connection identifier]];
 			break;
 		
 		case WCEventsTransferFinished:
@@ -744,14 +721,44 @@ static WCApplicationController		*sharedController;
 										   iconData:[[info1 icon] TIFFRepresentation]
 										   priority:0.0
 										   isSticky:NO
-									   clickContext:clickContext];
+									   clickContext:[connection identifier]];
 			break;
 	}
 }
 
 
 
-#pragma mark -
+- (void)handleAppleEvent:(NSAppleEventDescriptor *)event withReplyEvent:(NSAppleEventDescriptor *)replyEvent {
+	NSDictionary	*bookmark;
+	NSString		*string;
+	WIURL			*url;
+	WCConnect		*connect;
+	
+	string = [[event descriptorForKeyword:keyDirectObject] stringValue];
+	url = [WIURL URLWithString:string];
+	
+	if([[url scheme] isEqualToString:@"wired"]) {
+		if(![self _openConnectionWithURL:url]) {
+			connect = [WCConnect connectWithURL:url bookmark:NULL];
+			[connect showWindow:self];
+			[connect connect:self];
+		}
+	}
+	else if([[url scheme] isEqualToString:@"wiredtracker"]) {
+		bookmark = [NSDictionary dictionaryWithObjectsAndKeys:
+					[url host],					WCTrackerBookmarksName,
+					[url hostpair],				WCTrackerBookmarksAddress,
+					@"",						WCTrackerBookmarksLogin,
+					[NSString UUIDString],		WCTrackerBookmarksIdentifier,
+					NULL];
+		
+		[WCSettings addObject:bookmark toArrayForKey:WCTrackerBookmarks];
+		
+		[[WCServers servers] showWindow:self];
+	}
+}
+
+
 
 - (NSDictionary *)registrationDictionaryForGrowl {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
@@ -788,18 +795,22 @@ static WCApplicationController		*sharedController;
 
 
 - (void)growlNotificationWasClicked:(id)clickContext {
-	WCServerConnection	*connection;
+	NSEnumerator			*enumerator;
+	WCPublicChatController	*chatController;
 	
 	[NSApp activateIgnoringOtherApps:YES];
 	
-	connection = [_connections objectAtIndex:[clickContext unsignedIntegerValue]];
-
-	[[connection chat] showWindow:self];
+	enumerator = [[[WCPublicChat publicChat] chatControllers] objectEnumerator];
+	
+	while((chatController = [enumerator nextObject])) {
+		if([clickContext isEqualToString:[(WCPublicChatController *) [chatController connection] identifier]]) {
+			[[WCPublicChat publicChat] selectChatController:chatController];
+			[[WCPublicChat publicChat] showWindow:self];
+		}
+	}
 }
 
 
-
-#pragma mark -
 
 - (BOOL)updaterShouldPromptForPermissionToCheckForUpdates:(SUUpdater *)updater {
 	return NO;
@@ -814,53 +825,22 @@ static WCApplicationController		*sharedController;
 
 	selector = [item action];
 	
-	if(selector == @selector(nextConnection:) ||
-			selector == @selector(previousConnection:))
-		return ([_connections count] > 0);
-	else if(selector == @selector(makeLayoutDefault:))
-		return [[[NSApp keyWindow] windowController] isKindOfClass:[WCConnectionController class]];
-	else if(selector == @selector(restoreLayoutToDefault:))
-		return ([[[NSApp keyWindow] windowController] isKindOfClass:[WCConnectionController class]] &&
-				[WCSettings windowTemplateForKey:WCWindowTemplatesDefault] != NULL);
-	else if(selector == @selector(restoreAllLayoutsToDefault:))
-		return ([_connections count] > 0 && [WCSettings windowTemplateForKey:WCWindowTemplatesDefault] != NULL);
+	if(selector == @selector(disconnect:) || selector == @selector(reconnect:) ||
+	   selector == @selector(serverInfo:) || selector == @selector(news:) ||
+	   selector == @selector(files:) || selector == @selector(accounts:) ||
+	   selector == @selector(administration:) || selector == @selector(saveChat:) ||
+	   selector == @selector(setTopic:) || selector == @selector(postNews:) ||
+	   selector == @selector(broadcast:) || selector == @selector(addBookmark:) ||
+	   selector == @selector(console:) || selector == @selector(nextConnection:) ||
+	   selector == @selector(previousConnection:))
+		return [[WCPublicChat publicChat] validateMenuItem:item];
 
 	return YES;
 }
 
 
 
-- (void)handleAppleEvent:(NSAppleEventDescriptor *)event withReplyEvent:(NSAppleEventDescriptor *)replyEvent {
-	NSDictionary	*bookmark;
-	NSString		*string;
-	WIURL			*url;
-	WCConnect		*connect;
-
-	string = [[event descriptorForKeyword:keyDirectObject] stringValue];
-	url = [WIURL URLWithString:string];
-
-	if([[url scheme] isEqualToString:@"wired"]) {
-		if(![self _openConnectionWithURL:url]) {
-			connect = [WCConnect connectWithURL:url bookmark:NULL];
-			[connect showWindow:self];
-			[connect connect:self];
-		}
-	}
-	else if([[url scheme] isEqualToString:@"wiredtracker"]) {
-		bookmark = [NSDictionary dictionaryWithObjectsAndKeys:
-			[url host],					WCTrackerBookmarksName,
-			[url hostpair],				WCTrackerBookmarksAddress,
-			@"",						WCTrackerBookmarksLogin,
-			[NSString UUIDString],		WCTrackerBookmarksIdentifier,
-			NULL];
-		
-		[WCSettings addObject:bookmark toArrayForKey:WCTrackerBookmarks];
-
-		[[WCServers servers] showWindow:self];
-	}
-}
-
-
+#pragma mark -
 
 - (void)dailyTimer:(NSTimer *)timer {
 	[[NSNotificationCenter defaultCenter] postNotificationName:WCDateDidChangeNotification];
@@ -940,7 +920,73 @@ static WCApplicationController		*sharedController;
 #pragma mark -
 
 - (IBAction)connect:(id)sender {
-	[[WCConnect connect] showWindow:self];
+	[[WCConnect connect] showWindow:sender];
+}
+
+
+
+- (IBAction)disconnect:(id)sender {
+	[[WCPublicChat publicChat] disconnect:sender];
+}
+
+
+
+- (IBAction)reconnect:(id)sender {
+	[[WCPublicChat publicChat] reconnect:sender];
+}
+
+
+
+- (IBAction)serverInfo:(id)sender {
+	[[WCPublicChat publicChat] serverInfo:sender];
+}
+
+
+
+- (IBAction)news:(id)sender {
+	[[WCPublicChat publicChat] news:sender];
+}
+
+
+
+- (IBAction)files:(id)sender {
+	[[WCPublicChat publicChat] files:sender];
+}
+
+
+
+- (IBAction)accounts:(id)sender {
+	[[WCPublicChat publicChat] accounts:sender];
+}
+
+
+
+- (IBAction)administration:(id)sender {
+	[[WCPublicChat publicChat] administration:sender];
+}
+
+
+
+- (IBAction)saveChat:(id)sender {
+	[[WCPublicChat publicChat] saveChat:sender];
+}
+
+
+
+- (IBAction)setTopic:(id)sender {
+	[[WCPublicChat publicChat] setTopic:sender];
+}
+
+
+
+- (IBAction)postNews:(id)sender {
+	[[WCPublicChat publicChat] postNews:sender];
+}
+
+
+
+- (IBAction)broadcast:(id)sender {
+	[[WCPublicChat publicChat] broadcast:sender];
 }
 
 
@@ -948,14 +994,20 @@ static WCApplicationController		*sharedController;
 #pragma mark -
 
 - (IBAction)search:(id)sender {
-	[[WCSearch search] showWindow:self];
+	[[WCSearch search] showWindow:sender];
 }
 
 
 
 #pragma mark -
 
-- (IBAction)bookmark:(id)sender {
+- (IBAction)addBookmark:(id)sender {
+	[[WCPublicChat publicChat] addBookmark:sender];
+}
+
+
+
+- (void)bookmark:(id)sender {
 	[self _connectWithBookmark:[sender representedObject]];
 }
 
@@ -963,145 +1015,52 @@ static WCApplicationController		*sharedController;
 
 #pragma mark -
 
+- (IBAction)console:(id)sender {
+	[[WCPublicChat publicChat] console:sender];
+}
+
+
+
+#pragma mark -
+
+- (IBAction)chat:(id)sender {
+	[[WCPublicChat publicChat] showWindow:sender];
+}
+
+
+
 - (IBAction)servers:(id)sender {
-	[[WCServers servers] showWindow:self];
+	[[WCServers servers] showWindow:sender];
 }
 
 
 
 - (IBAction)boards:(id)sender {
-	[[WCBoards boards] showWindow:self];
+	[[WCBoards boards] showWindow:sender];
 }
 
 
 
 - (IBAction)messages:(id)sender {
-	[[WCMessages messages] showWindow:self];
+	[[WCMessages messages] showWindow:sender];
 }
 
 
 
 - (IBAction)transfers:(id)sender {
-	[[WCTransfers transfers] showWindow:self];
+	[[WCTransfers transfers] showWindow:sender];
 }
 
 
 
 - (IBAction)nextConnection:(id)sender {
-/*	WCServerConnection	*connection, *nextConnection;
-	NSUInteger			i;
-	
-	if([[[NSApp keyWindow] windowController] isKindOfClass:[WCConnectionController class]]) {
-		connection = [(WCConnectionController *) [[NSApp keyWindow] windowController] connection];
-
-		i = [_shownConnections indexOfObject:connection] + 1;
-		
-		if(i >= [_shownConnections count])
-			i = 0;
-			
-		nextConnection = [self _connectionAtIndex:i];
-	} else {
-		connection = NULL;
-
-		nextConnection = [self _connectionAtIndex:0];
-	}
-	
-	if(nextConnection && connection != nextConnection)
-		[self _openConnection:nextConnection];*/
+	[[WCPublicChat publicChat] nextConnection:sender];
 }
 
 
 
 - (IBAction)previousConnection:(id)sender {
-/*	WCServerConnection	*connection, *previousConnection;
-	NSInteger			i;
-	
-	if([[[NSApp keyWindow] windowController] isKindOfClass:[WCConnectionController class]]) {
-		connection = [(WCConnectionController *) [[NSApp keyWindow] windowController] connection];
-
-		i = [_shownConnections indexOfObject:connection] - 1;
-		
-		if(i < 0)
-			i = [_shownConnections count] - 1;
-
-		previousConnection = [self _connectionAtIndex:i];
-	} else {
-		connection = NULL;
-
-		previousConnection = [_shownConnections lastObject];
-	}
-
-	if(previousConnection && connection != previousConnection)
-		[self _openConnection:previousConnection];*/
-}
-
-
-
-- (IBAction)makeLayoutDefault:(id)sender {
-	NSAlert				*alert;
-	WCServerConnection	*connection;
-	
-	alert = [NSAlert alertWithMessageText:NSLS(@"Make Current Layout Default?", @"Make layout default dialog title")
-							defaultButton:NSLS(@"OK", @"Make layout default dialog button title")
-						  alternateButton:NULL
-							  otherButton:NSLS(@"Cancel", @"Make layout default dialog button title")
-				informativeTextWithFormat:NSLS(@"This will set the windows for the currently shown connection as the default layout.", @"Make layout default dialog button description")];
-	
-	if([alert runModal] == NSAlertDefaultReturn) {
-		connection = [(WCConnectionController *) [[NSApp keyWindow] windowController] connection];
-		
-		[connection postNotificationName:WCServerConnectionShouldSaveWindowTemplateNotification];
-		
-		[WCSettings setWindowTemplate:[WCSettings windowTemplateForKey:[connection identifier]]
-							   forKey:WCWindowTemplatesDefault];
-	}
-}
-
-
-
-- (IBAction)restoreLayoutToDefault:(id)sender {
-	NSAlert				*alert;
-	WCServerConnection	*connection;
-	
-	alert = [NSAlert alertWithMessageText:NSLS(@"Restore Layout To Default?", @"Restore layout to default dialog title")
-							defaultButton:NSLS(@"OK", @"Restore layout to default dialog button title")
-						  alternateButton:NULL
-							  otherButton:NSLS(@"Cancel", @"Restore layout to default dialog button title")
-				informativeTextWithFormat:NSLS(@"This will restore all windows for the currently shown connection to the previously saved default layout.", @"Restore layout to default dialog button description")];
-
-	if([alert runModal] == NSAlertDefaultReturn) {
-		connection = [(WCConnectionController *) [[NSApp keyWindow] windowController] connection];
-		
-		[WCSettings setWindowTemplate:[WCSettings windowTemplateForKey:WCWindowTemplatesDefault]
-							   forKey:[connection identifier]];
-		
-		[connection postNotificationName:WCServerConnectionShouldLoadWindowTemplateNotification];
-	}
-}
-
-
-
-- (IBAction)restoreAllLayoutsToDefault:(id)sender {
-	NSEnumerator		*enumerator;
-	NSAlert				*alert;
-	WCServerConnection	*connection;
-	
-	alert = [NSAlert alertWithMessageText:NSLS(@"Restore All Layouts To Default?", @"Restore all layouts to default dialog title")
-							defaultButton:NSLS(@"OK", @"Restore all layouts to default dialog button title")
-						  alternateButton:NULL
-							  otherButton:NSLS(@"Cancel", @"Restore all layouts to default dialog button title")
-				informativeTextWithFormat:NSLS(@"This will restore all windows for all connections to the previously saved default layout.", @"Restore all layouts to default dialog button description")];
-
-	if([alert runModal] == NSAlertDefaultReturn) {
-		enumerator = [_connections objectEnumerator];
-		
-		while((connection = [enumerator nextObject])) {
-			[WCSettings setWindowTemplate:[WCSettings windowTemplateForKey:WCWindowTemplatesDefault]
-								   forKey:[connection identifier]];
-			
-			[connection postNotificationName:WCServerConnectionShouldLoadWindowTemplateNotification];
-		}
-	}
+	[[WCPublicChat publicChat] previousConnection:sender];
 }
 
 

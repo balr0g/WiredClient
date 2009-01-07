@@ -638,6 +638,9 @@
 	[self setShouldCascadeWindows:YES];
 	[self setWindowFrameAutosaveName:@"Files"];
 
+	[[_filesController filesTableView] setPropertiesFromDictionary:
+		[[WCSettings objectForKey:WCWindowProperties] objectForKey:@"WCFilesTableView"]];
+	
 	[[self window] setTitle:[[self _currentPath] path] withSubtitle:[[self connection] name]];
 
 	if(_type == WCFilesStyleList) 
@@ -651,6 +654,10 @@
 
 
 - (void)windowWillClose:(NSNotification *)notification {
+	[WCSettings setObject:[[_filesController filesTableView] propertiesDictionary]
+				   forKey:@"WCFilesTableView"
+	   inDictionaryForKey:WCWindowProperties];
+	
 	if(_subscribed)
 		[self _unsubscribe];
 }
@@ -671,22 +678,6 @@
 	frame.size.height = defaultFrame.size.height;
 	
 	return frame;
-}
-
-
-
-- (void)windowTemplateShouldLoad:(NSMutableDictionary *)windowTemplate {
-	[super windowTemplateShouldLoad:windowTemplate];
-
-	[[_filesController filesTableView] setPropertiesFromDictionary:[windowTemplate objectForKey:@"WCFilesTableView"]];
-}
-
-
-
-- (void)windowTemplateShouldSave:(NSMutableDictionary *)windowTemplate {
-	[windowTemplate setObject:[[_filesController filesTableView] propertiesDictionary] forKey:@"WCFilesTableView"];
-	
-	[super windowTemplateShouldSave:windowTemplate];
 }
 
 
@@ -740,7 +731,7 @@
 - (void)wiredFileListPathReply:(WIP7Message *)message {
 	WCFile			*file;
 	WIP7UInt64		free;
-
+	
 	if([[message name] isEqualToString:@"wired.file.list"]) {
 		file = [WCFile fileWithMessage:message connection:[self connection]];
 		

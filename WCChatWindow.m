@@ -27,6 +27,7 @@
  */
 
 #import "WCChatWindow.h"
+#import "WCPublicChat.h"
 
 @implementation WCChatWindow
 
@@ -46,7 +47,7 @@
 		
 		textView = [[self delegate] insertionTextView];
 		
-		if([self firstResponder] != textView) {
+		if(textView && [self firstResponder] != textView) {
 			if([[event characters] isComposedOfCharactersFromSet:characterSet])
 				[self makeFirstResponder:textView];
 		}
@@ -63,8 +64,10 @@
 
 	textView = [[self delegate] insertionTextView];
 	
-	[self makeFirstResponder:textView];
-	[textView paste:sender];
+	if(textView) {
+		[self makeFirstResponder:textView];
+		[textView paste:sender];
+	}
 }
 
 @end

@@ -29,6 +29,9 @@
 #import "WCServerConnection.h"
 #import "WCStats.h"
 
+#define WCStatsPath				@"~/Library/Application Support/Wired Client/Stats.plist"
+
+
 static OSStatus _WCStatsEventSystemTimeDateChanged(EventHandlerCallRef, EventRef, void *);
 
 
@@ -37,17 +40,18 @@ static OSStatus _WCStatsEventSystemTimeDateChanged(EventHandlerCallRef, EventRef
 - (id)_objectForKey:(id)key;
 - (void)_setObject:(id)object forKey:(id)key;
 
-- (void)_start;
-- (void)_stop;
-- (void)_save;
-- (void)_reset;
+- (void)_startCountingTime;
+- (void)_stopCountingTime;
+- (void)_resetTime;
+
+- (void)_saveStats;
 
 @end
 
 
 
 static OSStatus _WCStatsEventSystemTimeDateChanged(EventHandlerCallRef nextHandler, EventRef event, void *userData) {
-	[(id) userData _reset];
+	[(id) userData _resetTime];
 
 	return noErr;
 }
@@ -86,7 +90,7 @@ static OSStatus _WCStatsEventSystemTimeDateChanged(EventHandlerCallRef nextHandl
 
 #pragma mark -
 
-- (void)_start {
+- (void)_startCountingTime {
 	[_lock lock];
 
 	if(!_date)
@@ -97,7 +101,7 @@ static OSStatus _WCStatsEventSystemTimeDateChanged(EventHandlerCallRef nextHandl
 
 
 
-- (void)_stop {
+- (void)_stopCountingTime {
 	[_lock lock];
 
 	if(_date) {
@@ -112,7 +116,16 @@ static OSStatus _WCStatsEventSystemTimeDateChanged(EventHandlerCallRef nextHandl
 
 
 
-- (void)_save {
+- (void)_resetTime {
+	[_date release];
+	_date = [[NSDate date] retain];
+}
+
+
+
+#pragma mark -
+
+- (void)_saveStats {
 	[_lock lock];
 
 	if(_date) {
@@ -124,13 +137,6 @@ static OSStatus _WCStatsEventSystemTimeDateChanged(EventHandlerCallRef nextHandl
 
 	[_stats writeToFile:[WCStatsPath stringByStandardizingPath] atomically:YES];
 	[_lock unlock];
-}
-
-
-
-- (void)_reset {
-	[_date release];
-	_date = [[NSDate date] retain];
 }
 
 @end
@@ -223,7 +229,7 @@ static OSStatus _WCStatsEventSystemTimeDateChanged(EventHandlerCallRef nextHandl
 #pragma mark -
 
 - (void)applicationWillTerminate:(NSNotification *)notification {
-	[self _save];
+	[self _saveStats];
 }
 
 
@@ -233,7 +239,7 @@ static OSStatus _WCStatsEventSystemTimeDateChanged(EventHandlerCallRef nextHandl
 		return;
 	
 	if(_connections == 1)
-		[self _stop];
+		[self _stopCountingTime];
 	
 	_connections--;
 }
@@ -246,7 +252,7 @@ static OSStatus _WCStatsEventSystemTimeDateChanged(EventHandlerCallRef nextHandl
 	
 	if([[notification object] isConnected]) {
 		if(_connections == 1)
-			[self _stop];
+			[self _stopCountingTime];
 		
 		_connections--;
 	}
@@ -259,7 +265,7 @@ static OSStatus _WCStatsEventSystemTimeDateChanged(EventHandlerCallRef nextHandl
 		return;
 	
 	if(_connections == 0)
-		[self _start];
+		[self _startCountingTime];
 	
 	_connections++;
 }
@@ -269,7 +275,7 @@ static OSStatus _WCStatsEventSystemTimeDateChanged(EventHandlerCallRef nextHandl
 #pragma mark -
 
 - (void)saveTimer:(NSTimer *)timer {
-	[self _save];
+	[self _saveStats];
 }
 
 

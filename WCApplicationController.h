@@ -28,21 +28,19 @@
 
 #define WCDateDidChangeNotification		@"WCDateDidChangeNotification"
 
-#define WCApplicationSupportPath		@"~/Library/Application Support/Wired Client"
-
 
 @interface WCApplicationController : WIObject <GrowlApplicationBridgeDelegate> {
 	IBOutlet NSMenu						*_bookmarksMenu;
 	IBOutlet NSMenu						*_insertSmileyMenu;
 	IBOutlet NSMenu						*_debugMenu;
+	IBOutlet NSMenu						*_windowMenu;
+	IBOutlet NSMenuItem					*_closeWindowMenuItem;
 	
 	IBOutlet NSMenuItem					*_disconnectMenuItem;
 	IBOutlet NSMenuItem					*_deleteMenuItem;
 	
 	IBOutlet SUUpdater					*_updater;
 	
-	NSMutableArray						*_connections;
-
 	NSString							*_clientVersion;
 	NSMutableDictionary					*_smileys;
 	NSArray								*_sortedSmileys;
@@ -58,20 +56,29 @@
 - (IBAction)preferences:(id)sender;
 
 - (IBAction)connect:(id)sender;
+- (IBAction)disconnect:(id)sender;
+- (IBAction)reconnect:(id)sender;
+- (IBAction)serverInfo:(id)sender;
+- (IBAction)news:(id)sender;
+- (IBAction)files:(id)sender;
+- (IBAction)accounts:(id)sender;
+- (IBAction)administration:(id)sender;
+- (IBAction)saveChat:(id)sender;
+- (IBAction)setTopic:(id)sender;
+- (IBAction)postNews:(id)sender;
+- (IBAction)broadcast:(id)sender;
 
 - (IBAction)search:(id)sender;
 
-- (IBAction)bookmark:(id)sender;
+- (IBAction)console:(id)sender;
 
+- (IBAction)chat:(id)sender;
 - (IBAction)servers:(id)sender;
 - (IBAction)messages:(id)sender;
 - (IBAction)boards:(id)sender;
 - (IBAction)transfers:(id)sender;
 - (IBAction)nextConnection:(id)sender;
 - (IBAction)previousConnection:(id)sender;
-- (IBAction)makeLayoutDefault:(id)sender;
-- (IBAction)restoreLayoutToDefault:(id)sender;
-- (IBAction)restoreAllLayoutsToDefault:(id)sender;
 
 - (IBAction)manual:(id)sender;
 

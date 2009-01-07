@@ -1,18 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.02">
+<archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.03">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">9E17</string>
-		<string key="IBDocument.InterfaceBuilderVersion">670</string>
-		<string key="IBDocument.AppKitVersion">949.33</string>
-		<string key="IBDocument.HIToolboxVersion">352.00</string>
+		<string key="IBDocument.SystemVersion">9G55</string>
+		<string key="IBDocument.InterfaceBuilderVersion">677</string>
+		<string key="IBDocument.AppKitVersion">949.43</string>
+		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="358"/>
+			<integer value="291"/>
+			<integer value="250"/>
+			<integer value="196"/>
+			<integer value="133"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+		</object>
+		<object class="NSMutableDictionary" key="IBDocument.Metadata">
+			<bool key="EncodedWithXMLCoder">YES</bool>
+			<object class="NSArray" key="dict.sortedKeys">
+				<bool key="EncodedWithXMLCoder">YES</bool>
+			</object>
+			<object class="NSMutableArray" key="dict.values">
+				<bool key="EncodedWithXMLCoder">YES</bool>
+			</object>
 		</object>
 		<object class="NSMutableArray" key="IBDocument.RootObjects" id="68635960">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -156,7 +168,7 @@
 																			<string>WebURLsWithTitlesPboardType</string>
 																		</object>
 																	</object>
-																	<string key="NSFrameSize">{408, 32}</string>
+																	<string key="NSFrameSize">{408, 14}</string>
 																	<reference key="NSSuperview" ref="1052149644"/>
 																	<object class="NSTextContainer" key="NSTextContainer" id="410394430">
 																		<object class="NSLayoutManager" key="NSLayoutManager">
@@ -215,8 +227,8 @@
 																		<nil key="NSDefaultParagraphStyle"/>
 																	</object>
 																	<int key="NSTVFlags">6</int>
-																	<string key="NSMaxSize">{629, 1e+07}</string>
-																	<string key="NSMinize">{377, 32}</string>
+																	<string key="NSMaxSize">{833, 1e+07}</string>
+																	<string key="NSMinize">{377, 0}</string>
 																	<nil key="NSDelegate"/>
 																</object>
 															</object>
@@ -364,7 +376,7 @@
 														<object class="NSTableView" id="706380852">
 															<reference key="NSNextResponder" ref="994685794"/>
 															<int key="NSvFlags">256</int>
-															<string key="NSFrameSize">{189, 254}</string>
+															<string key="NSFrameSize">{188, 254}</string>
 															<reference key="NSSuperview" ref="994685794"/>
 															<bool key="NSEnabled">YES</bool>
 															<object class="_NSCornerView" key="NSCornerView">
@@ -407,84 +419,131 @@
 																					<integer value="0"/>
 																					<object class="NSCachedImageRep">
 																						<object class="NSData" key="NSTIFFRepresentation">
-																							<bytes key="NS.bytes">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
-cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
+																							<bytes key="NS.bytes">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
+AAAAAQABAAABUwADAAAABAAADjyHcwAHAAAO/AAADkQAAAAAAAgACAAIAAgAAQABAAEAAQAADvxhcHBs
+AgAAAG1udHJSR0IgWFlaIAfYAAEAAwAWACwANmFjc3BBUFBMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAD21gABAAAAANMtYXBwbEdcrF04Qla3wientq1tCbkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAADnJYWVoAAAEsAAAAFGdYWVoAAAFAAAAAFGJYWVoAAAFUAAAAFHd0cHQAAAFoAAAAFGNoYWQAAAF8
+AAAALHJUUkMAAAGoAAAADmdUUkMAAAG4AAAADmJUUkMAAAHIAAAADnZjZ3QAAAHYAAAGEm5kaW4AAAfs
+AAAGPmRlc2MAAA4sAAAAX2RzY20AAA6MAAAAJG1tb2QAAA6wAAAAKGNwcnQAAA7YAAAAJFhZWiAAAAAA
+AAB3mgAAQJkAAAMZWFlaIAAAAAAAAFjtAACrjAAAF61YWVogAAAAAAAAJk4AABP1AAC4XlhZWiAAAAAA
+AADzUgABAAAAARbPc2YzMgAAAAAAAQxCAAAF3v//8yYAAAeSAAD9kf//+6L///2jAAAD3AAAwGxjdXJ2
+AAAAAAAAAAEBzQAAY3VydgAAAAAAAAABAc0AAGN1cnYAAAAAAAAAAQHNAAB2Y2d0AAAAAAAAAAAAAwEA
+AAIAAAFFAsgEOQWbByEIvApbC/sNmQ87EOoSlxRGFgIXuRlWGuMccR35H3Ug8iJnI9IlNSaQJ+YpMip5
+K74tAS5BL4EwvTH5MzU0azWhNtQ4Bzk4OmY7kzy8PeQ/DEAzQVdCeUOaRLhF1kbySAxJJUo6S1FMYk1z
+ToRPk1ChUbFSwlPWVOpV/1cVWCxZRFpdW3hckV2pXsBf1WDpYf5jF2QyZU9mcGeTaLlp4WsNbDttbW6d
+b81w/HIpc1V0gHWrdtR3/Hkjekl7bnySfbZ+13/5gRmCOYNXhHGFiYadh6+IvonKitOL2ozejeCO4I/e
+kNyR2ZLXk9OUzpXIlr+XtZiqmZ2ajpt+nGydWZ5Eny6gF6EAoemi0aO4pJ6lg6Zop06oNKkbqgOq7KvU
+rL2tpq6Qr3qwY7FMsjSzGrQAtOW1yraut5G4cblPuiq7BLvbvLC9gr5Rvx6/6sC0wX3CRsMPw9jEoMVo
+xi/G98e+yIXJS8oQytTLl8xZzRrN2s6Yz1bQE9DP0YrSRdMA07vUddUv1enWo9dc2BXYztmH2j/a+du2
+3HXdNt363r/fh+BS4R7h7OK844zkWuUo5fXmweeM6FbpIOno6rDreOw+7QTtyO6L707wEPDR8ZLyUvMT
+89T0lfVX9hn23Pef+GP5J/nr+q77cfw0/Pf9uf57/z3//wAAAgcEHwYICCUKEQvyDa0PaBEVErEUOBWx
+Fx4YdxnJGxocdB3IHx0gayG1IvwkOiV2Jqwn2ikGKi4rUyx3LZsuvy/gMQIyIjM/NFw1ejaVN684xjne
+OvQ8CD0aPis/O0BJQVhCZENxRHxFhkaRR5lIokmqSrBLtUy4TbpOvE+8ULxRvVLAU8RUy1XSVtpX5Fjw
+Wf1bC1wZXSdeNF9BYExhV2JlY3dkjWWkZr9n32kBaiVrTWx2baNuzW/2cR5yRXNqdI51s3bWd/l5G3o9
+e158gH2ifsN/44ECgiGDPoRYhXCGhYeXiKWJsYq8i8OMx43JjsiPyJDGkcSSv5O6lLSVrZall5yYkpmG
+mnmba5xcnU2ePJ8roBmhBqHyot2jyaS0pZ+mi6d4qGapVKpDqzSsJa0Xrgmu/K/vsOKx1LLGs7a0prWW
+toS3cbhbuUO6KLsKu+q8xr2gvne/TMAfwPDBwcKQw2DEL8T+xczGmsdnyDTJAsnOyprLZcwwzPrNxM6N
+z1XQHdDk0avScdM40/3Uw9WI1k3XEtfX2JvZXtoi2ufbrtx33ULeDt7d367ggeFV4irjAePY5K7lg+ZX
+5yvn/ejQ6aHqcutC7BLs4e2u7nrvRfAQ8NnxoPJn8y3z8fS19Xj2O/b+98D4gflC+gP6w/uD/EP9A/3C
+/oL/QP//AAACBQPsBb8HswmdC2MNIw7REG4SAhOLFQ8WfBfoGUIaqBwMHXAe0yAvIYUi2yQsJXQmuCf3
+KS4qYSuWLMgt+S8oMFUxgjKrM9M0+zYhN0Q4ZTmDOqI7vjzZPfM/CkAgQTVCSENZRGdFdUaBR4xIlUmd
+SqNLqUysTa5OsE+vUK5RrlKvU7FUs1W3VrxXwVjJWdBa2VvhXOld7171X/lg/WIBYwhkEWUdZipnOmhM
+aWJqeWuRbK1tyG7ib/txEnIpcz50UXVldnh3iXiZeal6uXvIfNd95X7yf/+BDIIYgyKEK4UyhjaHOIg4
+iTWKMIsojB2NEY4CjvGP4JDNkbiSo5ONlHaVXZZElyiYDJjumc+asJuPnG6dS54nnwKf3KC3oZGibKNG
+pCCk+aXSpqunhKheqTiqE6ruq8mspa2Brl6vPLAasPix1rKzs5C0bbVJtiW3ALfbuLS5i7pguzO8BbzV
+vaO+b785wALAycGQwlbDG8PfxKPFZsYoxunHqshqySrJ6cqoy2bMJszlzaTOYs8gz9/QndFb0hnS19OT
+1FDVDtXL1onXRtgE2MLZgNpA2wLbx9yQ3VveKd76383gpOF+4lrjOOQX5PXl0+ax54/obelL6irrC+vx
+7N7t0e7J78bwyPHQ8t7z8PUI9iL3PPhW+W/6iPuh/Ln90f7o//8AAG5kaW4AAAAAAAAGNgAAoZYAAFhE
+AABKuQAAmuEAACauAAASzQAAUA0AAFQ5AAJmZgACTMwAAiuFAAMBAAACAAAAAgAGAAwAFAAeACoANgBD
+AFEAYABxAIIAlQCoAL0A0gDoAP8BFwEwAUkBYwF+AZoBuQHaAfwCHwJDAmkCkQK6AuQDEAM+A24DoAPU
+BAoEQgR9BLoE+AU5BXsFvwYEBkwGlQbgBywHewfLCB4IcgjICSAJegnWCjQKlQr3C1sLwQwpDJQNAA1v
+DeAOUw7ID0APuhA3ELURNxG7EkESyRNUE+AUbRT6FYkWGRaqFzwX0BhkGPoZkBooGsMbYBv/HKEdRB3o
+HosfLx/TIHchGyG/ImMjByOrJE8k8yWZJkAm6SeUKEEo8CmhKlMrByu9LHUtLy3rLqkvaTAqMO4xszJ6
+M0Q0DzTdNa82hDddODk5GTn9OuU70DzAPbQ+qz+mQKNBokKjQ6dErUW3RsVH10jsSgVLIkxCTWdOj0+8
+UOxSH1NUVIxVx1cGWEhZjVrSXBhdX16nX/BhPGKIY9ZlJWZ3Z81pJmqDa+NtR26tcBdxiHMAdH92BHeS
+eSd6xXxqfhd/x4F7gzKE7YariGuKMIv4jcWPmZFyk1GVN5cjmRWbDp0Mnw2hEqMbpSinOKlNq2Wtgq+f
+sbWzxrXRt9e517vTvcu/wcG6w7nFvMfFydTL584A0B3SP9Rn1pXYytsF3UXfiOHP5BfmYOiq6vTtP++L
+8dr0LPaD+Nz7Of2a//8AAAABAAMABgAKABAAFgAdACQALQA3AEIATgBcAGsAewCMAJ8AswDJAOEA+wEW
+ATQBVAF3AZsBwQHnAg8COQJkApECwALxAyQDWgORA8sEBwRHBIgEzAUSBVoFpAXvBj0GjQbeBzIHiAfg
+CDkIlQjzCVMJtgoaCoEK6gtWC8QMNAynDRsNkg4LDoYPBA+DEAUQiREPEZgSIxKxE0IT1RRqFQIVnBY2
+FtIXbhgLGKoZSRnpGoobLBvPHHQdGx3EHm8fHR/MIHshKSHXIoUjMyPgJIwlOSXmJpInPyfrKJopSyn+
+KrMraiwjLN4tmi5YLxgv2TCdMWEyKDLvM7g0gzVPNh427jfAOJU5bjpKOyk8DDzzPd4+zD++QLRBr0Ku
+Q69EskW4RsJHzkjdSe9LBEwcTTdOVk94UJ1RxVLwVB5VT1aDV7tY9loyW3Fcsl30XzZgeWG9YwFkRWWL
+ZtFoGWliaqxr+m1Kbp1v83FMcqh0CXVwdt54U3nPe1N8335ygA2BsINWhQGGrohgihWLzY2Jj0eRCZLP
+lJqWaJg7mhKb7Z3Nn7GhmKODpXKnY6lYq1GtTq9PsU+zS7VEtzm5K7sYvQO+7MDTwrzEqsacyJLKjcyM
+zo/QltKh1LLWydjm2wjdMd9h4Zfj1OYV6Fzqpuz270rxovP99l34v/sm/ZD//wAAAAEAAwAHAAsAEQAY
+AB8AKAAxADwASABWAGQAdACFAJgArADCANkA8gEMASkBRwFnAYoBrQHRAfcCHgJGAnACnALKAvkDKgNd
+A5IDygQDBD8EfgS/BQEFRQWLBdMGHQZpBrYHBgdYB6wIAQhZCLMJDwluCc4KMQqWCv0LZgvSDEAMsA0j
+DZgOEA6KDwcPhhAIEIwRExGcEigStxNIE9wUcxULFaUWQBbcF3oYGBi5GVoZ/BqgG0Ub7ByWHUId8R6i
+H1UgCSC9IXEiJSLaI48kRCT4Ja0mYycYJ88ohylCKgAqvyuBLEUtDC3ULp4vazA6MQsx3jKyM4k0YTU8
+Nhg29zfXOLo5nzqIO3U8ZT1ZPlE/TUBOQVNCXUNrRH5FlEatR8tI7EoQSzdMYk2RTsVP/FE4UndTulUA
+VktXmljtWkJbmlzzXlBfsGETYnlj4GVIZrFoHGmJavdsZm3Wb0dwuXIvc6d1InageCF5pHssfLh+TH/l
+gYWDLITahpCITYoQi9iNpY94kU+TK5UNlvOY3prOnMKeuKCwoqykrKauqLSqvqzLrt2w8bMHtR+3OrlW
+u3W9j7+gwajDq8Wnx53JjMt2zVzPQdEp0xPVANbu2N7a0dzA3qXgfuJM5BLlz+eF6TPq2ux77hbvrvFI
+8uT0gfYh98H5Y/sH/K3+Vf//AABkZXNjAAAAAAAAAAVpTWFjAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABtbHVj
+AAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAGkATQBhAGNtbW9kAAAAAAAABhAAAJxlAAAAAL/TkYAAAAAA
+AAAAAAAAAAAAAAAAdGV4dAAAAABDb3B5cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 																						</object>
 																						<string key="NSCacheWindowColorSpace">NSCalibratedRGBColorSpace</string>
 																						<int key="NSCacheWindowBPS">8</int>
@@ -509,7 +568,7 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 																	<reference key="NSTableView" ref="706380852"/>
 																</object>
 																<object class="NSTableColumn" id="423860701">
-																	<double key="NSWidth">1.510000e+02</double>
+																	<double key="NSWidth">1.500000e+02</double>
 																	<double key="NSMinWidth">4.000000e+00</double>
 																	<double key="NSMaxWidth">1.000000e+03</double>
 																	<object class="NSTableHeaderCell" key="NSHeaderCell">
@@ -589,7 +648,6 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 													<int key="NSvFlags">256</int>
 													<string key="NSFrame">{{-100, -100}, {212, 15}}</string>
 													<reference key="NSSuperview" ref="22660103"/>
-													<bool key="NSEnabled">YES</bool>
 													<int key="NSsFlags">1</int>
 													<reference key="NSTarget" ref="22660103"/>
 													<string key="NSAction">_doScroller:</string>
@@ -599,7 +657,7 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 											<string key="NSFrameSize">{205, 256}</string>
 											<reference key="NSSuperview" ref="320953851"/>
 											<reference key="NSNextKeyView" ref="994685794"/>
-											<int key="NSsFlags">146</int>
+											<int key="NSsFlags">18</int>
 											<reference key="NSVScroller" ref="299417681"/>
 											<reference key="NSHScroller" ref="436297766"/>
 											<reference key="NSContentView" ref="994685794"/>
@@ -791,7 +849,7 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 				<string key="NSWindowContentMaxSize">{3.40282e+38, 3.40282e+38}</string>
 				<string key="NSWindowContentMinSize">{213, 107}</string>
 				<object class="NSView" key="NSWindowView" id="659385856">
-					<nil key="NSNextResponder"/>
+					<reference key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
 					<object class="NSMutableArray" key="NSSubviews">
 						<bool key="EncodedWithXMLCoder">YES</bool>
@@ -808,7 +866,30 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 										<object class="NSTextView" id="440692969">
 											<reference key="NSNextResponder" ref="427799386"/>
 											<int key="NSvFlags">2322</int>
-											<string key="NSFrameSize">{315, 72}</string>
+											<object class="NSMutableSet" key="NSDragTypes">
+												<bool key="EncodedWithXMLCoder">YES</bool>
+												<object class="NSMutableArray" key="set.sortedObjects">
+													<bool key="EncodedWithXMLCoder">YES</bool>
+													<string>Apple HTML pasteboard type</string>
+													<string>Apple PDF pasteboard type</string>
+													<string>Apple PICT pasteboard type</string>
+													<string>Apple PNG pasteboard type</string>
+													<string>Apple URL pasteboard type</string>
+													<string>CorePasteboardFlavorType 0x6D6F6F76</string>
+													<string>CorePasteboardFlavorType 0x75726C20</string>
+													<string>NSColor pasteboard type</string>
+													<string>NSFilenamesPboardType</string>
+													<string>NSStringPboardType</string>
+													<string>NeXT Encapsulated PostScript v1.2 pasteboard type</string>
+													<string>NeXT RTFD pasteboard type</string>
+													<string>NeXT Rich Text Format v1.0 pasteboard type</string>
+													<string>NeXT TIFF v4.0 pasteboard type</string>
+													<string>NeXT font pasteboard type</string>
+													<string>NeXT ruler pasteboard type</string>
+													<string>WebURLsWithTitlesPboardType</string>
+												</object>
+											</object>
+											<string key="NSFrameSize">{315, 14}</string>
 											<reference key="NSSuperview" ref="427799386"/>
 											<object class="NSTextContainer" key="NSTextContainer" id="277671060">
 												<object class="NSLayoutManager" key="NSLayoutManager">
@@ -865,13 +946,14 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 															<string key="NSHotSpot">{8, -8}</string>
 															<int key="NSCursorType">13</int>
 														</object>
-														<integer value="1"/>
+														<integer value="1" id="9"/>
 													</object>
 												</object>
 												<nil key="NSDefaultParagraphStyle"/>
 											</object>
 											<int key="NSTVFlags">6</int>
-											<string key="NSMaxSize">{315, 1e+07}</string>
+											<string key="NSMaxSize">{647, 1e+07}</string>
+											<string key="NSMinize">{315, 0}</string>
 											<nil key="NSDelegate"/>
 										</object>
 									</object>
@@ -975,7 +1057,8 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 							</object>
 						</object>
 					</object>
-					<string key="NSFrame">{{1, 1}, {372, 179}}</string>
+					<string key="NSFrameSize">{372, 179}</string>
+					<reference key="NSSuperview"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1680, 1028}}</string>
 				<string key="NSMinSize">{213, 129}</string>
@@ -994,7 +1077,7 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 				<string key="NSWindowContentMaxSize">{3.40282e+38, 3.40282e+38}</string>
 				<string key="NSWindowContentMinSize">{213, 107}</string>
 				<object class="NSView" key="NSWindowView" id="281801767">
-					<nil key="NSNextResponder"/>
+					<reference key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
 					<object class="NSMutableArray" key="NSSubviews">
 						<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1084,11 +1167,15 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 							</object>
 						</object>
 					</object>
-					<string key="NSFrame">{{1, 1}, {323, 127}}</string>
+					<string key="NSFrameSize">{323, 127}</string>
+					<reference key="NSSuperview"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1680, 1028}}</string>
 				<string key="NSMinSize">{213, 129}</string>
 				<string key="NSMaxSize">{3.40282e+38, 3.40282e+38}</string>
+			</object>
+			<object class="NSCustomObject" id="217721819">
+				<string key="NSClassName">WCPrivateChatController</string>
 			</object>
 		</object>
 		<object class="IBObjectContainer" key="IBDocument.Objects">
@@ -1104,67 +1191,11 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">dataSource</string>
-						<reference key="source" ref="706380852"/>
-						<reference key="destination" ref="213855478"/>
-					</object>
-					<int key="connectionID">158</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">delegate</string>
-						<reference key="source" ref="706380852"/>
-						<reference key="destination" ref="213855478"/>
-					</object>
-					<int key="connectionID">159</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">delegate</string>
-						<reference key="source" ref="692029027"/>
-						<reference key="destination" ref="213855478"/>
-					</object>
-					<int key="connectionID">163</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">delegate</string>
-						<reference key="source" ref="667809447"/>
-						<reference key="destination" ref="213855478"/>
-					</object>
-					<int key="connectionID">164</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">delegate</string>
 						<reference key="source" ref="1055475874"/>
 						<reference key="destination" ref="213855478"/>
 					</object>
 					<int key="connectionID">174</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">sendPrivateMessage:</string>
-						<reference key="source" ref="213855478"/>
-						<reference key="destination" ref="591453218"/>
-					</object>
-					<int key="connectionID">188</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">sendPrivateMessage:</string>
-						<reference key="source" ref="213855478"/>
-						<reference key="destination" ref="802844112"/>
-					</object>
-					<int key="connectionID">202</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">ignore:</string>
-						<reference key="source" ref="213855478"/>
-						<reference key="destination" ref="573185269"/>
-					</object>
-					<int key="connectionID">205</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -1184,123 +1215,11 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">_chatInputTextView</string>
-						<reference key="source" ref="213855478"/>
-						<reference key="destination" ref="692029027"/>
-					</object>
-					<int key="connectionID">214</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">_chatOutputTextView</string>
-						<reference key="source" ref="213855478"/>
-						<reference key="destination" ref="667809447"/>
-					</object>
-					<int key="connectionID">215</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">_chatOutputScrollView</string>
-						<reference key="source" ref="213855478"/>
-						<reference key="destination" ref="332967037"/>
-					</object>
-					<int key="connectionID">216</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">_chatSplitView</string>
-						<reference key="source" ref="213855478"/>
-						<reference key="destination" ref="680488153"/>
-					</object>
-					<int key="connectionID">217</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">_userListTableView</string>
-						<reference key="source" ref="213855478"/>
-						<reference key="destination" ref="706380852"/>
-					</object>
-					<int key="connectionID">219</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">_infoButton</string>
-						<reference key="source" ref="213855478"/>
-						<reference key="destination" ref="43042096"/>
-					</object>
-					<int key="connectionID">220</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">_privateMessageButton</string>
-						<reference key="source" ref="213855478"/>
-						<reference key="destination" ref="591453218"/>
-					</object>
-					<int key="connectionID">221</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">_chatInputScrollView</string>
-						<reference key="source" ref="213855478"/>
-						<reference key="destination" ref="1022279135"/>
-					</object>
-					<int key="connectionID">226</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">_userListView</string>
-						<reference key="source" ref="213855478"/>
-						<reference key="destination" ref="320953851"/>
-					</object>
-					<int key="connectionID">227</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">delegate</string>
 						<reference key="source" ref="680488153"/>
 						<reference key="destination" ref="213855478"/>
 					</object>
 					<int key="connectionID">228</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">_userListMenu</string>
-						<reference key="source" ref="213855478"/>
-						<reference key="destination" ref="710850544"/>
-					</object>
-					<int key="connectionID">229</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">_sendPrivateMessageMenuItem</string>
-						<reference key="source" ref="213855478"/>
-						<reference key="destination" ref="802844112"/>
-					</object>
-					<int key="connectionID">230</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">_getInfoMenuItem</string>
-						<reference key="source" ref="213855478"/>
-						<reference key="destination" ref="680012915"/>
-					</object>
-					<int key="connectionID">231</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">_ignoreMenuItem</string>
-						<reference key="source" ref="213855478"/>
-						<reference key="destination" ref="573185269"/>
-					</object>
-					<int key="connectionID">232</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">delegate</string>
-						<reference key="source" ref="710850544"/>
-						<reference key="destination" ref="213855478"/>
-					</object>
-					<int key="connectionID">233</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -1312,30 +1231,6 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">_userListSplitView</string>
-						<reference key="source" ref="213855478"/>
-						<reference key="destination" ref="926885866"/>
-					</object>
-					<int key="connectionID">242</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">_chatView</string>
-						<reference key="source" ref="213855478"/>
-						<reference key="destination" ref="166741756"/>
-					</object>
-					<int key="connectionID">243</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">_topicTextField</string>
-						<reference key="source" ref="213855478"/>
-						<reference key="destination" ref="1062478402"/>
-					</object>
-					<int key="connectionID">245</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">delegate</string>
 						<reference key="source" ref="926885866"/>
 						<reference key="destination" ref="213855478"/>
@@ -1344,75 +1239,11 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">_setTopicPanel</string>
-						<reference key="source" ref="213855478"/>
-						<reference key="destination" ref="845885208"/>
-					</object>
-					<int key="connectionID">253</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">_setTopicTextView</string>
-						<reference key="source" ref="213855478"/>
-						<reference key="destination" ref="440692969"/>
-					</object>
-					<int key="connectionID">254</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">delegate</string>
 						<reference key="source" ref="440692969"/>
 						<reference key="destination" ref="213855478"/>
 					</object>
 					<int key="connectionID">255</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">_topicNickTextField</string>
-						<reference key="source" ref="213855478"/>
-						<reference key="destination" ref="454709663"/>
-					</object>
-					<int key="connectionID">257</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">getInfo:</string>
-						<reference key="source" ref="213855478"/>
-						<reference key="destination" ref="43042096"/>
-					</object>
-					<int key="connectionID">258</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">_nickTableColumn</string>
-						<reference key="source" ref="213855478"/>
-						<reference key="destination" ref="423860701"/>
-					</object>
-					<int key="connectionID">260</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">_iconTableColumn</string>
-						<reference key="source" ref="213855478"/>
-						<reference key="destination" ref="357048256"/>
-					</object>
-					<int key="connectionID">261</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">getInfo:</string>
-						<reference key="source" ref="213855478"/>
-						<reference key="destination" ref="680012915"/>
-					</object>
-					<int key="connectionID">262</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">editAccount:</string>
-						<reference key="source" ref="213855478"/>
-						<reference key="destination" ref="482991929"/>
-					</object>
-					<int key="connectionID">268</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
@@ -1429,14 +1260,6 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 						<reference key="destination" ref="1034591739"/>
 					</object>
 					<int key="connectionID">270</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">_kickMessagePanel</string>
-						<reference key="source" ref="213855478"/>
-						<reference key="destination" ref="207125621"/>
-					</object>
-					<int key="connectionID">301</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
@@ -1456,35 +1279,307 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">_kickMessageTextField</string>
+						<string key="label">_chatController</string>
 						<reference key="source" ref="213855478"/>
+						<reference key="destination" ref="217721819"/>
+					</object>
+					<int key="connectionID">393</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_privateChat</string>
+						<reference key="source" ref="217721819"/>
+						<reference key="destination" ref="213855478"/>
+					</object>
+					<int key="connectionID">394</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_userListTableView</string>
+						<reference key="source" ref="217721819"/>
+						<reference key="destination" ref="706380852"/>
+					</object>
+					<int key="connectionID">395</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_nickTableColumn</string>
+						<reference key="source" ref="217721819"/>
+						<reference key="destination" ref="423860701"/>
+					</object>
+					<int key="connectionID">396</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_iconTableColumn</string>
+						<reference key="source" ref="217721819"/>
+						<reference key="destination" ref="357048256"/>
+					</object>
+					<int key="connectionID">397</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_chatOutputTextView</string>
+						<reference key="source" ref="217721819"/>
+						<reference key="destination" ref="667809447"/>
+					</object>
+					<int key="connectionID">398</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_chatOutputScrollView</string>
+						<reference key="source" ref="217721819"/>
+						<reference key="destination" ref="332967037"/>
+					</object>
+					<int key="connectionID">399</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_chatInputTextView</string>
+						<reference key="source" ref="217721819"/>
+						<reference key="destination" ref="692029027"/>
+					</object>
+					<int key="connectionID">400</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_chatInputScrollView</string>
+						<reference key="source" ref="217721819"/>
+						<reference key="destination" ref="1022279135"/>
+					</object>
+					<int key="connectionID">401</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_chatSplitView</string>
+						<reference key="source" ref="217721819"/>
+						<reference key="destination" ref="680488153"/>
+					</object>
+					<int key="connectionID">402</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_userListSplitView</string>
+						<reference key="source" ref="217721819"/>
+						<reference key="destination" ref="926885866"/>
+					</object>
+					<int key="connectionID">403</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_topicTextField</string>
+						<reference key="source" ref="217721819"/>
+						<reference key="destination" ref="1062478402"/>
+					</object>
+					<int key="connectionID">404</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_topicNickTextField</string>
+						<reference key="source" ref="217721819"/>
+						<reference key="destination" ref="454709663"/>
+					</object>
+					<int key="connectionID">405</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_userListMenu</string>
+						<reference key="source" ref="217721819"/>
+						<reference key="destination" ref="710850544"/>
+					</object>
+					<int key="connectionID">406</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_privateMessageButton</string>
+						<reference key="source" ref="217721819"/>
+						<reference key="destination" ref="591453218"/>
+					</object>
+					<int key="connectionID">407</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_infoButton</string>
+						<reference key="source" ref="217721819"/>
+						<reference key="destination" ref="43042096"/>
+					</object>
+					<int key="connectionID">408</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_kickMessagePanel</string>
+						<reference key="source" ref="217721819"/>
+						<reference key="destination" ref="207125621"/>
+					</object>
+					<int key="connectionID">410</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_chatView</string>
+						<reference key="source" ref="217721819"/>
+						<reference key="destination" ref="166741756"/>
+					</object>
+					<int key="connectionID">411</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_userListView</string>
+						<reference key="source" ref="217721819"/>
+						<reference key="destination" ref="320953851"/>
+					</object>
+					<int key="connectionID">412</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_setTopicPanel</string>
+						<reference key="source" ref="217721819"/>
+						<reference key="destination" ref="845885208"/>
+					</object>
+					<int key="connectionID">413</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_setTopicTextView</string>
+						<reference key="source" ref="217721819"/>
+						<reference key="destination" ref="440692969"/>
+					</object>
+					<int key="connectionID">414</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_kickMessageTextField</string>
+						<reference key="source" ref="217721819"/>
 						<reference key="destination" ref="317167697"/>
 					</object>
-					<int key="connectionID">304</int>
+					<int key="connectionID">415</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_ignoreMenuItem</string>
+						<reference key="source" ref="217721819"/>
+						<reference key="destination" ref="573185269"/>
+					</object>
+					<int key="connectionID">416</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_getInfoMenuItem</string>
+						<reference key="source" ref="217721819"/>
+						<reference key="destination" ref="680012915"/>
+					</object>
+					<int key="connectionID">417</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_sendPrivateMessageMenuItem</string>
+						<reference key="source" ref="217721819"/>
+						<reference key="destination" ref="802844112"/>
+					</object>
+					<int key="connectionID">418</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">dataSource</string>
+						<reference key="source" ref="706380852"/>
+						<reference key="destination" ref="217721819"/>
+					</object>
+					<int key="connectionID">419</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">delegate</string>
+						<reference key="source" ref="706380852"/>
+						<reference key="destination" ref="217721819"/>
+					</object>
+					<int key="connectionID">420</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">delegate</string>
+						<reference key="source" ref="692029027"/>
+						<reference key="destination" ref="217721819"/>
+					</object>
+					<int key="connectionID">421</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">delegate</string>
+						<reference key="source" ref="667809447"/>
+						<reference key="destination" ref="217721819"/>
+					</object>
+					<int key="connectionID">422</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">getInfo:</string>
+						<reference key="source" ref="217721819"/>
+						<reference key="destination" ref="43042096"/>
+					</object>
+					<int key="connectionID">423</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">getInfo:</string>
+						<reference key="source" ref="217721819"/>
+						<reference key="destination" ref="680012915"/>
+					</object>
+					<int key="connectionID">424</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">editAccount:</string>
+						<reference key="source" ref="217721819"/>
+						<reference key="destination" ref="482991929"/>
+					</object>
+					<int key="connectionID">425</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">kick:</string>
-						<reference key="source" ref="213855478"/>
+						<reference key="source" ref="217721819"/>
 						<reference key="destination" ref="924419255"/>
 					</object>
-					<int key="connectionID">307</int>
+					<int key="connectionID">426</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">kick:</string>
+						<reference key="source" ref="217721819"/>
+						<reference key="destination" ref="374453212"/>
+					</object>
+					<int key="connectionID">427</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">delegate</string>
+						<reference key="source" ref="710850544"/>
+						<reference key="destination" ref="217721819"/>
+					</object>
+					<int key="connectionID">429</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">sendPrivateMessage:</string>
+						<reference key="source" ref="217721819"/>
+						<reference key="destination" ref="802844112"/>
+					</object>
+					<int key="connectionID">430</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">sendPrivateMessage:</string>
+						<reference key="source" ref="217721819"/>
+						<reference key="destination" ref="591453218"/>
+					</object>
+					<int key="connectionID">431</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">_kickButton</string>
-						<reference key="source" ref="213855478"/>
+						<reference key="source" ref="217721819"/>
 						<reference key="destination" ref="924419255"/>
 					</object>
-					<int key="connectionID">308</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">kick:</string>
-						<reference key="source" ref="213855478"/>
-						<reference key="destination" ref="374453212"/>
-					</object>
-					<int key="connectionID">341</int>
+					<int key="connectionID">432</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1524,7 +1619,7 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 							<reference ref="156337710"/>
 						</object>
 						<reference key="parent" ref="0"/>
-						<string key="objectName">Chat</string>
+						<string key="objectName">Private Chat</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">146</int>
@@ -2008,6 +2103,11 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 						<reference key="object" ref="601689370"/>
 						<reference key="parent" ref="835414563"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">391</int>
+						<reference key="object" ref="217721819"/>
+						<reference key="parent" ref="0"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -2033,7 +2133,6 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 					<string>137.IBPluginDependency</string>
 					<string>137.ImportedFromIB2</string>
 					<string>139.IBEditorWindowLastContentRect</string>
-					<string>139.IBPluginDependency</string>
 					<string>139.IBWindowTemplateEditedContentRect</string>
 					<string>139.ImportedFromIB2</string>
 					<string>139.windowTemplate.hasMinSize</string>
@@ -2057,6 +2156,7 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 					<string>193.ImportedFromIB2</string>
 					<string>195.IBPluginDependency</string>
 					<string>195.ImportedFromIB2</string>
+					<string>196.IBEditorWindowLastContentRect</string>
 					<string>196.IBPluginDependency</string>
 					<string>196.ImportedFromIB2</string>
 					<string>197.IBPluginDependency</string>
@@ -2082,7 +2182,8 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 					<string>248.ImportedFromIB2</string>
 					<string>249.IBPluginDependency</string>
 					<string>249.ImportedFromIB2</string>
-					<string>250.IBPluginDependency</string>
+					<string>250.IBEditorWindowLastContentRect</string>
+					<string>250.IBWindowTemplateEditedContentRect</string>
 					<string>250.ImportedFromIB2</string>
 					<string>250.windowTemplate.hasMinSize</string>
 					<string>250.windowTemplate.maxSize</string>
@@ -2097,7 +2198,8 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 					<string>259.ImportedFromIB2</string>
 					<string>267.IBPluginDependency</string>
 					<string>267.ImportedFromIB2</string>
-					<string>291.IBPluginDependency</string>
+					<string>291.IBEditorWindowLastContentRect</string>
+					<string>291.IBWindowTemplateEditedContentRect</string>
 					<string>291.ImportedFromIB2</string>
 					<string>291.windowTemplate.hasMinSize</string>
 					<string>291.windowTemplate.maxSize</string>
@@ -2124,23 +2226,46 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 					<string>358.ImportedFromIB2</string>
 					<string>367.IBPluginDependency</string>
 					<string>367.ImportedFromIB2</string>
+					<string>369.IBPluginDependency</string>
+					<string>370.IBPluginDependency</string>
+					<string>371.IBPluginDependency</string>
+					<string>372.IBPluginDependency</string>
+					<string>373.IBPluginDependency</string>
+					<string>374.IBPluginDependency</string>
+					<string>375.IBPluginDependency</string>
+					<string>376.IBPluginDependency</string>
+					<string>377.IBPluginDependency</string>
+					<string>378.IBPluginDependency</string>
+					<string>379.IBPluginDependency</string>
+					<string>380.IBPluginDependency</string>
+					<string>381.IBPluginDependency</string>
+					<string>382.IBPluginDependency</string>
+					<string>383.IBPluginDependency</string>
 					<string>383.IBShouldRemoveOnLegacySave</string>
+					<string>384.IBPluginDependency</string>
 					<string>384.IBShouldRemoveOnLegacySave</string>
+					<string>385.IBPluginDependency</string>
 					<string>385.IBShouldRemoveOnLegacySave</string>
+					<string>386.IBPluginDependency</string>
 					<string>386.IBShouldRemoveOnLegacySave</string>
+					<string>387.IBPluginDependency</string>
 					<string>387.IBShouldRemoveOnLegacySave</string>
+					<string>388.IBPluginDependency</string>
 					<string>388.IBShouldRemoveOnLegacySave</string>
+					<string>389.IBPluginDependency</string>
 					<string>389.IBShouldRemoveOnLegacySave</string>
+					<string>390.IBPluginDependency</string>
 					<string>390.IBShouldRemoveOnLegacySave</string>
+					<string>391.IBPluginDependency</string>
 				</object>
 				<object class="NSMutableArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1" id="5"/>
+					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<object class="NSMutableDictionary">
 						<string key="NS.key.0">ToolTip</string>
 						<object class="IBToolTipAttribute" key="NS.object.0">
@@ -2150,21 +2275,20 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 						</object>
 					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>WISplitView</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
-					<string>{{504, 111}, {666, 321}}</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{504, 111}, {666, 321}}</string>
-					<reference ref="5"/>
-					<reference ref="5"/>
+					<reference ref="9"/>
+					<string>{{20, 378}, {666, 321}}</string>
+					<string>{{20, 378}, {666, 321}}</string>
+					<reference ref="9"/>
+					<reference ref="9"/>
 					<string>{3.40282e+38, 3.40282e+38}</string>
 					<string>{216.437, 107}</string>
 					<object class="NSMutableDictionary">
@@ -2176,77 +2300,80 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 						</object>
 					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>WITableView</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
+					<string>{{0, 1000}, {229, 123}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>WISplitView</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
-					<reference ref="5"/>
+					<reference ref="9"/>
+					<string>{{0, 955}, {372, 179}}</string>
+					<string>{{0, 955}, {372, 179}}</string>
+					<reference ref="9"/>
+					<reference ref="9"/>
 					<string>{3.40282e+38, 3.40282e+38}</string>
 					<string>{213, 107}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
-					<reference ref="5"/>
+					<reference ref="9"/>
+					<string>{{21, 984}, {323, 127}}</string>
+					<string>{{21, 984}, {323, 127}}</string>
+					<reference ref="9"/>
+					<reference ref="9"/>
 					<string>{3.40282e+38, 3.40282e+38}</string>
 					<string>{213, 107}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<object class="NSMutableDictionary">
 						<string key="NS.key.0">ToolTip</string>
 						<object class="IBToolTipAttribute" key="NS.object.0">
@@ -2256,24 +2383,47 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 						</object>
 					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>WCUserCell</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
-					<reference ref="5"/>
-					<reference ref="5"/>
-					<reference ref="5"/>
-					<reference ref="5"/>
-					<reference ref="5"/>
-					<reference ref="5"/>
-					<reference ref="5"/>
-					<reference ref="5"/>
+					<reference ref="9"/>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<reference ref="9"/>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<reference ref="9"/>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<reference ref="9"/>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<reference ref="9"/>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<reference ref="9"/>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<reference ref="9"/>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<reference ref="9"/>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<reference ref="9"/>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -2296,16 +2446,24 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">390</int>
+			<int key="maxID">433</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<object class="IBPartialClassDescription">
 					<string key="className">FirstResponder</string>
+					<string key="superclassName">NSObject</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBUserSource</string>
 						<string key="minorKey"/>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">NSObject</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">PSMTabBarControl/PSMTabBarControl.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -2338,6 +2496,7 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">NSWindowController</string>
+					<string key="superclassName">NSResponder</string>
 					<object class="NSMutableDictionary" key="actions">
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSMutableArray" key="dict.sortedKeys">
@@ -2357,8 +2516,8 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
-					<string key="className">WCChat</string>
-					<string key="superclassName">WCConnectionController</string>
+					<string key="className">WCChatController</string>
+					<string key="superclassName">WIObject</string>
 					<object class="NSMutableDictionary" key="actions">
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSMutableArray" key="dict.sortedKeys">
@@ -2367,6 +2526,7 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 							<string>fileFormat:</string>
 							<string>getInfo:</string>
 							<string>ignore:</string>
+							<string>insertSmiley:</string>
 							<string>kick:</string>
 							<string>saveChat:</string>
 							<string>sendPrivateMessage:</string>
@@ -2376,6 +2536,7 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -2453,15 +2614,7 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">WCChat.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">WCChat</string>
-					<string key="superclassName">WCConnectionController</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBUserSource</string>
-						<string key="minorKey"/>
+						<string key="minorKey">WCChatController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -2496,39 +2649,6 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 				<object class="IBPartialClassDescription">
 					<string key="className">WCConnectionController</string>
 					<string key="superclassName">WIWindowController</string>
-					<object class="NSMutableDictionary" key="actions">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSMutableArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>accounts:</string>
-							<string>addBookmark:</string>
-							<string>administration:</string>
-							<string>broadcast:</string>
-							<string>chat:</string>
-							<string>console:</string>
-							<string>disconnect:</string>
-							<string>files:</string>
-							<string>news:</string>
-							<string>postNews:</string>
-							<string>reconnect:</string>
-							<string>serverInfo:</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-						</object>
-					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">WCConnectionController.h</string>
@@ -2559,7 +2679,11 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">WCPrivateChat</string>
-					<string key="superclassName">WCChat</string>
+					<string key="superclassName">WCConnectionController</string>
+					<object class="NSMutableDictionary" key="outlets">
+						<string key="NS.key.0">_chatController</string>
+						<string key="NS.object.0">WCPrivateChatController</string>
+					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">WCPrivateChat.h</string>
@@ -2567,10 +2691,22 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">WCPrivateChat</string>
-					<string key="superclassName">WCChat</string>
+					<string key="superclassName">WCConnectionController</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBUserSource</string>
 						<string key="minorKey"/>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">WCPrivateChatController</string>
+					<string key="superclassName">WCChatController</string>
+					<object class="NSMutableDictionary" key="outlets">
+						<string key="NS.key.0">_privateChat</string>
+						<string key="NS.object.0">WCPrivateChat</string>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">WCPrivateChatController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -2631,6 +2767,17 @@ cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBUserSource</string>
 						<string key="minorKey"/>
+					</object>
+				</object>
+			</object>
+			<object class="NSMutableArray" key="referencedPartialClassDescriptionsV3.1+">
+				<bool key="EncodedWithXMLCoder">YES</bool>
+				<object class="IBPartialClassDescription">
+					<string key="className">WIObject</string>
+					<string key="superclassName">NSObject</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBDocumentRelativeSource</string>
+						<string key="minorKey">../WiredAdditions/WiredFoundation/WIObject.h</string>
 					</object>
 				</object>
 			</object>

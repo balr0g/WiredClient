@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.02">
+<archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.03">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">9E17</string>
-		<string key="IBDocument.InterfaceBuilderVersion">670</string>
-		<string key="IBDocument.AppKitVersion">949.33</string>
-		<string key="IBDocument.HIToolboxVersion">352.00</string>
+		<string key="IBDocument.SystemVersion">9G55</string>
+		<string key="IBDocument.InterfaceBuilderVersion">677</string>
+		<string key="IBDocument.AppKitVersion">949.43</string>
+		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<integer value="213"/>
@@ -13,6 +13,15 @@
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+		</object>
+		<object class="NSMutableDictionary" key="IBDocument.Metadata">
+			<bool key="EncodedWithXMLCoder">YES</bool>
+			<object class="NSArray" key="dict.sortedKeys">
+				<bool key="EncodedWithXMLCoder">YES</bool>
+			</object>
+			<object class="NSMutableArray" key="dict.values">
+				<bool key="EncodedWithXMLCoder">YES</bool>
+			</object>
 		</object>
 		<object class="NSMutableArray" key="IBDocument.RootObjects" id="890481131">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -242,7 +251,7 @@
 								<object class="NSTabViewItem" id="693567466">
 									<string key="NSIdentifier">List</string>
 									<object class="NSView" key="NSView" id="886397690">
-										<nil key="NSNextResponder"/>
+										<reference key="NSNextResponder" ref="144467106"/>
 										<int key="NSvFlags">4352</int>
 										<object class="NSMutableArray" key="NSSubviews">
 											<bool key="EncodedWithXMLCoder">YES</bool>
@@ -443,7 +452,7 @@
 																</object>
 																<double key="NSRowHeight">1.700000e+01</double>
 																<int key="NSTvFlags">-633339904</int>
-																<int key="NSColumnAutoresizingStyle">5</int>
+																<int key="NSColumnAutoresizingStyle">3</int>
 																<int key="NSDraggingSourceMaskForLocal">15</int>
 																<int key="NSDraggingSourceMaskForNonLocal">0</int>
 																<bool key="NSAllowsTypeSelect">YES</bool>
@@ -504,6 +513,7 @@
 											</object>
 										</object>
 										<string key="NSFrameSize">{448, 403}</string>
+										<reference key="NSSuperview" ref="144467106"/>
 									</object>
 									<string key="NSLabel">List</string>
 									<reference key="NSColor" ref="817493256"/>
@@ -512,7 +522,7 @@
 								<object class="NSTabViewItem" id="615961180">
 									<string key="NSIdentifier">Browser</string>
 									<object class="NSView" key="NSView" id="1023533846">
-										<reference key="NSNextResponder" ref="144467106"/>
+										<nil key="NSNextResponder"/>
 										<int key="NSvFlags">256</int>
 										<object class="NSMutableArray" key="NSSubviews">
 											<bool key="EncodedWithXMLCoder">YES</bool>
@@ -542,20 +552,19 @@
 											</object>
 										</object>
 										<string key="NSFrameSize">{448, 403}</string>
-										<reference key="NSSuperview" ref="144467106"/>
 									</object>
 									<string key="NSLabel">Browser</string>
 									<reference key="NSColor" ref="817493256"/>
 									<reference key="NSTabView" ref="144467106"/>
 								</object>
 							</object>
-							<reference key="NSSelectedTabViewItem" ref="615961180"/>
+							<reference key="NSSelectedTabViewItem" ref="693567466"/>
 							<reference key="NSFont" ref="823978316"/>
 							<int key="NSTvFlags">6</int>
 							<bool key="NSAllowTruncatedLabels">YES</bool>
 							<object class="NSMutableArray" key="NSSubviews">
 								<bool key="EncodedWithXMLCoder">YES</bool>
-								<reference ref="1023533846"/>
+								<reference ref="886397690"/>
 							</object>
 						</object>
 						<object class="NSSegmentedControl" id="418576457">
@@ -2038,13 +2047,11 @@
 					<string>47.IBPluginDependency</string>
 					<string>47.ImportedFromIB2</string>
 					<string>5.IBEditorWindowLastContentRect</string>
-					<string>5.IBPluginDependency</string>
 					<string>5.IBWindowTemplateEditedContentRect</string>
 					<string>5.ImportedFromIB2</string>
 					<string>5.windowTemplate.hasMinSize</string>
 					<string>5.windowTemplate.maxSize</string>
 					<string>5.windowTemplate.minSize</string>
-					<string>52.IBPluginDependency</string>
 					<string>52.ImportedFromIB2</string>
 					<string>52.windowTemplate.hasMinSize</string>
 					<string>52.windowTemplate.maxSize</string>
@@ -2073,12 +2080,35 @@
 					<string>564.ImportedFromIB2</string>
 					<string>57.IBPluginDependency</string>
 					<string>57.ImportedFromIB2</string>
+					<string>570.IBPluginDependency</string>
+					<string>571.IBPluginDependency</string>
+					<string>572.IBPluginDependency</string>
+					<string>573.IBPluginDependency</string>
+					<string>574.IBPluginDependency</string>
+					<string>575.IBPluginDependency</string>
+					<string>576.IBPluginDependency</string>
+					<string>577.IBPluginDependency</string>
+					<string>578.IBPluginDependency</string>
+					<string>579.IBPluginDependency</string>
+					<string>580.IBPluginDependency</string>
+					<string>581.IBPluginDependency</string>
+					<string>582.IBPluginDependency</string>
+					<string>583.IBPluginDependency</string>
+					<string>584.IBPluginDependency</string>
+					<string>585.IBPluginDependency</string>
+					<string>586.IBPluginDependency</string>
 					<string>586.IBShouldRemoveOnLegacySave</string>
+					<string>587.IBPluginDependency</string>
 					<string>587.IBShouldRemoveOnLegacySave</string>
+					<string>588.IBPluginDependency</string>
 					<string>588.IBShouldRemoveOnLegacySave</string>
+					<string>589.IBPluginDependency</string>
 					<string>589.IBShouldRemoveOnLegacySave</string>
+					<string>590.IBPluginDependency</string>
 					<string>590.IBShouldRemoveOnLegacySave</string>
+					<string>591.IBPluginDependency</string>
 					<string>591.IBShouldRemoveOnLegacySave</string>
+					<string>592.IBPluginDependency</string>
 					<string>592.IBShouldRemoveOnLegacySave</string>
 					<string>6.IBPluginDependency</string>
 					<string>6.ImportedFromIB2</string>
@@ -2209,13 +2239,11 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
 					<string>{{179, 466}, {446, 469}}</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{{179, 466}, {446, 469}}</string>
 					<reference ref="5"/>
 					<reference ref="5"/>
 					<string>{3.40282e+38, 3.40282e+38}</string>
 					<string>{404, 100}</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
 					<reference ref="5"/>
 					<string>{3.40282e+38, 3.40282e+38}</string>
@@ -2251,12 +2279,35 @@
 					<reference ref="5"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
@@ -2299,6 +2350,13 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBUserSource</string>
 						<string key="minorKey"/>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">NSObject</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">PSMTabBarControl/PSMTabBarControl.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -2353,39 +2411,6 @@
 				<object class="IBPartialClassDescription">
 					<string key="className">WCConnectionController</string>
 					<string key="superclassName">WIWindowController</string>
-					<object class="NSMutableDictionary" key="actions">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSMutableArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>accounts:</string>
-							<string>addBookmark:</string>
-							<string>administration:</string>
-							<string>broadcast:</string>
-							<string>chat:</string>
-							<string>console:</string>
-							<string>disconnect:</string>
-							<string>files:</string>
-							<string>news:</string>
-							<string>postNews:</string>
-							<string>reconnect:</string>
-							<string>serverInfo:</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-						</object>
-					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">WCConnectionController.h</string>

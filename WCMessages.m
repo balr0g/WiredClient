@@ -27,6 +27,7 @@
  */
 
 #import "NSAlert-WCAdditions.h"
+#import "WCChatController.h"
 #import "WCConversation.h"
 #import "WCMessage.h"
 #import "WCMessages.h"
@@ -102,7 +103,7 @@
 	}
 	
 	if([command isEqualToString:@"/exec"] && [argument length] > 0)
-		return [WCChat outputForShellCommand:argument];
+		return [WCChatController outputForShellCommand:argument];
 	else if([command isEqualToString:@"/stats"])
 		return [[WCStats stats] stringValue];
 	
@@ -601,7 +602,7 @@
 	[p7Message getUInt32:&uid forName:@"wired.user.id"];
 	
 	connection = [p7Message contextInfo];
-	user = [[connection chat] userWithUserID:uid];
+	user = [[connection chatController] userWithUserID:uid];
 	
 	if(!user || [user isIgnored])
 		return;
@@ -653,7 +654,7 @@
 	[p7Message getUInt32:&uid forName:@"wired.user.id"];
 	
 	connection = [p7Message contextInfo];
-	user = [[connection chat] userWithUserID:uid];
+	user = [[connection chatController] userWithUserID:uid];
 	
 	if(!user || [user isIgnored])
 		return;
@@ -954,8 +955,9 @@
 	user = [(WCMessage *) [[conversation messages] lastObject] user];
 	
 	if(user) {
-		[[[conversation connection] chat] selectUser:user];
-		[[[conversation connection] chat] showWindow:self];
+		[[WCPublicChat publicChat] selectChatController:[[conversation connection] chatController]];
+		[[[conversation connection] chatController] selectUser:user];
+		[[WCPublicChat publicChat] showWindow:self];
 	} else { 
 		error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientClientNotFound]; 
 		[[conversation connection] triggerEvent:WCEventsError info1:error]; 

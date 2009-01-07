@@ -99,7 +99,7 @@
 
 
 
-- (void)windowTemplateShouldLoad:(NSMutableDictionary *)windowTemplate {
+/*- (void)windowTemplateShouldLoad:(NSMutableDictionary *)windowTemplate {
 	[super windowTemplateShouldLoad:windowTemplate];
 
 	[_monitorController windowTemplateShouldLoad:windowTemplate];
@@ -117,7 +117,7 @@
 	[_banlistController windowTemplateShouldSave:windowTemplate];
 
 	[super windowTemplateShouldSave:windowTemplate];
-}
+}*/
 
 
 

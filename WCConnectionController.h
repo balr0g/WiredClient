@@ -29,20 +29,17 @@
 @class WCServerConnection;
 
 @interface WCConnectionController : WIWindowController {
-	NSString				*_name;
-	NSString				*_identifier;
-	WCServerConnection		*_connection;
-	NSMutableDictionary		*_windowTemplate;
+	NSString					*_name;
+	NSString					*_identifier;
+	WCServerConnection			*_connection;
 	
-	BOOL					_singleton;
-	BOOL					_releasedWhenClosed;
+	BOOL						_singleton;
+	BOOL						_releasedWhenClosed;
 }
 
 - (id)initWithWindowNibName:(NSString *)windowNibName connection:(WCServerConnection *)connection singleton:(BOOL)singleton;
 - (id)initWithWindowNibName:(NSString *)windowNibName name:(NSString *)name connection:(WCServerConnection *)connection singleton:(BOOL)singleton;
 
-- (void)windowTemplateShouldLoad:(NSMutableDictionary *)windowTemplate;
-- (void)windowTemplateShouldSave:(NSMutableDictionary *)windowTemplate;
 - (void)themeDidChange:(NSDictionary *)theme;
 - (void)linkConnectionDidTerminate:(NSNotification *)notification;
 - (void)linkConnectionDidClose:(NSNotification *)notification;
@@ -50,31 +47,11 @@
 - (void)serverConnectionServerInfoDidChange:(NSNotification *)notification;
 - (void)serverConnectionPrivilegesDidChange:(NSNotification *)notification;
 
-- (void)setName:(NSString *)name;
 - (NSString *)name;
-- (void)setConnection:(WCServerConnection *)connection;
 - (WCServerConnection *)connection;
-- (NSDictionary *)windowTemplate;
 
 - (BOOL)beginConfirmDisconnectSheetModalForWindow:(NSWindow *)window modalDelegate:(id)delegate didEndSelector:(SEL)selector contextInfo:(void *)contextInfo;
 
 - (void)validate;
-- (BOOL)validateAction:(SEL)selector;
-
-- (IBAction)disconnect:(id)sender;
-- (IBAction)reconnect:(id)sender;
-- (IBAction)serverInfo:(id)sender;
-- (IBAction)chat:(id)sender;
-- (IBAction)news:(id)sender;
-- (IBAction)board:(id)sender;
-- (IBAction)files:(id)sender;
-- (IBAction)accounts:(id)sender;
-- (IBAction)administration:(id)sender;
-- (IBAction)postNews:(id)sender;
-- (IBAction)broadcast:(id)sender;
-
-- (IBAction)addBookmark:(id)sender;
-
-- (IBAction)console:(id)sender;
 
 @end
