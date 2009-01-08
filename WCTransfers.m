@@ -141,8 +141,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		[self showWindow:self];
 	
 	[connection triggerEvent:WCEventsError info1:error];
-
-	[[error alert] beginSheetModalForWindow:[self window]];
+	
+	[[error alert] runNonModal];
 }
 
 
