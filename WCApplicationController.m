@@ -411,9 +411,9 @@ static WCApplicationController		*sharedController;
 	[_updater setSendsSystemProfile:YES];
 
 #ifdef WCConfigurationRelease
-	[_updater setFeedURL:[NSURL URLWithString:@"http://www.zankasoftware.com/sparkle/sparkle.pl?file=wiredclient.xml"]];
+	[_updater setFeedURL:[NSURL URLWithString:@"http://www.zankasoftware.com/sparkle/sparkle.pl?file=wiredclientp7.xml"]];
 #else
-	[_updater setFeedURL:[NSURL URLWithString:@"http://www.zankasoftware.com/sparkle/sparkle.pl?file=wiredclient-nightly.xml"]];
+	[_updater setFeedURL:[NSURL URLWithString:@"http://www.zankasoftware.com/sparkle/sparkle.pl?file=wiredclientp7-nightly.xml"]];
 #endif
 	
 	WCP7Spec = [[WIP7Spec alloc] initWithPath:[[NSBundle mainBundle] pathForResource:@"wired" ofType:@"xml"]
