@@ -274,7 +274,6 @@
 		A5DC7EE8057AAF2900736BBF /* WCTransfers.m in Sources */ = {isa = PBXBuildFile; fileRef = A5DC7ED8057AAF2900736BBF /* WCTransfers.m */; };
 		A5DC7EEA057AAF2900736BBF /* WCNews.m in Sources */ = {isa = PBXBuildFile; fileRef = A5DC7EDA057AAF2900736BBF /* WCNews.m */; };
 		A5DC7EEB057AAF2900736BBF /* WCMessages.m in Sources */ = {isa = PBXBuildFile; fileRef = A5DC7EDB057AAF2900736BBF /* WCMessages.m */; };
-		A5DC7F05057AAF6C00736BBF /* WCPreview.m in Sources */ = {isa = PBXBuildFile; fileRef = A5DC7EF5057AAF6C00736BBF /* WCPreview.m */; };
 		A5DC7F09057AAF6C00736BBF /* WCUserInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A5DC7EF9057AAF6C00736BBF /* WCUserInfo.m */; };
 		A5DC7F0A057AAF6C00736BBF /* WCPrivateChat.m in Sources */ = {isa = PBXBuildFile; fileRef = A5DC7EFA057AAF6C00736BBF /* WCPrivateChat.m */; };
 		A5DC7F0C057AAF6C00736BBF /* WCFileInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A5DC7EFC057AAF6C00736BBF /* WCFileInfo.m */; };
@@ -691,7 +690,6 @@
 		A5DC7EDA057AAF2900736BBF /* WCNews.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCNews.m; sourceTree = "<group>"; };
 		A5DC7EDB057AAF2900736BBF /* WCMessages.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCMessages.m; sourceTree = "<group>"; };
 		A5DC7EDE057AAF2900736BBF /* WCTransfers.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCTransfers.h; sourceTree = "<group>"; };
-		A5DC7EF5057AAF6C00736BBF /* WCPreview.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCPreview.m; sourceTree = "<group>"; };
 		A5DC7EF6057AAF6C00736BBF /* WCPrivateChat.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCPrivateChat.h; sourceTree = "<group>"; };
 		A5DC7EF8057AAF6C00736BBF /* WCUserInfo.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCUserInfo.h; sourceTree = "<group>"; };
 		A5DC7EF9057AAF6C00736BBF /* WCUserInfo.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCUserInfo.m; sourceTree = "<group>"; };
@@ -700,7 +698,6 @@
 		A5DC7EFC057AAF6C00736BBF /* WCFileInfo.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCFileInfo.m; sourceTree = "<group>"; };
 		A5DC7EFD057AAF6C00736BBF /* WCFiles.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCFiles.h; sourceTree = "<group>"; };
 		A5DC7EFE057AAF6C00736BBF /* WCFiles.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCFiles.m; sourceTree = "<group>"; };
-		A5DC7F00057AAF6C00736BBF /* WCPreview.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCPreview.h; sourceTree = "<group>"; };
 		A5DC7F6F057AB05F00736BBF /* WCUserCell.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCUserCell.h; sourceTree = "<group>"; };
 		A5DC7F70057AB05F00736BBF /* WCUserCell.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCUserCell.m; sourceTree = "<group>"; };
 		A5DC7F72057AB05F00736BBF /* WCTransferCell.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCTransferCell.h; sourceTree = "<group>"; };
@@ -1094,8 +1091,6 @@
 				A5FD60620D77FEE8000A7941 /* WCFilesController.h */,
 				77E2888C0A2D9E9B00035403 /* WCFilesTableView.m */,
 				77E2888D0A2D9E9B00035403 /* WCFilesTableView.h */,
-				A5DC7EF5057AAF6C00736BBF /* WCPreview.m */,
-				A5DC7F00057AAF6C00736BBF /* WCPreview.h */,
 				A5DC7ED3057AAF2900736BBF /* WCSearch.m */,
 				A5DC7ED2057AAF2900736BBF /* WCSearch.h */,
 			);
@@ -1892,7 +1887,6 @@
 				77E49F820DE6FF8D00703987 /* WCNewsPost.m in Sources */,
 				A526D7D80D5F00B200F30E6F /* WCNotificationCenter.m in Sources */,
 				A5DC7ECA057AAEAD00736BBF /* WCPreferences.m in Sources */,
-				A5DC7F05057AAF6C00736BBF /* WCPreview.m in Sources */,
 				A5DC7F0A057AAF6C00736BBF /* WCPrivateChat.m in Sources */,
 				A541A7830F115AC500D1EE94 /* WCPrivateChatController.m in Sources */,
 				A5DC7EE1057AAF2900736BBF /* WCPublicChat.m in Sources */,

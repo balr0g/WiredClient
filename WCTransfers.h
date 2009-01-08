@@ -41,6 +41,8 @@
 	NSLock									*_lock;
 }
 
++ (BOOL)canPreviewFileWithExtension:(NSString *)extension;
+
 + (id)transfers;
 
 - (BOOL)downloadFile:(WCFile *)file;

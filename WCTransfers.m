@@ -33,7 +33,6 @@
 #import "WCFileInfo.h"
 #import "WCFiles.h"
 #import "WCPreferences.h"
-#import "WCPreview.h"
 #import "WCServer.h"
 #import "WCServerConnection.h"
 #import "WCServerInfo.h"
@@ -43,11 +42,20 @@
 #import "WCTransferConnection.h"
 #import "WCTransfers.h"
 
-#define WCTransfersChecksumLength			1048576
+#define WCTransfersChecksumLength				1048576
 
-#define WCTransfersFileExtension			@"WiredTransfer"
-#define WCTransferConnectionKey				@"WCTransferConnectionKey"
-#define WCTransferPboardType				@"WCTransferPboardType"
+#define WCTransfersFileExtension				@"WiredTransfer"
+#define WCTransferConnectionKey					@"WCTransferConnectionKey"
+#define WCTransferPboardType					@"WCTransferPboardType"
+
+#define WCTransfersTextEditExtensionsString		@"c cc cgi conf css diff h in java log m patch pem php pl plist pod rb rtf s sh status strings tcl text txt xml"
+#define WCTransfersSafariExtensionsString		@"htm html shtm shtml svg"
+#define WCTransfersPreviewExtensionsString		@"bmp eps jpg jpeg tif tiff gif pct pict pdf png"
+
+
+static NSMutableSet								*WCTransfersTextEditExtensions;
+static NSMutableSet								*WCTransfersSafariExtensions;
+static NSMutableSet								*WCTransfersPreviewExtensions;
 
 
 static inline NSTimeInterval _WCTransfersTimeInterval(void) {
@@ -266,16 +274,14 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	
 	if([[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isDirectory]) {
 		if(!(isDirectory && [file isFolder])) {
-			if(!preview) {
-				alert = [NSAlert alertWithMessageText:NSLS(@"File Exists", @"Transfers overwrite alert title")
-										defaultButton:NSLS(@"Cancel", @"Transfers overwrite alert button")
-									  alternateButton:NSLS(@"Overwrite", @"Transfers overwrite alert button")
-										  otherButton:NULL
-							informativeTextWithFormat:[NSSWF:NSLS(@"The file \u201c%@\u201d already exists. Overwrite?", @"Transfers overwrite alert title"), path]];
-				
-				if([alert runModal] == NSAlertDefaultReturn)
-					return NO;
-			}
+			alert = [NSAlert alertWithMessageText:NSLS(@"File Exists", @"Transfers overwrite alert title")
+									defaultButton:NSLS(@"Cancel", @"Transfers overwrite alert button")
+								  alternateButton:NSLS(@"Overwrite", @"Transfers overwrite alert button")
+									  otherButton:NULL
+						informativeTextWithFormat:[NSSWF:NSLS(@"The file \u201c%@\u201d already exists. Overwrite?", @"Transfers overwrite alert title"), path]];
+			
+			if([alert runModal] == NSAlertDefaultReturn)
+				return NO;
 			
 			[[NSFileManager defaultManager] removeFileAtPath:path handler:NULL];
 		}
@@ -570,11 +576,9 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 
 - (void)_finishTransfer:(WCTransfer *)transfer {
-	NSString			*path, *newPath;
+	NSString			*path, *newPath, *extension;
 	NSDictionary		*dictionary;
 	WCFile				*file;
-	WCPreview			*preview;
-	WCError				*error;
 	WCTransferState		state;
 	BOOL				next = YES;
 	
@@ -614,12 +618,16 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 			[[transfer connection] triggerEvent:WCEventsTransferFinished info1:transfer];
 			
-			if([transfer isKindOfClass:[WCPreviewTransfer class]]) {
-				error = NULL;
-				preview = [WCPreview previewWithConnection:[transfer connection] path:path error:&error];
+			extension = [[path pathExtension] lowercaseString];
+
+			if([transfer isKindOfClass:[WCPreviewTransfer class]] && [[self class] canPreviewFileWithExtension:extension]) {
 				
-				if(!preview)
-					[self _presentError:error forConnection:[transfer connection]];
+				if([WCTransfersTextEditExtensions containsObject:extension])
+					[[NSWorkspace sharedWorkspace] openFile:path withApplication:@"/Applications/TextEdit.app"];
+				else if([WCTransfersSafariExtensions containsObject:extension])
+					[[NSWorkspace sharedWorkspace] openFile:path withApplication:@"/Applications/Safari.app"];
+				else if([WCTransfersPreviewExtensions containsObject:extension])
+					[[NSWorkspace sharedWorkspace] openFile:path withApplication:@"/Applications/Preview.app"];
 			}
 		} else {
 			[self _startTransfer:transfer first:NO];
@@ -1122,6 +1130,35 @@ end:
 
 
 @implementation WCTransfers
+
++ (BOOL)canPreviewFileWithExtension:(NSString *)extension {
+	static NSMutableSet		*extensions;
+					
+	if(!WCTransfersTextEditExtensions) {
+		WCTransfersTextEditExtensions = [[NSSet alloc] initWithArray:
+			[WCTransfersTextEditExtensionsString componentsSeparatedByString:@" "]];
+
+		WCTransfersSafariExtensions = [[NSSet alloc] initWithArray:
+			[WCTransfersSafariExtensionsString componentsSeparatedByString:@" "]];
+
+		WCTransfersPreviewExtensions = [[NSSet alloc] initWithArray:
+			[WCTransfersPreviewExtensionsString componentsSeparatedByString:@" "]];
+	}
+	
+	if(!extensions) {
+		extensions = [[NSMutableSet alloc] init];
+		
+		[extensions unionSet:WCTransfersTextEditExtensions];
+		[extensions unionSet:WCTransfersSafariExtensions];
+		[extensions unionSet:WCTransfersPreviewExtensions];
+	}
+	
+	return [extensions containsObject:[extension lowercaseString]];
+}
+
+
+
+#pragma mark -
 
 + (id)transfers {
 	static WCTransfers   *sharedTransfers;
@@ -1644,7 +1681,7 @@ end:
 
 
 - (BOOL)previewFile:(WCFile *)file {
-	return [self _downloadFile:file toFolder:NSTemporaryDirectory() preview:YES];
+	return [self _downloadFile:file toFolder:[[WCSettings objectForKey:WCDownloadFolder] stringByStandardizingPath] preview:YES];
 }
 
 

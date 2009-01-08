@@ -34,7 +34,6 @@
 #import "WCFilesController.h"
 #import "WCFilesBrowserCell.h"
 #import "WCPreferences.h"
-#import "WCPreview.h"
 #import "WCServerConnection.h"
 #import "WCTransfers.h"
 
@@ -807,7 +806,9 @@
 			[_downloadButton setEnabled:([account transferDownloadFiles] && connected)];
 			[_deleteButton setEnabled:([account fileDeleteFiles] && connected)];
 			[_infoButton setEnabled:connected];
-			[_previewButton setEnabled:(connected && [account transferDownloadFiles] && ![file isFolder] && [WCPreview canInitWithExtension:[file extension]])];
+			[_previewButton setEnabled:(connected && [account transferDownloadFiles] &&
+										![file isFolder] &&
+										[WCTransfers canPreviewFileWithExtension:[file extension]])];
 			break;
 
 		default:
@@ -819,7 +820,7 @@
 				enumerator = [files objectEnumerator];
 				
 				while((file = [enumerator nextObject])) {
-					if([file isFolder] || ![WCPreview canInitWithExtension:[file extension]]) {
+					if([file isFolder] || ![WCTransfers canPreviewFileWithExtension:[file extension]]) {
 						preview = NO;
 						
 						break;
