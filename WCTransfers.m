@@ -786,8 +786,11 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		[connection setURL:[[transfer connection] URL]];
 		[connection setBookmark:[[transfer connection] bookmark]];
 		
-		if(![self _connectConnection:connection forTransfer:transfer error:&error])
+		if(![self _connectConnection:connection forTransfer:transfer error:&error]) {
+			[transfer setState:WCTransferStopping];
+
 			goto end;
+		}
 		
 		[transfer setTransferConnection:connection];
 	}
@@ -798,21 +801,29 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	[message setString:[file path] forName:@"wired.file.path"];
 	[message setUInt64:[file transferred] forName:@"wired.transfer.offset"];
 	
-	if(![connection writeMessage:message timeout:30.0 error:&error])
+	if(![connection writeMessage:message timeout:30.0 error:&error]) {
+		[transfer setState:WCTransferStopping];
+		
 		goto end;
+	}
 	
 	message = [self _runConnection:connection
 					   forTransfer:transfer
 		 untilReceivingMessageName:@"wired.transfer.download"
 							 error:&error];
 	
-	if(!message)
+	if(!message) {
+		[transfer setState:WCTransferStopping];
+		
 		goto end;
+	}
 	
 	if(![[NSFileManager defaultManager] fileExistsAtPath:path]) {
 		if(![[NSFileManager defaultManager] createFileAtPath:path]) {
 			error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientCreateFailed argument:path];
 			
+			[transfer setState:WCTransferStopping];
+
 			goto end;
 		}
 	}
@@ -822,6 +833,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	if(!fileHandle) {
 		error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientOpenFailed argument:path];
 		
+		[transfer setState:WCTransferStopping];
+
 		goto end;
 	}
 	
@@ -853,14 +866,11 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		if([transfer isTerminating])
 			break;
 
-		readBytes = [socket readOOBData:&buffer timeout:1.0 error:&error];
+		readBytes = [socket readOOBData:&buffer timeout:30.0 error:&error];
 		
 		if(readBytes <= 0) {
-			if(readBytes == 0 && dataLength > 0)
-				[transfer setState:WCTransferDisconnected];
-			else if(readBytes < 0 && [[[error userInfo] objectForKey:WILibWiredErrorKey] code] == ETIMEDOUT)
-				continue;
-			
+			[transfer setState:WCTransferDisconnecting];
+
 			break;
 		}
 		
@@ -928,8 +938,6 @@ end:
 		[self performSelectorOnMainThread:@selector(_presentError:forConnection:)
 							   withObject:error
 							   withObject:[transfer connection]];
-		
-		[transfer setState:WCTransferStopping];
 	}
 
 	[pool release];
@@ -977,8 +985,11 @@ end:
 		[connection setURL:[[transfer connection] URL]];
 		[connection setBookmark:[[transfer connection] bookmark]];
 		
-		if(![self _connectConnection:connection forTransfer:transfer error:&error])
+		if(![self _connectConnection:connection forTransfer:transfer error:&error]) {
+			[transfer setState:WCTransferStopping];
+
 			goto end;
+		}
 		
 		[transfer setTransferConnection:connection];
 	}
@@ -992,16 +1003,22 @@ end:
 	if([[[NSFileManager defaultManager] fileAttributesAtPath:path traverseLink:YES] filePosixPermissions] & 0111)
 		[message setBool:YES forName:@"wired.file.executable"];
 	
-	if(![connection writeMessage:message timeout:30.0 error:&error])
+	if(![connection writeMessage:message timeout:30.0 error:&error]) {
+		[transfer setState:WCTransferStopping];
+
 		goto end;
+	}
 	
 	message = [self _runConnection:connection
 					   forTransfer:transfer
 		 untilReceivingMessageName:@"wired.transfer.upload_ready"
 							 error:&error];
 	
-	if(!message)
+	if(!message) {
+		[transfer setState:WCTransferStopping];
+
 		goto end;
+	}
 	
 	[message getUInt64:&offset forName:@"wired.transfer.offset"];
 	
@@ -1013,14 +1030,19 @@ end:
 	[message setString:[[transfer firstFile] path] forName:@"wired.file.path"];
 	[message setUInt64:dataLength forName:@"wired.transfer.data"];
 	
-	if(![connection writeMessage:message timeout:30.0 error:&error])
+	if(![connection writeMessage:message timeout:30.0 error:&error]) {
+		[transfer setState:WCTransferStopping];
+		
 		goto end;
+	}
 
 	fileHandle = [NSFileHandle fileHandleForReadingAtPath:path];
 	
 	if(!fileHandle) {
 		error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientOpenFailed argument:path];
 		
+		[transfer setState:WCTransferStopping];
+
 		goto end;
 	}
 
@@ -1056,13 +1078,18 @@ end:
 			if(readBytes < 0)
 				error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientTransferFailed argument:[transfer name]];
 
+			[transfer setState:WCTransferStopping];
+			
 			break;
 		}
 		
 		sendBytes = (dataLength < (NSUInteger) readBytes) ? dataLength : (NSUInteger) readBytes;
 		
-		if(![socket writeOOBData:buffer length:sendBytes timeout:0.0 error:&error])
+		if(![socket writeOOBData:buffer length:sendBytes timeout:30.0 error:&error]) {
+			[transfer setState:WCTransferDisconnecting];
+
 			break;
+		}
 
 		transfer->_actualTransferred += readBytes;
 		transfer->_transferred += sendBytes;
@@ -1109,8 +1136,6 @@ end:
 		[self performSelectorOnMainThread:@selector(_presentError:forConnection:)
 							   withObject:error
 							   withObject:[transfer connection]];
-		
-		[transfer setState:WCTransferStopping];
 	}
 
 	[pool release];

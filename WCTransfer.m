@@ -238,7 +238,7 @@
 
 - (void)setState:(WCTransferState)state {
 	_state = state;
-
+	
 	if(_state < WCTransferRunning && [_progressIndicator doubleValue] == 0.0)
 		[_progressIndicator setIndeterminate:YES];
 	else
