@@ -173,23 +173,10 @@
 	[_dateFormatter setDateStyle:NSDateFormatterMediumStyle];
 	[_dateFormatter setNaturalLanguageStyle:WIDateFormatterCapitalizedNaturalLanguageStyle];
 	
-	[self _validate];
-}
-
-
-
-- (void)windowTemplateShouldLoad:(NSMutableDictionary *)windowTemplate {
-	[super windowTemplateShouldLoad:windowTemplate];
-
-	[_banlistTableView setPropertiesFromDictionary:[windowTemplate objectForKey:@"WCBanlistTableView"]];
-}
-
-
-
-- (void)windowTemplateShouldSave:(NSMutableDictionary *)windowTemplate {
-	[windowTemplate setObject:[_banlistTableView propertiesDictionary] forKey:@"WCBanlistTableView"];
+	[_banlistTableView setPropertiesFromDictionary:
+		[[WCSettings objectForKey:WCWindowProperties] objectForKey:@"WCBanlistTableView"]];
 	
-	[super windowTemplateShouldSave:windowTemplate];
+	[self _validate];
 }
 
 
@@ -235,6 +222,14 @@
 
 - (void)controllerWindowDidBecomeKey {
 	[self _getBans];
+}
+
+
+
+- (void)controllerWindowWillClose {
+	[WCSettings setObject:[_banlistTableView propertiesDictionary]
+				   forKey:@"WCBanlistTableView"
+	   inDictionaryForKey:WCWindowProperties];
 }
 
 

@@ -31,28 +31,26 @@
 @class WCMonitorController, WCLogController, WCSettingsController, WCBanlistController;
 
 @interface WCAdministration : WCConnectionController {
-	IBOutlet NSTabView					*_administrationTabView;
-	IBOutlet NSTabViewItem				*_monitorTabViewItem;
-	IBOutlet NSTabViewItem				*_logTabViewItem;
-	IBOutlet NSTabViewItem				*_settingsTabViewItem;
-	IBOutlet NSTabViewItem				*_banlistTabViewItem;
+	IBOutlet NSView						*_monitorView;
+	IBOutlet NSView						*_logView;
+	IBOutlet NSView						*_settingsView;
+	IBOutlet NSView						*_banlistView;
 	
 	IBOutlet WCMonitorController		*_monitorController;
 	IBOutlet WCLogController			*_logController;
 	IBOutlet WCSettingsController		*_settingsController;
 	IBOutlet WCBanlistController		*_banlistController;
 	
-	id									_selectedController;
+	NSMutableArray						*_identifiers;
+	NSMutableDictionary					*_views;
+	
+	NSView								*_shownView;
+	id									_shownController;
 }
 
 + (id)administrationWithConnection:(WCServerConnection *)connection;
 
 - (id)selectedController;
-
-- (IBAction)monitor:(id)sender;
-- (IBAction)log:(id)sender;
-- (IBAction)settings:(id)sender;
-- (IBAction)banlist:(id)sender;
 
 @end
 
@@ -62,8 +60,6 @@
 }
 
 - (void)windowDidLoad;
-- (void)windowTemplateShouldLoad:(NSMutableDictionary *)windowTemplate;
-- (void)windowTemplateShouldSave:(NSMutableDictionary *)windowTemplate;
 - (void)linkConnectionLoggedIn:(NSNotification *)notification;
 - (void)linkConnectionDidClose:(NSNotification *)notification;
 - (void)linkConnectionDidTerminate:(NSNotification *)notification;

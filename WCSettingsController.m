@@ -248,20 +248,6 @@
 
 
 - (void)controllerDidSelect {
-	NSRect		rect, frame;
-	
-	frame = [[_administration window] frame];
-
-	_windowSize = frame.size;
-	_minWindowSize = [[_administration window] minSize];
-
-	rect = [[_administration window] frameRectForContentRect:[_box frame]];
-	rect.origin = frame.origin;
-	rect.origin.y -= rect.size.height - frame.size.height;
-	[[_administration window] setFrame:rect display:YES animate:YES];
-	[[_administration window] setMinSize:rect.size];
-	[[_administration window] setMaxSize:rect.size];
-	
 	[[_administration window] setShowsResizeIndicator:NO];
 	[[_administration window] makeFirstResponder:_nameTextField];
 	
@@ -271,15 +257,6 @@
 
 
 - (void)controllerDidUnselect {
-	NSRect		rect;
-	
-	rect = [[_administration window] frame];
-	rect.origin.y -= _windowSize.height - rect.size.height;
-	rect.size = _windowSize;
-	[[_administration window] setFrame:rect display:YES animate:YES];
-	[[_administration window] setMinSize:_minWindowSize];
-	[[_administration window] setMaxSize:NSMakeSize(10000.0, 10000.0)];
-
 	[[_administration window] setShowsResizeIndicator:YES];
 }
 

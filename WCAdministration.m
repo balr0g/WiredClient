@@ -29,9 +29,18 @@
 #import "WCAdministration.h"
 #import "WCServerConnection.h"
 
+#define WIAdministrationView			@"WIAdministrationView"
+#define WIAdministrationName			@"WIAdministrationName"
+#define WIAdministrationImage			@"WIAdministrationImage"
+#define WIAdministrationController		@"WIAdministrationController"
+
+
 @interface WCAdministration(Private)
 
 - (id)_initAdministrationWithConnection:(WCServerConnection *)connection;
+
+- (void)_addAdministrationView:(NSView *)view name:(NSString *)name image:(NSImage *)image controller:(id)controller;
+- (void)_selectAdministrationViewWithIdentifier:(NSString *)identifier animate:(BOOL)animate;
 
 @end
 
@@ -45,9 +54,89 @@
 							 connection:connection
 							  singleton:YES];
 	
+	_identifiers	= [[NSMutableArray alloc] init];
+	_views			= [[NSMutableDictionary alloc] init];
+
 	[self window];
 	
 	return self;
+}
+
+
+
+#pragma mark -
+
+- (void)_addAdministrationView:(NSView *)view name:(NSString *)name image:(NSImage *)image controller:(id)controller {
+	NSMutableDictionary			*dictionary;
+	NSString					*identifier;
+	
+	[view setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable | NSViewMaxXMargin | NSViewMaxYMargin];
+	
+	dictionary = [NSMutableDictionary dictionary];
+	[dictionary setObject:view forKey:WIAdministrationView];
+	[dictionary setObject:name forKey:WIAdministrationName];
+	[dictionary setObject:image forKey:WIAdministrationImage];
+	[dictionary setObject:controller forKey:WIAdministrationController];
+	
+	identifier = [NSString UUIDString];
+	
+	[_identifiers addObject:identifier];
+	[_views setObject:dictionary forKey:identifier];
+}
+
+
+
+- (void)_selectAdministrationViewWithIdentifier:(NSString *)identifier animate:(BOOL)animate {
+	NSViewAnimation		*animation;
+	NSDictionary		*dictionary;
+	NSArray				*animations;
+	NSView				*view;
+	id					controller;
+	NSRect				frame;
+	
+	dictionary	= [_views objectForKey:identifier];
+	view		= [dictionary objectForKey:WIAdministrationView];
+	controller	= [dictionary objectForKey:WIAdministrationController];
+	
+	if(view != _shownView) {
+		[_shownController controllerDidUnselect];
+		[_shownView removeFromSuperview];
+		
+		[view setHidden:YES];
+		
+		frame = [[self window] frame];
+		frame.size = [[self window] frameRectForContentRect:[view frame]].size;
+		frame.origin.y -= frame.size.height - [[self window] frame].size.height;
+		[[self window] setFrame:frame display:YES animate:animate];
+		
+		[[[self window] contentView] addSubview:view];
+		
+		if(animate) {
+			animations = [NSArray arrayWithObject:[NSDictionary dictionaryWithObjectsAndKeys:
+				view,
+					NSViewAnimationTargetKey,
+				NSViewAnimationFadeInEffect,
+					NSViewAnimationEffectKey,
+				NULL]];
+
+			animation = [[NSViewAnimation alloc] initWithViewAnimations:animations];
+			[animation setAnimationBlockingMode:NSAnimationNonblocking];
+			[animation setDuration:0.25];
+			[animation startAnimation];
+			[animation release];
+		} else {
+			[view setHidden:NO];
+		}
+
+		[[self window] setTitle:[dictionary objectForKey:WIAdministrationName]];
+		
+		[[[self window] toolbar] setSelectedItemIdentifier:identifier];
+
+		[controller controllerDidSelect];
+
+		_shownView = view;
+		_shownController = controller;
+	}
 }
 
 @end
@@ -62,134 +151,126 @@
 
 
 
+- (void)dealloc {
+	[_identifiers release];
+	[_views release];
+
+	[super dealloc];
+}
+
+
+
 #pragma mark -
 
 - (void)windowDidLoad {
+	NSWindow	*window;
 	NSToolbar		*toolbar;
 	
+	[self _addAdministrationView:_monitorView
+							name:NSLS(@"Monitor", @"Monitor toolbar item")
+						   image:[NSImage imageNamed:@"Monitor"]
+					  controller:_monitorController];
+	
+	[self _addAdministrationView:_logView
+							name:NSLS(@"Log", @"Log toolbar item")
+						   image:[NSImage imageNamed:@"Log"]
+					  controller:_logController];
+	
+	[self _addAdministrationView:_settingsView
+							name:NSLS(@"Settings", @"Settings toolbar item")
+						   image:[NSImage imageNamed:@"Settings"]
+					  controller:_settingsController];
+	
+	[self _addAdministrationView:_banlistView
+							name:NSLS(@"Banlist", @"Banlist toolbar item")
+						   image:[NSImage imageNamed:@"Banlist"]
+					  controller:_banlistController];
+	
+	window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0.0, 0.0, 100.0, 100.0)
+										 styleMask:NSTitledWindowMask | NSClosableWindowMask |
+												   NSMiniaturizableWindowMask | NSResizableWindowMask
+										   backing:NSBackingStoreBuffered
+											 defer:YES];
+	[window setShowsToolbarButton:NO];
+	[window setDelegate:self];
+	[self setWindow:window];
+	[window release];
+
 	toolbar = [[NSToolbar alloc] initWithIdentifier:@"Administration"];
 	[toolbar setDelegate:self];
-	[toolbar setAllowsUserCustomization:YES];
+	[toolbar setAllowsUserCustomization:NO];
+	[toolbar setAutosavesConfiguration:NO];
 	[[self window] setToolbar:toolbar];
 	[toolbar release];
-
-	[self monitor:self];
 	
-	[[[self window] toolbar] setSelectedItemIdentifier:@"Monitor"];
+	[[self window] center];
+	
+	[self setShouldCascadeWindows:NO];
+	[self setWindowFrameAutosaveName:@"Administration"];
 
 	[_monitorController windowDidLoad];
 	[_logController windowDidLoad];
 	[_settingsController windowDidLoad];
 	[_banlistController windowDidLoad];
 	
+	[self _selectAdministrationViewWithIdentifier:[_identifiers objectAtIndex:0] animate:NO];
+
 	[super windowDidLoad];
 }
 
 
 
 - (void)windowDidBecomeKey:(NSNotification *)notification {
-	[_selectedController controllerWindowDidBecomeKey];
+	[_shownController controllerWindowDidBecomeKey];
 }
 
 
 
 - (void)windowWillClose:(NSNotification *)notification {
-	[_selectedController controllerWindowWillClose];
+	[_shownController controllerWindowWillClose];
 }
 
 
 
-/*- (void)windowTemplateShouldLoad:(NSMutableDictionary *)windowTemplate {
-	[super windowTemplateShouldLoad:windowTemplate];
-
-	[_monitorController windowTemplateShouldLoad:windowTemplate];
-	[_logController windowTemplateShouldLoad:windowTemplate];
-	[_settingsController windowTemplateShouldLoad:windowTemplate];
-	[_banlistController windowTemplateShouldLoad:windowTemplate];
+- (NSSize)windowWillResize:(NSWindow *)window toSize:(NSSize)proposedFrameSize {
+	if(_shownController == _settingsController)
+		return [window frame].size;
+	
+	return proposedFrameSize;
 }
-
-
-
-- (void)windowTemplateShouldSave:(NSMutableDictionary *)windowTemplate {
-	[_monitorController windowTemplateShouldSave:windowTemplate];
-	[_logController windowTemplateShouldSave:windowTemplate];
-	[_settingsController windowTemplateShouldSave:windowTemplate];
-	[_banlistController windowTemplateShouldSave:windowTemplate];
-
-	[super windowTemplateShouldSave:windowTemplate];
-}*/
 
 
 
 - (NSToolbarItem *)toolbar:(NSToolbar *)toolbar itemForItemIdentifier:(NSString *)identifier willBeInsertedIntoToolbar:(BOOL)willBeInsertedIntoToolbar {
-	if([identifier isEqualToString:@"Monitor"]) {
-		return [NSToolbarItem toolbarItemWithIdentifier:identifier
-												   name:NSLS(@"Monitor", @"Monitor toolbar item")
-												content:[NSImage imageNamed:@"Monitor"]
-												 target:self
-												 action:@selector(monitor:)];
-	}
-	else if([identifier isEqualToString:@"Log"]) {
-		return [NSToolbarItem toolbarItemWithIdentifier:identifier
-												   name:NSLS(@"Log", @"Log toolbar item")
-												content:[NSImage imageNamed:@"Log"]
-												 target:self
-												 action:@selector(log:)];
-	}
-	else if([identifier isEqualToString:@"Settings"]) {
-		return [NSToolbarItem toolbarItemWithIdentifier:identifier
-												   name:NSLS(@"Settings", @"Settings toolbar item")
-												content:[NSImage imageNamed:@"Settings"]
-												 target:self
-												 action:@selector(settings:)];
-	}
-	else if([identifier isEqualToString:@"Banlist"]) {
-		return [NSToolbarItem toolbarItemWithIdentifier:identifier
-												   name:NSLS(@"Banlist", @"Banlist toolbar item")
-												content:[NSImage imageNamed:@"Banlist"]
-												 target:self
-												 action:@selector(banlist:)];
-	}
+	NSDictionary		*dictionary;
 	
-	return NULL;
+	dictionary = [_views objectForKey:identifier];
+	
+	return [NSToolbarItem toolbarItemWithIdentifier:identifier
+											   name:[dictionary objectForKey:WIAdministrationName]
+											content:[dictionary objectForKey:WIAdministrationImage]
+											 target:self
+											 action:@selector(toolbarItem:)];
 }
 
 
 
 - (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar {
-	return [NSArray arrayWithObjects:
-		@"Monitor",
-		@"Log",
-		@"Settings",
-		@"Banlist",
-		NULL];
+	return _identifiers;
 }
 
 
 
 - (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar *)toolbar {
-	return [NSArray arrayWithObjects:
-		@"Monitor",
-		@"Log",
-		@"Settings",
-		@"Banlist",
-		NSToolbarSeparatorItemIdentifier,
-		NSToolbarSpaceItemIdentifier,
-		NSToolbarFlexibleSpaceItemIdentifier,
-		NSToolbarCustomizeToolbarItemIdentifier,
-		NULL];
+	return [self toolbarDefaultItemIdentifiers:toolbar];
 }
 
 
 
 - (NSArray *)toolbarSelectableItemIdentifiers:(NSToolbar *)toolbar {
-	return [NSArray arrayWithObjects:
-		@"Monitor",
-		@"Log",
-		@"Settings",
-		@"Banlist",
-		NULL];
+	return [self toolbarDefaultItemIdentifiers:toolbar];
 }
+
 
 
 
@@ -250,63 +331,21 @@
 #pragma mark -
 
 - (id)selectedController {
-	return _selectedController;
+	return _shownController;
 }
 
 
 
 #pragma mark -
 
-- (IBAction)monitor:(id)sender {
-	if(_selectedController != _monitorController) {
-		[_administrationTabView selectTabViewItem:_monitorTabViewItem];
-		
-		[_selectedController controllerDidUnselect];
-		_selectedController = _monitorController;
-		[_selectedController controllerDidSelect];
-	}
-}
-
-
-
-- (IBAction)log:(id)sender {
-	if(_selectedController != _logController) {
-		[_administrationTabView selectTabViewItem:_logTabViewItem];
-		
-		[_selectedController controllerDidUnselect];
-		_selectedController = _logController;
-		[_selectedController controllerDidSelect];
-	}
-}
-
-
-
-- (IBAction)settings:(id)sender {
-	if(_selectedController != _settingsController) {
-		[_administrationTabView selectTabViewItem:_settingsTabViewItem];
-		
-		[_selectedController controllerDidUnselect];
-		_selectedController = _settingsController;
-		[_selectedController controllerDidSelect];
-	}
-}
-
-
-
-- (IBAction)banlist:(id)sender {
-	if(_selectedController != _banlistController) {
-		[_administrationTabView selectTabViewItem:_banlistTabViewItem];
-		
-		[_selectedController controllerDidUnselect];
-		_selectedController = _banlistController;
-		[_selectedController controllerDidSelect];
-	}
+- (void)toolbarItem:(id)sender {
+	[self _selectAdministrationViewWithIdentifier:[sender itemIdentifier] animate:YES];
 }
 
 
 
 - (IBAction)submitSheet:(id)sender {
-	[_selectedController submitSheet:sender];
+	[_shownController submitSheet:sender];
 }
 
 @end
@@ -316,16 +355,6 @@
 @implementation WCAdministrationController
 
 - (void)windowDidLoad {
-}
-
-
-
-- (void)windowTemplateShouldLoad:(NSMutableDictionary *)windowTemplate {
-}
-
-
-
-- (void)windowTemplateShouldSave:(NSMutableDictionary *)windowTemplate {
 }
 
 

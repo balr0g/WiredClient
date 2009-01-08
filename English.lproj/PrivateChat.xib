@@ -8,10 +8,10 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="291"/>
-			<integer value="250"/>
 			<integer value="196"/>
 			<integer value="133"/>
+			<integer value="291"/>
+			<integer value="250"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -387,9 +387,9 @@
 															<object class="NSMutableArray" key="NSTableColumns">
 																<bool key="EncodedWithXMLCoder">YES</bool>
 																<object class="NSTableColumn" id="357048256">
-																	<double key="NSWidth">3.200000e+01</double>
-																	<double key="NSMinWidth">3.200000e+01</double>
-																	<double key="NSMaxWidth">3.200000e+01</double>
+																	<double key="NSWidth">3.600000e+01</double>
+																	<double key="NSMinWidth">3.600000e+01</double>
+																	<double key="NSMaxWidth">3.600000e+01</double>
 																	<object class="NSTableHeaderCell" key="NSHeaderCell">
 																		<int key="NSCellFlags">75628032</int>
 																		<int key="NSCellFlags2">0</int>
@@ -568,8 +568,8 @@ AAAAAAAAAAAAAAAAdGV4dAAAAABDb3B5cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 																	<reference key="NSTableView" ref="706380852"/>
 																</object>
 																<object class="NSTableColumn" id="423860701">
-																	<double key="NSWidth">1.500000e+02</double>
-																	<double key="NSMinWidth">4.000000e+00</double>
+																	<double key="NSWidth">1.440000e+02</double>
+																	<double key="NSMinWidth">1.000000e+01</double>
 																	<double key="NSMaxWidth">1.000000e+03</double>
 																	<object class="NSTableHeaderCell" key="NSHeaderCell">
 																		<int key="NSCellFlags">67239424</int>
