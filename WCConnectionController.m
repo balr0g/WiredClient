@@ -144,23 +144,6 @@
 
 
 
-- (void)windowTemplateShouldLoad:(NSMutableDictionary *)windowTemplate {
-	if(_singleton) {
-		[[self window] setPropertiesFromDictionary:[windowTemplate objectForKey:NSStringFromClass([self class])]
-									   restoreSize:YES
-										visibility:YES];
-	}
-}
-
-
-
-- (void)windowTemplateShouldSave:(NSMutableDictionary *)windowTemplate {
-	if(_singleton)
-		[windowTemplate setObject:[[self window] propertiesDictionary] forKey:NSStringFromClass([self class])];
-}
-
-
-
 - (void)themeDidChange:(NSDictionary *)theme {
 }
 

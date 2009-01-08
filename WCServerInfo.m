@@ -71,7 +71,6 @@
 	[url setUser:NULL];
 	[url setPassword:NULL];
 
-	// --- set fields
 	[_bannerImageView setImage:[server banner]];
 	[_nameTextField setStringValue:[server name]];
 	[_descriptionTextField setStringValue:[server serverDescription]];
@@ -104,7 +103,6 @@
 		[_compressionTextField setStringValue:NSLS(@"No", @"Compression disabled")];
 	}
 	
-	// --- resize dynamic fields
 	[self setYOffset:18.0];
 	
 	[self resizeTitleTextField:_compressionTitleTextField withTextField:_compressionTextField];
@@ -120,7 +118,6 @@
 
 	offset = [self yOffset];
 	
-	// --- resize banner
 	if([_bannerImageView image]) {
 		rect = [_bannerImageView frame];
 		rect.origin.y = offset + 14.0;
@@ -128,13 +125,11 @@
 		[_bannerImageView setFrame:rect];
 	}
 
-	// --- resize name field
 	rect = [_nameTextField frame];
 	rect.origin.y = offset + 14.0;
 	offset += rect.size.height + 14.0;
 	[_nameTextField setFrame:rect];
 
-	// --- resize window
 	rect = [[self window] frame];
 	rect.size.height = offset + 14.0;
 	[[self window] setContentSize:rect.size];
@@ -165,6 +160,10 @@
 #pragma mark -
 
 - (void)windowDidLoad {
+	[self setShouldCascadeWindows:NO];
+	[self setShouldSaveWindowFrameOriginOnly:YES];
+	[self setWindowFrameAutosaveName:@"ServerInfo"];
+	
 	_dateFormatter = [[WIDateFormatter alloc] init];
 	[_dateFormatter setTimeStyle:NSDateFormatterShortStyle];
 	[_dateFormatter setDateStyle:NSDateFormatterMediumStyle];
@@ -185,20 +184,6 @@
 
 - (void)windowWillClose:(NSNotification *)notification {
 	[[self class] cancelPreviousPerformRequestsWithTarget:self selector:@selector(_reloadServerInfo)];
-}
-
-
-
-- (void)windowTemplateShouldLoad:(NSMutableDictionary *)windowTemplate {
-	[[self window] setPropertiesFromDictionary:[windowTemplate objectForKey:NSStringFromClass([self class])]
-								   restoreSize:NO
-									visibility:YES];
-}
-
-
-
-- (void)windowTemplateShouldSave:(NSMutableDictionary *)windowTemplate {
-	[windowTemplate setObject:[[self window] propertiesDictionary] forKey:NSStringFromClass([self class])];
 }
 
 

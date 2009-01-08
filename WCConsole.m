@@ -110,6 +110,17 @@
 
 #pragma mark -
 
+- (void)windowDidLoad {
+	[self setShouldCascadeWindows:NO];
+	[self setWindowFrameAutosaveName:@"Console"];
+
+	[super windowDidLoad];
+}
+
+
+
+#pragma mark -
+
 - (void)linkConnectionReceivedMessage:(NSNotification *)notification {
 	[self _log:[[notification object] description] color:[NSColor blueColor]];
 }
