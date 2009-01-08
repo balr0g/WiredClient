@@ -115,6 +115,7 @@
 		77A1AF400F15003900F7D24B /* PSMTabBarControl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77A1AE750F14FF0100F7D24B /* PSMTabBarControl.framework */; };
 		77A1AF7F0F15020600F7D24B /* PSMWiredTabStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 77A1AF7D0F15020600F7D24B /* PSMWiredTabStyle.m */; };
 		77A1AF800F15020600F7D24B /* PSMWiredTabStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 77A1AF7E0F15020600F7D24B /* PSMWiredTabStyle.h */; };
+		77A1BA230F161A8100F7D24B /* SUPublicDSAKeyFile.pem in Resources */ = {isa = PBXBuildFile; fileRef = 77A1BA220F161A8100F7D24B /* SUPublicDSAKeyFile.pem */; };
 		77B5F96F097FDD3B00C055E1 /* NSAlert-WCAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 77B5F96D097FDD3B00C055E1 /* NSAlert-WCAdditions.m */; };
 		77B5F973097FDD4500C055E1 /* NSString-WCAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 77B5F971097FDD4500C055E1 /* NSString-WCAdditions.m */; };
 		77C83C340B70FBD8000F8478 /* WCChatTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 77C83C320B70FBD8000F8478 /* WCChatTextView.m */; };
@@ -487,6 +488,7 @@
 		77A1AF7C0F1501DD00F7D24B /* prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = prefix.pch; path = PSMTabBarControl/prefix.pch; sourceTree = "<group>"; };
 		77A1AF7D0F15020600F7D24B /* PSMWiredTabStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PSMWiredTabStyle.m; path = PSMTabBarControl/PSMWiredTabStyle.m; sourceTree = "<group>"; };
 		77A1AF7E0F15020600F7D24B /* PSMWiredTabStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PSMWiredTabStyle.h; path = PSMTabBarControl/PSMWiredTabStyle.h; sourceTree = "<group>"; };
+		77A1BA220F161A8100F7D24B /* SUPublicDSAKeyFile.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SUPublicDSAKeyFile.pem; sourceTree = "<group>"; };
 		77B5F96C097FDD3B00C055E1 /* NSAlert-WCAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAlert-WCAdditions.h"; sourceTree = "<group>"; };
 		77B5F96D097FDD3B00C055E1 /* NSAlert-WCAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAlert-WCAdditions.m"; sourceTree = "<group>"; };
 		77B5F970097FDD4500C055E1 /* NSString-WCAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString-WCAdditions.h"; sourceTree = "<group>"; };
@@ -826,6 +828,7 @@
 				A5DC7E5B057AAC1000736BBF /* Localizable.strings */,
 				A5DC7E4B057AAC1000736BBF /* Credits.rtf */,
 				A5E8BCCE087494DB0010F2A4 /* ReleaseNotes.rtf */,
+				77A1BA220F161A8100F7D24B /* SUPublicDSAKeyFile.pem */,
 				A565B4FF0D5DA94000AF91BA /* wired.xml */,
 				A509A96205F3B8F000E6AE2D /* WiredClient.icns */,
 				A509A98F05F4EB9D00E6AE2D /* WiredScheme.icns */,
@@ -1642,6 +1645,7 @@
 				A5DC7E75057AAC1100736BBF /* Localizable.strings in Resources */,
 				A5DC7E6D057AAC1100736BBF /* Credits.rtf in Resources */,
 				A5E8BCD0087494DB0010F2A4 /* ReleaseNotes.rtf in Resources */,
+				77A1BA230F161A8100F7D24B /* SUPublicDSAKeyFile.pem in Resources */,
 				77CFB98C0E66D35800F2D5F8 /* Accounts.xib in Resources */,
 				77CFB9900E66D36900F2D5F8 /* Administration.xib in Resources */,
 				77CED3B90EC0691E00123164 /* Boards.xib in Resources */,

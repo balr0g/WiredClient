@@ -64,5 +64,7 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>WCApplication</string>
+	<key>SUPublicDSAKeyFile</key>
+	<string>SUPublicDSAKeyFile.pem</string>
 </dict>
 </plist>
