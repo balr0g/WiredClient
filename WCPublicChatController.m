@@ -131,6 +131,8 @@
 
 	if(!user || [user isIgnored])
 		return;
+	
+#warning This must be refactored similar to trunk
 
 	title = [NSSWF:
 		NSLS(@"%@ has invited you to a private chat.", @"Private chat invite dialog title (nick)"),
