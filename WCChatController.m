@@ -551,8 +551,6 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 
 - (void)dealloc {
-	NSLog(@"%@ dealloc", self);
-	
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[_connection removeObserver:self];
 	

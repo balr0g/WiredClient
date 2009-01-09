@@ -87,16 +87,6 @@
 
 #pragma mark -
 
-- (void)dealloc {
-	NSLog(@"%@ dealloc", self);
-	
-	[super dealloc];
-}
-
-
-
-#pragma mark -
-
 - (void)windowDidLoad {
 	[self setShouldCascadeWindows:YES];
 	[self setWindowFrameAutosaveName:@"PrivateChat"];
