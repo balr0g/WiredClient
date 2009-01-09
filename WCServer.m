@@ -38,6 +38,8 @@
 	[_serverVersion release];
 	[_startupDate release];
 	[_banner release];
+	
+	[_account release];
 
 	[super dealloc];
 }

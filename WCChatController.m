@@ -555,6 +555,9 @@ typedef enum _WCChatFormat					WCChatFormat;
 	[_connection removeObserver:self];
 	
 	if(_loadedNib) {
+		[_userListMenu release];
+		[_setTopicPanel release];
+		[_kickMessagePanel release];
 	}
 	
 	[_saveChatView release];
@@ -573,6 +576,8 @@ typedef enum _WCChatFormat					WCChatFormat;
 	[_timestampDateFormatter release];
 	[_timestampEveryLineDateFormatter release];
 	[_topicDateFormatter release];
+	
+	[_pings release];
 
 	[super dealloc];
 }

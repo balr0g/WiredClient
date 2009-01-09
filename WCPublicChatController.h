@@ -29,6 +29,8 @@
 #import "WCChatController.h"
 
 @interface WCPublicChatController : WCChatController {
+	IBOutlet NSView						*_publicChatView;
+	
 	IBOutlet NSButton					*_privateChatButton;
 	IBOutlet NSButton					*_banButton;
 

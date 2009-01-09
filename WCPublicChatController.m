@@ -69,6 +69,8 @@
 
 - (void)dealloc {
 	if(_loadedNib) {
+		[_publicChatView release];
+		[_banMessagePanel release];
 	}
 	
 	[super dealloc];
