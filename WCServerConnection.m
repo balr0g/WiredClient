@@ -143,8 +143,6 @@
 
 
 - (void)dealloc {
-	NSLog(@"%@ dealloc", self);
-	
 	[_identifier release];
 	[_theme release];
 	
