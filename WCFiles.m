@@ -862,7 +862,7 @@
 	else if(selector == @selector(deleteFiles:))
 		return ([[[self connection] account] fileDeleteFiles] && connected);
 
-	return [super validateMenuItem:item];
+	return YES;
 }
 
 
