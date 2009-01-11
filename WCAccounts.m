@@ -214,7 +214,11 @@
 		if([account isKindOfClass:[WCUserAccount class]]) {
 			[_typePopUpButton selectItem:_userMenuItem];
 			[_fullNameTextField setStringValue:[(WCUserAccount *) account fullName]];
-			[_passwordTextField setStringValue:[(WCUserAccount *) account password]];
+			
+			if([[(WCUserAccount *) account password] isEqualToString:[@"" SHA1]])
+				[_passwordTextField setStringValue:@""];
+			else
+				[_passwordTextField setStringValue:[(WCUserAccount *) account password]];
 			
 			if([[(WCUserAccount *) account group] length] > 0)
 				[_groupPopUpButton selectItemWithTitle:[(WCUserAccount *) account group]];
