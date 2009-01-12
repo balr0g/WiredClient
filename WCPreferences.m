@@ -428,6 +428,38 @@
 	}
 }
 
+
+
+#pragma mark -
+
+- (void)_savePasswordForBookmark:(NSArray *)arguments {
+	NSDictionary		*oldBookmark = [arguments objectAtIndex:0];
+	NSDictionary		*bookmark = [arguments objectAtIndex:1];
+	NSString			*password = [arguments objectAtIndex:2];
+
+	[[WCKeychain keychain] deletePasswordForBookmark:oldBookmark];
+	
+	if([_bookmarksPassword length] > 0)
+		[[WCKeychain keychain] setPassword:password forBookmark:bookmark];
+	else
+		[[WCKeychain keychain] deletePasswordForBookmark:bookmark];
+}
+
+
+
+- (void)_savePasswordForTrackerBookmark:(NSArray *)arguments {
+	NSDictionary		*oldBookmark = [arguments objectAtIndex:0];
+	NSDictionary		*bookmark = [arguments objectAtIndex:1];
+	NSString			*password = [arguments objectAtIndex:2];
+
+	[[WCKeychain keychain] deletePasswordForTrackerBookmark:oldBookmark];
+	
+	if([password length] > 0)
+		[[WCKeychain keychain] setPassword:password forTrackerBookmark:bookmark];
+	else
+		[[WCKeychain keychain] deletePasswordForTrackerBookmark:bookmark];
+}
+
 @end
 
 
@@ -1109,7 +1141,6 @@
 	NSDictionary			*oldBookmark;
 	NSString				*password;
 	NSInteger				row;
-	BOOL					passwordChanged = NO;
 	
 	row = [_bookmarksTableView selectedRow];
 	
@@ -1134,20 +1165,16 @@
 	[bookmark setObject:[_bookmarksStatusTextField stringValue] forKey:WCBookmarksStatus];
 	
 	if(!_bookmarksPassword || ![_bookmarksPassword isEqualToString:password]) {
-		[[WCKeychain keychain] deletePasswordForBookmark:oldBookmark];
-		
-		if([password length] > 0)
-			[[WCKeychain keychain] setPassword:password forBookmark:bookmark];
-		else
-			[[WCKeychain keychain] deletePasswordForBookmark:bookmark];
+		[NSObject cancelPreviousPerformRequestsWithTarget:self];
+		[self performSelector:@selector(_savePasswordForBookmark:)
+				   withObject:[NSArray arrayWithObjects:oldBookmark, bookmark, password, NULL]
+				   afterDelay:1.0];
 
 		[_bookmarksPassword release];
 		_bookmarksPassword = [password copy];
-		
-		passwordChanged = YES;
 	}
 	
-	if(![oldBookmark isEqualToDictionary:bookmark] || passwordChanged) {
+	if(![oldBookmark isEqualToDictionary:bookmark]) {
 		[WCSettings replaceObjectAtIndex:row withObject:bookmark inArrayForKey:WCBookmarks];
 
 		[[NSNotificationCenter defaultCenter] postNotificationName:WCBookmarkDidChangeNotification object:bookmark];
@@ -1501,7 +1528,6 @@
 	NSDictionary			*oldBookmark;
 	NSString				*password;
 	NSInteger				row;
-	BOOL					passwordChanged = NO;
 	
 	row = [_trackerBookmarksTableView selectedRow];
 	
@@ -1515,21 +1541,17 @@
 	[bookmark setObject:[_trackerBookmarksAddressTextField stringValue] forKey:WCTrackerBookmarksAddress];
 	[bookmark setObject:[_trackerBookmarksLoginTextField stringValue] forKey:WCTrackerBookmarksLogin];
 	
-	if(!_trackerBookmarksPassword || ![_trackerBookmarksPassword isEqualToString:password]) {
-		[[WCKeychain keychain] deletePasswordForTrackerBookmark:oldBookmark];
-		
-		if([password length] > 0)
-			[[WCKeychain keychain] setPassword:password forTrackerBookmark:bookmark];
-		else
-			[[WCKeychain keychain] deletePasswordForTrackerBookmark:bookmark];
+	if(!_bookmarksPassword || ![_bookmarksPassword isEqualToString:password]) {
+		[NSObject cancelPreviousPerformRequestsWithTarget:self];
+		[self performSelector:@selector(_savePasswordForTrackerBookmark:)
+				   withObject:[NSArray arrayWithObjects:oldBookmark, bookmark, password, NULL]
+				   afterDelay:1.0];
 
 		[_trackerBookmarksPassword release];
 		_trackerBookmarksPassword = [password copy];
-		
-		passwordChanged = YES;
 	}
-	
-	if(![oldBookmark isEqualToDictionary:bookmark] || passwordChanged) {
+
+	if(![oldBookmark isEqualToDictionary:bookmark]) {
 		[WCSettings replaceObjectAtIndex:row withObject:bookmark inArrayForKey:WCTrackerBookmarks];
 
 		[[NSNotificationCenter defaultCenter] postNotificationName:WCTrackerBookmarkDidChangeNotification object:bookmark];
