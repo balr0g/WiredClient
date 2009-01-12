@@ -1065,6 +1065,8 @@
 
 		[_bookmarksTableView reloadData];
 		
+		[self _reloadBookmark];
+		
 		[[NSNotificationCenter defaultCenter] postNotificationName:WCBookmarksDidChangeNotification];
 	}
 	
@@ -1454,6 +1456,8 @@
 		[WCSettings removeObjectAtIndex:[row integerValue] fromArrayForKey:WCTrackerBookmarks];
 		
 		[_trackerBookmarksTableView reloadData];
+		
+		[self _reloadTrackerBookmark];
 
 		[[NSNotificationCenter defaultCenter] postNotificationName:WCTrackerBookmarksDidChangeNotification];
 	}
@@ -1642,7 +1646,7 @@
 	else if(tableView == _trackerBookmarksTableView) {
 		dictionary = [[[[WCSettings objectForKey:WCTrackerBookmarks] objectAtIndex:row] mutableCopy] autorelease];
 		
-		if(tableColumn == _bookmarksNameTableColumn)
+		if(tableColumn == _trackerBookmarksNameTableColumn)
 			[dictionary setObject:object forKey:WCTrackerBookmarksName];
 		
 		[WCSettings replaceObjectAtIndex:row withObject:dictionary inArrayForKey:WCTrackerBookmarks];
