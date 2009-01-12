@@ -838,7 +838,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		goto end;
 	}
 	
-	[fileHandle seekToEndOfFile];
+	[fileHandle seekToFileOffset:[file transferred]];
 	
 	state = [transfer state];
 	
