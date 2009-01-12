@@ -102,6 +102,8 @@
 
 
 - (void)linkConnectionDidTerminate:(NSNotification *)notification {
+	[NSObject cancelPreviousPerformRequestsWithTarget:_link];
+	[_link setDelegate:NULL];
 	[_link release];
 	_link = NULL;
 	

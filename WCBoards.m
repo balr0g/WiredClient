@@ -343,7 +343,9 @@
 		return;
 	
 	[_boards invalidateForConnection:[notification object]];
-	[_receivedBoards removeObject:[connection URL]];
+	
+	if([connection URL])
+		[_receivedBoards removeObject:[connection URL]];
 
 	[self _validate];
 }

@@ -629,7 +629,7 @@
 				return;
 			}
 
-			url = [WIURL URLWithScheme:@"wired" host:[address string] port:[address port]];
+			url = [WIURL URLWithScheme:@"wiredp7" host:[address string] port:[address port]];
 		} else {
 			url = [(WCServerTrackerServer *) item URL];
 		}

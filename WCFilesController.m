@@ -92,33 +92,29 @@
 	WCFile				*file;
 	WIFileOffset		size = 0;
 
-	if([_files count] == 0) {
-		[_statusTextField setStringValue:@""];
+	enumerator = [_files objectEnumerator];
+
+	while((file = [enumerator nextObject]))
+		if([file type] == WCFileFile)
+			size += [file size];
+
+	if(free == (WIFileOffset) -1) {
+		[_statusTextField setStringValue:[NSSWF:
+			NSLS(@"%lu %@, %@ total", @"Search info (items, 'item(s)', total)"),
+			[_files count],
+			[_files count] == 1
+				? NSLS(@"item", @"Item singular")
+				: NSLS(@"items", @"Item plural"),
+			[NSString humanReadableStringForSizeInBytes:size]]];
 	} else {
-		enumerator = [_files objectEnumerator];
-
-		while((file = [enumerator nextObject]))
-			if([file type] == WCFileFile)
-				size += [file size];
-
-		if(free == (WIFileOffset) -1) {
-			[_statusTextField setStringValue:[NSSWF:
-				NSLS(@"%lu %@, %@ total", @"Search info (items, 'item(s)', total)"),
-				[_files count],
-				[_files count] == 1
-					? NSLS(@"item", @"Item singular")
-					: NSLS(@"items", @"Item plural"),
-				[NSString humanReadableStringForSizeInBytes:size]]];
-		} else {
-			[_statusTextField setStringValue:[NSSWF:
-				NSLS(@"%lu %@, %@ total, %@ available", @"Files info (count, 'item(s)', size, available)"),
-				[_files count],
-				[_files count] == 1
-					? NSLS(@"item", @"Item singular")
-					: NSLS(@"items", @"Item plural"),
-				[NSString humanReadableStringForSizeInBytes:size],
-				[NSString humanReadableStringForSizeInBytes:free]]];
-		}
+		[_statusTextField setStringValue:[NSSWF:
+			NSLS(@"%lu %@, %@ total, %@ available", @"Files info (count, 'item(s)', size, available)"),
+			[_files count],
+			[_files count] == 1
+				? NSLS(@"item", @"Item singular")
+				: NSLS(@"items", @"Item plural"),
+			[NSString humanReadableStringForSizeInBytes:size],
+			[NSString humanReadableStringForSizeInBytes:free]]];
 	}
 }
 

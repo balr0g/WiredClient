@@ -47,6 +47,7 @@
 	WIP7Message				*message;
 	BOOL					state;
 	NSUInteger				i = 0;
+	NSInteger				code;
 	
 	pool = [[NSAutoreleasePool alloc] init];
 
@@ -54,6 +55,11 @@
 		if(!pool)
 			pool = [[NSAutoreleasePool alloc] init];
 		
+		if(++i % 100 == 0) {
+			[pool release];
+			pool = NULL;
+		}
+
 		do {
 			state = [_socket waitWithTimeout:0.1];
 		} while(!state && !_closing && !_terminating);
@@ -66,7 +72,11 @@
 		[_lock unlock];
 		
 		if(!message) {
-			if([[[*error userInfo] objectForKey:WILibWiredErrorKey] code] == WI_ERROR_SOCKET_EOF)
+			code = [[[*error userInfo] objectForKey:WILibWiredErrorKey] code];
+			
+			if(code == ETIMEDOUT)
+				continue;
+			else if(code == WI_ERROR_SOCKET_EOF)
 				*error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientServerDisconnected];
 			
 			[*error retain];
@@ -76,11 +86,6 @@
 		
 		if(_delegateLinkReceivedMessage)
 			[_delegate performSelectorOnMainThread:@selector(link:receivedMessage:) withObject:self withObject:message];
-		
-		if(++i % 100 == 0) {
-			[pool release];
-			pool = NULL;
-		}
 	}
 	
 	[pool release];

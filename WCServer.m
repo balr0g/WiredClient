@@ -66,7 +66,7 @@
 	[message getUInt32:&uploadSpeed forName:@"wired.info.upload_speed"];
 	
 	_name				= [[message stringForName:@"wired.info.name"] retain];
-	_serverDescription	= [[message stringForName:@"wired.info.name"] retain];
+	_serverDescription	= [[message stringForName:@"wired.info.description"] retain];
 	_serverVersion		= [[WCServerConnection versionStringForMessage:message] retain];
 	_startupDate		= [[message dateForName:@"wired.info.start_time"] retain];
 	_banner				= [[NSImage alloc] initWithData:[message dataForName:@"wired.info.banner"]];

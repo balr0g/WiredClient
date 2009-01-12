@@ -247,7 +247,7 @@
 	
 	_bookmark = [bookmark retain];
 	
-	_url = [[WIURL URLWithString:[bookmark objectForKey:WCTrackerBookmarksAddress] scheme:@"wiredtracker"] retain];
+	_url = [[WIURL URLWithString:[bookmark objectForKey:WCTrackerBookmarksAddress] scheme:@"wiredp7"] retain];
 	[_url setUser:[bookmark objectForKey:WCTrackerBookmarksLogin]];
 	[_url setPassword:[[WCKeychain keychain] passwordForTrackerBookmark:bookmark]];
 	
