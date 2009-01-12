@@ -227,8 +227,8 @@
 
 
 - (void)linkConnectionDidTerminate:(NSNotification *)notification {
-	[[self class] cancelPreviousPerformRequestsWithTarget:self selector:@selector(_autoReconnect) object:NULL];
-	[[self class] cancelPreviousPerformRequestsWithTarget:self selector:@selector(_triggerAutoReconnect) object:NULL];
+	[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_autoReconnect)];
+	[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_triggerAutoReconnect)];
 	
 	[super linkConnectionDidTerminate:notification];
 }
@@ -358,7 +358,8 @@
 		_manuallyReconnecting	= YES;
 		_shouldAutoReconnect	= YES;
 		
-		[[self class] cancelPreviousPerformRequestsWithTarget:self selector:@selector(autoReconnect) object:NULL];
+		[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_autoReconnect)];
+		[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_triggerAutoReconnect)];
 		
 		[[self chatController] printEvent:[NSSWF:NSLS(@"Reconnecting to %@...", @"Reconnecting chat message"),
 			[self name]]];
