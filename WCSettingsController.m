@@ -387,7 +387,7 @@
 	WIURL		*url;
 	
 	if(tableView == _trackersTableView) {
-		url = [WIURL URLWithString:[_trackers objectAtIndex:row]];
+		url = [WIURL URLWithString:[_trackers objectAtIndex:row] scheme:@"wiredp7"];
 
 		if(tableColumn == _trackerTableColumn)
 			[url setHostpair:object];

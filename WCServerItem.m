@@ -427,7 +427,7 @@
 	
 	_tracker			= tracker;
 	_categoryPath		= [[message stringForName:@"wired.tracker.category"] retain];
-	_url				= [[WIURL URLWithString:[message stringForName:@"wired.tracker.url"]] retain];
+	_url				= [[WIURL URLWithString:[message stringForName:@"wired.tracker.url"] scheme:@"wiredp7"] retain];
 	_serverDescription	= [[message stringForName:@"wired.info.description"] retain];
 	_users				= users;
 	_filesCount			= filesCount;
