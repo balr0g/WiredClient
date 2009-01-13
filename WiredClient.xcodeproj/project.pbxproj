@@ -292,6 +292,17 @@
 		A5DC7FCE057AB0F200736BBF /* WCApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = A5DC7FC6057AB0F200736BBF /* WCApplication.m */; };
 		A5DC7FD1057AB0F200736BBF /* WCSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = A5DC7FC9057AB0F200736BBF /* WCSettings.m */; };
 		A5E8BCD0087494DB0010F2A4 /* ReleaseNotes.rtf in Resources */ = {isa = PBXBuildFile; fileRef = A5E8BCCE087494DB0010F2A4 /* ReleaseNotes.rtf */; };
+		A5F7F8D30F1D16EE007BF4FD /* WCBoardsSplitView.m in Sources */ = {isa = PBXBuildFile; fileRef = A5F7F8D20F1D16EE007BF4FD /* WCBoardsSplitView.m */; };
+		A5F7F95E0F1D2588007BF4FD /* WCBoardsBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = A5F7F95D0F1D2588007BF4FD /* WCBoardsBackgroundView.m */; };
+		A5F7F9A70F1D4D3A007BF4FD /* AddBoard.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5F7F9A50F1D4D3A007BF4FD /* AddBoard.tiff */; };
+		A5F7F9A80F1D4D3A007BF4FD /* AddBoardPressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5F7F9A60F1D4D3A007BF4FD /* AddBoardPressed.tiff */; };
+		A5F7F9BF0F1D50D8007BF4FD /* BoardBackground.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5F7F9BE0F1D50D8007BF4FD /* BoardBackground.tiff */; };
+		A5F7F9C40F1D50FD007BF4FD /* BoardAction.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5F7F9C00F1D50FD007BF4FD /* BoardAction.tiff */; };
+		A5F7F9C50F1D50FD007BF4FD /* BoardActionPressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5F7F9C10F1D50FD007BF4FD /* BoardActionPressed.tiff */; };
+		A5F7F9C60F1D50FD007BF4FD /* DeleteBoard.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5F7F9C20F1D50FD007BF4FD /* DeleteBoard.tiff */; };
+		A5F7F9C70F1D50FD007BF4FD /* DeleteBoardPressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5F7F9C30F1D50FD007BF4FD /* DeleteBoardPressed.tiff */; };
+		A5F7F9F50F1D528F007BF4FD /* BoardBar.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5F7F9F40F1D528F007BF4FD /* BoardBar.tiff */; };
+		A5F7F9F90F1D52DB007BF4FD /* WCBoardsImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = A5F7F9F80F1D52DB007BF4FD /* WCBoardsImageView.m */; };
 		A5F802980D8E378300A84685 /* WCMonitorCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A5F802970D8E378300A84685 /* WCMonitorCell.m */; };
 		A5FD60630D77FEE8000A7941 /* WCFilesController.m in Sources */ = {isa = PBXBuildFile; fileRef = A5FD60610D77FEE8000A7941 /* WCFilesController.m */; };
 /* End PBXBuildFile section */
@@ -728,6 +739,20 @@
 		A5E3CAF20BFB9CE10000BAC9 /* WiredAdditions */ = {isa = PBXFileReference; lastKnownFileType = folder; path = WiredAdditions; sourceTree = "<group>"; };
 		A5E8BADA08748E1C0010F2A4 /* WiredClient.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; path = WiredClient.xcconfig; sourceTree = "<group>"; };
 		A5E8BCCF087494DB0010F2A4 /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/ReleaseNotes.rtf; sourceTree = "<group>"; };
+		A5F7F8D10F1D16EE007BF4FD /* WCBoardsSplitView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCBoardsSplitView.h; sourceTree = "<group>"; };
+		A5F7F8D20F1D16EE007BF4FD /* WCBoardsSplitView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCBoardsSplitView.m; sourceTree = "<group>"; };
+		A5F7F95C0F1D2588007BF4FD /* WCBoardsBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCBoardsBackgroundView.h; sourceTree = "<group>"; };
+		A5F7F95D0F1D2588007BF4FD /* WCBoardsBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCBoardsBackgroundView.m; sourceTree = "<group>"; };
+		A5F7F9A50F1D4D3A007BF4FD /* AddBoard.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = AddBoard.tiff; sourceTree = "<group>"; };
+		A5F7F9A60F1D4D3A007BF4FD /* AddBoardPressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = AddBoardPressed.tiff; sourceTree = "<group>"; };
+		A5F7F9BE0F1D50D8007BF4FD /* BoardBackground.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = BoardBackground.tiff; sourceTree = "<group>"; };
+		A5F7F9C00F1D50FD007BF4FD /* BoardAction.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = BoardAction.tiff; sourceTree = "<group>"; };
+		A5F7F9C10F1D50FD007BF4FD /* BoardActionPressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = BoardActionPressed.tiff; sourceTree = "<group>"; };
+		A5F7F9C20F1D50FD007BF4FD /* DeleteBoard.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = DeleteBoard.tiff; sourceTree = "<group>"; };
+		A5F7F9C30F1D50FD007BF4FD /* DeleteBoardPressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = DeleteBoardPressed.tiff; sourceTree = "<group>"; };
+		A5F7F9F40F1D528F007BF4FD /* BoardBar.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = BoardBar.tiff; sourceTree = "<group>"; };
+		A5F7F9F70F1D52DB007BF4FD /* WCBoardsImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCBoardsImageView.h; sourceTree = "<group>"; };
+		A5F7F9F80F1D52DB007BF4FD /* WCBoardsImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCBoardsImageView.m; sourceTree = "<group>"; };
 		A5F802960D8E378300A84685 /* WCMonitorCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCMonitorCell.h; sourceTree = "<group>"; };
 		A5F802970D8E378300A84685 /* WCMonitorCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCMonitorCell.m; sourceTree = "<group>"; };
 		A5FD60610D77FEE8000A7941 /* WCFilesController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCFilesController.m; sourceTree = "<group>"; };
@@ -978,6 +1003,12 @@
 				77CED39F0EC068F500123164 /* WCBoardPost.h */,
 				77CED3A20EC068F500123164 /* WCBoards.m */,
 				77CED3A10EC068F500123164 /* WCBoards.h */,
+				A5F7F95D0F1D2588007BF4FD /* WCBoardsBackgroundView.m */,
+				A5F7F95C0F1D2588007BF4FD /* WCBoardsBackgroundView.h */,
+				A5F7F9F80F1D52DB007BF4FD /* WCBoardsImageView.m */,
+				A5F7F9F70F1D52DB007BF4FD /* WCBoardsImageView.h */,
+				A5F7F8D20F1D16EE007BF4FD /* WCBoardsSplitView.m */,
+				A5F7F8D10F1D16EE007BF4FD /* WCBoardsSplitView.h */,
 				77CED3A40EC068F500123164 /* WCBoardThread.m */,
 				77CED3A30EC068F500123164 /* WCBoardThread.h */,
 			);
@@ -987,6 +1018,14 @@
 		77CED3BA0EC0692100123164 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				A5F7F9A50F1D4D3A007BF4FD /* AddBoard.tiff */,
+				A5F7F9BE0F1D50D8007BF4FD /* BoardBackground.tiff */,
+				A5F7F9C00F1D50FD007BF4FD /* BoardAction.tiff */,
+				A5F7F9C10F1D50FD007BF4FD /* BoardActionPressed.tiff */,
+				A5F7F9C20F1D50FD007BF4FD /* DeleteBoard.tiff */,
+				A5F7F9F40F1D528F007BF4FD /* BoardBar.tiff */,
+				A5F7F9C30F1D50FD007BF4FD /* DeleteBoardPressed.tiff */,
+				A5F7F9A60F1D4D3A007BF4FD /* AddBoardPressed.tiff */,
 				77CED3B70EC0691E00123164 /* Boards.xib */,
 			);
 			name = Resources;
@@ -1769,6 +1808,14 @@
 				779951890A122BBB00600320 /* Smile.tiff in Resources */,
 				779951900A122BBB00600320 /* Wink.tiff in Resources */,
 				779951820A122BBB00600320 /* Yuck.tiff in Resources */,
+				A5F7F9A70F1D4D3A007BF4FD /* AddBoard.tiff in Resources */,
+				A5F7F9A80F1D4D3A007BF4FD /* AddBoardPressed.tiff in Resources */,
+				A5F7F9BF0F1D50D8007BF4FD /* BoardBackground.tiff in Resources */,
+				A5F7F9C40F1D50FD007BF4FD /* BoardAction.tiff in Resources */,
+				A5F7F9C50F1D50FD007BF4FD /* BoardActionPressed.tiff in Resources */,
+				A5F7F9C60F1D50FD007BF4FD /* DeleteBoard.tiff in Resources */,
+				A5F7F9C70F1D50FD007BF4FD /* DeleteBoardPressed.tiff in Resources */,
+				A5F7F9F50F1D528F007BF4FD /* BoardBar.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1914,6 +1961,9 @@
 				A5DC7FAB057AB0A600736BBF /* WCUser.m in Sources */,
 				A5DC7F84057AB05F00736BBF /* WCUserCell.m in Sources */,
 				A5DC7F09057AAF6C00736BBF /* WCUserInfo.m in Sources */,
+				A5F7F8D30F1D16EE007BF4FD /* WCBoardsSplitView.m in Sources */,
+				A5F7F95E0F1D2588007BF4FD /* WCBoardsBackgroundView.m in Sources */,
+				A5F7F9F90F1D52DB007BF4FD /* WCBoardsImageView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

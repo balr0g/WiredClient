@@ -29,6 +29,7 @@
 #import "WCAccount.h"
 #import "WCBoard.h"
 #import "WCBoards.h"
+#import "WCBoardsSplitView.h"
 #import "WCBoardPost.h"
 #import "WCBoardThread.h"
 #import "WCPreferences.h"
@@ -280,21 +281,24 @@
 	[[self window] setToolbar:toolbar];
 	[toolbar release];
 	
-	[self setShouldCascadeWindows:NO];
-	[self setWindowFrameAutosaveName:@"Boards"];
+//	[self setShouldCascadeWindows:NO];
+//	[self setWindowFrameAutosaveName:@"Boards"];
 
-	[_boardsSplitView setAutosaveName:@"Boards"];
-	[_threadsSplitView setAutosaveName:@"Threads"];
+//	[_boardsSplitView setAutosaveName:@"Boards"];
+//	[_threadsSplitView setAutosaveName:@"Threads"];
 	
 	[_boardsOutlineView registerForDraggedTypes:[NSArray arrayWithObject:WCBoardPboardType]];
 
-	[_threadsTableView setAutosaveName:@"Threads"];
+//	[_threadsTableView setAutosaveName:@"Threads"];
 //	[_threadsTableView setDoubleAction:@selector(reply:)];
 //	[_threadsTableView setAllowsUserCustomization:YES];
 	[_threadsTableView setDefaultHighlightedTableColumnIdentifier:@"Time"];
 	[_threadsTableView setDefaultSortOrder:WISortAscending];
 	
 	[[_threadWebView windowScriptObject] setValue:self forKey:@"Boards"];
+	
+	NSString *html = [NSString stringWithContentsOfFile:@"/Users/morris/Desktop/test.html"];
+	[[_threadWebView mainFrame] loadHTMLString:html baseURL:NULL];
 
 	_dateFormatter = [[WIDateFormatter alloc] init];
 	[_dateFormatter setTimeStyle:NSDateFormatterShortStyle];
@@ -314,21 +318,7 @@
 
 
 - (NSToolbarItem *)toolbar:(NSToolbar *)toolbar itemForItemIdentifier:(NSString *)identifier willBeInsertedIntoToolbar:(BOOL)willBeInsertedIntoToolbar {
-	if([identifier isEqualToString:@"NewBoard"]) {
-		return [NSToolbarItem toolbarItemWithIdentifier:identifier
-												   name:NSLS(@"New Board", @"New board toolbar item")
-												content:[NSImage imageNamed:@"NewBoard"]
-												 target:self
-												 action:@selector(newBoard:)];
-	}
-	else if([identifier isEqualToString:@"DeleteBoard"]) {
-		return [NSToolbarItem toolbarItemWithIdentifier:identifier
-												   name:NSLS(@"Delete Board", @"Delete board toolbar item")
-												content:[NSImage imageNamed:@"DeleteBoard"]
-												 target:self
-												 action:@selector(deleteBoard:)];
-	}
-	else if([identifier isEqualToString:@"NewThread"]) {
+	if([identifier isEqualToString:@"NewThread"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
 												   name:NSLS(@"New Thread", @"New thread toolbar item")
 												content:[NSImage imageNamed:@"NewThread"]
@@ -343,9 +333,6 @@
 
 - (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar {
 	return [NSArray arrayWithObjects:
-		@"NewBoard",
-		@"DeleteBoard",
-		NSToolbarSpaceItemIdentifier,
 		@"NewThread",
 		NULL];
 }
@@ -358,8 +345,6 @@
 		NSToolbarSpaceItemIdentifier,
 		NSToolbarFlexibleSpaceItemIdentifier,
 		NSToolbarCustomizeToolbarItemIdentifier,
-		@"NewBoard",
-		@"DeleteBoard",
 		@"NewThread",
 		NULL];
 }
@@ -670,6 +655,7 @@
 
 
 
+
 #pragma mark -
 
 - (BOOL)validateToolbarItem:(NSToolbarItem *)item {
@@ -682,11 +668,6 @@
 	board		= [self _selectedBoard];
 	account		= [[board connection] account];
 	connected	= [[board connection] isConnected];
-	
-	if(selector == @selector(deleteBoard:))
-		return (board != NULL && /*[account boardDeleteBoards] &&*/ connected && [board isModifiable]);
-	else if(selector == @selector(newThread:))
-		return (board != NULL && /*[account boardCreateThreads] &&*/ connected);
 	
 	return YES;
 }

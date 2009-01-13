@@ -1,7 +1,7 @@
 /* $Id$ */
 
 /*
- *  Copyright (c) 2008 Axel Andersson
+ *  Copyright (c) 2009 Axel Andersson
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -26,48 +26,20 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WCConnectionController.h"
+#import "WCBoardsSplitView.h"
 
-@class WCBoardsSplitView, WCBoard;
+@implementation WCBoardsSplitView
 
-@interface WCBoards : WIWindowController {
-	IBOutlet WCBoardsSplitView			*_boardsSplitView;
-	IBOutlet NSView						*_boardsView;
-	IBOutlet NSView						*_threadsView;
-	IBOutlet WISplitView				*_threadsSplitView;
-	IBOutlet NSView						*_threadListView;
-	IBOutlet NSView						*_threadView;
-
-	IBOutlet WIOutlineView				*_boardsOutlineView;
-	IBOutlet NSTableColumn				*_boardTableColumn;
-	
-	IBOutlet WITableView				*_threadsTableView;
-	IBOutlet NSTableColumn				*_subjectTableColumn;
-	IBOutlet NSTableColumn				*_nickTableColumn;
-	IBOutlet NSTableColumn				*_timeTableColumn;
-
-	IBOutlet WebView					*_threadWebView;
-	
-	IBOutlet NSPanel					*_newBoardPanel;
-	IBOutlet NSPopUpButton				*_boardLocationPopUpButton;
-	IBOutlet NSTextField				*_boardNameTextField;
-	
-	IBOutlet NSPanel					*_newThreadPanel;
-	IBOutlet NSTextField				*_threadStatusTextField;
-	IBOutlet NSTextView					*_threadTextView;
-	
-	WCBoard								*_boards;
-	WIDateFormatter						*_dateFormatter;
-	
-	NSMutableSet						*_receivedBoards;
-	
-	NSMutableString						*_headerTemplate, *_footerTemplate, *_postTemplate;
+- (CGFloat)dividerThickness {
+	return 1.0;
 }
 
-+ (id)boards;
 
-- (IBAction)newBoard:(id)sender;
-- (IBAction)deleteBoard:(id)sender;
-- (IBAction)newThread:(id)sender;
+
+- (void)drawDividerInRect:(NSRect)rect {
+	[[NSColor colorWithCalibratedWhite:0.75 alpha:1.0] set];
+
+	NSRectFill(rect);
+}
 
 @end
