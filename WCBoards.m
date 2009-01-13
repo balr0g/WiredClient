@@ -34,6 +34,9 @@
 #import "WCPreferences.h"
 #import "WCServerConnection.h"
 
+#define WCBoardPboardType				@"WCBoardPboardType"
+
+
 @interface WCBoards(Private)
 
 - (void)_themeDidChange;
@@ -283,6 +286,8 @@
 	[_boardsSplitView setAutosaveName:@"Boards"];
 	[_threadsSplitView setAutosaveName:@"Threads"];
 	
+	[_boardsOutlineView registerForDraggedTypes:[NSArray arrayWithObject:WCBoardPboardType]];
+
 	[_threadsTableView setAutosaveName:@"Threads"];
 //	[_threadsTableView setDoubleAction:@selector(reply:)];
 //	[_threadsTableView setAllowsUserCustomization:YES];
@@ -323,12 +328,12 @@
 												 target:self
 												 action:@selector(deleteBoard:)];
 	}
-	else if([identifier isEqualToString:@"NewPost"]) {
+	else if([identifier isEqualToString:@"NewThread"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
-												   name:NSLS(@"New Post", @"New post toolbar item")
-												content:[NSImage imageNamed:@"NewPost"]
+												   name:NSLS(@"New Thread", @"New thread toolbar item")
+												content:[NSImage imageNamed:@"NewThread"]
 												 target:self
-												 action:@selector(newPost:)];
+												 action:@selector(newThread:)];
 	}
 	
 	return NULL;
@@ -341,7 +346,7 @@
 		@"NewBoard",
 		@"DeleteBoard",
 		NSToolbarSpaceItemIdentifier,
-		@"NewPost",
+		@"NewThread",
 		NULL];
 }
 
@@ -355,7 +360,7 @@
 		NSToolbarCustomizeToolbarItemIdentifier,
 		@"NewBoard",
 		@"DeleteBoard",
-		@"NewPost",
+		@"NewThread",
 		NULL];
 }
 
@@ -378,6 +383,9 @@
 		[_boards addBoard:[WCBoard boardWithConnection:connection]];
 
 	[connection addObserver:self selector:@selector(wiredBoardBoardAdded:) messageName:@"wired.board.board_added"];
+	[connection addObserver:self selector:@selector(wiredBoardBoardRenamed:) messageName:@"wired.board.board_renamed"];
+	[connection addObserver:self selector:@selector(wiredBoardBoardMoved:) messageName:@"wired.board.board_moved"];
+	[connection addObserver:self selector:@selector(wiredBoardBoardDeleted:) messageName:@"wired.board.board_deleted"];
 
 	[self _validate];
 }
@@ -520,8 +528,103 @@
 	[parent addBoard:board];
 
 	[_boardsOutlineView reloadData];
+	[_boardsOutlineView expandItem:parent];
 	
 	[self _reloadLocationsAndSelectBoard:[_boardLocationPopUpButton representedObjectOfSelectedItem]];
+}
+
+
+
+- (void)wiredBoardBoardRenamed:(WIP7Message *)message {
+	NSString			*oldPath, *newPath;
+	WCServerConnection	*connection;
+	WCBoard				*board;
+	
+	connection	= [message contextInfo];
+	oldPath		= [message stringForName:@"wired.board.board"];
+	newPath		= [message stringForName:@"wired.board.new_board"];
+	board		= [[_boards boardForConnection:connection] boardForPath:oldPath];
+	
+	[board setPath:newPath];
+	[board setName:[newPath lastPathComponent]];
+	
+	[_boardsOutlineView reloadData];
+	
+	[self _reloadLocationsAndSelectBoard:[_boardLocationPopUpButton representedObjectOfSelectedItem]];
+}
+
+
+
+- (void)wiredBoardBoardMoved:(WIP7Message *)message {
+	NSString			*oldPath, *newPath;
+	WCServerConnection	*connection;
+	WCBoard				*board, *oldParent, *newParent;
+	
+	connection	= [message contextInfo];
+	oldPath		= [message stringForName:@"wired.board.board"];
+	newPath		= [message stringForName:@"wired.board.new_board"];
+	board		= [[_boards boardForConnection:connection] boardForPath:oldPath];
+	oldParent	= [[_boards boardForConnection:connection] boardForPath:[oldPath stringByDeletingLastPathComponent]];
+	newParent	= [[_boards boardForConnection:connection] boardForPath:[newPath stringByDeletingLastPathComponent]];
+	
+	[board setPath:newPath];
+	[board setName:[newPath lastPathComponent]];
+	
+	[board retain];
+	[oldParent removeBoard:board];
+	[newParent addBoard:board];
+	[board release];
+	
+	[_boardsOutlineView reloadData];
+	[_boardsOutlineView expandItem:newParent];
+	
+	[self _reloadLocationsAndSelectBoard:[_boardLocationPopUpButton representedObjectOfSelectedItem]];
+}
+
+
+
+- (void)wiredBoardBoardDeleted:(WIP7Message *)message {
+	NSString			*path;
+	WCServerConnection	*connection;
+	WCBoard				*parent;
+	
+	connection	= [message contextInfo];
+	path		= [message stringForName:@"wired.board.board"];
+	parent		= [[_boards boardForConnection:connection] boardForPath:[path stringByDeletingLastPathComponent]];
+	
+	[parent removeBoard:[[_boards boardForConnection:connection] boardForPath:path]];
+	
+	[_boardsOutlineView reloadData];
+	
+	[self _reloadLocationsAndSelectBoard:[_boardLocationPopUpButton representedObjectOfSelectedItem]];
+}
+
+
+
+- (void)wiredBoardAddBoardReply:(WIP7Message *)message {
+	// handle error
+	NSLog(@"message = %@", message);
+}
+
+
+
+- (void)wiredBoardRenameBoardReply:(WIP7Message *)message {
+	// handle error
+	NSLog(@"message = %@", message);
+}
+
+
+
+- (void)wiredBoardMoveBoardReply:(WIP7Message *)message {
+	// handle error
+	NSLog(@"message = %@", message);
+}
+
+
+
+- (void)wiredBoardDeleteBoardReply:(WIP7Message *)message {
+	// handle error
+	NSLog(@"message = %@", message);
 }
 
 
@@ -580,8 +683,10 @@
 	account		= [[board connection] account];
 	connected	= [[board connection] isConnected];
 	
-	if(selector == @selector(newPost:))
-		return (board != NULL && /*[account boardCreatePosts] &&*/ connected);
+	if(selector == @selector(deleteBoard:))
+		return (board != NULL && /*[account boardDeleteBoards] &&*/ connected && [board isModifiable]);
+	else if(selector == @selector(newThread:))
+		return (board != NULL && /*[account boardCreateThreads] &&*/ connected);
 	
 	return YES;
 }
@@ -602,6 +707,8 @@
 
 - (IBAction)newBoard:(id)sender {
 	[self _reloadLocationsAndSelectBoard:[self _selectedBoard]];
+	
+	[_newBoardPanel makeFirstResponder:_boardNameTextField];
 	
 	[NSApp beginSheet:_newBoardPanel
 	   modalForWindow:[self window]
@@ -630,7 +737,7 @@
 			
 			[message setString:path forName:@"wired.board.board"];
 
-			[[board connection] sendMessage:message];
+			[[board connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardAddBoardReply:)];
 		}
 	}
 	
@@ -640,43 +747,59 @@
 
 
 - (IBAction)deleteBoard:(id)sender {
-	[self deleteBoardAlertDidEnd:NULL returnCode:NSAlertDefaultReturn contextInfo:NULL];
+	NSAlert		*alert;
+	WCBoard		*board;
+	
+	board = [self _selectedBoard];
+	
+	if(![board isModifiable])
+		return;
+	
+	alert = [[[NSAlert alloc] init] autorelease];
+	[alert setMessageText:[NSSWF:NSLS(@"Are you sure you want to delete the board \u201c%@\u201d?", @"Delete board dialog title"), [board name]]];
+	[alert setInformativeText:NSLS(@"This cannot be undone.", @"Delete board dialog description")];
+	[alert addButtonWithTitle:NSLS(@"Delete", @"Delete board button title")];
+	[alert addButtonWithTitle:NSLS(@"Cancel", @"Delete board button title")];
+	[alert beginSheetModalForWindow:[self window]
+					  modalDelegate:self
+					 didEndSelector:@selector(deleteBoardAlertDidEnd:returnCode:contextInfo:)
+						contextInfo:[board retain]];
 }
 
 
 
 - (void)deleteBoardAlertDidEnd:(NSAlert *)alert returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
 	WIP7Message		*message;
-	WCBoard			*board;
+	WCBoard			*board = contextInfo;
 	
-	if(returnCode == NSAlertDefaultReturn) {
-		board = [self _selectedBoard];
-		
-		if(board && [[board connection] isConnected]) {
+	if(returnCode == NSAlertFirstButtonReturn) {
+		if([[board connection] isConnected]) {
 			message = [WIP7Message messageWithName:@"wired.board.delete_board" spec:WCP7Spec];
 			[message setString:[board path] forName:@"wired.board.board"];
-			[[board connection] sendMessage:message];
+			[[board connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardDeleteBoardReply:)];
 		}
 	}
+	
+	[board release];
 }
 
 
 
-- (IBAction)newPost:(id)sender {
-	[NSApp beginSheet:_newPostPanel
+- (IBAction)newThread:(id)sender {
+	[NSApp beginSheet:_newThreadPanel
 	   modalForWindow:[self window]
 		modalDelegate:self
-	   didEndSelector:@selector(newPostPanelDidEnd:returnCode:contextInfo:)
+	   didEndSelector:@selector(newThreadPanelDidEnd:returnCode:contextInfo:)
 		  contextInfo:NULL];
 }
 
 
 
-- (void)newPostPanelDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-	[_newPostPanel close];
-	
+- (void)newThreadPanelDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
 	if(returnCode == NSOKButton) {
 	}
+
+	[_newThreadPanel close];
 }
 
 
@@ -743,6 +866,106 @@
 - (void)outlineViewSelectionDidChange:(NSNotification *)notification {
 	[_threadsTableView reloadData];
 	[_threadsTableView deselectAll:self];
+}
+
+
+
+- (BOOL)outlineView:(NSOutlineView *)outlineView shouldEditTableColumn:(NSTableColumn *)tableColumn item:(id)item {
+	WCServerConnection		*connection;
+	WCBoard					*board = item;
+	
+	connection = [board connection];
+	
+	return ([board isModifiable] && [connection isConnected]/* && [[connection account] boardRenameBoards]*/);
+}
+
+
+
+- (void)outlineView:(NSOutlineView *)outlineView setObjectValue:(id)object forTableColumn:(NSTableColumn *)tableColumn byItem:(id)item {
+	NSString		*oldPath, *newPath;
+	WCBoard			*board = item;
+	WIP7Message		*message;
+	
+	board		= item;
+	oldPath		= [item path];
+	newPath		= [[[item path] stringByDeletingLastPathComponent] stringByAppendingPathComponent:object];
+	
+	if(![oldPath isEqualToString:newPath]) {
+		message = [WIP7Message messageWithName:@"wired.board.rename_board" spec:WCP7Spec];
+		[message setString:oldPath forName:@"wired.board.board"];
+		[message setString:newPath forName:@"wired.board.new_board"];
+		[[board connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardRenameBoardReply:)];
+	}
+}
+
+
+
+- (BOOL)outlineView:(NSOutlineView *)tableView writeItems:(NSArray *)items toPasteboard:(NSPasteboard *)pasteboard {
+	WCBoard			*board;
+	
+	board = [items objectAtIndex:0];
+	
+	[pasteboard declareTypes:[NSArray arrayWithObject:WCBoardPboardType] owner:NULL];
+	[pasteboard setPropertyList:[NSArray arrayWithObjects:[board path], [board name], NULL] forType:WCBoardPboardType];
+	
+	return YES;
+}
+
+
+
+- (NSDragOperation)outlineView:(NSOutlineView *)outlineView validateDrop:(id <NSDraggingInfo>)info proposedItem:(id)item proposedChildIndex:(NSInteger)index {
+	NSPasteboard		*pasteboard;
+	NSArray				*types, *array;
+	NSString			*oldPath, *oldName, *newPath, *rootPath;
+	WCBoard				*board = item;
+
+	pasteboard	= [info draggingPasteboard];
+	types		= [pasteboard types];
+	
+	if([types containsObject:WCBoardPboardType]) {
+		array		= [pasteboard propertyListForType:WCBoardPboardType];
+		oldPath		= [array objectAtIndex:0];
+		oldName		= [array objectAtIndex:1];
+		rootPath	= [[board path] isEqualToString:@"/"] ? @"" : [board path];
+		newPath		= [rootPath stringByAppendingPathComponent:oldName];
+		
+		if(!board || [oldPath isEqualToString:newPath] || [newPath hasPrefix:oldPath])
+			return NSDragOperationNone;
+		
+		return NSDragOperationMove;
+	}
+	
+	return NSDragOperationNone;
+}
+
+
+
+- (BOOL)outlineView:(NSOutlineView *)outlineView acceptDrop:(id <NSDraggingInfo>)info item:(id)item childIndex:(NSInteger)index {
+	NSPasteboard		*pasteboard;
+	NSArray				*types, *array;
+	NSString			*oldPath, *oldName, *newPath, *rootPath;
+	WIP7Message			*message;
+	WCBoard				*board = item;
+	
+	pasteboard	= [info draggingPasteboard];
+	types		= [pasteboard types];
+	
+	if([types containsObject:WCBoardPboardType]) {
+		array		= [pasteboard propertyListForType:WCBoardPboardType];
+		oldPath		= [array objectAtIndex:0];
+		oldName		= [array objectAtIndex:1];
+		rootPath	= [[board path] isEqualToString:@"/"] ? @"" : [board path];
+		newPath		= [rootPath stringByAppendingPathComponent:oldName];
+		
+		message = [WIP7Message messageWithName:@"wired.board.move_board" spec:WCP7Spec];
+		[message setString:oldPath forName:@"wired.board.board"];
+		[message setString:newPath forName:@"wired.board.new_board"];
+		[[board connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardMoveBoardReply:)];
+		
+		return YES;
+	}
+	
+	return NO;
 }
 
 

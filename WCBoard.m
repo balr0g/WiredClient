@@ -125,6 +125,15 @@
 
 
 
+- (void)setPath:(NSString *)path {
+	[path retain];
+	[_path release];
+	
+	_path = path;
+}
+
+
+
 - (NSString *)path {
 	return _path;
 }
@@ -137,12 +146,17 @@
 
 
 
+- (BOOL)isModifiable {
+	return ![_path isEqualToString:@"/"];
+}
+
+
+
 #pragma mark -
 
 - (NSUInteger)numberOfBoards {
 	return [_boards count];
 }
-
 
 
 

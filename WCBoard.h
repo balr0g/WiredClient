@@ -44,8 +44,10 @@
 
 - (void)setName:(NSString *)name;
 - (NSString *)name;
+- (void)setPath:(NSString *)path;
 - (NSString *)path;
 - (BOOL)isExpandable;
+- (BOOL)isModifiable;
 
 - (NSUInteger)numberOfBoards;
 - (NSArray *)boards;

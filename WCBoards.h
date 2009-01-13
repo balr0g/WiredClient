@@ -52,9 +52,9 @@
 	IBOutlet NSPopUpButton				*_boardLocationPopUpButton;
 	IBOutlet NSTextField				*_boardNameTextField;
 	
-	IBOutlet NSPanel					*_newPostPanel;
-	IBOutlet NSTextField				*_postStatusTextField;
-	IBOutlet NSTextView					*_postTextView;
+	IBOutlet NSPanel					*_newThreadPanel;
+	IBOutlet NSTextField				*_threadStatusTextField;
+	IBOutlet NSTextView					*_threadTextView;
 	
 	WCBoard								*_boards;
 	WIDateFormatter						*_dateFormatter;
@@ -67,6 +67,6 @@
 + (id)boards;
 
 - (IBAction)newBoard:(id)sender;
-- (IBAction)newPost:(id)sender;
+- (IBAction)newThread:(id)sender;
 
 @end
