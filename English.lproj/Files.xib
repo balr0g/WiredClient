@@ -8,7 +8,7 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="213"/>
+			<integer value="211"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -544,7 +544,7 @@
 													<characters key="NS.bytes">/</characters>
 												</object>
 												<int key="NSMinColumnWidth">150</int>
-												<int key="NSNumberOfVisibleColumns">3</int>
+												<int key="NSNumberOfVisibleColumns">1</int>
 												<int key="NSColumnResizingType">2</int>
 												<double key="NSPreferedColumnWidth">1.800000e+02</double>
 												<bool key="NSAllowsTypeSelect">YES</bool>
@@ -2238,8 +2238,8 @@
 					<reference ref="5"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
-					<string>{{179, 466}, {446, 469}}</string>
-					<string>{{179, 466}, {446, 469}}</string>
+					<string>{{179, 287}, {446, 469}}</string>
+					<string>{{179, 287}, {446, 469}}</string>
 					<reference ref="5"/>
 					<reference ref="5"/>
 					<string>{3.40282e+38, 3.40282e+38}</string>
@@ -2257,7 +2257,7 @@
 						<object class="IBToolTipAttribute" key="NS.object.0">
 							<string key="name">ToolTip</string>
 							<reference key="object" ref="915792242"/>
-							<string key="toolTip">Reload</string>
+							<string key="toolTip">Delete</string>
 						</object>
 					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>

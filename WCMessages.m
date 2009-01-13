@@ -567,6 +567,8 @@
 
 	[_conversations invalidateForConnection:connection];
 	
+	[connection removeObserver:self];
+	
 	[self _validate];
 }
 

@@ -28,7 +28,7 @@
 
 #import "WCConnectionController.h"
 
-@class WCBoardItem;
+@class WCBoard;
 
 @interface WCBoards : WIWindowController {
 	IBOutlet WISplitView				*_boardsSplitView;
@@ -56,7 +56,7 @@
 	IBOutlet NSTextField				*_postStatusTextField;
 	IBOutlet NSTextView					*_postTextView;
 	
-	WCBoardItem							*_boards;
+	WCBoard								*_boards;
 	WIDateFormatter						*_dateFormatter;
 	
 	NSMutableSet						*_receivedBoards;

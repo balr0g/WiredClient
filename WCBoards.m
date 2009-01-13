@@ -43,6 +43,9 @@
 - (WCBoard *)_selectedBoard;
 - (WCBoardThread *)_selectedThread;
 
+- (void)_reloadLocationsAndSelectBoard:(WCBoard *)board;
+- (void)_addLocationsForChildrenOfBoard:(WCBoard *)board level:(NSUInteger)level;
+
 - (NSString *)_HTMLStringForPost:(WCBoardPost *)post;
 
 @end
@@ -119,6 +122,41 @@
 
 #pragma mark -
 
+- (void)_reloadLocationsAndSelectBoard:(WCBoard *)board {
+	[_boardLocationPopUpButton removeAllItems];
+	
+	[self _addLocationsForChildrenOfBoard:_boards level:0];
+	
+	if(board)
+		[_boardLocationPopUpButton selectItemWithRepresentedObject:board];
+	else
+		[_boardLocationPopUpButton selectItemAtIndex:0];
+}
+
+
+
+- (void)_addLocationsForChildrenOfBoard:(WCBoard *)board level:(NSUInteger)level {
+	NSEnumerator		*enumerator;
+	NSMenuItem			*item;
+	WCBoard				*childBoard;
+	
+	enumerator = [[board boards] objectEnumerator];
+	
+	while((childBoard = [enumerator nextObject])) {
+		item = [NSMenuItem itemWithTitle:[childBoard name]];
+		[item setRepresentedObject:childBoard];
+		[item setIndentationLevel:level];
+		
+		[_boardLocationPopUpButton addItem:item];
+		
+		[self _addLocationsForChildrenOfBoard:childBoard level:level + 1];
+	}
+}
+
+
+
+#pragma mark -
+
 - (NSString *)_HTMLStringForPost:(WCBoardPost *)post {
 	NSMutableString		*string;
 	
@@ -169,9 +207,15 @@
 	_boards				= [[WCBoard rootBoard] retain];
 	_receivedBoards		= [[NSMutableSet alloc] init];
 	
-	_headerTemplate		= [[NSMutableString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"header" ofType:@"html"] encoding:NSUTF8StringEncoding error:NULL];
-	_footerTemplate		= [[NSMutableString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"footer" ofType:@"html"] encoding:NSUTF8StringEncoding error:NULL];
-	_postTemplate		= [[NSMutableString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"post" ofType:@"html"] encoding:NSUTF8StringEncoding error:NULL];
+	_headerTemplate		= [[NSMutableString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"header" ofType:@"html"]
+															  encoding:NSUTF8StringEncoding
+																 error:NULL];
+	_footerTemplate		= [[NSMutableString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"footer" ofType:@"html"]
+															  encoding:NSUTF8StringEncoding
+																 error:NULL];
+	_postTemplate		= [[NSMutableString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"post" ofType:@"html"]
+															encoding:NSUTF8StringEncoding
+															   error:NULL];
 	
 	[_headerTemplate replaceOccurrencesOfString:@"<? fromstring ?>" withString:@"From"];
 	[_headerTemplate replaceOccurrencesOfString:@"<? subjectstring ?>" withString:@"Subject"];
@@ -272,6 +316,13 @@
 												 target:self
 												 action:@selector(newBoard:)];
 	}
+	else if([identifier isEqualToString:@"DeleteBoard"]) {
+		return [NSToolbarItem toolbarItemWithIdentifier:identifier
+												   name:NSLS(@"Delete Board", @"Delete board toolbar item")
+												content:[NSImage imageNamed:@"DeleteBoard"]
+												 target:self
+												 action:@selector(deleteBoard:)];
+	}
 	else if([identifier isEqualToString:@"NewPost"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
 												   name:NSLS(@"New Post", @"New post toolbar item")
@@ -288,6 +339,8 @@
 - (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar {
 	return [NSArray arrayWithObjects:
 		@"NewBoard",
+		@"DeleteBoard",
+		NSToolbarSpaceItemIdentifier,
 		@"NewPost",
 		NULL];
 }
@@ -301,6 +354,7 @@
 		NSToolbarFlexibleSpaceItemIdentifier,
 		NSToolbarCustomizeToolbarItemIdentifier,
 		@"NewBoard",
+		@"DeleteBoard",
 		@"NewPost",
 		NULL];
 }
@@ -322,6 +376,8 @@
 	
 	if(!board)
 		[_boards addBoard:[WCBoard boardWithConnection:connection]];
+
+	[connection addObserver:self selector:@selector(wiredBoardBoardAdded:) messageName:@"wired.board.board_added"];
 
 	[self _validate];
 }
@@ -357,6 +413,8 @@
 	
 	if([connection URL])
 		[_receivedBoards removeObject:[connection URL]];
+
+	[connection removeObserver:self];
 
 	[self _validate];
 }
@@ -404,6 +462,8 @@
 		[_boardsOutlineView reloadData];
 
 		[_boardsOutlineView expandItem:NULL expandChildren:YES];
+	
+		[self _reloadLocationsAndSelectBoard:NULL];
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
 		// handle error
@@ -445,6 +505,23 @@
 	else if([[message name] isEqualToString:@"wired.error"]) {
 		// handle error
 	}
+}
+
+
+
+- (void)wiredBoardBoardAdded:(WIP7Message *)message {
+	WCServerConnection	*connection;
+	WCBoard				*board, *parent;
+	
+	connection	= [message contextInfo];
+	board		= [WCBoard boardWithMessage:message connection:connection];
+	parent		= [[_boards boardForConnection:connection] boardForPath:[board path]];
+		
+	[parent addBoard:board];
+
+	[_boardsOutlineView reloadData];
+	
+	[self _reloadLocationsAndSelectBoard:[_boardLocationPopUpButton representedObjectOfSelectedItem]];
 }
 
 
@@ -524,6 +601,8 @@
 #pragma mark -
 
 - (IBAction)newBoard:(id)sender {
+	[self _reloadLocationsAndSelectBoard:[self _selectedBoard]];
+	
 	[NSApp beginSheet:_newBoardPanel
 	   modalForWindow:[self window]
 		modalDelegate:self
@@ -534,9 +613,50 @@
 
 
 - (void)newBoardPanelDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-	[_newBoardPanel close];
+	NSString		*path;
+	WIP7Message		*message;
+	WCBoard			*board;
 	
 	if(returnCode == NSOKButton) {
+		board = [_boardLocationPopUpButton representedObjectOfSelectedItem];
+		
+		if(board && [[board connection] isConnected] && [[_boardNameTextField stringValue] length] > 0) {
+			message = [WIP7Message messageWithName:@"wired.board.add_board" spec:WCP7Spec];
+			
+			if([[board path] isEqualToString:@"/"])
+				path = [_boardNameTextField stringValue];
+			else
+				path = [[board path] stringByAppendingPathComponent:[_boardNameTextField stringValue]];
+			
+			[message setString:path forName:@"wired.board.board"];
+
+			[[board connection] sendMessage:message];
+		}
+	}
+	
+	[_newBoardPanel close];
+}
+
+
+
+- (IBAction)deleteBoard:(id)sender {
+	[self deleteBoardAlertDidEnd:NULL returnCode:NSAlertDefaultReturn contextInfo:NULL];
+}
+
+
+
+- (void)deleteBoardAlertDidEnd:(NSAlert *)alert returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+	WIP7Message		*message;
+	WCBoard			*board;
+	
+	if(returnCode == NSAlertDefaultReturn) {
+		board = [self _selectedBoard];
+		
+		if(board && [[board connection] isConnected]) {
+			message = [WIP7Message messageWithName:@"wired.board.delete_board" spec:WCP7Spec];
+			[message setString:[board path] forName:@"wired.board.board"];
+			[[board connection] sendMessage:message];
+		}
 	}
 }
 
