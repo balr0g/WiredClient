@@ -265,13 +265,20 @@
 
 
 - (NSToolbarItem *)toolbar:(NSToolbar *)toolbar itemForItemIdentifier:(NSString *)identifier willBeInsertedIntoToolbar:(BOOL)willBeInsertedIntoToolbar {
-/*	if([identifier isEqualToString:@"Post"]) {
+	if([identifier isEqualToString:@"NewBoard"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
-												   name:NSLS(@"Post", @"Post news toolbar item")
-												content:[NSImage imageNamed:@"PostNews"]
+												   name:NSLS(@"New Board", @"New board toolbar item")
+												content:[NSImage imageNamed:@"NewBoard"]
 												 target:self
-												 action:@selector(postNews:)];
-	}*/
+												 action:@selector(newBoard:)];
+	}
+	else if([identifier isEqualToString:@"NewPost"]) {
+		return [NSToolbarItem toolbarItemWithIdentifier:identifier
+												   name:NSLS(@"New Post", @"New post toolbar item")
+												content:[NSImage imageNamed:@"NewPost"]
+												 target:self
+												 action:@selector(newPost:)];
+	}
 	
 	return NULL;
 }
@@ -280,6 +287,8 @@
 
 - (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar {
 	return [NSArray arrayWithObjects:
+		@"NewBoard",
+		@"NewPost",
 		NULL];
 }
 
@@ -291,6 +300,8 @@
 		NSToolbarSpaceItemIdentifier,
 		NSToolbarFlexibleSpaceItemIdentifier,
 		NSToolbarCustomizeToolbarItemIdentifier,
+		@"NewBoard",
+		@"NewPost",
 		NULL];
 }
 
@@ -482,16 +493,18 @@
 #pragma mark -
 
 - (BOOL)validateToolbarItem:(NSToolbarItem *)item {
-/*	WCAccount	*account;
+	WCAccount	*account;
+	WCBoard		*board;
 	SEL			selector;
 	BOOL		connected;
 	
 	selector	= [item action];
-	account		= [[self connection] account];
-	connected	= [[self connection] isConnected];
+	board		= [self _selectedBoard];
+	account		= [[board connection] account];
+	connected	= [[board connection] isConnected];
 	
-	if(selector == @selector(reloadNews:))
-		return ([account newsReadNews] && connected);*/
+	if(selector == @selector(newPost:))
+		return (board != NULL && /*[account boardCreatePosts] &&*/ connected);
 	
 	return YES;
 }
@@ -504,6 +517,46 @@
 	NSLog(@"delete %@", postID);
 	
 	return YES;
+}
+
+
+
+#pragma mark -
+
+- (IBAction)newBoard:(id)sender {
+	[NSApp beginSheet:_newBoardPanel
+	   modalForWindow:[self window]
+		modalDelegate:self
+	   didEndSelector:@selector(newBoardPanelDidEnd:returnCode:contextInfo:)
+		  contextInfo:NULL];
+}
+
+
+
+- (void)newBoardPanelDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+	[_newBoardPanel close];
+	
+	if(returnCode == NSOKButton) {
+	}
+}
+
+
+
+- (IBAction)newPost:(id)sender {
+	[NSApp beginSheet:_newPostPanel
+	   modalForWindow:[self window]
+		modalDelegate:self
+	   didEndSelector:@selector(newPostPanelDidEnd:returnCode:contextInfo:)
+		  contextInfo:NULL];
+}
+
+
+
+- (void)newPostPanelDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+	[_newPostPanel close];
+	
+	if(returnCode == NSOKButton) {
+	}
 }
 
 

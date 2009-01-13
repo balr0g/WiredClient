@@ -48,6 +48,14 @@
 
 	IBOutlet WebView					*_threadWebView;
 	
+	IBOutlet NSPanel					*_newBoardPanel;
+	IBOutlet NSPopUpButton				*_boardLocationPopUpButton;
+	IBOutlet NSTextField				*_boardNameTextField;
+	
+	IBOutlet NSPanel					*_newPostPanel;
+	IBOutlet NSTextField				*_postStatusTextField;
+	IBOutlet NSTextView					*_postTextView;
+	
 	WCBoardItem							*_boards;
 	WIDateFormatter						*_dateFormatter;
 	
@@ -57,5 +65,8 @@
 }
 
 + (id)boards;
+
+- (IBAction)newBoard:(id)sender;
+- (IBAction)newPost:(id)sender;
 
 @end
