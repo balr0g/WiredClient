@@ -26,6 +26,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-@interface WCBoardsSplitView : WISplitView
+@interface WCSourceSplitView : WISplitView
 
 @end

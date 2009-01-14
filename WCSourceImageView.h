@@ -26,20 +26,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WCBoardsSplitView.h"
+@class WCSourceSplitView;
 
-@implementation WCBoardsSplitView
-
-- (CGFloat)dividerThickness {
-	return 1.0;
-}
-
-
-
-- (void)drawDividerInRect:(NSRect)rect {
-	[[NSColor colorWithCalibratedWhite:0.75 alpha:1.0] set];
-
-	NSRectFill(rect);
+@interface WCSourceImageView : NSImageView {
+	IBOutlet WCSourceSplitView				*_splitView;
 }
 
 @end

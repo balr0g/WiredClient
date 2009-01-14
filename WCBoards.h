@@ -28,10 +28,10 @@
 
 #import "WCConnectionController.h"
 
-@class WCBoardsSplitView, WCBoard;
+@class WCSourceSplitView, WCBoard;
 
 @interface WCBoards : WIWindowController {
-	IBOutlet WCBoardsSplitView			*_boardsSplitView;
+	IBOutlet WCSourceSplitView			*_boardsSplitView;
 	IBOutlet NSView						*_boardsView;
 	IBOutlet NSView						*_threadsView;
 	IBOutlet WISplitView				*_threadsSplitView;
@@ -40,6 +40,8 @@
 
 	IBOutlet WIOutlineView				*_boardsOutlineView;
 	IBOutlet NSTableColumn				*_boardTableColumn;
+	IBOutlet NSButton					*_addBoardButton;
+	IBOutlet NSButton					*_deleteBoardButton;
 	
 	IBOutlet WITableView				*_threadsTableView;
 	IBOutlet NSTableColumn				*_subjectTableColumn;
@@ -68,6 +70,7 @@
 
 - (IBAction)newBoard:(id)sender;
 - (IBAction)deleteBoard:(id)sender;
+- (IBAction)renameBoard:(id)sender;
 - (IBAction)newThread:(id)sender;
 
 @end

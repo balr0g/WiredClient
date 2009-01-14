@@ -26,14 +26,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WCBoardsBackgroundView.h"
-
-@implementation WCBoardsBackgroundView
-
-- (void)drawRect:(NSRect)rect {
-	[[NSColor colorWithCalibratedWhite:0.75 alpha:1.0] set];
-	
-	NSRectFill(rect);
-}
+@interface WCSourceBackgroundView : NSView
 
 @end

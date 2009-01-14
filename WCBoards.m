@@ -29,11 +29,11 @@
 #import "WCAccount.h"
 #import "WCBoard.h"
 #import "WCBoards.h"
-#import "WCBoardsSplitView.h"
 #import "WCBoardPost.h"
 #import "WCBoardThread.h"
 #import "WCPreferences.h"
 #import "WCServerConnection.h"
+#import "WCSourceSplitView.h"
 
 #define WCBoardPboardType				@"WCBoardPboardType"
 
@@ -63,6 +63,15 @@
 
 
 - (void)_validate {
+	WCBoard					*board;
+	WCServerConnection		*connection;
+	
+	board			= [self _selectedBoard];
+	connection		= [board connection];
+	
+	[_addBoardButton setEnabled:([_boardLocationPopUpButton numberOfItems] > 0)];
+	[_deleteBoardButton setEnabled:(board != NULL && [board isModifiable] && [connection isConnected] /* && [[connection account] boardDeleteBoards]*/)];
+	
 	[[[self window] toolbar] validateVisibleItems];
 }
 
@@ -281,19 +290,22 @@
 	[[self window] setToolbar:toolbar];
 	[toolbar release];
 	
-//	[self setShouldCascadeWindows:NO];
-//	[self setWindowFrameAutosaveName:@"Boards"];
-
-//	[_boardsSplitView setAutosaveName:@"Boards"];
-//	[_threadsSplitView setAutosaveName:@"Threads"];
+	[self setShouldCascadeWindows:NO];
+	[self setWindowFrameAutosaveName:@"Boards"];
+	
+	[_boardsSplitView setAutosaveName:@"Boards"];
+	[_threadsSplitView setAutosaveName:@"Threads"];
 	
 	[_boardsOutlineView registerForDraggedTypes:[NSArray arrayWithObject:WCBoardPboardType]];
 
-//	[_threadsTableView setAutosaveName:@"Threads"];
-//	[_threadsTableView setDoubleAction:@selector(reply:)];
-//	[_threadsTableView setAllowsUserCustomization:YES];
+	[[_boardTableColumn dataCell] setVerticalTextOffset:3.0];
+
 	[_threadsTableView setDefaultHighlightedTableColumnIdentifier:@"Time"];
 	[_threadsTableView setDefaultSortOrder:WISortAscending];
+	[_threadsTableView setAllowsUserCustomization:YES];
+	[_threadsTableView setAutosaveName:@"Threads"];
+    [_threadsTableView setAutosaveTableColumns:YES];
+	[_threadsTableView setDoubleAction:@selector(reply:)];
 	
 	[[_threadWebView windowScriptObject] setValue:self forKey:@"Boards"];
 	
@@ -306,6 +318,7 @@
 	[_dateFormatter setNaturalLanguageStyle:WIDateFormatterCapitalizedNaturalLanguageStyle];
 	
 	[self _themeDidChange];
+	[self _validate];
 	
 	[super windowDidLoad];
 }
@@ -457,6 +470,7 @@
 		[_boardsOutlineView expandItem:NULL expandChildren:YES];
 	
 		[self _reloadLocationsAndSelectBoard:NULL];
+		[self _validate];
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
 		// handle error
@@ -516,6 +530,7 @@
 	[_boardsOutlineView expandItem:parent];
 	
 	[self _reloadLocationsAndSelectBoard:[_boardLocationPopUpButton representedObjectOfSelectedItem]];
+	[self _validate];
 }
 
 
@@ -536,6 +551,7 @@
 	[_boardsOutlineView reloadData];
 	
 	[self _reloadLocationsAndSelectBoard:[_boardLocationPopUpButton representedObjectOfSelectedItem]];
+	[self _validate];
 }
 
 
@@ -564,6 +580,7 @@
 	[_boardsOutlineView expandItem:newParent];
 	
 	[self _reloadLocationsAndSelectBoard:[_boardLocationPopUpButton representedObjectOfSelectedItem]];
+	[self _validate];
 }
 
 
@@ -582,6 +599,7 @@
 	[_boardsOutlineView reloadData];
 	
 	[self _reloadLocationsAndSelectBoard:[_boardLocationPopUpButton representedObjectOfSelectedItem]];
+	[self _validate];
 }
 
 
@@ -649,8 +667,20 @@
 
 
 
+- (CGFloat)splitView:(NSSplitView *)splitView constrainMaxCoordinate:(CGFloat)proposedMax ofSubviewAt:(NSInteger)offset {
+	return proposedMax - 120.0;
+}
+
+
+
+- (CGFloat)splitView:(NSSplitView *)splitView constrainMinCoordinate:(CGFloat)proposedMin ofSubviewAt:(NSInteger)offset {
+	return proposedMin + 120.0;
+}
+
+
+
 - (BOOL)splitView:(NSSplitView *)splitView canCollapseSubview:(NSView *)subview {
-	return YES;
+	return NO;
 }
 
 
@@ -668,6 +698,25 @@
 	board		= [self _selectedBoard];
 	account		= [[board connection] account];
 	connected	= [[board connection] isConnected];
+	
+	return YES;
+}
+
+
+
+- (BOOL)validateMenuItem:(NSMenuItem *)item {
+	WCAccount	*account;
+	WCBoard		*board;
+	SEL			selector;
+	BOOL		connected;
+	
+	selector	= [item action];
+	board		= [self _selectedBoard];
+	account		= [[board connection] account];
+	connected	= [[board connection] isConnected];
+	
+	if(selector == @selector(renameBoard:))
+		return (board != NULL && [board isModifiable] && connected /* && [account boardRenameBoards]*/);
 	
 	return YES;
 }
@@ -738,7 +787,7 @@
 	
 	alert = [[[NSAlert alloc] init] autorelease];
 	[alert setMessageText:[NSSWF:NSLS(@"Are you sure you want to delete the board \u201c%@\u201d?", @"Delete board dialog title"), [board name]]];
-	[alert setInformativeText:NSLS(@"This cannot be undone.", @"Delete board dialog description")];
+	[alert setInformativeText:NSLS(@"All child boards and posts of this board will also be deleted. This cannot be undone.", @"Delete board dialog description")];
 	[alert addButtonWithTitle:NSLS(@"Delete", @"Delete board button title")];
 	[alert addButtonWithTitle:NSLS(@"Cancel", @"Delete board button title")];
 	[alert beginSheetModalForWindow:[self window]
@@ -762,6 +811,12 @@
 	}
 	
 	[board release];
+}
+
+
+
+- (IBAction)renameBoard:(id)sender {
+	[_boardsOutlineView editColumn:0 row:[_boardsOutlineView selectedRow] withEvent:NULL select:YES];
 }
 
 
@@ -847,6 +902,8 @@
 - (void)outlineViewSelectionDidChange:(NSNotification *)notification {
 	[_threadsTableView reloadData];
 	[_threadsTableView deselectAll:self];
+	
+	[self _validate];
 }
 
 
@@ -990,10 +1047,10 @@
 
 
 - (void)tableView:(NSTableView *)tableView didClickTableColumn:(NSTableColumn *)tableColumn {
-/*	[_messagesTableView setHighlightedTableColumn:tableColumn];
-	[self _sortMessages];
-	[_messagesTableView reloadData];
-	[[_messagesTableView delegate] tableViewSelectionDidChange:NULL];*/
+	[_threadsTableView setHighlightedTableColumn:tableColumn];
+//	[self _sortMessages];
+	[_threadsTableView reloadData];
+	[[_threadsTableView delegate] tableViewSelectionDidChange:NULL];
 }
 
 
@@ -1005,20 +1062,23 @@
 	WCBoardPost			*post;
 	
 	thread = [self _selectedThread];
-	html = [NSMutableString stringWithString:_headerTemplate];
 	
 	if(thread) {
-		[html appendString:[self _HTMLStringForPost:thread]];
+		html = [NSMutableString stringWithString:_headerTemplate];
 		
-		enumerator = [[thread posts] objectEnumerator];
+		if(thread) {
+			[html appendString:[self _HTMLStringForPost:thread]];
+			
+			enumerator = [[thread posts] objectEnumerator];
+			
+			while((post = [enumerator nextObject]))
+				[html appendString:[self _HTMLStringForPost:post]];
+		}
 		
-		while((post = [enumerator nextObject]))
-			[html appendString:[self _HTMLStringForPost:post]];
+		[html appendString:_footerTemplate];
+		
+		[[_threadWebView mainFrame] loadHTMLString:html baseURL:NULL];
 	}
-	
-	[html appendString:_footerTemplate];
-	
-	[[_threadWebView mainFrame] loadHTMLString:html baseURL:NULL];
 	
 	[self _validate];
 }

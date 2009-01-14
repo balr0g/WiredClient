@@ -413,12 +413,14 @@
 	[_conversationsSplitView setAutosaveName:@"Conversations"];
 	[_messagesSplitView setAutosaveName:@"Messages"];
 
-	[_messagesTableView setAutosaveName:@"Messages"];
-    [_messagesTableView setAutosaveTableColumns:YES];
-	[_messagesTableView setDoubleAction:@selector(reply:)];
-	[_messagesTableView setAllowsUserCustomization:YES];
 	[_messagesTableView setDefaultHighlightedTableColumnIdentifier:@"Time"];
 	[_messagesTableView setDefaultSortOrder:WISortAscending];
+	[_messagesTableView setAutosaveName:@"Messages"];
+    [_messagesTableView setAutosaveTableColumns:YES];
+	[_messagesTableView setAllowsUserCustomization:YES];
+	[_messagesTableView setDoubleAction:@selector(reply:)];
+	
+	[[_messagesTableColumn dataCell] setVerticalTextOffset:3.0];
 	
 	_conversations			= [[WCConversation rootConversation] retain];
 	_messageConversations	= [[WCMessageConversation rootConversation] retain];
@@ -733,8 +735,20 @@
 
 
 
+- (CGFloat)splitView:(NSSplitView *)splitView constrainMaxCoordinate:(CGFloat)proposedMax ofSubviewAt:(NSInteger)offset {
+	return proposedMax - 140.0;
+}
+
+
+
+- (CGFloat)splitView:(NSSplitView *)splitView constrainMinCoordinate:(CGFloat)proposedMin ofSubviewAt:(NSInteger)offset {
+	return proposedMin + 140.0;
+}
+
+
+
 - (BOOL)splitView:(NSSplitView *)splitView canCollapseSubview:(NSView *)subview {
-	return YES;
+	return NO;
 }
 
 
@@ -1036,9 +1050,9 @@
 
 - (void)outlineView:(NSOutlineView *)outlineView willDisplayCell:(id)cell forTableColumn:(NSTableColumn *)tableColumn item:(id)item {
 	if([item numberOfUnreadMessages] > 0)
-		[cell setFont:[NSFont boldSystemFontOfSize:[NSFont smallSystemFontSize]]];
+		[cell setFont:[[cell font] fontByAddingTrait:NSBoldFontMask]];
 	else
-		[cell setFont:[NSFont systemFontOfSize:[NSFont smallSystemFontSize]]];
+		[cell setFont:[[cell font] fontByAddingTrait:NSUnboldFontMask]];
 	
 	if(item == _messageConversations || item == _broadcastConversations)
 		[cell setImage:_conversationIcon];
