@@ -589,6 +589,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 - (void)awakeFromNib {
 	[_chatOutputTextView setEditable:NO];
 	[_chatOutputTextView setUsesFindPanel:YES];
+	[_userListTableView setTarget:self];
 	[_userListTableView setDoubleAction:@selector(sendPrivateMessage:)];
 	
 	_chatFilter = [[WITextFilter alloc] initWithSelectors:@selector(filterWiredChat:), @selector(filterURLs:), @selector(filterWiredSmilies:), 0];
