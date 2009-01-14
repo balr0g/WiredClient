@@ -175,12 +175,13 @@
 	
 	string = [_postTemplate mutableCopy];
 
-	[string replaceOccurrencesOfString:@"<? from ?>" withString:@"morris"];
+	[string replaceOccurrencesOfString:@"<? from ?>" withString:[NSSWF:NSLS(@"%@ (%@)", @"Post from (nick, login)"), [post nick], [post login]]];
 	[string replaceOccurrencesOfString:@"<? subject ?>" withString:[post subject]];
 	[string replaceOccurrencesOfString:@"<? date ?>" withString:[_dateFormatter stringFromDate:[post postDate]]];
 	[string replaceOccurrencesOfString:@"<? body ?>" withString:[post text]];
 	[string replaceOccurrencesOfString:@"<? postid ?>" withString:[post postID]];
-	[string replaceOccurrencesOfString:@"<? deletestring ?>" withString:@"Delete"];
+	[string replaceOccurrencesOfString:@"<? editstring ?>" withString:NSLS(@"Edit", @"Edit post button title")];
+	[string replaceOccurrencesOfString:@"<? deletestring ?>" withString:NSLS(@"Delete", @"Delete post button title")];
 	
 	return [string autorelease];
 }
@@ -191,7 +192,7 @@
 @implementation WCBoards
 
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)selector {
-	if(selector == @selector(deletePostWithID:))
+	if(selector == @selector(deletePostWithID:) || selector == @selector(editPostWithID:))
 		return NO;
 
 	return YES;
@@ -230,9 +231,9 @@
 															encoding:NSUTF8StringEncoding
 															   error:NULL];
 	
-	[_headerTemplate replaceOccurrencesOfString:@"<? fromstring ?>" withString:@"From"];
-	[_headerTemplate replaceOccurrencesOfString:@"<? subjectstring ?>" withString:@"Subject"];
-	[_headerTemplate replaceOccurrencesOfString:@"<? datestring ?>" withString:@"Date"];
+	[_headerTemplate replaceOccurrencesOfString:@"<? fromstring ?>" withString:NSLS(@"From", @"Post header")];
+	[_headerTemplate replaceOccurrencesOfString:@"<? subjectstring ?>" withString:NSLS(@"Subject", @"Post header")];
+	[_headerTemplate replaceOccurrencesOfString:@"<? datestring ?>" withString:NSLS(@"Date", @"Post header")];
 	
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
@@ -309,9 +310,6 @@
 	
 	[[_threadWebView windowScriptObject] setValue:self forKey:@"Boards"];
 	
-	NSString *html = [NSString stringWithContentsOfFile:@"/Users/morris/Desktop/test.html"];
-	[[_threadWebView mainFrame] loadHTMLString:html baseURL:NULL];
-
 	_dateFormatter = [[WIDateFormatter alloc] init];
 	[_dateFormatter setTimeStyle:NSDateFormatterShortStyle];
 	[_dateFormatter setDateStyle:NSDateFormatterMediumStyle];
@@ -632,6 +630,13 @@
 
 
 
+- (void)wiredBoardAddPostReply:(WIP7Message *)message {
+	// handle error
+	NSLog(@"message = %@", message);
+}
+
+
+
 - (void)selectedThemeDidChange:(NSNotification *)notification {
 	[self _themeDidChange];
 }
@@ -685,6 +690,22 @@
 
 
 
+- (BOOL)textView:(NSTextView *)textView doCommandBySelector:(SEL)selector {
+	BOOL		value = NO;
+	
+	if(selector == @selector(insertNewline:)) {
+		if([[NSApp currentEvent] character] == NSEnterCharacter) {
+			[self submitSheet:textView];
+			
+			value = YES;
+		}
+	}
+	
+	return value;
+}
+
+
+
 
 #pragma mark -
 
@@ -725,10 +746,14 @@
 
 #pragma mark -
 
-- (BOOL)deletePostWithID:(NSString *)postID {
+- (void)editPostWithID:(NSString *)postID {
+	NSLog(@"edit %@", postID);
+}
+
+
+
+- (void)deletePostWithID:(NSString *)postID {
 	NSLog(@"delete %@", postID);
-	
-	return YES;
 }
 
 
@@ -822,17 +847,35 @@
 
 
 - (IBAction)newThread:(id)sender {
+	WCBoard			*board;
+	
+	board = [self _selectedBoard];
+	
+	if(!board)
+		return;
+	
+	[_threadSubjectTextField setStringValue:@""];
+	[_threadTextView setString:@""];
+	
 	[NSApp beginSheet:_newThreadPanel
 	   modalForWindow:[self window]
 		modalDelegate:self
 	   didEndSelector:@selector(newThreadPanelDidEnd:returnCode:contextInfo:)
-		  contextInfo:NULL];
+		  contextInfo:[board retain]];
 }
 
 
 
 - (void)newThreadPanelDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+	WIP7Message		*message;
+	WCBoard			*board = contextInfo;
+	
 	if(returnCode == NSOKButton) {
+		message = [WIP7Message messageWithName:@"wired.board.add_post" spec:WCP7Spec];
+		[message setString:[board path] forName:@"wired.board.board"];
+		[message setString:[_threadSubjectTextField stringValue] forName:@"wired.board.subject"];
+		[message setString:[_threadTextView string] forName:@"wired.board.text"];
+		[[board connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardAddPostReply:)];
 	}
 
 	[_newThreadPanel close];

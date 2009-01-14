@@ -10,6 +10,7 @@
 	</div>
 
 	<form>
-		<input type="button" onclick="if(window.Boards.deletePostWithID_('<? postid ?>')) { var post = document.getElementById('<? postid ?>'); post.parentNode.removeChild(post); }" value="<? deletestring ?>" />
+		<input type="button" onclick="window.Boards.editPostWithID_('<? postid ?>');" value="<? editstring ?>" />
+		<input type="button" onclick="window.Boards.deletePostWithID_('<? postid ?>');" value="<? deletestring ?>" />
 	</form>
 </div>

@@ -55,7 +55,7 @@
 	IBOutlet NSTextField				*_boardNameTextField;
 	
 	IBOutlet NSPanel					*_newThreadPanel;
-	IBOutlet NSTextField				*_threadStatusTextField;
+	IBOutlet NSTextField				*_threadSubjectTextField;
 	IBOutlet NSTextView					*_threadTextView;
 	
 	WCBoard								*_boards;

@@ -35,6 +35,7 @@
 	NSDate						*_postDate;
 	NSDate						*_editDate;
 	NSString					*_nick;
+	NSString					*_login;
 	NSString					*_subject;
 	NSString					*_text;
 }
@@ -48,6 +49,7 @@
 - (NSDate *)postDate;
 - (NSDate *)editDate;
 - (NSString *)nick;
+- (NSString *)login;
 - (NSString *)subject;
 - (NSString *)text;
 

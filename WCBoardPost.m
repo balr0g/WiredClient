@@ -44,7 +44,8 @@
 	_post		= [[message UUIDForName:@"wired.board.post"] retain];
 	_postDate	= [[message dateForName:@"wired.board.post_date"] retain];
 	_editDate	= [[message dateForName:@"wired.board.edit_date"] retain];
-	_nick		= [[message stringForName:@"wired.board.nick"] retain];
+	_nick		= [[message stringForName:@"wired.user.nick"] retain];
+	_login		= [[message stringForName:@"wired.user.login"] retain];
 	_subject	= [[message stringForName:@"wired.board.subject"] retain];
 	_text		= [[message stringForName:@"wired.board.text"] retain];
 	
@@ -60,6 +61,7 @@
 	[_postDate release];
 	[_editDate release];
 	[_nick release];
+	[_login release];
 	[_subject release];
 	[_text release];
 	
@@ -102,6 +104,12 @@
 
 - (NSString *)nick {
 	return _nick;
+}
+
+
+
+- (NSString *)login {
+	return _login;
 }
 
 
