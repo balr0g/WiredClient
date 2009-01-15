@@ -826,7 +826,7 @@
 	[openPanel setCanChooseDirectories:NO];
 	[openPanel beginSheetForDirectory:NULL
 								 file:NULL
-								types:[NSArray arrayWithObject:@"wiredTheme"]
+								types:[NSArray arrayWithObject:@"WiredTheme"]
 					   modalForWindow:[self window]
 						modalDelegate:self
 					   didEndSelector:@selector(importThemePanelDidEnd:returnCode:contextInfo:)
@@ -870,10 +870,10 @@
 	[theme removeObjectForKey:WCThemesIdentifier];
 
 	savePanel = [NSSavePanel savePanel];
-	[savePanel setRequiredFileType:@"wiredTheme"];
+	[savePanel setRequiredFileType:@"WiredTheme"];
 	[savePanel setCanSelectHiddenExtension:YES];
 	[savePanel beginSheetForDirectory:NULL
-								 file:[[theme objectForKey:WCThemesName] stringByAppendingPathExtension:@"wiredTheme"]
+								 file:[[theme objectForKey:WCThemesName] stringByAppendingPathExtension:@"WiredTheme"]
 					   modalForWindow:[self window]
 						modalDelegate:self
 					   didEndSelector:@selector(exportThemePanelDidEnd:returnCode:contextInfo:)
