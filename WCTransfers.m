@@ -1904,23 +1904,17 @@ end:
 
 
 
-- (BOOL)tableView:(NSTableView *)tableView writeRows:(NSArray *)items toPasteboard:(NSPasteboard *)pasteboard {
+- (BOOL)tableView:(NSTableView *)tableView writeRowsWithIndexes:(NSIndexSet *)indexes toPasteboard:(NSPasteboard *)pasteboard {
 	WCTransfer		*transfer;
 	NSString		*string;
-	NSInteger		row;
+	NSUInteger		index;
 
-	row = [[items objectAtIndex:0] integerValue];
-
-	if(row < 0)
-		return NO;
-
-	transfer = [_transfers objectAtIndex:row];
+	transfer = [_transfers objectAtIndex:[indexes firstIndex]];
 
 	string = [NSSWF:@"%@ - %@", [transfer name], [transfer status]];
 
-	[pasteboard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, WCTransferPboardType, NULL]
-					   owner:NULL];
-	[pasteboard setString:[NSSWF:@"%ld", row] forType:WCTransferPboardType];
+	[pasteboard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, WCTransferPboardType, NULL] owner:NULL];
+	[pasteboard setString:[NSSWF:@"%ld", index] forType:WCTransferPboardType];
 	[pasteboard setString:string forType:NSStringPboardType];
 
 	return YES;

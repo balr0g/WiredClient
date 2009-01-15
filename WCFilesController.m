@@ -295,25 +295,26 @@
 
 
 
-- (BOOL)tableView:(NSTableView *)tableView writeRows:(NSArray *)items toPasteboard:(NSPasteboard *)pasteboard {
-	NSEnumerator		*enumerator;
+- (BOOL)tableView:(NSTableView *)tableView writeRowsWithIndexes:(NSIndexSet *)indexes toPasteboard:(NSPasteboard *)pasteboard {
 	NSMutableArray		*sources;
 	NSMutableString		*string;
 	WCFile				*file;
-	NSNumber			*row;
+	NSUInteger			index;
 
 	sources			= [NSMutableArray array];
 	string			= [NSMutableString string];
-	enumerator		= [items objectEnumerator];
+	index			= [indexes firstIndex];
 	
-	while((row = [enumerator nextObject])) {
-		file = [self fileAtIndex:[row integerValue]];
+	while(index != NSNotFound) {
+		file = [self fileAtIndex:index];
 		
 		if([string length] > 0)
 			[string appendString:@"\n"];
 
 		[string appendString:[file path]];
 		[sources addObject:file];
+		
+		index = [indexes indexGreaterThanIndex:index];
 	}
 
 	[pasteboard declareTypes:[NSArray arrayWithObjects:

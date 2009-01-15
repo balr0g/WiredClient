@@ -1795,15 +1795,12 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 
 
-- (BOOL)tableView:(NSTableView *)tableView writeRows:(NSArray *)items toPasteboard:(NSPasteboard *)pasteboard {
+- (BOOL)tableView:(NSTableView *)tableView writeRowsWithIndexes:(NSIndexSet *)indexes toPasteboard:(NSPasteboard *)pasteboard {
 	WCUser		*user;
-	NSInteger	row;
 	
-	row = [[items objectAtIndex:0] integerValue];
-	user = [self userAtIndex:row];
+	user = [self userAtIndex:[indexes firstIndex]];
 	
-	[pasteboard declareTypes:[NSArray arrayWithObjects:WCUserPboardType, NSStringPboardType, NULL]
-					   owner:NULL];
+	[pasteboard declareTypes:[NSArray arrayWithObjects:WCUserPboardType, NSStringPboardType, NULL] owner:NULL];
 	[pasteboard setString:[NSSWF:@"%u", [user userID]] forType:WCUserPboardType];
 	[pasteboard setString:[user nick] forType:NSStringPboardType];
 	

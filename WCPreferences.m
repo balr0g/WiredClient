@@ -1714,34 +1714,38 @@
 
 
 
-- (BOOL)tableView:(NSTableView *)tableView writeRows:(NSArray *)items toPasteboard:(NSPasteboard *)pasteboard {
+- (BOOL)tableView:(NSTableView *)tableView writeRowsWithIndexes:(NSIndexSet *)indexes toPasteboard:(NSPasteboard *)pasteboard {
+	NSUInteger		index;
+	
+	index = [indexes firstIndex];
+	
 	if(tableView == _themesTableView) {
 		[pasteboard declareTypes:[NSArray arrayWithObject:WCThemePboardType] owner:NULL];
-		[pasteboard setString:[NSSWF:@"%ld", [[items objectAtIndex:0] integerValue]] forType:WCThemePboardType];
+		[pasteboard setString:[NSSWF:@"%ld", index] forType:WCThemePboardType];
 		
 		return YES;
 	}
 	else if(tableView == _bookmarksTableView) {
 		[pasteboard declareTypes:[NSArray arrayWithObject:WCBookmarkPboardType] owner:NULL];
-		[pasteboard setString:[NSSWF:@"%ld", [[items objectAtIndex:0] integerValue]] forType:WCBookmarkPboardType];
+		[pasteboard setString:[NSSWF:@"%ld", index] forType:WCBookmarkPboardType];
 		
 		return YES;
 	}
 	else if(tableView == _highlightsTableView) {
 		[pasteboard declareTypes:[NSArray arrayWithObject:WCHighlightPboardType] owner:NULL];
-		[pasteboard setString:[NSSWF:@"%ld", [[items objectAtIndex:0] integerValue]] forType:WCHighlightPboardType];
+		[pasteboard setString:[NSSWF:@"%ld", index] forType:WCHighlightPboardType];
 		
 		return YES;
 	}
 	else if(tableView == _ignoresTableView) {
 		[pasteboard declareTypes:[NSArray arrayWithObject:WCIgnorePboardType] owner:NULL];
-		[pasteboard setString:[NSSWF:@"%ld", [[items objectAtIndex:0] integerValue]] forType:WCIgnorePboardType];
+		[pasteboard setString:[NSSWF:@"%ld", index] forType:WCIgnorePboardType];
 		
 		return YES;
 	}
 	else if(tableView == _trackerBookmarksTableView) {
 		[pasteboard declareTypes:[NSArray arrayWithObject:WCTrackerBookmarkPboardType] owner:NULL];
-		[pasteboard setString:[NSSWF:@"%ld", [[items objectAtIndex:0] integerValue]] forType:WCTrackerBookmarkPboardType];
+		[pasteboard setString:[NSSWF:@"%ld", index] forType:WCTrackerBookmarkPboardType];
 		
 		return YES;
 	}

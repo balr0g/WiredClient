@@ -415,14 +415,18 @@
 
 
 
-- (BOOL)tableView:(NSTableView *)tableView writeRows:(NSArray *)items toPasteboard:(NSPasteboard *)pasteboard {
+- (BOOL)tableView:(NSTableView *)tableView writeRowsWithIndexes:(NSIndexSet *)indexes toPasteboard:(NSPasteboard *)pasteboard {
+	NSUInteger		index;
+	
+	index = [indexes firstIndex];
+	
 	if(tableView == _trackersTableView) {
 		[pasteboard declareTypes:[NSArray arrayWithObject:WCTrackerPboardType] owner:NULL];
-		[pasteboard setString:[NSSWF:@"%ld", [[items objectAtIndex:0] integerValue]] forType:WCTrackerPboardType];
+		[pasteboard setString:[NSSWF:@"%ld", index] forType:WCTrackerPboardType];
 	}
 	else if(tableView == _categoriesTableView) {
 		[pasteboard declareTypes:[NSArray arrayWithObject:WCCategoryPboardType] owner:NULL];
-		[pasteboard setString:[NSSWF:@"%ld", [[items objectAtIndex:0] integerValue]] forType:WCCategoryPboardType];
+		[pasteboard setString:[NSSWF:@"%ld", index] forType:WCCategoryPboardType];
 	}
 	
 	return YES;
