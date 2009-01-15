@@ -36,6 +36,7 @@
 #import "WCSourceSplitView.h"
 
 #define WCBoardPboardType				@"WCBoardPboardType"
+#define WCThreadPboardType				@"WCThreadPboardType"
 
 
 @interface WCBoards(Private)
@@ -328,7 +329,7 @@
 	[_boardsSplitView setAutosaveName:@"Boards"];
 	[_threadsSplitView setAutosaveName:@"Threads"];
 	
-	[_boardsOutlineView registerForDraggedTypes:[NSArray arrayWithObject:WCBoardPboardType]];
+	[_boardsOutlineView registerForDraggedTypes:[NSArray arrayWithObjects:WCBoardPboardType, WCThreadPboardType, NULL]];
 
 	[[_boardTableColumn dataCell] setVerticalTextOffset:3.0];
 
@@ -414,7 +415,8 @@
 	[connection addObserver:self selector:@selector(wiredBoardPostAdded:) messageName:@"wired.board.post_added"];
 	[connection addObserver:self selector:@selector(wiredBoardPostEdited:) messageName:@"wired.board.post_edited"];
 	[connection addObserver:self selector:@selector(wiredBoardPostDeleted:) messageName:@"wired.board.post_deleted"];
-
+	[connection addObserver:self selector:@selector(wiredBoardThreadMoved:) messageName:@"wired.board.thread_moved"];
+	
 	[self _validate];
 }
 
@@ -698,6 +700,19 @@
 - (void)wiredBoardDeletePostReply:(WIP7Message *)message {
 	// handle error
 	NSLog(@"wiredBoardDeletePostReply: message = %@", message);
+}
+
+
+
+- (void)wiredBoardThreadMoved:(WIP7Message *)message {
+	NSLog(@"wiredBoardThreadMoved: message = %@", message);
+}
+
+
+
+- (void)wiredBoardMoveThreadReply:(WIP7Message *)message {
+	// handle error
+	NSLog(@"wiredBoardMoveThreadReply: message = %@", message);
 }
 
 
@@ -1212,7 +1227,7 @@
 	NSPasteboard		*pasteboard;
 	NSArray				*types, *array;
 	NSString			*oldPath, *oldName, *newPath, *rootPath;
-	WCBoard				*board = item;
+	WCBoard				*newBoard = item, *oldBoard;
 
 	pasteboard	= [info draggingPasteboard];
 	types		= [pasteboard types];
@@ -1221,10 +1236,23 @@
 		array		= [pasteboard propertyListForType:WCBoardPboardType];
 		oldPath		= [array objectAtIndex:0];
 		oldName		= [array objectAtIndex:1];
-		rootPath	= [[board path] isEqualToString:@"/"] ? @"" : [board path];
+		oldBoard	= [[_boards boardForConnection:[newBoard connection]] boardForPath:oldPath];
+		rootPath	= [[newBoard path] isEqualToString:@"/"] ? @"" : [newBoard path];
 		newPath		= [rootPath stringByAppendingPathComponent:oldName];
 		
-		if(!board || [oldPath isEqualToString:newPath] || [newPath hasPrefix:oldPath])
+		if(!newBoard || !oldBoard || [oldPath isEqualToString:newPath] || [newPath hasPrefix:oldPath] || index >= 0)
+			return NSDragOperationNone;
+		
+		return NSDragOperationMove;
+	}
+	else if([types containsObject:WCThreadPboardType]) {
+		array		= [pasteboard propertyListForType:WCThreadPboardType];
+		oldPath		= [array objectAtIndex:0];
+		oldBoard	= [[_boards boardForConnection:[newBoard connection]] boardForPath:oldPath];
+		rootPath	= [[newBoard path] isEqualToString:@"/"] ? @"" : [newBoard path];
+		newPath		= [newBoard path];
+		
+		if(!oldBoard || [oldPath isEqualToString:newPath] || index >= 0)
 			return NSDragOperationNone;
 		
 		return NSDragOperationMove;
@@ -1238,9 +1266,10 @@
 - (BOOL)outlineView:(NSOutlineView *)outlineView acceptDrop:(id <NSDraggingInfo>)info item:(id)item childIndex:(NSInteger)index {
 	NSPasteboard		*pasteboard;
 	NSArray				*types, *array;
-	NSString			*oldPath, *oldName, *newPath, *rootPath;
+	NSString			*oldPath, *oldName, *newPath, *rootPath, *threadID;
 	WIP7Message			*message;
-	WCBoard				*board = item;
+	WCBoard				*newBoard = item, *oldBoard;
+	WCBoardThread		*thread;
 	
 	pasteboard	= [info draggingPasteboard];
 	types		= [pasteboard types];
@@ -1249,13 +1278,28 @@
 		array		= [pasteboard propertyListForType:WCBoardPboardType];
 		oldPath		= [array objectAtIndex:0];
 		oldName		= [array objectAtIndex:1];
-		rootPath	= [[board path] isEqualToString:@"/"] ? @"" : [board path];
+		rootPath	= [[newBoard path] isEqualToString:@"/"] ? @"" : [newBoard path];
 		newPath		= [rootPath stringByAppendingPathComponent:oldName];
 		
 		message = [WIP7Message messageWithName:@"wired.board.move_board" spec:WCP7Spec];
 		[message setString:oldPath forName:@"wired.board.board"];
 		[message setString:newPath forName:@"wired.board.new_board"];
-		[[board connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardMoveBoardReply:)];
+		[[newBoard connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardMoveBoardReply:)];
+		
+		return YES;
+	}
+	else if([types containsObject:WCThreadPboardType]) {
+		array		= [pasteboard propertyListForType:WCThreadPboardType];
+		oldPath		= [array objectAtIndex:0];
+		threadID	= [array objectAtIndex:1];
+		oldBoard	= [[_boards boardForConnection:[newBoard connection]] boardForPath:oldPath];
+		thread		= [oldBoard threadWithID:threadID];
+		
+		message = [WIP7Message messageWithName:@"wired.board.move_thread" spec:WCP7Spec];
+		[message setString:[oldBoard path] forName:@"wired.board.board"];
+		[message setUUID:[thread threadID] forName:@"wired.board.thread"];
+		[message setString:[newBoard path] forName:@"wired.board.new_board"];
+		[[newBoard connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardMoveThreadReply:)];
 		
 		return YES;
 	}
@@ -1317,6 +1361,21 @@
 - (void)tableViewSelectionDidChange:(NSNotification *)notification {
 	[self _reloadThread];
 	[self _validate];
+}
+
+
+
+- (BOOL)tableView:(NSTableView *)tableView writeRowsWithIndexes:(NSIndexSet *)indexes toPasteboard:(NSPasteboard *)pasteboard {
+	WCBoard				*board;
+	WCBoardThread		*thread;
+	
+	board	= [self _selectedBoard];
+	thread	= [board threadAtIndex:[indexes firstIndex]];
+	
+	[pasteboard declareTypes:[NSArray arrayWithObject:WCThreadPboardType] owner:NULL];
+	[pasteboard setPropertyList:[NSArray arrayWithObjects:[board path], [thread threadID], NULL] forType:WCThreadPboardType];
+
+	return YES;
 }
 
 @end
