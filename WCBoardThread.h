@@ -28,15 +28,20 @@
 
 #import "WCBoardPost.h"
 
-@interface WCBoardThread : WCBoardPost {
+@interface WCBoardThread : WCServerConnectionObject {
+	NSString					*_threadID;
 	NSMutableArray				*_posts;
 }
 
-+ (id)threadWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection;
++ (id)threadWithThreadID:(NSString *)threadID connection:(WCServerConnection *)connection;
+- (id)initWithThreadID:(NSString *)threadID connection:(WCServerConnection *)connection;
+
+- (NSString *)threadID;
 
 - (NSUInteger)numberOfPosts;
 - (NSArray *)posts;
 - (WCBoardPost *)postAtIndex:(NSUInteger)index;
+- (WCBoardPost *)postWithID:(NSString *)postID;
 - (void)addPost:(WCBoardPost *)post;
 - (void)removePost:(WCBoardPost *)post;
 - (void)removeAllPosts;

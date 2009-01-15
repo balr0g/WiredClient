@@ -10,7 +10,8 @@
 	</div>
 
 	<form>
-		<input type="button" onclick="window.Boards.editPostWithID_('<? postid ?>');" value="<? editstring ?>" />
-		<input type="button" onclick="window.Boards.deletePostWithID_('<? postid ?>');" value="<? deletestring ?>" />
+		<input type="button" <? replydisabled ?> onclick="window.Boards.replyToPostWithID_('<? postid ?>');" value="<? replystring ?>" />
+		<input type="button" <? editdisabled ?> onclick="window.Boards.editPostWithID_('<? postid ?>');" value="<? editstring ?>" />
+		<input type="button" <? deletedisabled ?> onclick="window.Boards.deletePostWithID_('<? postid ?>');" value="<? deletestring ?>" />
 	</form>
 </div>

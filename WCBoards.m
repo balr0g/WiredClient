@@ -50,6 +50,7 @@
 - (void)_reloadLocationsAndSelectBoard:(WCBoard *)board;
 - (void)_addLocationsForChildrenOfBoard:(WCBoard *)board level:(NSUInteger)level;
 
+- (void)_reloadThread;
 - (NSString *)_HTMLStringForPost:(WCBoardPost *)post;
 
 @end
@@ -170,6 +171,30 @@
 
 #pragma mark -
 
+- (void)_reloadThread {
+	NSEnumerator		*enumerator;
+	NSMutableString		*html;
+	WCBoardThread		*thread;
+	WCBoardPost			*post;
+	
+	thread = [self _selectedThread];
+	
+	html = [NSMutableString stringWithString:_headerTemplate];
+	
+	if(thread) {
+		enumerator = [[thread posts] objectEnumerator];
+		
+		while((post = [enumerator nextObject]))
+			[html appendString:[self _HTMLStringForPost:post]];
+	}
+	
+	[html appendString:_footerTemplate];
+	
+	[[_threadWebView mainFrame] loadHTMLString:html baseURL:NULL];
+}
+
+
+
 - (NSString *)_HTMLStringForPost:(WCBoardPost *)post {
 	NSMutableString		*string;
 	
@@ -180,9 +205,13 @@
 	[string replaceOccurrencesOfString:@"<? date ?>" withString:[_dateFormatter stringFromDate:[post postDate]]];
 	[string replaceOccurrencesOfString:@"<? body ?>" withString:[post text]];
 	[string replaceOccurrencesOfString:@"<? postid ?>" withString:[post postID]];
+	[string replaceOccurrencesOfString:@"<? replydisabled ?>" withString:@""];
+	[string replaceOccurrencesOfString:@"<? editdisabled ?>" withString:@""];
+	[string replaceOccurrencesOfString:@"<? deletedisabled ?>" withString:@""];
+	[string replaceOccurrencesOfString:@"<? replystring ?>" withString:NSLS(@"Reply", @"Reply post button title")];
 	[string replaceOccurrencesOfString:@"<? editstring ?>" withString:NSLS(@"Edit", @"Edit post button title")];
 	[string replaceOccurrencesOfString:@"<? deletestring ?>" withString:NSLS(@"Delete", @"Delete post button title")];
-	
+
 	return [string autorelease];
 }
 
@@ -192,7 +221,9 @@
 @implementation WCBoards
 
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)selector {
-	if(selector == @selector(deletePostWithID:) || selector == @selector(editPostWithID:))
+	if(selector == @selector(replyToPostWithID:) ||
+	   selector == @selector(deletePostWithID:) ||
+	   selector == @selector(editPostWithID:))
 		return NO;
 
 	return YES;
@@ -308,8 +339,6 @@
     [_threadsTableView setAutosaveTableColumns:YES];
 	[_threadsTableView setDoubleAction:@selector(reply:)];
 	
-	[[_threadWebView windowScriptObject] setValue:self forKey:@"Boards"];
-	
 	_dateFormatter = [[WIDateFormatter alloc] init];
 	[_dateFormatter setTimeStyle:NSDateFormatterShortStyle];
 	[_dateFormatter setDateStyle:NSDateFormatterMediumStyle];
@@ -382,6 +411,9 @@
 	[connection addObserver:self selector:@selector(wiredBoardBoardRenamed:) messageName:@"wired.board.board_renamed"];
 	[connection addObserver:self selector:@selector(wiredBoardBoardMoved:) messageName:@"wired.board.board_moved"];
 	[connection addObserver:self selector:@selector(wiredBoardBoardDeleted:) messageName:@"wired.board.board_deleted"];
+	[connection addObserver:self selector:@selector(wiredBoardPostAdded:) messageName:@"wired.board.post_added"];
+	[connection addObserver:self selector:@selector(wiredBoardPostEdited:) messageName:@"wired.board.post_edited"];
+	[connection addObserver:self selector:@selector(wiredBoardPostDeleted:) messageName:@"wired.board.post_deleted"];
 
 	[self _validate];
 }
@@ -489,17 +521,18 @@
 		board = [[_boards boardForConnection:connection] boardForPath:[message stringForName:@"wired.board.board"]];
 		
 		if(board) {
-			thread = [board threadWithID:[message UUIDForName:@"wired.board.thread"]];
+			post		= [WCBoardPost postWithMessage:message connection:connection];
+			thread		= [board threadWithID:[post threadID]];
 			
-			if(thread) {
-				post = [WCBoardPost postWithMessage:message connection:connection];
-				
-				[thread addPost:post];
-			} else {
-				thread = [WCBoardThread threadWithMessage:message connection:connection];
+			if(!thread) {
+				thread = [WCBoardThread threadWithThreadID:[post threadID] connection:connection];
 				
 				[board addThread:thread];
 			}
+			
+			post = [WCBoardPost postWithMessage:message connection:connection];
+
+			[thread addPost:post];
 		}
 	}
 	else if([[message name] isEqualToString:@"wired.board.post_list.done"]) {
@@ -604,35 +637,67 @@
 
 - (void)wiredBoardAddBoardReply:(WIP7Message *)message {
 	// handle error
-	NSLog(@"message = %@", message);
+	NSLog(@"wiredBoardAddBoardReply: message = %@", message);
 }
 
 
 
 - (void)wiredBoardRenameBoardReply:(WIP7Message *)message {
 	// handle error
-	NSLog(@"message = %@", message);
+	NSLog(@"wiredBoardRenameBoardReply: message = %@", message);
 }
 
 
 
 - (void)wiredBoardMoveBoardReply:(WIP7Message *)message {
 	// handle error
-	NSLog(@"message = %@", message);
+	NSLog(@"wiredBoardMoveBoardReply: message = %@", message);
 }
 
 
 
 - (void)wiredBoardDeleteBoardReply:(WIP7Message *)message {
 	// handle error
-	NSLog(@"message = %@", message);
+	NSLog(@"wiredBoardDeleteBoardReply: message = %@", message);
+}
+
+
+
+- (void)wiredBoardPostAdded:(WIP7Message *)message {
+	NSLog(@"wiredBoardPostAdded: message = %@", message);
+}
+
+
+
+- (void)wiredBoardPostEdited:(WIP7Message *)message {
+	NSLog(@"wiredBoardPostEdited: message = %@", message);
+}
+
+
+
+- (void)wiredBoardPostDeleted:(WIP7Message *)message {
+	NSLog(@"wiredBoardPostDeleted: message = %@", message);
 }
 
 
 
 - (void)wiredBoardAddPostReply:(WIP7Message *)message {
 	// handle error
-	NSLog(@"message = %@", message);
+	NSLog(@"wiredBoardAddPostReply: message = %@", message);
+}
+
+
+
+- (void)wiredBoardEditPostReply:(WIP7Message *)message {
+	// handle error
+	NSLog(@"wiredBoardEditPostReply: message = %@", message);
+}
+
+
+
+- (void)wiredBoardDeletePostReply:(WIP7Message *)message {
+	// handle error
+	NSLog(@"wiredBoardDeletePostReply: message = %@", message);
 }
 
 
@@ -706,6 +771,11 @@
 
 
 
+- (void)webView:(WebView *)webView didClearWindowObject:(WebScriptObject *)windowObject forFrame:(WebFrame *)frame {
+	[windowObject setValue:self forKey:@"Boards"];
+}
+
+
 
 #pragma mark -
 
@@ -746,14 +816,154 @@
 
 #pragma mark -
 
+- (void)replyToPostWithID:(NSString *)postID {
+	NSString			*subject;
+	WCBoard				*board;
+	WCBoardThread		*thread;
+	WCBoardPost			*post;
+	
+	board	= [self _selectedBoard];
+	thread	= [self _selectedThread];
+	post	= [thread postWithID:postID];
+	
+	if(!post)
+		return;
+	
+	subject	= [post subject];
+	
+	if(![subject hasPrefix:@"Re: "])
+		subject = [@"Re: " stringByAppendingString:subject];
+	
+	[_postSubjectTextField setStringValue:subject];
+	[_postTextView setString:@""];
+	[_postButton setTitle:NSLS(@"Reply", @"Reply post button title")];
+	
+	[_newPostPanel makeFirstResponder:_postTextView];
+	
+	[NSApp beginSheet:_newPostPanel
+	   modalForWindow:[self window]
+		modalDelegate:self
+	   didEndSelector:@selector(replyPanelDidEnd:returnCode:contextInfo:)
+		  contextInfo:[[NSArray alloc] initWithObjects:board, thread, NULL]];
+}
+
+
+
+- (void)replyPanelDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+	NSArray			*array = contextInfo;
+	WIP7Message		*message;
+	WCBoard			*board = [array objectAtIndex:0];
+	WCBoardThread	*thread = [array objectAtIndex:1];
+	
+	if(returnCode == NSOKButton) {
+		message = [WIP7Message messageWithName:@"wired.board.add_post" spec:WCP7Spec];
+		[message setString:[board path] forName:@"wired.board.board"];
+		[message setUUID:[thread threadID] forName:@"wired.board.thread"];
+		[message setString:[_postSubjectTextField stringValue] forName:@"wired.board.subject"];
+		[message setString:[_postTextView string] forName:@"wired.board.text"];
+		[[board connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardAddPostReply:)];
+	}
+	
+	[_newPostPanel close];
+	[array release];
+}
+
+
+
 - (void)editPostWithID:(NSString *)postID {
-	NSLog(@"edit %@", postID);
+	WCBoard				*board;
+	WCBoardThread		*thread;
+	WCBoardPost			*post;
+	
+	board	= [self _selectedBoard];
+	thread	= [self _selectedThread];
+	post	= [thread postWithID:postID];
+	
+	if(!post)
+		return;
+	
+	[_postSubjectTextField setStringValue:[post subject]];
+	[_postTextView setString:[post text]];
+	[_postButton setTitle:NSLS(@"Edit", @"Edit post button title")];
+	
+	[_newPostPanel makeFirstResponder:_postTextView];
+	
+	[NSApp beginSheet:_newPostPanel
+	   modalForWindow:[self window]
+		modalDelegate:self
+	   didEndSelector:@selector(editPanelDidEnd:returnCode:contextInfo:)
+		  contextInfo:[[NSArray alloc] initWithObjects:board, thread, post, NULL]];
+}
+
+
+
+- (void)editPanelDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+	NSArray			*array = contextInfo;
+	WIP7Message		*message;
+	WCBoard			*board = [array objectAtIndex:0];
+	WCBoardThread	*thread = [array objectAtIndex:1];
+	WCBoardPost		*post = [array objectAtIndex:2];
+	
+	if(returnCode == NSOKButton) {
+		message = [WIP7Message messageWithName:@"wired.board.edit_post" spec:WCP7Spec];
+		[message setString:[board path] forName:@"wired.board.board"];
+		[message setUUID:[thread threadID] forName:@"wired.board.thread"];
+		[message setUUID:[post postID] forName:@"wired.board.post"];
+		[message setString:[_postSubjectTextField stringValue] forName:@"wired.board.subject"];
+		[message setString:[_postTextView string] forName:@"wired.board.text"];
+		[[board connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardEditPostReply:)];
+	}
+	
+	[_newPostPanel close];
+	[array release];
 }
 
 
 
 - (void)deletePostWithID:(NSString *)postID {
-	NSLog(@"delete %@", postID);
+	NSAlert				*alert;
+	WCBoard				*board;
+	WCBoardThread		*thread;
+	WCBoardPost			*post;
+	
+	board	= [self _selectedBoard];
+	thread	= [self _selectedThread];
+	post	= [thread postWithID:postID];
+	
+	if(!post)
+		return;
+	
+	alert = [[[NSAlert alloc] init] autorelease];
+	[alert setMessageText:[NSSWF:NSLS(@"Are you sure you want to delete the post \u201c%@\u201d?", @"Delete post dialog title"), [post subject]]];
+	[alert setInformativeText:NSLS(@"This cannot be undone.", @"Delete post dialog description")];
+	[alert addButtonWithTitle:NSLS(@"Delete", @"Delete post button title")];
+	[alert addButtonWithTitle:NSLS(@"Cancel", @"Delete post button title")];
+	[alert beginSheetModalForWindow:[self window]
+					  modalDelegate:self
+					 didEndSelector:@selector(deletePostAlertDidEnd:returnCode:contextInfo:)
+						contextInfo:[[NSArray alloc] initWithObjects:board, thread, post, NULL]];
+}
+
+
+
+- (void)deletePostAlertDidEnd:(NSAlert *)alert returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+	NSArray			*array = contextInfo;
+	WIP7Message		*message;
+	WCBoard			*board = [array objectAtIndex:0];
+	WCBoardThread	*thread = [array objectAtIndex:1];
+	WCBoardPost		*post = [array objectAtIndex:2];
+	
+	if(returnCode == NSAlertFirstButtonReturn) {
+		if([[board connection] isConnected]) {
+			message = [WIP7Message messageWithName:@"wired.board.delete_post" spec:WCP7Spec];
+			[message setString:[board path] forName:@"wired.board.board"];
+			[message setUUID:[thread threadID] forName:@"wired.board.thread"];
+			[message setUUID:[post postID] forName:@"wired.board.post"];
+			[[board connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardDeletePostReply:)];
+		}
+	}
+	
+	[array release];
 }
 
 
@@ -854,10 +1064,13 @@
 	if(!board)
 		return;
 	
-	[_threadSubjectTextField setStringValue:@""];
-	[_threadTextView setString:@""];
+	[_postSubjectTextField setStringValue:@""];
+	[_postTextView setString:@""];
+	[_postButton setTitle:NSLS(@"Create", @"New thread button title")];
 	
-	[NSApp beginSheet:_newThreadPanel
+	[_newPostPanel makeFirstResponder:_postSubjectTextField];
+	
+	[NSApp beginSheet:_newPostPanel
 	   modalForWindow:[self window]
 		modalDelegate:self
 	   didEndSelector:@selector(newThreadPanelDidEnd:returnCode:contextInfo:)
@@ -873,12 +1086,13 @@
 	if(returnCode == NSOKButton) {
 		message = [WIP7Message messageWithName:@"wired.board.add_post" spec:WCP7Spec];
 		[message setString:[board path] forName:@"wired.board.board"];
-		[message setString:[_threadSubjectTextField stringValue] forName:@"wired.board.subject"];
-		[message setString:[_threadTextView string] forName:@"wired.board.text"];
+		[message setString:[_postSubjectTextField stringValue] forName:@"wired.board.subject"];
+		[message setString:[_postTextView string] forName:@"wired.board.text"];
 		[[board connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardAddPostReply:)];
 	}
 
-	[_newThreadPanel close];
+	[_newPostPanel close];
+	[board release];
 }
 
 
@@ -1065,11 +1279,11 @@
 	thread = [[self _selectedBoard] threadAtIndex:row];
 	
 	if(tableColumn == _subjectTableColumn)
-		return [thread subject];
+		return [[thread postAtIndex:0] subject];
 	else if(tableColumn == _nickTableColumn)
-		return [thread nick];
+		return [[thread postAtIndex:0] nick];
 	else if(tableColumn == _timeTableColumn)
-		return [_dateFormatter stringFromDate:[thread postDate]];
+		return [_dateFormatter stringFromDate:[[thread postAtIndex:0] postDate]];
 	
 	return NULL;
 }
@@ -1093,36 +1307,15 @@
 	[_threadsTableView setHighlightedTableColumn:tableColumn];
 //	[self _sortMessages];
 	[_threadsTableView reloadData];
-	[[_threadsTableView delegate] tableViewSelectionDidChange:NULL];
+
+	[self _reloadThread];
+	[self _validate];
 }
 
 
 
 - (void)tableViewSelectionDidChange:(NSNotification *)notification {
-	NSEnumerator		*enumerator;
-	NSMutableString		*html;
-	WCBoardThread		*thread;
-	WCBoardPost			*post;
-	
-	thread = [self _selectedThread];
-	
-	if(thread) {
-		html = [NSMutableString stringWithString:_headerTemplate];
-		
-		if(thread) {
-			[html appendString:[self _HTMLStringForPost:thread]];
-			
-			enumerator = [[thread posts] objectEnumerator];
-			
-			while((post = [enumerator nextObject]))
-				[html appendString:[self _HTMLStringForPost:post]];
-		}
-		
-		[html appendString:_footerTemplate];
-		
-		[[_threadWebView mainFrame] loadHTMLString:html baseURL:NULL];
-	}
-	
+	[self _reloadThread];
 	[self _validate];
 }
 

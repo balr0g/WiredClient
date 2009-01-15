@@ -53,4 +53,6 @@
 - (NSString *)subject;
 - (NSString *)text;
 
+- (NSComparisonResult)comparePostDate:(id)object;
+
 @end

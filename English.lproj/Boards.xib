@@ -9,8 +9,8 @@
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<integer value="215"/>
-			<integer value="166"/>
 			<integer value="176"/>
+			<integer value="166"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -860,7 +860,7 @@
 							<object class="NSButtonCell" key="NSCell" id="436307237">
 								<int key="NSCellFlags">-2080244224</int>
 								<int key="NSCellFlags2">134217728</int>
-								<string key="NSContents">Create</string>
+								<string type="base64-UTF8" key="NSContents">PDxkbyBub3QgbG9jYWxpemU+Pg</string>
 								<reference key="NSSupport" ref="612172572"/>
 								<reference key="NSControlView" ref="273579376"/>
 								<int key="NSButtonFlags">-2038284033</int>
@@ -927,7 +927,7 @@
 													<string>WebURLsWithTitlesPboardType</string>
 												</object>
 											</object>
-											<string key="NSFrameSize">{372, 56}</string>
+											<string key="NSFrameSize">{372, 14}</string>
 											<reference key="NSSuperview" ref="409870172"/>
 											<object class="NSTextContainer" key="NSTextContainer" id="721951467">
 												<object class="NSLayoutManager" key="NSLayoutManager">
@@ -1255,22 +1255,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">_newThreadPanel</string>
-						<reference key="source" ref="879030232"/>
-						<reference key="destination" ref="863829378"/>
-					</object>
-					<int key="connectionID">208</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">_threadTextView</string>
-						<reference key="source" ref="879030232"/>
-						<reference key="destination" ref="89105204"/>
-					</object>
-					<int key="connectionID">210</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">_boardsSplitView</string>
 						<reference key="source" ref="879030232"/>
 						<reference key="destination" ref="609260804"/>
@@ -1399,11 +1383,43 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">_threadSubjectTextField</string>
+						<string key="label">_newPostPanel</string>
+						<reference key="source" ref="879030232"/>
+						<reference key="destination" ref="863829378"/>
+					</object>
+					<int key="connectionID">315</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_postSubjectTextField</string>
 						<reference key="source" ref="879030232"/>
 						<reference key="destination" ref="363045954"/>
 					</object>
-					<int key="connectionID">314</int>
+					<int key="connectionID">316</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_postTextView</string>
+						<reference key="source" ref="879030232"/>
+						<reference key="destination" ref="89105204"/>
+					</object>
+					<int key="connectionID">317</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">frameLoadDelegate</string>
+						<reference key="source" ref="170552868"/>
+						<reference key="destination" ref="879030232"/>
+					</object>
+					<int key="connectionID">318</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_postButton</string>
+						<reference key="source" ref="879030232"/>
+						<reference key="destination" ref="273579376"/>
+					</object>
+					<int key="connectionID">319</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -2198,7 +2214,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">314</int>
+			<int key="maxID">319</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2272,12 +2288,13 @@
 							<string>_boardsView</string>
 							<string>_deleteBoardButton</string>
 							<string>_newBoardPanel</string>
-							<string>_newThreadPanel</string>
+							<string>_newPostPanel</string>
 							<string>_nickTableColumn</string>
+							<string>_postButton</string>
+							<string>_postSubjectTextField</string>
+							<string>_postTextView</string>
 							<string>_subjectTableColumn</string>
 							<string>_threadListView</string>
-							<string>_threadSubjectTextField</string>
-							<string>_threadTextView</string>
 							<string>_threadView</string>
 							<string>_threadWebView</string>
 							<string>_threadsSplitView</string>
@@ -2298,10 +2315,11 @@
 							<string>NSPanel</string>
 							<string>NSPanel</string>
 							<string>NSTableColumn</string>
-							<string>NSTableColumn</string>
-							<string>NSView</string>
+							<string>NSButton</string>
 							<string>NSTextField</string>
 							<string>NSTextView</string>
+							<string>NSTableColumn</string>
+							<string>NSView</string>
 							<string>NSView</string>
 							<string>WebView</string>
 							<string>WISplitView</string>

@@ -110,6 +110,14 @@
 
 #pragma mark -
 
+- (NSString *)description {
+	return [NSSWF:@"<%@: %p>{board = %@}", [self class], self, [self path]];
+}
+
+
+
+#pragma mark -
+
 - (void)setName:(NSString *)name {
 	[name retain];
 	[_name release];

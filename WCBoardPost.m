@@ -72,6 +72,14 @@
 
 #pragma mark -
 
+- (NSString *)description {
+	return [NSSWF:@"<%@: %p>{board = %@, subject = %@, postdate = %@}", [self class], self, [self board], [self subject], [self postDate]];
+}
+
+
+
+#pragma mark -
+
 - (NSString *)board {
 	return _board;
 }
@@ -122,6 +130,14 @@
 
 - (NSString *)text {
 	return _text;
+}
+
+
+
+#pragma mark -
+
+- (NSComparisonResult)comparePostDate:(id)object {
+	return [_postDate compare:[object postDate]];
 }
 
 @end

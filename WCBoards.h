@@ -54,9 +54,10 @@
 	IBOutlet NSPopUpButton				*_boardLocationPopUpButton;
 	IBOutlet NSTextField				*_boardNameTextField;
 	
-	IBOutlet NSPanel					*_newThreadPanel;
-	IBOutlet NSTextField				*_threadSubjectTextField;
-	IBOutlet NSTextView					*_threadTextView;
+	IBOutlet NSPanel					*_newPostPanel;
+	IBOutlet NSTextField				*_postSubjectTextField;
+	IBOutlet NSTextView					*_postTextView;
+	IBOutlet NSButton					*_postButton;
 	
 	WCBoard								*_boards;
 	WIDateFormatter						*_dateFormatter;

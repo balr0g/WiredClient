@@ -30,16 +30,17 @@
 
 @implementation WCBoardThread
 
-+ (id)threadWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection {
-	return [[[self alloc] initWithMessage:message connection:connection] autorelease];
++ (id)threadWithThreadID:(NSString *)threadID connection:(WCServerConnection *)connection {
+	return [[[self alloc] initWithThreadID:threadID connection:connection] autorelease];
 }
 
 
 
-- (id)initWithMessage:(WIP7Message *) message connection:(WCServerConnection *)connection {
-	self = [super initWithMessage:message connection:connection];
+- (id)initWithThreadID:(NSString *)threadID connection:(WCServerConnection *)connection {
+	self = [super initWithConnection:connection];
 	
-	_posts = [[NSMutableArray alloc] init];
+	_threadID	= [threadID retain];
+	_posts		= [[NSMutableArray alloc] init];
 	
 	return self;
 }
@@ -47,9 +48,26 @@
 
 
 - (void)dealloc {
+	[_threadID release];
 	[_posts release];
 	
 	[super dealloc];
+}
+
+
+
+#pragma mark -
+
+- (NSString *)description {
+	return [NSSWF:@"<%@: %p>{posts = %@}", [self class], self, [self posts]];
+}
+
+
+
+#pragma mark -
+
+- (NSString *)threadID {
+	return _threadID;
 }
 
 
@@ -74,8 +92,24 @@
 
 
 
+- (WCBoardPost *)postWithID:(NSString *)postID {
+	NSEnumerator		*enumerator;
+	WCBoardPost			*post;
+	
+	enumerator = [_posts objectEnumerator];
+	
+	while((post = [enumerator nextObject])) {
+		if([[post postID] isEqualToString:postID])
+			return post;
+	}
+	
+	return NULL;
+}
+
+
+
 - (void)addPost:(WCBoardPost *)post {
-	[_posts addObject:post];
+	[_posts addObject:post sortedUsingSelector:@selector(comparePostDate:)];
 }
 
 
