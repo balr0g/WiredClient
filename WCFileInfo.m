@@ -485,12 +485,15 @@
 
 - (void)controlTextDidChange:(NSNotification *)notification {
 	NSControl		*control;
+	WCFileType		type;
 	
 	control = [notification object];
 	
 	if(control == _fileTextField) {
-		[_kindPopUpButton selectItemWithTag:
-			[WCFile folderTypeForString:[_fileTextField stringValue]]];
+		type = [WCFile folderTypeForString:[_fileTextField stringValue]];
+		
+		if(type == WCFileUploads || type == WCFileDropBox)
+			[_kindPopUpButton selectItemWithTag:type];
 	}
 }
 
