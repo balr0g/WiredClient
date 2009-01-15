@@ -26,21 +26,24 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "WCBoardPost.h"
 #import "WCBoardThread.h"
 
 @implementation WCBoardThread
 
-+ (id)threadWithThreadID:(NSString *)threadID connection:(WCServerConnection *)connection {
-	return [[[self alloc] initWithThreadID:threadID connection:connection] autorelease];
++ (id)threadWithPost:(WCBoardPost *)post connection:(WCServerConnection *)connection {
+	return [[[self alloc] initWithPost:post connection:connection] autorelease];
 }
 
 
 
-- (id)initWithThreadID:(NSString *)threadID connection:(WCServerConnection *)connection {
+- (id)initWithPost:(WCBoardPost *)post connection:(WCServerConnection *)connection {
 	self = [super initWithConnection:connection];
 	
-	_threadID	= [threadID retain];
 	_posts		= [[NSMutableArray alloc] init];
+	_threadID	= [[post threadID] retain];
+	
+	[_posts addObject:post];
 	
 	return self;
 }
@@ -59,7 +62,7 @@
 #pragma mark -
 
 - (NSString *)description {
-	return [NSSWF:@"<%@: %p>{posts = %@}", [self class], self, [self posts]];
+	return [NSSWF:@"<%@: %p>{id = %@, posts = %@}", [self class], self, [self threadID], [self posts]];
 }
 
 
@@ -109,7 +112,7 @@
 
 
 - (void)addPost:(WCBoardPost *)post {
-	[_posts addObject:post sortedUsingSelector:@selector(comparePostDate:)];
+	[_posts addObject:post sortedUsingSelector:@selector(compareDate:)];
 }
 
 
@@ -122,6 +125,40 @@
 
 - (void)removeAllPosts {
 	[_posts removeAllObjects];
+}
+
+
+
+#pragma mark -
+
+- (NSComparisonResult)compareSubject:(id)object {
+	NSComparisonResult		result;
+	
+	result = [[[_posts objectAtIndex:0] subject] compare:[[object postAtIndex:0] subject] options:NSCaseInsensitiveSearch];
+	
+	if(result == NSOrderedSame)
+		result = [self compareDate:object];
+	
+	return result;
+}
+
+
+
+- (NSComparisonResult)compareNick:(id)object {
+	NSComparisonResult		result;
+	
+	result = [[[_posts objectAtIndex:0] nick] compare:[[object postAtIndex:0] nick] options:NSCaseInsensitiveSearch];
+	
+	if(result == NSOrderedSame)
+		result = [self compareDate:object];
+	
+	return result;
+}
+
+
+
+- (NSComparisonResult)compareDate:(id)object {
+	return [[[_posts objectAtIndex:0] postDate] compare:[[object postAtIndex:0] postDate]];
 }
 
 @end

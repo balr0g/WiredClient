@@ -268,8 +268,14 @@
 
 
 
-- (void)addThread:(WCBoardThread *)thread {
-	[_threadsArray addObject:thread];
+- (NSUInteger)indexOfThread:(WCBoardThread *)thread {
+	return [_threadsArray indexOfObject:thread];
+}
+
+
+
+- (void)addThread:(WCBoardThread *)thread sortedUsingSelector:(SEL)selector {
+	[_threadsArray addObject:thread sortedUsingSelector:selector];
 	[_threadsDictionary setObject:thread forKey:[thread threadID]];
 }
 
@@ -285,6 +291,12 @@
 - (void)removeAllThreads {
 	[_threadsArray removeAllObjects];
 	[_threadsDictionary removeAllObjects];
+}
+
+
+
+- (void)sortThreadsUsingSelector:(SEL)selector {
+	[_threadsArray sortUsingSelector:selector];
 }
 
 

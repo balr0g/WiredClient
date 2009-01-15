@@ -26,15 +26,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WCBoardPost.h"
+@class WCBoardPost;
 
 @interface WCBoardThread : WCServerConnectionObject {
 	NSString					*_threadID;
 	NSMutableArray				*_posts;
 }
 
-+ (id)threadWithThreadID:(NSString *)threadID connection:(WCServerConnection *)connection;
-- (id)initWithThreadID:(NSString *)threadID connection:(WCServerConnection *)connection;
++ (id)threadWithPost:(WCBoardPost *)post connection:(WCServerConnection *)connection;
+- (id)initWithPost:(WCBoardPost *)post connection:(WCServerConnection *)connection;
 
 - (NSString *)threadID;
 
@@ -45,5 +45,9 @@
 - (void)addPost:(WCBoardPost *)post;
 - (void)removePost:(WCBoardPost *)post;
 - (void)removeAllPosts;
+
+- (NSComparisonResult)compareSubject:(id)object;
+- (NSComparisonResult)compareNick:(id)object;
+- (NSComparisonResult)compareDate:(id)object;
 
 @end

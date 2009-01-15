@@ -50,11 +50,11 @@
 
 	IBOutlet WebView					*_threadWebView;
 	
-	IBOutlet NSPanel					*_newBoardPanel;
+	IBOutlet NSPanel					*_boardPanel;
 	IBOutlet NSPopUpButton				*_boardLocationPopUpButton;
 	IBOutlet NSTextField				*_boardNameTextField;
 	
-	IBOutlet NSPanel					*_newPostPanel;
+	IBOutlet NSPanel					*_postPanel;
 	IBOutlet NSTextField				*_postSubjectTextField;
 	IBOutlet NSTextView					*_postTextView;
 	IBOutlet NSButton					*_postButton;
@@ -69,9 +69,10 @@
 
 + (id)boards;
 
-- (IBAction)newBoard:(id)sender;
+- (IBAction)addBoard:(id)sender;
 - (IBAction)deleteBoard:(id)sender;
 - (IBAction)renameBoard:(id)sender;
-- (IBAction)newThread:(id)sender;
+- (IBAction)addThread:(id)sender;
+- (IBAction)deleteThread:(id)sender;
 
 @end

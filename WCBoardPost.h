@@ -47,12 +47,15 @@
 - (NSString *)threadID;
 - (NSString *)postID;
 - (NSDate *)postDate;
+- (void)setEditDate:(NSDate *)editDate;
 - (NSDate *)editDate;
 - (NSString *)nick;
 - (NSString *)login;
+- (void)setSubject:(NSString *)subject;
 - (NSString *)subject;
+- (void)setText:(NSString *)text;
 - (NSString *)text;
 
-- (NSComparisonResult)comparePostDate:(id)object;
+- (NSComparisonResult)compareDate:(id)object;
 
 @end

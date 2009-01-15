@@ -62,9 +62,11 @@
 - (NSArray *)threads;
 - (WCBoardThread *)threadAtIndex:(NSUInteger)index;
 - (WCBoardThread *)threadWithID:(NSString *)string;
-- (void)addThread:(WCBoardThread *)thread;
+- (NSUInteger)indexOfThread:(WCBoardThread *)thread;
+- (void)addThread:(WCBoardThread *)thread sortedUsingSelector:(SEL)selector;
 - (void)removeThread:(WCBoardThread *)thread;
 - (void)removeAllThreads;
+- (void)sortThreadsUsingSelector:(SEL)selector;
 
 - (void)invalidateForConnection:(WCServerConnection *)connection;
 - (void)revalidateForConnection:(WCServerConnection *)connection;

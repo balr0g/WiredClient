@@ -73,7 +73,8 @@
 #pragma mark -
 
 - (NSString *)description {
-	return [NSSWF:@"<%@: %p>{board = %@, subject = %@, postdate = %@}", [self class], self, [self board], [self subject], [self postDate]];
+	return [NSSWF:@"<%@: %p>{id = %@, board = %@, subject = %@, postdate = %@}",
+		[self class], self, [self postID], [self board], [self subject], [self postDate]];
 }
 
 
@@ -104,6 +105,15 @@
 
 
 
+- (void)setEditDate:(NSDate *)editDate {
+	[editDate retain];
+	[_editDate release];
+	
+	_editDate = editDate;
+}
+
+
+
 - (NSDate *)editDate {
 	return _editDate;
 }
@@ -122,8 +132,26 @@
 
 
 
+- (void)setSubject:(NSString *)subject {
+	[subject retain];
+	[_subject release];
+	
+	_subject = subject;
+}
+
+
+
 - (NSString *)subject {
 	return _subject;
+}
+
+
+
+- (void)setText:(NSString *)text {
+	[text retain];
+	[_text release];
+	
+	_text = text;
 }
 
 
@@ -136,7 +164,7 @@
 
 #pragma mark -
 
-- (NSComparisonResult)comparePostDate:(id)object {
+- (NSComparisonResult)compareDate:(id)object {
 	return [_postDate compare:[object postDate]];
 }
 
