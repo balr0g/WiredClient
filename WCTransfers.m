@@ -1909,9 +1909,9 @@ end:
 	NSString		*string;
 	NSUInteger		index;
 
-	transfer = [_transfers objectAtIndex:[indexes firstIndex]];
-
-	string = [NSSWF:@"%@ - %@", [transfer name], [transfer status]];
+	index		= [indexes firstIndex];
+	transfer	= [_transfers objectAtIndex:index];
+	string		= [NSSWF:@"%@ - %@", [transfer name], [transfer status]];
 
 	[pasteboard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, WCTransferPboardType, NULL] owner:NULL];
 	[pasteboard setString:[NSSWF:@"%ld", index] forType:WCTransferPboardType];
