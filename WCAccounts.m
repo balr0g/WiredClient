@@ -946,6 +946,8 @@
 
 	while((account = [enumerator nextObject]))
 		[array addObject:[account name]];
+	
+	[array sortUsingSelector:@selector(caseInsensitiveCompare:)];
 
 	return array;
 }
@@ -980,6 +982,8 @@
 
 	while((account = [enumerator nextObject]))
 		[array addObject:[account name]];
+	
+	[array sortUsingSelector:@selector(caseInsensitiveCompare:)];
 
 	return array;
 }

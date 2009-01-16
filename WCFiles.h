@@ -42,9 +42,14 @@
 	IBOutlet NSBrowser				*_filesBrowser;
 
 	IBOutlet NSPanel				*_createFolderPanel;
-	IBOutlet NSTextField			*_createFolderTextField;
-	IBOutlet NSPopUpButton			*_createFolderPopUpButton;
-
+	IBOutlet NSTextField			*_nameTextField;
+	IBOutlet NSPopUpButton			*_typePopUpButton;
+	IBOutlet NSPopUpButton			*_ownerPopUpButton;
+	IBOutlet NSPopUpButton			*_ownerPermissionsPopUpButton;
+	IBOutlet NSPopUpButton			*_groupPopUpButton;
+	IBOutlet NSPopUpButton			*_groupPermissionsPopUpButton;
+	IBOutlet NSPopUpButton			*_everyonePermissionsPopUpButton;
+	
 	IBOutlet NSMenu					*_titleBarMenu;
 	
 	IBOutlet NSSegmentedControl		*_historyControl;
@@ -88,6 +93,7 @@
 - (IBAction)getInfo:(id)sender;
 - (IBAction)preview:(id)sender;
 - (IBAction)createFolder:(id)sender;
+- (IBAction)type:(id)sender;
 - (IBAction)reloadFiles:(id)sender;
 - (IBAction)deleteFiles:(id)sender;
 

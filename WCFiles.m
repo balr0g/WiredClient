@@ -27,6 +27,7 @@
  */
 
 #import "WCAccount.h"
+#import "WCAccounts.h"
 #import "WCCache.h"
 #import "WCFile.h"
 #import "WCFileInfo.h"
@@ -66,6 +67,8 @@
 - (BOOL)_acceptDrop:(id <NSDraggingInfo>)info inDestination:(WCFile *)destination;
 
 - (BOOL)_validateUpload;
+
+- (void)_validatePermissions;
 
 @end
 
@@ -564,11 +567,28 @@
 	WCAccount		*account;
 	WCFileType		type;
 	
-	account = [[self connection] account];
-	type = [[self _currentPath] type];
+	account		= [[self connection] account];
+	type		= [[self _currentPath] type];
 
 	return ([account transferUploadAnywhere] ||
 		   ([account transferUploadFiles] && (type == WCFileUploads || type == WCFileDropBox)));
+}
+
+
+
+#pragma mark -
+
+- (void)_validatePermissions {
+	BOOL			setPermissions, dropBox;
+	
+	setPermissions	= [[[self connection] account] fileSetPermissions];
+	dropBox			= ([_typePopUpButton tagOfSelectedItem] == WCFileDropBox);
+	
+	[_ownerPopUpButton setEnabled:(dropBox && setPermissions)];
+	[_ownerPermissionsPopUpButton setEnabled:(dropBox && setPermissions)];
+	[_groupPopUpButton setEnabled:(dropBox && setPermissions)];
+	[_groupPermissionsPopUpButton setEnabled:(dropBox && setPermissions)];
+	[_everyonePermissionsPopUpButton setEnabled:(dropBox && setPermissions)];
 }
 
 @end
@@ -768,12 +788,15 @@
 
 - (void)controlTextDidChange:(NSNotification *)notification {
 	NSControl		*control;
+	WCFileType		type;
 	
 	control = [notification object];
 	
-	if(control == _createFolderTextField) {
-		[_createFolderPopUpButton selectItemWithTag:
-			[WCFile folderTypeForString:[_createFolderTextField stringValue]]];
+	if(control == _nameTextField) {
+		type = [WCFile folderTypeForString:[_nameTextField stringValue]];
+		
+		if(type != WCFileDirectory)
+			[_typePopUpButton selectItemWithTag:type];
 	}
 }
 
@@ -871,7 +894,7 @@
 	BOOL	valid = YES;
 	
 	if([sender window] == _createFolderPanel)
-		valid = ([[_createFolderTextField stringValue] length] > 0);
+		valid = ([[_nameTextField stringValue] length] > 0);
 	
 	if(valid)
 		[super submitSheet:sender];
@@ -1057,18 +1080,49 @@
 
 - (IBAction)createFolder:(id)sender {
 	NSEnumerator		*enumerator;
+	NSArray				*array;
 	NSMenuItem			*item;
 	
-	if(![[_createFolderPopUpButton lastItem] image]) {
-		enumerator = [[_createFolderPopUpButton itemArray] objectEnumerator];
+	if(![[_typePopUpButton lastItem] image]) {
+		enumerator = [[_typePopUpButton itemArray] objectEnumerator];
 		
 		while((item = [enumerator nextObject]))
 			[item setImage:[WCFile iconForFolderType:[item tag] width:16.0]];
 	}
 	
-	[_createFolderTextField setStringValue:NSLS(@"Untitled", @"New folder name")];
-	[_createFolderTextField selectText:self];
-	[_createFolderPopUpButton selectItemWithTag:WCFileDirectory];
+	[_nameTextField setStringValue:NSLS(@"Untitled", @"New folder name")];
+	[_nameTextField selectText:self];
+	[_typePopUpButton selectItemWithTag:WCFileDirectory];
+	
+	[self _validatePermissions];
+	
+	[_ownerPopUpButton removeAllItems];
+	[_ownerPopUpButton addItem:[NSMenuItem itemWithTitle:NSLS(@"None", @"Create folder owner popup title") tag:1]];
+	
+	array = [[[self connection] accounts] userNames];
+	
+	if([array count] > 0) {
+		[_ownerPopUpButton addItem:[NSMenuItem separatorItem]];
+		[_ownerPopUpButton addItemsWithTitles:array];
+		[_ownerPopUpButton selectItemWithTitle:[[[self connection] URL] user]];
+	}
+	
+	[_ownerPermissionsPopUpButton selectItemWithTag:WCFileRead | WCFileWrite];
+	
+	[_groupPopUpButton removeAllItems];
+	[_groupPopUpButton addItem:[NSMenuItem itemWithTitle:NSLS(@"None", @"Create folder group popup title") tag:1]];
+	
+	array = [[[self connection] accounts] groupNames];
+	
+	if([array count] > 0) {
+		[_groupPopUpButton addItem:[NSMenuItem separatorItem]];
+		[_groupPopUpButton addItemsWithTitles:array];
+	}
+	
+	[_groupPopUpButton selectItemAtIndex:0];
+	[_groupPermissionsPopUpButton selectItemWithTag:0];
+
+	[_everyonePermissionsPopUpButton selectItemWithTag:WCFileWrite];
 	
 	[NSApp beginSheet:_createFolderPanel
 	   modalForWindow:[self window]
@@ -1080,25 +1134,49 @@
 
 
 - (void)createFolderSheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-	NSString		*path;
+	NSString		*path, *owner, *group;
 	WIP7Message		*message;
+	NSUInteger		ownerPermissions, groupPermissions, everyonePermissions;
 	WCFileType		type;
 
 	[_createFolderPanel close];
 
 	if(returnCode == NSAlertDefaultReturn) {
-		path = [[[self _currentPath] path] stringByAppendingPathComponent:[_createFolderTextField stringValue]];
+		path = [[[self _currentPath] path] stringByAppendingPathComponent:[_nameTextField stringValue]];
 		
 		message = [WIP7Message messageWithName:@"wired.file.create_directory" spec:WCP7Spec];
 		[message setString:path forName:@"wired.file.path"];
 		
-		type = [_createFolderPopUpButton tagOfSelectedItem];
+		type = [_typePopUpButton tagOfSelectedItem];
 
 		if(type != WCFileDirectory)
 			[message setEnum:type forName:@"wired.file.type"];
 		
+		if(type == WCFileDropBox) {
+			owner					= ([_ownerPopUpButton tagOfSelectedItem] == 0) ? [_ownerPopUpButton titleOfSelectedItem] : @"";
+			ownerPermissions		= [_ownerPermissionsPopUpButton tagOfSelectedItem];
+			group					= ([_ownerPopUpButton tagOfSelectedItem] == 0) ? [_groupPopUpButton titleOfSelectedItem] : @"";
+			groupPermissions		= [_groupPermissionsPopUpButton tagOfSelectedItem];
+			everyonePermissions		= [_everyonePermissionsPopUpButton tagOfSelectedItem];
+			
+			[message setString:owner forName:@"wired.file.owner"];
+			[message setBool:(ownerPermissions & WCFileRead) forName:@"wired.file.owner.read"];
+			[message setBool:(ownerPermissions & WCFileWrite) forName:@"wired.file.owner.write"];
+			[message setString:group forName:@"wired.file.group"];
+			[message setBool:(groupPermissions & WCFileRead) forName:@"wired.file.group.read"];
+			[message setBool:(groupPermissions & WCFileWrite) forName:@"wired.file.group.write"];
+			[message setBool:(everyonePermissions & WCFileRead) forName:@"wired.file.everyone.read"];
+			[message setBool:(everyonePermissions & WCFileWrite) forName:@"wired.file.everyone.write"];
+		}
+		
 		[[self connection] sendMessage:message];
 	}
+}
+
+
+
+- (IBAction)type:(id)sender {
+	[self _validatePermissions];
 }
 
 
