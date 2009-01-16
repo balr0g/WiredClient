@@ -1309,7 +1309,7 @@
 	
 	[_ownerPermissionsPopUpButton selectItemWithTag:WCBoardOwnerRead | WCBoardOwnerWrite];
 	[_groupPermissionsPopUpButton selectItemWithTag:0];
-	[_everyonePermissionsPopUpButton selectItemWithTag:WCBoardEveryoneWrite];
+	[_everyonePermissionsPopUpButton selectItemWithTag:WCBoardEveryoneRead | WCBoardEveryoneWrite];
 
 	[_boardPanel makeFirstResponder:_nameTextField];
 

@@ -8,8 +8,8 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="167"/>
 			<integer value="175"/>
+			<integer value="167"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -347,7 +347,7 @@
 												<reference key="NSControlView" ref="738751736"/>
 												<int key="NSButtonFlags">-2046803713</int>
 												<int key="NSButtonFlags2">6</int>
-												<object class="NSCustomResource" key="NSNormalImage">
+												<object class="NSCustomResource" key="NSNormalImage" id="846656810">
 													<string key="NSClassName">NSImage</string>
 													<string key="NSResourceName">SourceAction</string>
 												</object>
@@ -361,10 +361,7 @@
 													<string key="NSKeyEquiv"/>
 													<int key="NSMnemonicLoc">2147483647</int>
 													<int key="NSState">1</int>
-													<object class="NSCustomResource" key="NSImage">
-														<string key="NSClassName">NSImage</string>
-														<string key="NSResourceName">SourceAction</string>
-													</object>
+													<reference key="NSImage" ref="846656810"/>
 													<object class="NSCustomResource" key="NSOnImage" id="651194922">
 														<string key="NSClassName">NSImage</string>
 														<string key="NSResourceName">NSMenuCheckmark</string>
@@ -684,7 +681,7 @@
 			<object class="NSWindowTemplate" id="762108780">
 				<int key="NSWindowStyleMask">7</int>
 				<int key="NSWindowBacking">2</int>
-				<string key="NSWindowRect">{{196, 226}, {425, 284}}</string>
+				<string key="NSWindowRect">{{196, 221}, {425, 289}}</string>
 				<int key="NSWTFlags">-469762048</int>
 				<string type="base64-UTF8" key="NSWindowTitle">PDxkbyBub3QgbG9jYWxpemU+Pg</string>
 				<string key="NSWindowClass">NSPanel</string>
@@ -738,7 +735,7 @@
 						<object class="NSTextField" id="709711625">
 							<reference key="NSNextResponder" ref="37014376"/>
 							<int key="NSvFlags">266</int>
-							<string key="NSFrame">{{87, 208}, {318, 22}}</string>
+							<string key="NSFrame">{{87, 213}, {318, 22}}</string>
 							<reference key="NSSuperview" ref="37014376"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="882210267">
@@ -765,7 +762,7 @@
 						<object class="NSPopUpButton" id="1014501611">
 							<reference key="NSNextResponder" ref="37014376"/>
 							<int key="NSvFlags">268</int>
-							<string key="NSFrame">{{84, 240}, {190, 26}}</string>
+							<string key="NSFrame">{{84, 245}, {190, 26}}</string>
 							<reference key="NSSuperview" ref="37014376"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSPopUpButtonCell" key="NSCell" id="473320614">
@@ -797,7 +794,7 @@
 						<object class="NSTextField" id="232737477">
 							<reference key="NSNextResponder" ref="37014376"/>
 							<int key="NSvFlags">268</int>
-							<string key="NSFrame">{{37, 210}, {45, 17}}</string>
+							<string key="NSFrame">{{37, 215}, {45, 17}}</string>
 							<reference key="NSSuperview" ref="37014376"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="479521474">
@@ -818,7 +815,7 @@
 						<object class="NSTextField" id="678744456">
 							<reference key="NSNextResponder" ref="37014376"/>
 							<int key="NSvFlags">268</int>
-							<string key="NSFrame">{{20, 246}, {62, 17}}</string>
+							<string key="NSFrame">{{20, 251}, {62, 17}}</string>
 							<reference key="NSSuperview" ref="37014376"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="109290414">
@@ -1220,7 +1217,7 @@
 							</object>
 						</object>
 					</object>
-					<string key="NSFrameSize">{425, 284}</string>
+					<string key="NSFrameSize">{425, 289}</string>
 					<reference key="NSSuperview"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1280, 778}}</string>
@@ -2887,8 +2884,8 @@
 					<reference ref="235375869"/>
 					<real value="0.000000e+00"/>
 					<real value="0.000000e+00"/>
-					<string>{{394, 209}, {425, 284}}</string>
-					<string>{{394, 209}, {425, 284}}</string>
+					<string>{{394, 204}, {425, 289}}</string>
+					<string>{{394, 204}, {425, 289}}</string>
 					<boolean value="NO" id="6"/>
 					<reference ref="6"/>
 					<reference ref="6"/>
