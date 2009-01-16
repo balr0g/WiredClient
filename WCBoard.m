@@ -89,11 +89,41 @@
 
 
 + (id)boardWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection {
-	NSString		*path;
+	NSString		*path, *owner, *group;
+	WCBoard			*board;
+	NSUInteger		permissions;
+	WIP7Bool		value;
 	
-	path = [message stringForName:@"wired.board.board"];
+	path	= [message stringForName:@"wired.board.board"];
+	owner	= [message stringForName:@"wired.board.owner"];
+	group	= [message stringForName:@"wired.board.group"];
 	
-	return [[[self alloc] _initWithPath:path name:[path lastPathComponent] connection:connection] autorelease];
+	permissions = 0;
+	
+	if([message getBool:&value forName:@"wired.board.owner.read"])
+		permissions |= WCBoardOwnerRead;
+	
+	if([message getBool:&value forName:@"wired.board.owner.write"])
+		permissions |= WCBoardOwnerWrite;
+	
+	if([message getBool:&value forName:@"wired.board.group.read"])
+		permissions |= WCBoardGroupRead;
+	
+	if([message getBool:&value forName:@"wired.board.group.write"])
+		permissions |= WCBoardGroupWrite;
+	
+	if([message getBool:&value forName:@"wired.board.everyone.read"])
+		permissions |= WCBoardEveryoneRead;
+	
+	if([message getBool:&value forName:@"wired.board.everyone.write"])
+		permissions |= WCBoardEveryoneWrite;
+	
+	board = [[self alloc] _initWithPath:path name:[path lastPathComponent] connection:connection];
+	[board setOwner:owner];
+	[board setGroup:group];
+	[board setPermissions:permissions];
+	
+	return [board autorelease];
 }
 
 
@@ -144,6 +174,48 @@
 
 - (NSString *)path {
 	return _path;
+}
+
+
+
+- (void)setOwner:(NSString *)owner {
+	[owner retain];
+	[_owner release];
+	
+	_owner = owner;
+}
+
+
+
+- (NSString *)owner {
+	return _owner;
+}
+
+
+
+- (void)setGroup:(NSString *)group {
+	[group retain];
+	[_group release];
+	
+	_group = group;
+}
+
+
+
+- (NSString *)group {
+	return _group;
+}
+
+
+
+- (void)setPermissions:(NSUInteger)permissions {
+	_permissions = permissions;
+}
+
+
+
+- (NSUInteger)permissions {
+	return _permissions;
 }
 
 
@@ -225,7 +297,7 @@
 
 
 - (void)addBoard:(WCBoard *)board {
-	[_boards addObject:board];
+	[_boards addObject:board sortedUsingSelector:@selector(compareName:)];
 }
 
 

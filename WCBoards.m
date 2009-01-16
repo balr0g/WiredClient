@@ -27,6 +27,7 @@
  */
 
 #import "WCAccount.h"
+#import "WCAccounts.h"
 #import "WCBoard.h"
 #import "WCBoards.h"
 #import "WCBoardPost.h"
@@ -58,6 +59,7 @@
 
 - (void)_reloadLocationsAndSelectBoard:(WCBoard *)board;
 - (void)_addLocationsForChildrenOfBoard:(WCBoard *)board level:(NSUInteger)level;
+- (void)_updatePermissions;
 
 @end
 
@@ -73,7 +75,7 @@
 	thread			= [self _selectedThread];
 	connection		= [board connection];
 	
-	[_addBoardButton setEnabled:([_boardLocationPopUpButton numberOfItems] > 0)];
+	[_addBoardButton setEnabled:([_locationPopUpButton numberOfItems] > 0)];
 	[_deleteBoardButton setEnabled:(board != NULL && [board isModifiable] && [connection isConnected] /* && [[connection account] boardDeleteBoards]*/)];
 	
 	[[[self window] toolbar] validateVisibleItems];
@@ -270,14 +272,14 @@
 #pragma mark -
 
 - (void)_reloadLocationsAndSelectBoard:(WCBoard *)board {
-	[_boardLocationPopUpButton removeAllItems];
+	[_locationPopUpButton removeAllItems];
 	
 	[self _addLocationsForChildrenOfBoard:_boards level:0];
 	
 	if(board)
-		[_boardLocationPopUpButton selectItemWithRepresentedObject:board];
+		[_locationPopUpButton selectItemWithRepresentedObject:board];
 	else
-		[_boardLocationPopUpButton selectItemAtIndex:0];
+		[_locationPopUpButton selectItemAtIndex:0];
 }
 
 
@@ -294,10 +296,56 @@
 		[item setRepresentedObject:childBoard];
 		[item setIndentationLevel:level];
 		
-		[_boardLocationPopUpButton addItem:item];
+		[_locationPopUpButton addItem:item];
 		
 		[self _addLocationsForChildrenOfBoard:childBoard level:level + 1];
 	}
+}
+
+
+
+- (void)_updatePermissions {
+	NSArray			*array;
+	NSString		*selectedOwner, *selectedGroup;
+	WCBoard			*board;
+	
+	board = [_locationPopUpButton representedObjectOfSelectedItem];
+	
+	selectedOwner = [_ownerPopUpButton titleOfSelectedItem];
+	
+	[_ownerPopUpButton removeAllItems];
+	[_ownerPopUpButton addItem:[NSMenuItem itemWithTitle:NSLS(@"None", @"Create folder owner popup title") tag:1]];
+	
+	array = [[[board connection] accounts] userNames];
+	
+	if([array count] > 0) {
+		[_ownerPopUpButton addItem:[NSMenuItem separatorItem]];
+		[_ownerPopUpButton addItemsWithTitles:array];
+		
+		if(selectedOwner && [_ownerPopUpButton indexOfItemWithTitle:selectedOwner] != -1)
+			[_ownerPopUpButton selectItemWithTitle:selectedOwner];
+		else
+			[_ownerPopUpButton selectItemWithTitle:[[[board connection] URL] user]];
+	}
+	
+	selectedGroup = [_groupPopUpButton titleOfSelectedItem];
+	
+	[_groupPopUpButton removeAllItems];
+	[_groupPopUpButton addItem:[NSMenuItem itemWithTitle:NSLS(@"None", @"Create folder group popup title") tag:1]];
+	
+	array = [[[board connection] accounts] groupNames];
+	
+	if([array count] > 0) {
+		[_groupPopUpButton addItem:[NSMenuItem separatorItem]];
+		[_groupPopUpButton addItemsWithTitles:array];
+
+		if(selectedGroup && [_groupPopUpButton indexOfItemWithTitle:selectedGroup] != -1)
+			[_groupPopUpButton selectItemWithTitle:selectedGroup];
+		else
+			[_groupPopUpButton selectItemAtIndex:0];
+	}
+	
+	[_groupPermissionsPopUpButton selectItemWithTag:0];
 }
 
 @end
@@ -638,18 +686,33 @@
 
 - (void)wiredBoardBoardAdded:(WIP7Message *)message {
 	WCServerConnection	*connection;
-	WCBoard				*board, *parent;
+	WCBoard				*board, *parent, *selectedBoard;
+	WCBoardThread		*selectedThread;
+	NSUInteger			index;
 	
-	connection	= [message contextInfo];
-	board		= [WCBoard boardWithMessage:message connection:connection];
-	parent		= [[_boards boardForConnection:connection] boardForPath:[board path]];
-		
+	connection		= [message contextInfo];
+	board			= [WCBoard boardWithMessage:message connection:connection];
+	parent			= [[_boards boardForConnection:connection] boardForPath:[board path]];
+	selectedBoard	= [self _selectedBoard];
+	selectedThread	= [self _selectedThread];
+	
 	[parent addBoard:board];
 
 	[_boardsOutlineView reloadData];
 	[_boardsOutlineView expandItem:parent];
 	
-	[self _reloadLocationsAndSelectBoard:[_boardLocationPopUpButton representedObjectOfSelectedItem]];
+	if(selectedBoard) {
+		index = [_boardsOutlineView rowForItem:selectedBoard];
+		
+		[_boardsOutlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
+		
+		if(selectedThread)
+			[self _selectThread:selectedThread];
+		
+		[self _reloadThread];
+	}
+	
+	[self _reloadLocationsAndSelectBoard:[_locationPopUpButton representedObjectOfSelectedItem]];
 	[self _validate];
 }
 
@@ -670,7 +733,7 @@
 	
 	[_boardsOutlineView reloadData];
 	
-	[self _reloadLocationsAndSelectBoard:[_boardLocationPopUpButton representedObjectOfSelectedItem]];
+	[self _reloadLocationsAndSelectBoard:[_locationPopUpButton representedObjectOfSelectedItem]];
 	[self _validate];
 }
 
@@ -699,7 +762,7 @@
 	[_boardsOutlineView reloadData];
 	[_boardsOutlineView expandItem:newParent];
 	
-	[self _reloadLocationsAndSelectBoard:[_boardLocationPopUpButton representedObjectOfSelectedItem]];
+	[self _reloadLocationsAndSelectBoard:[_locationPopUpButton representedObjectOfSelectedItem]];
 	[self _validate];
 }
 
@@ -718,7 +781,7 @@
 	
 	[_boardsOutlineView reloadData];
 	
-	[self _reloadLocationsAndSelectBoard:[_boardLocationPopUpButton representedObjectOfSelectedItem]];
+	[self _reloadLocationsAndSelectBoard:[_locationPopUpButton representedObjectOfSelectedItem]];
 	[self _validate];
 }
 
@@ -742,11 +805,11 @@
 	
 	if(board == [self _selectedBoard]) {
 		[_threadsTableView reloadData];
-
-		[self _reloadThread];
 		
 		if(selectedThread)
 			[self _selectThread:selectedThread];
+		
+		[self _reloadThread];
 	}
 }
 
@@ -774,11 +837,11 @@
 	
 	if(oldBoard == [self _selectedBoard] || newBoard == [self _selectedBoard]) {
 		[_threadsTableView reloadData];
-
-		[self _reloadThread];
 		
 		if(selectedThread)
 			[self _selectThread:selectedThread];
+		
+		[self _reloadThread];
 	}
 }
 
@@ -1070,6 +1133,22 @@
 
 #pragma mark -
 
+- (void)submitSheet:(id)sender {
+	BOOL	valid = YES;
+	
+	if([sender window] == _boardPanel)
+		valid = ([[_nameTextField stringValue] length] > 0);
+	else if([sender window] == _postPanel)
+		valid = ([[_subjectTextField stringValue] length] > 0 && [[_postTextView string] length] > 0);
+	
+	if(valid)
+		[super submitSheet:sender];
+}
+
+
+
+#pragma mark -
+
 - (void)replyToPostWithID:(NSString *)postID {
 	NSString			*subject;
 	WCBoard				*board;
@@ -1088,7 +1167,7 @@
 	if(![subject hasPrefix:@"Re: "])
 		subject = [@"Re: " stringByAppendingString:subject];
 	
-	[_postSubjectTextField setStringValue:subject];
+	[_subjectTextField setStringValue:subject];
 	[_postTextView setString:@""];
 	[_postButton setTitle:NSLS(@"Reply", @"Reply post button title")];
 	
@@ -1113,7 +1192,7 @@
 		message = [WIP7Message messageWithName:@"wired.board.add_post" spec:WCP7Spec];
 		[message setString:[board path] forName:@"wired.board.board"];
 		[message setUUID:[thread threadID] forName:@"wired.board.thread"];
-		[message setString:[_postSubjectTextField stringValue] forName:@"wired.board.subject"];
+		[message setString:[_subjectTextField stringValue] forName:@"wired.board.subject"];
 		[message setString:[_postTextView string] forName:@"wired.board.text"];
 		[[board connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardAddPostReply:)];
 	}
@@ -1136,7 +1215,7 @@
 	if(!post)
 		return;
 	
-	[_postSubjectTextField setStringValue:[post subject]];
+	[_subjectTextField setStringValue:[post subject]];
 	[_postTextView setString:[post text]];
 	[_postButton setTitle:NSLS(@"Edit", @"Edit post button title")];
 	
@@ -1163,7 +1242,7 @@
 		[message setString:[board path] forName:@"wired.board.board"];
 		[message setUUID:[thread threadID] forName:@"wired.board.thread"];
 		[message setUUID:[post postID] forName:@"wired.board.post"];
-		[message setString:[_postSubjectTextField stringValue] forName:@"wired.board.subject"];
+		[message setString:[_subjectTextField stringValue] forName:@"wired.board.subject"];
 		[message setString:[_postTextView string] forName:@"wired.board.text"];
 		[[board connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardEditPostReply:)];
 	}
@@ -1226,9 +1305,14 @@
 
 - (IBAction)addBoard:(id)sender {
 	[self _reloadLocationsAndSelectBoard:[self _selectedBoard]];
+	[self _updatePermissions];
 	
-	[_boardPanel makeFirstResponder:_boardNameTextField];
-	
+	[_ownerPermissionsPopUpButton selectItemWithTag:WCBoardOwnerRead | WCBoardOwnerWrite];
+	[_groupPermissionsPopUpButton selectItemWithTag:0];
+	[_everyonePermissionsPopUpButton selectItemWithTag:WCBoardEveryoneWrite];
+
+	[_boardPanel makeFirstResponder:_nameTextField];
+
 	[NSApp beginSheet:_boardPanel
 	   modalForWindow:[self window]
 		modalDelegate:self
@@ -1239,22 +1323,38 @@
 
 
 - (void)addBoardPanelDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-	NSString		*path;
+	NSString		*path, *owner, *group;
 	WIP7Message		*message;
 	WCBoard			*board;
+	NSUInteger		ownerPermissions, groupPermissions, everyonePermissions;
 	
 	if(returnCode == NSOKButton) {
-		board = [_boardLocationPopUpButton representedObjectOfSelectedItem];
+		board = [_locationPopUpButton representedObjectOfSelectedItem];
 		
-		if(board && [[board connection] isConnected] && [[_boardNameTextField stringValue] length] > 0) {
+		if(board && [[board connection] isConnected] && [[_nameTextField stringValue] length] > 0) {
 			message = [WIP7Message messageWithName:@"wired.board.add_board" spec:WCP7Spec];
 			
 			if([[board path] isEqualToString:@"/"])
-				path = [_boardNameTextField stringValue];
+				path = [_nameTextField stringValue];
 			else
-				path = [[board path] stringByAppendingPathComponent:[_boardNameTextField stringValue]];
+				path = [[board path] stringByAppendingPathComponent:[_nameTextField stringValue]];
 			
 			[message setString:path forName:@"wired.board.board"];
+
+			owner					= ([_ownerPopUpButton tagOfSelectedItem] == 0) ? [_ownerPopUpButton titleOfSelectedItem] : @"";
+			ownerPermissions		= [_ownerPermissionsPopUpButton tagOfSelectedItem];
+			group					= ([_groupPopUpButton tagOfSelectedItem] == 0) ? [_groupPopUpButton titleOfSelectedItem] : @"";
+			groupPermissions		= [_groupPermissionsPopUpButton tagOfSelectedItem];
+			everyonePermissions		= [_everyonePermissionsPopUpButton tagOfSelectedItem];
+			
+			[message setString:owner forName:@"wired.board.owner"];
+			[message setBool:(ownerPermissions & WCBoardOwnerRead) forName:@"wired.board.owner.read"];
+			[message setBool:(ownerPermissions & WCBoardOwnerWrite) forName:@"wired.board.owner.write"];
+			[message setString:group forName:@"wired.board.group"];
+			[message setBool:(groupPermissions & WCBoardGroupRead) forName:@"wired.board.group.read"];
+			[message setBool:(groupPermissions & WCBoardGroupWrite) forName:@"wired.board.group.write"];
+			[message setBool:(everyonePermissions & WCBoardEveryoneRead) forName:@"wired.board.everyone.read"];
+			[message setBool:(everyonePermissions & WCBoardEveryoneWrite) forName:@"wired.board.everyone.write"];
 
 			[[board connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardAddBoardReply:)];
 		}
@@ -1310,6 +1410,12 @@
 
 
 
+- (IBAction)location:(id)sender {
+	[self _updatePermissions];
+}
+
+
+
 - (IBAction)addThread:(id)sender {
 	WCBoard			*board;
 	
@@ -1318,11 +1424,11 @@
 	if(!board)
 		return;
 	
-	[_postSubjectTextField setStringValue:@""];
+	[_subjectTextField setStringValue:@""];
 	[_postTextView setString:@""];
 	[_postButton setTitle:NSLS(@"Create", @"New thread button title")];
 	
-	[_postPanel makeFirstResponder:_postSubjectTextField];
+	[_postPanel makeFirstResponder:_subjectTextField];
 	
 	[NSApp beginSheet:_postPanel
 	   modalForWindow:[self window]
@@ -1340,7 +1446,7 @@
 	if(returnCode == NSOKButton) {
 		message = [WIP7Message messageWithName:@"wired.board.add_thread" spec:WCP7Spec];
 		[message setString:[board path] forName:@"wired.board.board"];
-		[message setString:[_postSubjectTextField stringValue] forName:@"wired.board.subject"];
+		[message setString:[_subjectTextField stringValue] forName:@"wired.board.subject"];
 		[message setString:[_postTextView string] forName:@"wired.board.text"];
 		[[board connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardAddThreadReply:)];
 	}

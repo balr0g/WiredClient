@@ -28,14 +28,30 @@
 
 #import "WCServerConnectionObject.h"
 
+enum _WCBoardPermissions {
+	WCBoardOwnerWrite					= (2 << 6),
+	WCBoardOwnerRead					= (4 << 6),
+	WCBoardGroupWrite					= (2 << 3),
+	WCBoardGroupRead					= (4 << 3),
+	WCBoardEveryoneWrite				= (2 << 0),
+	WCBoardEveryoneRead					= (4 << 0)
+};
+typedef enum _WCBoardPermissions		WCBoardPermissions;
+
+
 @class WCBoardThread;
 
 @interface WCBoard : WCServerConnectionObject {
-	NSString					*_name;
-	NSString					*_path;
-	NSMutableArray				*_boards;
-	NSMutableArray				*_threadsArray;
-	NSMutableDictionary			*_threadsDictionary;
+	NSString							*_name;
+	NSString							*_path;
+	NSString							*_owner;
+	NSString							*_group;
+	NSUInteger							_permissions;
+	
+	NSMutableArray						*_boards;
+	
+	NSMutableArray						*_threadsArray;
+	NSMutableDictionary					*_threadsDictionary;
 }
 
 + (id)rootBoard;
@@ -46,6 +62,12 @@
 - (NSString *)name;
 - (void)setPath:(NSString *)path;
 - (NSString *)path;
+- (void)setOwner:(NSString *)owner;
+- (NSString *)owner;
+- (void)setGroup:(NSString *)group;
+- (NSString *)group;
+- (void)setPermissions:(NSUInteger)permissions;
+- (NSUInteger)permissions;
 - (BOOL)isExpandable;
 - (BOOL)isModifiable;
 

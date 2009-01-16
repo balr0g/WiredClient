@@ -890,6 +890,8 @@
 
 
 
+#pragma mark -
+
 - (void)submitSheet:(id)sender {
 	BOOL	valid = YES;
 	
@@ -1155,7 +1157,7 @@
 		if(type == WCFileDropBox) {
 			owner					= ([_ownerPopUpButton tagOfSelectedItem] == 0) ? [_ownerPopUpButton titleOfSelectedItem] : @"";
 			ownerPermissions		= [_ownerPermissionsPopUpButton tagOfSelectedItem];
-			group					= ([_ownerPopUpButton tagOfSelectedItem] == 0) ? [_groupPopUpButton titleOfSelectedItem] : @"";
+			group					= ([_groupPopUpButton tagOfSelectedItem] == 0) ? [_groupPopUpButton titleOfSelectedItem] : @"";
 			groupPermissions		= [_groupPermissionsPopUpButton tagOfSelectedItem];
 			everyonePermissions		= [_everyonePermissionsPopUpButton tagOfSelectedItem];
 			
