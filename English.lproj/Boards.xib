@@ -1024,18 +1024,6 @@
 											<int key="NSTag">256</int>
 											<reference key="NSTarget" ref="110457620"/>
 										</object>
-										<object class="NSMenuItem" id="313151424">
-											<reference key="NSMenu" ref="186720342"/>
-											<string key="NSTitle">Write only</string>
-											<string key="NSKeyEquiv"/>
-											<int key="NSKeyEquivModMask">1048576</int>
-											<int key="NSMnemonicLoc">2147483647</int>
-											<reference key="NSOnImage" ref="651194922"/>
-											<reference key="NSMixedImage" ref="558935212"/>
-											<string key="NSAction">_popUpItemAction:</string>
-											<int key="NSTag">128</int>
-											<reference key="NSTarget" ref="110457620"/>
-										</object>
 									</object>
 								</object>
 								<int key="NSPreferredEdge">3</int>
@@ -1110,18 +1098,6 @@
 											<int key="NSTag">32</int>
 											<reference key="NSTarget" ref="418158648"/>
 										</object>
-										<object class="NSMenuItem" id="360684481">
-											<reference key="NSMenu" ref="208363066"/>
-											<string key="NSTitle">Write only</string>
-											<string key="NSKeyEquiv"/>
-											<int key="NSKeyEquivModMask">1048576</int>
-											<int key="NSMnemonicLoc">2147483647</int>
-											<reference key="NSOnImage" ref="651194922"/>
-											<reference key="NSMixedImage" ref="558935212"/>
-											<string key="NSAction">_popUpItemAction:</string>
-											<int key="NSTag">16</int>
-											<reference key="NSTarget" ref="418158648"/>
-										</object>
 									</object>
 								</object>
 								<int key="NSPreferredEdge">3</int>
@@ -1194,18 +1170,6 @@
 											<reference key="NSMixedImage" ref="558935212"/>
 											<string key="NSAction">_popUpItemAction:</string>
 											<int key="NSTag">4</int>
-											<reference key="NSTarget" ref="191957996"/>
-										</object>
-										<object class="NSMenuItem" id="901403899">
-											<reference key="NSMenu" ref="634222797"/>
-											<string key="NSTitle">Write only</string>
-											<string key="NSKeyEquiv"/>
-											<int key="NSKeyEquivModMask">1048576</int>
-											<int key="NSMnemonicLoc">2147483647</int>
-											<reference key="NSOnImage" ref="651194922"/>
-											<reference key="NSMixedImage" ref="558935212"/>
-											<string key="NSAction">_popUpItemAction:</string>
-											<int key="NSTag">2</int>
 											<reference key="NSTarget" ref="191957996"/>
 										</object>
 									</object>
@@ -2522,17 +2486,11 @@
 						<reference key="object" ref="634222797"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="901403899"/>
 							<reference ref="221403810"/>
 							<reference ref="558305030"/>
 							<reference ref="907123502"/>
 						</object>
 						<reference key="parent" ref="191957996"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">337</int>
-						<reference key="object" ref="901403899"/>
-						<reference key="parent" ref="634222797"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">338</int>
@@ -2563,17 +2521,11 @@
 						<reference key="object" ref="208363066"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="360684481"/>
 							<reference ref="626168912"/>
 							<reference ref="281492911"/>
 							<reference ref="344391217"/>
 						</object>
 						<reference key="parent" ref="418158648"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">343</int>
-						<reference key="object" ref="360684481"/>
-						<reference key="parent" ref="208363066"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">344</int>
@@ -2605,7 +2557,6 @@
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="138404533"/>
-							<reference ref="313151424"/>
 							<reference ref="474585950"/>
 							<reference ref="143228665"/>
 						</object>
@@ -2614,11 +2565,6 @@
 					<object class="IBObjectRecord">
 						<int key="objectID">349</int>
 						<reference key="object" ref="138404533"/>
-						<reference key="parent" ref="186720342"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">350</int>
-						<reference key="object" ref="313151424"/>
 						<reference key="parent" ref="186720342"/>
 					</object>
 					<object class="IBObjectRecord">
@@ -2802,10 +2748,9 @@
 					<string>334.IBPluginDependency</string>
 					<string>334.ImportedFromIB2</string>
 					<string>335.IBPluginDependency</string>
+					<string>336.IBEditorWindowLastContentRect</string>
 					<string>336.IBPluginDependency</string>
 					<string>336.ImportedFromIB2</string>
-					<string>337.IBPluginDependency</string>
-					<string>337.ImportedFromIB2</string>
 					<string>338.IBPluginDependency</string>
 					<string>338.ImportedFromIB2</string>
 					<string>339.IBPluginDependency</string>
@@ -2816,8 +2761,6 @@
 					<string>342.IBEditorWindowLastContentRect</string>
 					<string>342.IBPluginDependency</string>
 					<string>342.ImportedFromIB2</string>
-					<string>343.IBPluginDependency</string>
-					<string>343.ImportedFromIB2</string>
 					<string>344.IBPluginDependency</string>
 					<string>344.ImportedFromIB2</string>
 					<string>345.IBPluginDependency</string>
@@ -2825,12 +2768,11 @@
 					<string>346.IBPluginDependency</string>
 					<string>346.ImportedFromIB2</string>
 					<string>347.IBPluginDependency</string>
+					<string>348.IBEditorWindowLastContentRect</string>
 					<string>348.IBPluginDependency</string>
 					<string>348.ImportedFromIB2</string>
 					<string>349.IBPluginDependency</string>
 					<string>349.ImportedFromIB2</string>
-					<string>350.IBPluginDependency</string>
-					<string>350.ImportedFromIB2</string>
 					<string>351.IBPluginDependency</string>
 					<string>351.ImportedFromIB2</string>
 					<string>352.IBPluginDependency</string>
@@ -2965,6 +2907,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>{{467, 223}, {177, 63}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2974,9 +2917,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="9"/>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{826, 656}, {177, 83}}</string>
+					<string>{{467, 253}, {177, 63}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2986,10 +2927,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="9"/>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="9"/>
+					<string>{{467, 313}, {177, 63}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
