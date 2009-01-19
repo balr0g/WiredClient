@@ -76,7 +76,7 @@
 	connection		= [board connection];
 	
 	[_addBoardButton setEnabled:([_locationPopUpButton numberOfItems] > 0)];
-	[_deleteBoardButton setEnabled:(board != NULL && [board isModifiable] && [connection isConnected] /* && [[connection account] boardDeleteBoards]*/)];
+	[_deleteBoardButton setEnabled:(board != NULL && [board isModifiable] && [connection isConnected] && [[connection account] boardDeleteBoards])];
 	
 	[[[self window] toolbar] validateVisibleItems];
 }
@@ -94,7 +94,7 @@
 	WIP7Message		*message;
 	WCBoard			*board;
 	
-	if(YES /*[[connection account] boardReadBoard]*/) {
+	if([[connection account] boardReadBoards]) {
 		board = [_boards boardForConnection:connection];
 		
 		[board removeAllBoards];
@@ -305,47 +305,67 @@
 
 
 - (void)_updatePermissions {
+	NSEnumerator	*enumerator;
 	NSArray			*array;
 	NSString		*selectedOwner, *selectedGroup;
+	NSMenuItem		*item;
 	WCBoard			*board;
 	
 	board = [_locationPopUpButton representedObjectOfSelectedItem];
 	
-	selectedOwner = [_ownerPopUpButton titleOfSelectedItem];
+	selectedOwner = [_addOwnerPopUpButton titleOfSelectedItem];
 	
-	[_ownerPopUpButton removeAllItems];
-	[_ownerPopUpButton addItem:[NSMenuItem itemWithTitle:NSLS(@"None", @"Create folder owner popup title") tag:1]];
+	[_addOwnerPopUpButton removeAllItems];
+	[_addOwnerPopUpButton addItem:[NSMenuItem itemWithTitle:NSLS(@"None", @"Create board owner popup title") tag:1]];
 	
 	array = [[[board connection] accounts] userNames];
 	
 	if([array count] > 0) {
-		[_ownerPopUpButton addItem:[NSMenuItem separatorItem]];
-		[_ownerPopUpButton addItemsWithTitles:array];
-		
-		if(selectedOwner && [_ownerPopUpButton indexOfItemWithTitle:selectedOwner] != -1)
-			[_ownerPopUpButton selectItemWithTitle:selectedOwner];
+		[_addOwnerPopUpButton addItem:[NSMenuItem separatorItem]];
+		[_addOwnerPopUpButton addItemsWithTitles:array];
+
+		if(selectedOwner && [_addOwnerPopUpButton indexOfItemWithTitle:selectedOwner] != -1)
+			[_addOwnerPopUpButton selectItemWithTitle:selectedOwner];
 		else
-			[_ownerPopUpButton selectItemWithTitle:[[[board connection] URL] user]];
+			[_addOwnerPopUpButton selectItemWithTitle:[[[board connection] URL] user]];
 	}
 	
-	selectedGroup = [_groupPopUpButton titleOfSelectedItem];
+	[_setOwnerPopUpButton removeAllItems];
 	
-	[_groupPopUpButton removeAllItems];
-	[_groupPopUpButton addItem:[NSMenuItem itemWithTitle:NSLS(@"None", @"Create folder group popup title") tag:1]];
+	enumerator = [[_addOwnerPopUpButton itemArray] objectEnumerator];
+	
+	while((item = [enumerator nextObject]))
+		[_setOwnerPopUpButton addItem:[[item copy] autorelease]];
+
+	[_setOwnerPopUpButton selectItemAtIndex:[_addOwnerPopUpButton indexOfSelectedItem]];
+	
+	selectedGroup = [_addGroupPopUpButton titleOfSelectedItem];
+	
+	[_addGroupPopUpButton removeAllItems];
+	[_addGroupPopUpButton addItem:[NSMenuItem itemWithTitle:NSLS(@"None", @"Create board group popup title") tag:1]];
 	
 	array = [[[board connection] accounts] groupNames];
 	
 	if([array count] > 0) {
-		[_groupPopUpButton addItem:[NSMenuItem separatorItem]];
-		[_groupPopUpButton addItemsWithTitles:array];
+		[_addGroupPopUpButton addItem:[NSMenuItem separatorItem]];
+		[_addGroupPopUpButton addItemsWithTitles:array];
 
-		if(selectedGroup && [_groupPopUpButton indexOfItemWithTitle:selectedGroup] != -1)
-			[_groupPopUpButton selectItemWithTitle:selectedGroup];
+		if(selectedGroup && [_addGroupPopUpButton indexOfItemWithTitle:selectedGroup] != -1)
+			[_addGroupPopUpButton selectItemWithTitle:selectedGroup];
 		else
-			[_groupPopUpButton selectItemAtIndex:0];
+			[_addGroupPopUpButton selectItemAtIndex:0];
 	}
 	
-	[_groupPermissionsPopUpButton selectItemWithTag:0];
+	[_setGroupPopUpButton removeAllItems];
+	
+	enumerator = [[_addGroupPopUpButton itemArray] objectEnumerator];
+	
+	while((item = [enumerator nextObject]))
+		[_setGroupPopUpButton addItem:[[item copy] autorelease]];
+
+	[_setGroupPopUpButton selectItemAtIndex:[_addGroupPopUpButton indexOfSelectedItem]];
+	
+	[_addGroupPermissionsPopUpButton selectItemWithTag:0];
 }
 
 @end
@@ -548,6 +568,7 @@
 	[connection addObserver:self selector:@selector(wiredBoardBoardRenamed:) messageName:@"wired.board.board_renamed"];
 	[connection addObserver:self selector:@selector(wiredBoardBoardMoved:) messageName:@"wired.board.board_moved"];
 	[connection addObserver:self selector:@selector(wiredBoardBoardDeleted:) messageName:@"wired.board.board_deleted"];
+	[connection addObserver:self selector:@selector(wiredBoardPermissionsChanged:) messageName:@"wired.board.permissions_changed"];
 	[connection addObserver:self selector:@selector(wiredBoardThreadDeleted:) messageName:@"wired.board.thread_deleted"];
 	[connection addObserver:self selector:@selector(wiredBoardThreadMoved:) messageName:@"wired.board.thread_moved"];
 	[connection addObserver:self selector:@selector(wiredBoardPostAdded:) messageName:@"wired.board.post_added"];
@@ -787,6 +808,47 @@
 
 
 
+- (void)wiredBoardPermissionsChanged:(WIP7Message *)message {
+	NSString			*path;
+	WCServerConnection	*connection;
+	WCBoard				*board;
+	NSUInteger			permissions;
+	WIP7Bool			value;
+	
+	connection	= [message contextInfo];
+	path		= [message stringForName:@"wired.board.board"];
+	board		= [[_boards boardForConnection:connection] boardForPath:path];
+	
+	[board setOwner:[message stringForName:@"wired.board.owner"]];
+	[board setGroup:[message stringForName:@"wired.board.group"]];
+	
+	permissions = 0;
+	
+	if([message getBool:&value forName:@"wired.board.owner.read"] && value)
+		permissions |= WCBoardOwnerRead;
+	
+	if([message getBool:&value forName:@"wired.board.owner.write"] && value)
+		permissions |= WCBoardOwnerWrite;
+	
+	if([message getBool:&value forName:@"wired.board.group.read"] && value)
+		permissions |= WCBoardGroupRead;
+	
+	if([message getBool:&value forName:@"wired.board.group.write"] && value)
+		permissions |= WCBoardGroupWrite;
+	
+	if([message getBool:&value forName:@"wired.board.everyone.read"] && value)
+		permissions |= WCBoardEveryoneRead;
+	
+	if([message getBool:&value forName:@"wired.board.everyone.write"] && value)
+		permissions |= WCBoardEveryoneWrite;
+	
+	[board setPermissions:permissions];
+
+	[self _validate];
+}
+
+
+
 - (void)wiredBoardThreadDeleted:(WIP7Message *)message {
 	WCServerConnection	*connection;
 	WCBoard				*board;
@@ -970,6 +1032,12 @@
 
 
 
+- (void)wiredBoardSetPermissionsReply:(WIP7Message *)message {
+	// handle error
+}
+
+
+
 - (void)wiredBoardAddThreadReply:(WIP7Message *)message {
 	// handle error
 }
@@ -1124,7 +1192,9 @@
 	connected	= [[board connection] isConnected];
 	
 	if(selector == @selector(renameBoard:))
-		return (board != NULL && [board isModifiable] && connected /* && [account boardRenameBoards]*/);
+		return (board != NULL && [board isModifiable] && connected && [account boardRenameBoards]);
+	else if(selector == @selector(changePermissions:))
+		return (board != NULL && [board isModifiable] && connected/* && [account boardChangePermissions]*/);
 	
 	return YES;
 }
@@ -1136,8 +1206,10 @@
 - (void)submitSheet:(id)sender {
 	BOOL	valid = YES;
 	
-	if([sender window] == _boardPanel)
-		valid = ([[_nameTextField stringValue] length] > 0);
+	if([sender window] == _addBoardPanel)
+		valid = ([[_nameTextField stringValue] length] > 0 && [_addOwnerPermissionsPopUpButton tagOfSelectedItem] > 0);
+	else if([sender window] == _setPermissionsPanel)
+		valid = ([_setOwnerPermissionsPopUpButton tagOfSelectedItem] > 0);
 	else if([sender window] == _postPanel)
 		valid = ([[_subjectTextField stringValue] length] > 0 && [[_postTextView string] length] > 0);
 	
@@ -1307,13 +1379,13 @@
 	[self _reloadLocationsAndSelectBoard:[self _selectedBoard]];
 	[self _updatePermissions];
 	
-	[_ownerPermissionsPopUpButton selectItemWithTag:WCBoardOwnerRead | WCBoardOwnerWrite];
-	[_groupPermissionsPopUpButton selectItemWithTag:0];
-	[_everyonePermissionsPopUpButton selectItemWithTag:WCBoardEveryoneRead | WCBoardEveryoneWrite];
+	[_addOwnerPermissionsPopUpButton selectItemWithTag:WCBoardOwnerRead | WCBoardOwnerWrite];
+	[_addGroupPermissionsPopUpButton selectItemWithTag:0];
+	[_addEveryonePermissionsPopUpButton selectItemWithTag:WCBoardEveryoneRead | WCBoardEveryoneWrite];
 
-	[_boardPanel makeFirstResponder:_nameTextField];
+	[_addBoardPanel makeFirstResponder:_nameTextField];
 
-	[NSApp beginSheet:_boardPanel
+	[NSApp beginSheet:_addBoardPanel
 	   modalForWindow:[self window]
 		modalDelegate:self
 	   didEndSelector:@selector(addBoardPanelDidEnd:returnCode:contextInfo:)
@@ -1341,11 +1413,11 @@
 			
 			[message setString:path forName:@"wired.board.board"];
 
-			owner					= ([_ownerPopUpButton tagOfSelectedItem] == 0) ? [_ownerPopUpButton titleOfSelectedItem] : @"";
-			ownerPermissions		= [_ownerPermissionsPopUpButton tagOfSelectedItem];
-			group					= ([_groupPopUpButton tagOfSelectedItem] == 0) ? [_groupPopUpButton titleOfSelectedItem] : @"";
-			groupPermissions		= [_groupPermissionsPopUpButton tagOfSelectedItem];
-			everyonePermissions		= [_everyonePermissionsPopUpButton tagOfSelectedItem];
+			owner					= ([_addOwnerPopUpButton tagOfSelectedItem] == 0) ? [_addOwnerPopUpButton titleOfSelectedItem] : @"";
+			ownerPermissions		= [_addOwnerPermissionsPopUpButton tagOfSelectedItem];
+			group					= ([_addGroupPopUpButton tagOfSelectedItem] == 0) ? [_addGroupPopUpButton titleOfSelectedItem] : @"";
+			groupPermissions		= [_addGroupPermissionsPopUpButton tagOfSelectedItem];
+			everyonePermissions		= [_addEveryonePermissionsPopUpButton tagOfSelectedItem];
 			
 			[message setString:owner forName:@"wired.board.owner"];
 			[message setBool:(ownerPermissions & WCBoardOwnerRead) forName:@"wired.board.owner.read"];
@@ -1360,7 +1432,7 @@
 		}
 	}
 	
-	[_boardPanel close];
+	[_addBoardPanel close];
 }
 
 
@@ -1406,6 +1478,70 @@
 
 - (IBAction)renameBoard:(id)sender {
 	[_boardsOutlineView editColumn:0 row:[_boardsOutlineView selectedRow] withEvent:NULL select:YES];
+}
+
+
+
+- (IBAction)changePermissions:(id)sender {
+	WCBoard		*board;
+	
+	[self _updatePermissions];
+	
+	board = [self _selectedBoard];
+	
+	if([[board owner] length] > 0 && [_setOwnerPopUpButton indexOfItemWithTitle:[board owner]] != -1)
+		[_setOwnerPopUpButton selectItemWithTitle:[board owner]];
+	else
+		[_setOwnerPopUpButton selectItemAtIndex:0];
+
+	[_setOwnerPermissionsPopUpButton selectItemWithTag:([board permissions]) & (WCBoardOwnerWrite | WCBoardOwnerRead)];
+
+	if([[board group] length] > 0 && [_setGroupPopUpButton indexOfItemWithTitle:[board group]] != -1)
+		[_setGroupPopUpButton selectItemWithTitle:[board group]];
+	else
+		[_setGroupPopUpButton selectItemAtIndex:0];
+
+	[_setGroupPermissionsPopUpButton selectItemWithTag:([board permissions]) & (WCBoardGroupWrite | WCBoardGroupRead)];
+
+	[_setEveryonePermissionsPopUpButton selectItemWithTag:([board permissions]) & (WCBoardEveryoneWrite | WCBoardEveryoneRead)];
+
+	[NSApp beginSheet:_setPermissionsPanel
+	   modalForWindow:[self window]
+		modalDelegate:self
+	   didEndSelector:@selector(changePermissionsPanelDidEnd:returnCode:contextInfo:)
+		  contextInfo:[board retain]];
+}
+
+
+
+- (void)changePermissionsPanelDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+	NSString		*owner, *group;
+	WIP7Message		*message;
+	WCBoard			*board = contextInfo;
+	NSUInteger		ownerPermissions, groupPermissions, everyonePermissions;
+	
+	if(returnCode == NSOKButton) {
+		owner					= ([_setOwnerPopUpButton tagOfSelectedItem] == 0) ? [_setOwnerPopUpButton titleOfSelectedItem] : @"";
+		ownerPermissions		= [_setOwnerPermissionsPopUpButton tagOfSelectedItem];
+		group					= ([_setGroupPopUpButton tagOfSelectedItem] == 0) ? [_setGroupPopUpButton titleOfSelectedItem] : @"";
+		groupPermissions		= [_setGroupPermissionsPopUpButton tagOfSelectedItem];
+		everyonePermissions		= [_setEveryonePermissionsPopUpButton tagOfSelectedItem];
+
+		message = [WIP7Message messageWithName:@"wired.board.set_permissions" spec:WCP7Spec];
+		[message setString:[board path] forName:@"wired.board.board"];
+		[message setString:owner forName:@"wired.board.owner"];
+		[message setBool:(ownerPermissions & WCBoardOwnerRead) forName:@"wired.board.owner.read"];
+		[message setBool:(ownerPermissions & WCBoardOwnerWrite) forName:@"wired.board.owner.write"];
+		[message setString:group forName:@"wired.board.group"];
+		[message setBool:(groupPermissions & WCBoardGroupRead) forName:@"wired.board.group.read"];
+		[message setBool:(groupPermissions & WCBoardGroupWrite) forName:@"wired.board.group.write"];
+		[message setBool:(everyonePermissions & WCBoardEveryoneRead) forName:@"wired.board.everyone.read"];
+		[message setBool:(everyonePermissions & WCBoardEveryoneWrite) forName:@"wired.board.everyone.write"];
+		[[board connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardSetPermissionsReply:)];
+	}
+	
+	[board release];
+	[_setPermissionsPanel close];
 }
 
 
@@ -1575,7 +1711,7 @@
 	
 	connection = [board connection];
 	
-	return ([board isModifiable] && [connection isConnected]/* && [[connection account] boardRenameBoards]*/);
+	return ([board isModifiable] && [connection isConnected] && [[connection account] boardRenameBoards]);
 }
 
 

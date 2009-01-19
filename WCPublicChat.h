@@ -50,7 +50,6 @@
 - (IBAction)getInfo:(id)sender;
 - (IBAction)saveChat:(id)sender;
 - (IBAction)setTopic:(id)sender;
-- (IBAction)postNews:(id)sender;
 - (IBAction)broadcast:(id)sender;
 
 - (IBAction)addBookmark:(id)sender;

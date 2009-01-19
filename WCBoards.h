@@ -50,15 +50,22 @@
 
 	IBOutlet WebView					*_threadWebView;
 	
-	IBOutlet NSPanel					*_boardPanel;
+	IBOutlet NSPanel					*_addBoardPanel;
 	IBOutlet NSPopUpButton				*_locationPopUpButton;
 	IBOutlet NSTextField				*_nameTextField;
-	IBOutlet NSPopUpButton				*_ownerPopUpButton;
-	IBOutlet NSPopUpButton				*_ownerPermissionsPopUpButton;
-	IBOutlet NSPopUpButton				*_groupPopUpButton;
-	IBOutlet NSPopUpButton				*_groupPermissionsPopUpButton;
-	IBOutlet NSPopUpButton				*_everyonePermissionsPopUpButton;
+	IBOutlet NSPopUpButton				*_addOwnerPopUpButton;
+	IBOutlet NSPopUpButton				*_addOwnerPermissionsPopUpButton;
+	IBOutlet NSPopUpButton				*_addGroupPopUpButton;
+	IBOutlet NSPopUpButton				*_addGroupPermissionsPopUpButton;
+	IBOutlet NSPopUpButton				*_addEveryonePermissionsPopUpButton;
 	
+	IBOutlet NSPanel					*_setPermissionsPanel;
+	IBOutlet NSPopUpButton				*_setOwnerPopUpButton;
+	IBOutlet NSPopUpButton				*_setOwnerPermissionsPopUpButton;
+	IBOutlet NSPopUpButton				*_setGroupPopUpButton;
+	IBOutlet NSPopUpButton				*_setGroupPermissionsPopUpButton;
+	IBOutlet NSPopUpButton				*_setEveryonePermissionsPopUpButton;
+
 	IBOutlet NSPanel					*_postPanel;
 	IBOutlet NSTextField				*_subjectTextField;
 	IBOutlet NSTextView					*_postTextView;
@@ -77,6 +84,7 @@
 - (IBAction)addBoard:(id)sender;
 - (IBAction)deleteBoard:(id)sender;
 - (IBAction)renameBoard:(id)sender;
+- (IBAction)changePermissions:(id)sender;
 - (IBAction)location:(id)sender;
 - (IBAction)addThread:(id)sender;
 - (IBAction)deleteThread:(id)sender;

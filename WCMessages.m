@@ -1114,9 +1114,9 @@
 	message = [self _messageAtIndex:row];
 	
 	if(![message isRead])
-		[cell setFont:[NSFont boldSystemFontOfSize:[NSFont smallSystemFontSize]]];
+		[cell setFont:[[cell font] fontByAddingTrait:NSBoldFontMask]];
 	else
-		[cell setFont:[NSFont systemFontOfSize:[NSFont smallSystemFontSize]]];
+		[cell setFont:[[cell font] fontByAddingTrait:NSUnboldFontMask]];
 }
 
 

@@ -59,13 +59,9 @@
 - (IBAction)disconnect:(id)sender;
 - (IBAction)reconnect:(id)sender;
 - (IBAction)serverInfo:(id)sender;
-- (IBAction)news:(id)sender;
 - (IBAction)files:(id)sender;
 - (IBAction)accounts:(id)sender;
 - (IBAction)administration:(id)sender;
-- (IBAction)saveChat:(id)sender;
-- (IBAction)setTopic:(id)sender;
-- (IBAction)postNews:(id)sender;
 - (IBAction)broadcast:(id)sender;
 
 - (IBAction)search:(id)sender;

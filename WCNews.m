@@ -96,14 +96,14 @@
 - (void)_reloadNews {
 	WIP7Message		*message;
 	
-	if([[[self connection] account] newsReadNews]) {
+//	if([[[self connection] account] newsReadNews]) {
 		[_posts removeAllObjects];
 		[_newsTextView setString:@""];
 		[_newsTextView setNeedsDisplay:YES];
 		
 		message = [WIP7Message messageWithName:@"wired.news.get_news" spec:WCP7Spec];
 		[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredNewsGetNewsReply:)];
-	}
+//	}
 }
 
 
@@ -384,11 +384,11 @@
 	connected	= [[self connection] isConnected];
 	
 	if(selector == @selector(reloadNews:))
-		return ([account newsReadNews] && connected);
+		return (/*[account newsReadNews] && */connected);
 	else if(selector == @selector(postNews:))
-		return ([account newsPostNews] && connected);
+		return (/*[account newsPostNews] && */connected);
 	else if(selector == @selector(clearNews:))
-		return ([account newsClearNews] && connected);
+		return (/*[account newsClearNews] && */connected);
 	
 	return YES;
 }

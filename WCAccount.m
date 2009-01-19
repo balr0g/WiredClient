@@ -59,9 +59,18 @@
 	[message getBool:&_chatCreateChats forName:@"wired.account.chat.create_chats"];
 	[message getBool:&_messageSendMessages forName:@"wired.account.message.send_messages"];
 	[message getBool:&_messageBroadcast forName:@"wired.account.message.broadcast"];
-	[message getBool:&_newsReadNews forName:@"wired.account.news.read_news"];
-	[message getBool:&_newsPostNews forName:@"wired.account.news.post_news"];
-	[message getBool:&_newsClearNews forName:@"wired.account.news.clear_news"];
+	[message getBool:&_boardReadBoards forName:@"wired.account.board.read_boards"];
+	[message getBool:&_boardAddBoards forName:@"wired.account.board.add_boards"];
+	[message getBool:&_boardMoveBoards forName:@"wired.account.board.move_boards"];
+	[message getBool:&_boardRenameBoards forName:@"wired.account.board.rename_boards"];
+	[message getBool:&_boardDeleteBoards forName:@"wired.account.board.delete_boards"];
+	[message getBool:&_boardAddThreads forName:@"wired.account.board.add_threads"];
+	[message getBool:&_boardMoveThreads forName:@"wired.account.board.move_threads"];
+	[message getBool:&_boardDeleteThreads forName:@"wired.account.board.delete_threads"];
+	[message getBool:&_boardAddPosts forName:@"wired.account.board.add_posts"];
+	[message getBool:&_boardEditOwnPosts forName:@"wired.account.board.edit_own_posts"];
+	[message getBool:&_boardEditAllPosts forName:@"wired.account.board.edit_all_posts"];
+	[message getBool:&_boardDeletePosts forName:@"wired.account.board.delete_posts"];
 	[message getBool:&_fileListFiles forName:@"wired.account.file.list_files"];
 	[message getBool:&_fileGetInfo forName:@"wired.account.file.get_info"];
 	[message getBool:&_fileCreateDirectories forName:@"wired.account.file.create_directories"];
@@ -119,9 +128,18 @@
 	[message setBool:_chatCreateChats forName:@"wired.account.chat.create_chats"];
 	[message setBool:_messageSendMessages forName:@"wired.account.message.send_messages"];
 	[message setBool:_messageBroadcast forName:@"wired.account.message.broadcast"];
-	[message setBool:_newsReadNews forName:@"wired.account.news.read_news"];
-	[message setBool:_newsPostNews forName:@"wired.account.news.post_news"];
-	[message setBool:_newsClearNews forName:@"wired.account.news.clear_news"];
+	[message setBool:_boardReadBoards forName:@"wired.account.board.read_boards"];
+	[message setBool:_boardAddBoards forName:@"wired.account.board.add_boards"];
+	[message setBool:_boardMoveBoards forName:@"wired.account.board.move_boards"];
+	[message setBool:_boardRenameBoards forName:@"wired.account.board.rename_boards"];
+	[message setBool:_boardDeleteBoards forName:@"wired.account.board.delete_boards"];
+	[message setBool:_boardAddThreads forName:@"wired.account.board.add_threads"];
+	[message setBool:_boardMoveThreads forName:@"wired.account.board.move_threads"];
+	[message setBool:_boardDeleteThreads forName:@"wired.account.board.delete_threads"];
+	[message setBool:_boardAddPosts forName:@"wired.account.board.add_posts"];
+	[message setBool:_boardEditOwnPosts forName:@"wired.account.board.edit_own_posts"];
+	[message setBool:_boardEditAllPosts forName:@"wired.account.board.edit_all_posts"];
+	[message setBool:_boardDeletePosts forName:@"wired.account.board.delete_posts"];
 	[message setBool:_fileListFiles forName:@"wired.account.file.list_files"];
 	[message setBool:_fileGetInfo forName:@"wired.account.file.get_info"];
 	[message setBool:_fileCreateDirectories forName:@"wired.account.file.create_directories"];
@@ -388,38 +406,146 @@
 
 
 
-- (void)setNewsReadNews:(BOOL)value {
-	_newsReadNews = value;
+- (void)setBoardReadBoards:(BOOL)value {
+	_boardReadBoards = value;
 }
 
 
 
-- (BOOL)newsReadNews {
-	return _newsReadNews;
+- (BOOL)boardReadBoards {
+	return _boardReadBoards;
 }
 
 
 
-- (void)setNewsPostNews:(BOOL)value {
-	_newsPostNews = value;
+- (void)setBoardAddBoards:(BOOL)value {
+	_boardAddBoards = value;
 }
 
 
 
-- (BOOL)newsPostNews {
-	return _newsPostNews;
+- (BOOL)boardAddBoards {
+	return _boardAddBoards;
 }
 
 
 
-- (void)setNewsClearNews:(BOOL)value {
-	_newsClearNews = value;
+- (void)setBoardMoveBoards:(BOOL)value {
+	_boardMoveBoards = value;
 }
 
 
 
-- (BOOL)newsClearNews {
-	return _newsClearNews;
+- (BOOL)boardMoveBoards {
+	return _boardMoveBoards;
+}
+
+
+
+- (void)setBoardRenameBoards:(BOOL)value {
+	_boardRenameBoards = value;
+}
+
+
+
+- (BOOL)boardRenameBoards {
+	return _boardRenameBoards;
+}
+
+
+
+- (void)setBoardDeleteBoards:(BOOL)value {
+	_boardDeleteBoards = value;
+}
+
+
+
+- (BOOL)boardDeleteBoards {
+	return _boardDeleteBoards;
+}
+
+
+
+- (void)setBoardAddThreads:(BOOL)value {
+	_boardAddThreads = value;
+}
+
+
+
+- (BOOL)boardAddThreads {
+	return _boardAddThreads;
+}
+
+
+
+- (void)setBoardMoveThreads:(BOOL)value {
+	_boardMoveThreads = value;
+}
+
+
+
+- (BOOL)boardMoveThreads {
+	return _boardMoveThreads;
+}
+
+
+
+- (void)setBoardDeleteThreads:(BOOL)value {
+	_boardDeleteThreads = value;
+}
+
+
+
+- (BOOL)boardDeleteThreads {
+	return _boardDeleteThreads;
+}
+
+
+
+- (void)setBoardAddPosts:(BOOL)value {
+	_boardAddPosts = value;
+}
+
+
+
+- (BOOL)boardAddPosts {
+	return _boardAddPosts;
+}
+
+
+
+- (void)setBoardEditOwnPosts:(BOOL)value {
+	_boardEditOwnPosts = value;
+}
+
+
+
+- (BOOL)boardEditOwnPosts {
+	return _boardEditOwnPosts;
+}
+
+
+
+- (void)setBoardEditAllPosts:(BOOL)value {
+	_boardEditAllPosts = value;
+}
+
+
+
+- (BOOL)boardEditAllPosts {
+	return _boardEditAllPosts;
+}
+
+
+
+- (void)setBoardDeletePosts:(BOOL)value {
+	_boardDeletePosts = value;
+}
+
+
+
+- (BOOL)boardDeletePosts {
+	return _boardDeletePosts;
 }
 
 

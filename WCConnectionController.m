@@ -44,7 +44,8 @@
 @implementation WCConnectionController(Private)
 
 - (void)_WC_windowWillClose:(NSNotification *)notification {
-	[_connection removeConnectionController:self];
+	if(!_singleton)
+		[_connection removeConnectionController:self];
 }
 
 

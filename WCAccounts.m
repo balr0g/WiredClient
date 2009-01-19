@@ -264,9 +264,18 @@
 		[_chatCreateChatsButton setState:[account chatCreateChats]];
 		[_messageSendMessagesButton setState:[account messageSendMessages]];
 		[_messageBroadcastButton setState:[account messageBroadcast]];
-		[_newsReadNewsButton setState:[account newsReadNews]];
-		[_newsPostNewsButton setState:[account newsPostNews]];
-		[_newsClearNewsButton setState:[account newsClearNews]];
+		[_boardReadBoardsButton setState:[account boardReadBoards]];
+		[_boardAddBoardsButton setState:[account boardAddBoards]];
+		[_boardMoveBoardsButton setState:[account boardMoveBoards]];
+		[_boardRenameBoardsButton setState:[account boardRenameBoards]];
+		[_boardDeleteBoardsButton setState:[account boardDeleteBoards]];
+		[_boardAddThreadsButton setState:[account boardAddThreads]];
+		[_boardMoveThreadsButton setState:[account boardMoveThreads]];
+		[_boardDeleteThreadsButton setState:[account boardDeleteThreads]];
+		[_boardAddPostsButton setState:[account boardAddPosts]];
+		[_boardEditOwnPostsButton setState:[account boardEditOwnPosts]];
+		[_boardEditAllPostsButton setState:[account boardEditAllPosts]];
+		[_boardDeletePostsButton setState:[account boardDeletePosts]];
 		[_fileListFilesButton setState:[account fileListFiles]];
 		[_fileGetInfoButton setState:[account fileGetInfo]];
 		[_fileCreateDirectoriesButton setState:[account fileCreateDirectories]];
@@ -343,8 +352,10 @@
 			[_userGetInfoButton setState:NSOnState];
 			[_chatCreateChatsButton setState:NSOnState];
 			[_messageSendMessagesButton setState:NSOnState];
-			[_newsReadNewsButton setState:NSOnState];
-			[_newsPostNewsButton setState:NSOnState];
+			[_boardReadBoardsButton setState:NSOnState];
+			[_boardAddThreadsButton setState:NSOnState];
+			[_boardAddPostsButton setState:NSOnState];
+			[_boardEditOwnPostsButton setState:NSOnState];
 			[_fileListFilesButton setState:NSOnState];
 			[_fileGetInfoButton setState:NSOnState];
 			[_transferDownloadFilesButton setState:NSOnState];
@@ -395,9 +406,18 @@
 	[account setChatCreateChats:[_chatCreateChatsButton state]];
 	[account setMessageSendMessages:[_messageSendMessagesButton state]];
 	[account setMessageBroadcast:[_messageBroadcastButton state]];
-	[account setNewsReadNews:[_newsReadNewsButton state]];
-	[account setNewsPostNews:[_newsPostNewsButton state]];
-	[account setNewsClearNews:[_newsClearNewsButton state]];
+	[account setBoardReadBoards:[_boardReadBoardsButton state]];
+	[account setBoardAddBoards:[_boardAddBoardsButton state]];
+	[account setBoardMoveBoards:[_boardMoveBoardsButton state]];
+	[account setBoardRenameBoards:[_boardRenameBoardsButton state]];
+	[account setBoardDeleteBoards:[_boardDeleteBoardsButton state]];
+	[account setBoardAddThreads:[_boardAddThreadsButton state]];
+	[account setBoardMoveThreads:[_boardMoveThreadsButton state]];
+	[account setBoardDeleteThreads:[_boardDeleteThreadsButton state]];
+	[account setBoardAddPosts:[_boardAddPostsButton state]];
+	[account setBoardEditOwnPosts:[_boardEditOwnPostsButton state]];
+	[account setBoardEditAllPosts:[_boardEditAllPostsButton state]];
+	[account setBoardDeletePosts:[_boardDeletePostsButton state]];
 	[account setFileListFiles:[_fileListFilesButton state]];
 	[account setFileGetInfo:[_fileGetInfoButton state]];
 	[account setFileCreateDirectories:[_fileCreateDirectoriesButton state]];
@@ -596,7 +616,9 @@
 	_groupControls = [[NSArray alloc] initWithObjects:
 		_selectAllBasicPrivilegesButton,
 		_selectAllFilesPrivilegesButton,
+		_selectAllBoardsPrivilegesButton,
 		_selectAllTrackerPrivilegesButton,
+		_selectAllUsersPrivilegesButton,
 		_selectAllAccountsPrivilegesButton,
 		_selectAllAdministrationPrivilegesButton,
 		_filesTextField,
@@ -610,9 +632,18 @@
 		_chatCreateChatsButton,
 		_messageSendMessagesButton,
 		_messageBroadcastButton,
-		_newsReadNewsButton,
-		_newsPostNewsButton,
-		_newsClearNewsButton,
+		_boardReadBoardsButton,
+		_boardAddBoardsButton,
+		_boardMoveBoardsButton,
+		_boardRenameBoardsButton,
+		_boardDeleteBoardsButton,
+		_boardAddThreadsButton,
+		_boardMoveThreadsButton,
+		_boardDeleteThreadsButton,
+		_boardAddPostsButton,
+		_boardEditOwnPostsButton,
+		_boardEditAllPostsButton,
+		_boardDeletePostsButton,
 		_fileListFilesButton,
 		_fileGetInfoButton,
 		_fileCreateDirectoriesButton,
@@ -1223,9 +1254,12 @@
 		} else {
 			[self _validateAccount:NULL];
 			[self _readFromAccount:NULL];
+			
+			if(row == -2) {
+				[_accountsTableView deselectAll:self];
 
-			if(row == -2)
 				[self close];
+			}
 		}
 
 		[self validate];
@@ -1239,16 +1273,10 @@
 - (IBAction)selectAllBasicPrivileges:(id)sender {
 	[_userCannotSetNickButton setState:NSOnState];
 	[_userGetInfoButton setState:NSOnState];
-	[_userKickUsersButton setState:NSOnState];
-	[_userBanUsersButton setState:NSOnState];
-	[_userCannotBeDisconnectedButton setState:NSOnState];
 	[_chatSetTopicButton setState:NSOnState];
 	[_chatCreateChatsButton setState:NSOnState];
 	[_messageSendMessagesButton setState:NSOnState];
 	[_messageBroadcastButton setState:NSOnState];
-	[_newsReadNewsButton setState:NSOnState];
-	[_newsPostNewsButton setState:NSOnState];
-	[_newsClearNewsButton setState:NSOnState];
 	
 	[self touch:self];
 }
@@ -1277,9 +1305,38 @@
 
 
 
+- (IBAction)selectAllBoardsPrivileges:(id)sender {
+	[_boardReadBoardsButton setState:NSOnState];
+	[_boardAddBoardsButton setState:NSOnState];
+	[_boardMoveBoardsButton setState:NSOnState];
+	[_boardRenameBoardsButton setState:NSOnState];
+	[_boardDeleteBoardsButton setState:NSOnState];
+	[_boardAddThreadsButton setState:NSOnState];
+	[_boardMoveThreadsButton setState:NSOnState];
+	[_boardDeleteThreadsButton setState:NSOnState];
+	[_boardAddPostsButton setState:NSOnState];
+	[_boardEditOwnPostsButton setState:NSOnState];
+	[_boardEditAllPostsButton setState:NSOnState];
+	[_boardDeletePostsButton setState:NSOnState];
+	
+	[self touch:self];
+}
+
+
+
 - (IBAction)selectAllTrackerPrivileges:(id)sender {
 	[_trackerListServersButton setState:NSOnState];
 	[_trackerRegisterServersButton setState:NSOnState];
+	
+	[self touch:self];
+}
+
+
+
+- (IBAction)selectAllUsersPrivileges:(id)sender {
+	[_userKickUsersButton setState:NSOnState];
+	[_userBanUsersButton setState:NSOnState];
+	[_userCannotBeDisconnectedButton setState:NSOnState];
 	
 	[self touch:self];
 }

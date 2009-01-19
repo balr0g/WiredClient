@@ -826,10 +826,8 @@ static WCApplicationController		*sharedController;
 	selector = [item action];
 	
 	if(selector == @selector(disconnect:) || selector == @selector(reconnect:) ||
-	   selector == @selector(serverInfo:) || selector == @selector(news:) ||
-	   selector == @selector(files:) || selector == @selector(accounts:) ||
-	   selector == @selector(administration:) || selector == @selector(saveChat:) ||
-	   selector == @selector(setTopic:) || selector == @selector(postNews:) ||
+	   selector == @selector(serverInfo:) || selector == @selector(files:) ||
+	   selector == @selector(accounts:) || selector == @selector(administration:) ||
 	   selector == @selector(broadcast:) || selector == @selector(addBookmark:) ||
 	   selector == @selector(console:) || selector == @selector(nextConnection:) ||
 	   selector == @selector(previousConnection:))
@@ -943,12 +941,6 @@ static WCApplicationController		*sharedController;
 
 
 
-- (IBAction)news:(id)sender {
-	[[WCPublicChat publicChat] news:sender];
-}
-
-
-
 - (IBAction)files:(id)sender {
 	[[WCPublicChat publicChat] files:sender];
 }
@@ -963,24 +955,6 @@ static WCApplicationController		*sharedController;
 
 - (IBAction)administration:(id)sender {
 	[[WCPublicChat publicChat] administration:sender];
-}
-
-
-
-- (IBAction)saveChat:(id)sender {
-	[[WCPublicChat publicChat] saveChat:sender];
-}
-
-
-
-- (IBAction)setTopic:(id)sender {
-	[[WCPublicChat publicChat] setTopic:sender];
-}
-
-
-
-- (IBAction)postNews:(id)sender {
-	[[WCPublicChat publicChat] postNews:sender];
 }
 
 

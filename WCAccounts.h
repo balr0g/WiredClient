@@ -37,7 +37,9 @@
 
 	IBOutlet NSButton					*_selectAllBasicPrivilegesButton;
 	IBOutlet NSButton					*_selectAllFilesPrivilegesButton;
+	IBOutlet NSButton					*_selectAllBoardsPrivilegesButton;
 	IBOutlet NSButton					*_selectAllTrackerPrivilegesButton;
+	IBOutlet NSButton					*_selectAllUsersPrivilegesButton;
 	IBOutlet NSButton					*_selectAllAccountsPrivilegesButton;
 	IBOutlet NSButton					*_selectAllAdministrationPrivilegesButton;
 	IBOutlet NSProgressIndicator		*_progressIndicator;
@@ -68,9 +70,18 @@
 	IBOutlet NSButton					*_chatCreateChatsButton;
 	IBOutlet NSButton					*_messageSendMessagesButton;
 	IBOutlet NSButton					*_messageBroadcastButton;
-	IBOutlet NSButton					*_newsReadNewsButton;
-	IBOutlet NSButton					*_newsPostNewsButton;
-	IBOutlet NSButton					*_newsClearNewsButton;
+	IBOutlet NSButton					*_boardReadBoardsButton;
+	IBOutlet NSButton					*_boardAddBoardsButton;
+	IBOutlet NSButton					*_boardMoveBoardsButton;
+	IBOutlet NSButton					*_boardRenameBoardsButton;
+	IBOutlet NSButton					*_boardDeleteBoardsButton;
+	IBOutlet NSButton					*_boardAddThreadsButton;
+	IBOutlet NSButton					*_boardMoveThreadsButton;
+	IBOutlet NSButton					*_boardDeleteThreadsButton;
+	IBOutlet NSButton					*_boardAddPostsButton;
+	IBOutlet NSButton					*_boardEditOwnPostsButton;
+	IBOutlet NSButton					*_boardEditAllPostsButton;
+	IBOutlet NSButton					*_boardDeletePostsButton;
 	IBOutlet NSButton					*_fileListFilesButton;
 	IBOutlet NSButton					*_fileGetInfoButton;
 	IBOutlet NSButton					*_fileCreateDirectoriesButton;
@@ -147,7 +158,9 @@
 - (IBAction)save:(id)sender;
 - (IBAction)selectAllBasicPrivileges:(id)sender;
 - (IBAction)selectAllFilesPrivileges:(id)sender;
+- (IBAction)selectAllBoardsPrivileges:(id)sender;
 - (IBAction)selectAllTrackerPrivileges:(id)sender;
+- (IBAction)selectAllUsersPrivileges:(id)sender;
 - (IBAction)selectAllAccountsPrivileges:(id)sender;
 - (IBAction)selectAllAdministrationPrivileges:(id)sender;
 

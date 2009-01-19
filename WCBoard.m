@@ -100,22 +100,22 @@
 	
 	permissions = 0;
 	
-	if([message getBool:&value forName:@"wired.board.owner.read"])
+	if([message getBool:&value forName:@"wired.board.owner.read"] && value)
 		permissions |= WCBoardOwnerRead;
 	
-	if([message getBool:&value forName:@"wired.board.owner.write"])
+	if([message getBool:&value forName:@"wired.board.owner.write"] && value)
 		permissions |= WCBoardOwnerWrite;
 	
-	if([message getBool:&value forName:@"wired.board.group.read"])
+	if([message getBool:&value forName:@"wired.board.group.read"] && value)
 		permissions |= WCBoardGroupRead;
 	
-	if([message getBool:&value forName:@"wired.board.group.write"])
+	if([message getBool:&value forName:@"wired.board.group.write"] && value)
 		permissions |= WCBoardGroupWrite;
 	
-	if([message getBool:&value forName:@"wired.board.everyone.read"])
+	if([message getBool:&value forName:@"wired.board.everyone.read"] && value)
 		permissions |= WCBoardEveryoneRead;
 	
-	if([message getBool:&value forName:@"wired.board.everyone.write"])
+	if([message getBool:&value forName:@"wired.board.everyone.write"] && value)
 		permissions |= WCBoardEveryoneWrite;
 	
 	board = [[self alloc] _initWithPath:path name:[path lastPathComponent] connection:connection];

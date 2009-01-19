@@ -118,6 +118,34 @@
 
 #pragma mark -
 
+- (BOOL)validateMenuItem:(NSMenuItem *)item {
+	return [_chatController validateMenuItem:item];
+}
+
+
+
+#pragma mark -
+
+- (IBAction)getInfo:(id)sender {
+	[_chatController getInfo:sender];
+}
+
+
+
+- (IBAction)saveChat:(id)sender {
+	[_chatController saveChat:sender];
+}
+
+
+
+- (IBAction)setTopic:(id)sender {
+	[_chatController setTopic:sender];
+}
+
+
+
+#pragma mark -
+
 - (NSTextView *)insertionTextView {
 	return [_chatController insertionTextView];
 }

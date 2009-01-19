@@ -421,19 +421,16 @@
 		return ([connection isConnected] && ![connection isDisconnecting]);
 	else if(selector == @selector(reconnect:))
 		return (connection != NULL && ![connection isConnected] && ![connection isManuallyReconnecting]);
-	else if(selector == @selector(files:) || selector == @selector(postNews:) ||
-			selector == @selector(broadcast:))
+	else if(selector == @selector(files:) || selector == @selector(broadcast:))
 		return [connection isConnected];
 	else if(selector == @selector(serverInfo:) || selector == @selector(news:) ||
 			selector == @selector(accounts:) || selector == @selector(administration:) ||
 			selector == @selector(console:))
 		return (connection != NULL);
-	else if(selector == @selector(saveChat:) || selector == @selector(setTopic:))
-		return [chatController validateMenuItem:item];
 	else if(selector == @selector(nextConnection:) || selector == @selector(previousConnection:))
 		return ([_chatControllers count] > 1);
 	
-	return YES;
+	return [chatController validateMenuItem:item];
 }
 
 
@@ -563,18 +560,9 @@
 }
 
 
+
 - (IBAction)setTopic:(id)sender {
 	[[self selectedChatController] setTopic:sender];
-}
-
-
-
-- (IBAction)postNews:(id)sender {
-	WCServerConnection		*connection;
-	
-	connection = [[self selectedChatController] connection];
-	
-	[[connection news] postNews:self];
 }
 
 

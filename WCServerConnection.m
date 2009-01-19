@@ -229,6 +229,8 @@
 	while((controller = [enumerator nextObject]))
 		[controller close];
 	
+	[_connectionControllers removeAllObjects];
+	
 	[super linkConnectionDidTerminate:notification];
 }
 

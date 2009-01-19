@@ -1038,12 +1038,14 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 
 - (void)menuNeedsUpdate:(NSMenu *)menu {
-	if([[self selectedUser] isIgnored]) {
-		[_ignoreMenuItem setTitle:NSLS(@"Unignore", "User list menu title")];
-		[_ignoreMenuItem setAction:@selector(unignore:)];
-	} else {
-		[_ignoreMenuItem setTitle:NSLS(@"Ignore", "User list menu title")];
-		[_ignoreMenuItem setAction:@selector(ignore:)];
+	if(menu == _userListMenu) {
+		if([[self selectedUser] isIgnored]) {
+			[_ignoreMenuItem setTitle:NSLS(@"Unignore", "User list menu title")];
+			[_ignoreMenuItem setAction:@selector(unignore:)];
+		} else {
+			[_ignoreMenuItem setTitle:NSLS(@"Ignore", "User list menu title")];
+			[_ignoreMenuItem setAction:@selector(ignore:)];
+		}
 	}
 }
 
@@ -1052,7 +1054,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 - (BOOL)topicTextView:(NSTextView *)textView doCommandBySelector:(SEL)selector {
 	if(selector == @selector(insertNewline:)) {
 		if([[NSApp currentEvent] character] == NSEnterCharacter) {
-//			[self submitSheet:textView];
+			[self submitSheet:textView];
 			
 			return YES;
 		}
@@ -1239,20 +1241,11 @@ typedef enum _WCChatFormat					WCChatFormat;
 	if(selector == @selector(sendPrivateMessage:))
 		return connected;
 	else if(selector == @selector(getInfo:))
-		return ([[[self connection] account] userGetInfo] && connected);
+		return ([[[self connection] account] userGetInfo] && [self selectedUser] != NULL && connected);
 	else if(selector == @selector(kick:))
 		return (([self chatID] != WCPublicChatID || [[[self connection] account] userKickUsers]) && connected);
 	else if(selector == @selector(editAccount:))
 		return ([[[self connection] account] accountEditAccounts] && connected);
-	else if(selector == @selector(ignore:) || selector == @selector(unignore:)) {
-		if([[self selectedUser] isIgnored]) {
-			[item setTitle:NSLS(@"Unignore", "User list menu title")];
-			[item setAction:@selector(unignore:)];
-		} else {
-			[item setTitle:NSLS(@"Ignore", "User list menu title")];
-			[item setAction:@selector(ignore:)];
-		}
-	}
 	
 	return YES;
 }

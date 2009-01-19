@@ -8,6 +8,7 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
+			<integer value="81"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -245,14 +246,6 @@
 									<reference key="NSOnImage" ref="393497551"/>
 									<reference key="NSMixedImage" ref="410793182"/>
 								</object>
-								<object class="NSMenuItem" id="342973074">
-									<reference key="NSMenu" ref="905514725"/>
-									<string key="NSTitle">News</string>
-									<string key="NSKeyEquiv"/>
-									<int key="NSMnemonicLoc">2147483647</int>
-									<reference key="NSOnImage" ref="393497551"/>
-									<reference key="NSMixedImage" ref="410793182"/>
-								</object>
 								<object class="NSMenuItem" id="939041705">
 									<reference key="NSMenu" ref="905514725"/>
 									<string key="NSTitle">Files</string>
@@ -313,15 +306,6 @@
 									<reference key="NSMenu" ref="905514725"/>
 									<string type="base64-UTF8" key="NSTitle">U2V0IFRvcGlj4oCmA</string>
 									<string key="NSKeyEquiv">T</string>
-									<int key="NSKeyEquivModMask">1048576</int>
-									<int key="NSMnemonicLoc">2147483647</int>
-									<reference key="NSOnImage" ref="393497551"/>
-									<reference key="NSMixedImage" ref="410793182"/>
-								</object>
-								<object class="NSMenuItem" id="1050621067">
-									<reference key="NSMenu" ref="905514725"/>
-									<string type="base64-UTF8" key="NSTitle">UG9zdCBOZXdz4oCmA</string>
-									<string key="NSKeyEquiv">p</string>
 									<int key="NSKeyEquivModMask">1048576</int>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="393497551"/>
@@ -1251,14 +1235,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label">news:</string>
-						<reference key="source" ref="672801163"/>
-						<reference key="destination" ref="342973074"/>
-					</object>
-					<int key="connectionID">772</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
 						<string key="label">getInfo:</string>
 						<reference key="source" ref="672801163"/>
 						<reference key="destination" ref="312204872"/>
@@ -1491,14 +1467,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label">postNews:</string>
-						<reference key="source" ref="569324035"/>
-						<reference key="destination" ref="1050621067"/>
-					</object>
-					<int key="connectionID">850</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
 						<string key="label">reconnect:</string>
 						<reference key="source" ref="569324035"/>
 						<reference key="destination" ref="391185660"/>
@@ -1507,27 +1475,11 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label">saveChat:</string>
-						<reference key="source" ref="569324035"/>
-						<reference key="destination" ref="780835616"/>
-					</object>
-					<int key="connectionID">852</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
 						<string key="label">serverInfo:</string>
 						<reference key="source" ref="569324035"/>
 						<reference key="destination" ref="876975309"/>
 					</object>
 					<int key="connectionID">853</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">setTopic:</string>
-						<reference key="source" ref="569324035"/>
-						<reference key="destination" ref="507907497"/>
-					</object>
-					<int key="connectionID">854</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
@@ -1568,6 +1520,22 @@
 						<reference key="destination" ref="275352344"/>
 					</object>
 					<int key="connectionID">859</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">saveChat:</string>
+						<reference key="source" ref="672801163"/>
+						<reference key="destination" ref="780835616"/>
+					</object>
+					<int key="connectionID">860</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">setTopic:</string>
+						<reference key="source" ref="672801163"/>
+						<reference key="destination" ref="507907497"/>
+					</object>
+					<int key="connectionID">861</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1818,13 +1786,11 @@
 							<reference ref="346936077"/>
 							<reference ref="2192435"/>
 							<reference ref="939041705"/>
-							<reference ref="342973074"/>
 							<reference ref="177780392"/>
 							<reference ref="432020739"/>
 							<reference ref="312204872"/>
 							<reference ref="562721670"/>
 							<reference ref="775200795"/>
-							<reference ref="1050621067"/>
 							<reference ref="876975309"/>
 							<reference ref="780835616"/>
 							<reference ref="507907497"/>
@@ -1846,11 +1812,6 @@
 					<object class="IBObjectRecord">
 						<int key="objectID">401</int>
 						<reference key="object" ref="939041705"/>
-						<reference key="parent" ref="905514725"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">412</int>
-						<reference key="object" ref="342973074"/>
 						<reference key="parent" ref="905514725"/>
 					</object>
 					<object class="IBObjectRecord">
@@ -1876,11 +1837,6 @@
 					<object class="IBObjectRecord">
 						<int key="objectID">566</int>
 						<reference key="object" ref="775200795"/>
-						<reference key="parent" ref="905514725"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">641</int>
-						<reference key="object" ref="1050621067"/>
 						<reference key="parent" ref="905514725"/>
 					</object>
 					<object class="IBObjectRecord">
@@ -2393,8 +2349,6 @@
 					<string>399.ImportedFromIB2</string>
 					<string>401.IBPluginDependency</string>
 					<string>401.ImportedFromIB2</string>
-					<string>412.IBPluginDependency</string>
-					<string>412.ImportedFromIB2</string>
 					<string>444.IBPluginDependency</string>
 					<string>444.ImportedFromIB2</string>
 					<string>446.IBPluginDependency</string>
@@ -2462,8 +2416,6 @@
 					<string>58.ImportedFromIB2</string>
 					<string>595.IBPluginDependency</string>
 					<string>595.ImportedFromIB2</string>
-					<string>641.IBPluginDependency</string>
-					<string>641.ImportedFromIB2</string>
 					<string>646.IBPluginDependency</string>
 					<string>646.ImportedFromIB2</string>
 					<string>648.IBPluginDependency</string>
@@ -2594,12 +2546,12 @@
 					<reference ref="5"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
-					<string>{{879, 143}, {228, 253}}</string>
+					<string>{{784, 568}, {228, 253}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
-					<string>{{365, 396}, {646, 20}}</string>
+					<string>{{270, 821}, {646, 20}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
 					<string>{{780, 320}, {216, 73}}</string>
@@ -2627,11 +2579,7 @@
 					<reference ref="5"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
-					<string>{{2162, 491}, {189, 93}}</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
+					<string>{{578, 728}, {189, 93}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2640,7 +2588,9 @@
 					<reference ref="5"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
-					<string>{{2211, 561}, {169, 23}}</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<reference ref="5"/>
+					<string>{{627, 798}, {169, 23}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2698,8 +2648,6 @@
 					<reference ref="5"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<reference ref="5"/>
 					<string>{{2168, 538}, {110, 23}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
@@ -2726,7 +2674,7 @@
 					<reference ref="5"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
-					<string>{{483, 113}, {194, 283}}</string>
+					<string>{{388, 578}, {194, 243}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2776,7 +2724,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">859</int>
+			<int key="maxID">861</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2793,10 +2741,14 @@
 							<string>getInfo:</string>
 							<string>newFolder:</string>
 							<string>reloadFiles:</string>
+							<string>saveChat:</string>
+							<string>setTopic:</string>
 							<string>showViewOptions:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -2861,12 +2813,16 @@
 							<string>selectAllAccountsPrivileges:</string>
 							<string>selectAllAdministrationPrivileges:</string>
 							<string>selectAllBasicPrivileges:</string>
+							<string>selectAllBoardsPrivileges:</string>
 							<string>selectAllFilesPrivileges:</string>
 							<string>selectAllTrackerPrivileges:</string>
+							<string>selectAllUsersPrivileges:</string>
 							<string>touch:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -2897,6 +2853,18 @@
 							<string>_banlistAddBansButton</string>
 							<string>_banlistDeleteBansButton</string>
 							<string>_banlistGetBansButton</string>
+							<string>_boardAddBoardsButton</string>
+							<string>_boardAddPostsButton</string>
+							<string>_boardAddThreadsButton</string>
+							<string>_boardDeleteBoardsButton</string>
+							<string>_boardDeletePostsButton</string>
+							<string>_boardDeleteThreadsButton</string>
+							<string>_boardEditAllPostsButton</string>
+							<string>_boardEditOwnPostsButton</string>
+							<string>_boardMoveBoardsButton</string>
+							<string>_boardMoveThreadsButton</string>
+							<string>_boardReadBoardsButton</string>
+							<string>_boardRenameBoardsButton</string>
 							<string>_changePasswordPanel</string>
 							<string>_changePasswordTextField</string>
 							<string>_chatCreateChatsButton</string>
@@ -2927,9 +2895,6 @@
 							<string>_modificationTimeTextField</string>
 							<string>_nameTableColumn</string>
 							<string>_nameTextField</string>
-							<string>_newsClearNewsButton</string>
-							<string>_newsPostNewsButton</string>
-							<string>_newsReadNewsButton</string>
 							<string>_noneMenuItem</string>
 							<string>_passwordTextField</string>
 							<string>_progressIndicator</string>
@@ -2937,8 +2902,10 @@
 							<string>_selectAllAccountsPrivilegesButton</string>
 							<string>_selectAllAdministrationPrivilegesButton</string>
 							<string>_selectAllBasicPrivilegesButton</string>
+							<string>_selectAllBoardsPrivilegesButton</string>
 							<string>_selectAllFilesPrivilegesButton</string>
 							<string>_selectAllTrackerPrivilegesButton</string>
+							<string>_selectAllUsersPrivilegesButton</string>
 							<string>_settingsGetSettingsButton</string>
 							<string>_settingsSetSettingsButton</string>
 							<string>_trackerListServersButton</string>
@@ -2975,6 +2942,18 @@
 							<string>NSButton</string>
 							<string>NSButton</string>
 							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
 							<string>NSPanel</string>
 							<string>NSSecureTextField</string>
 							<string>NSButton</string>
@@ -3005,12 +2984,11 @@
 							<string>NSTextField</string>
 							<string>NSTableColumn</string>
 							<string>NSTextField</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
 							<string>NSMenuItem</string>
 							<string>NSSecureTextField</string>
 							<string>NSProgressIndicator</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
 							<string>NSButton</string>
 							<string>NSButton</string>
 							<string>NSButton</string>
@@ -3126,25 +3104,17 @@
 							<string>files:</string>
 							<string>manual:</string>
 							<string>messages:</string>
-							<string>news:</string>
 							<string>nextConnection:</string>
-							<string>postNews:</string>
 							<string>preferences:</string>
 							<string>previousConnection:</string>
 							<string>reconnect:</string>
-							<string>saveChat:</string>
 							<string>search:</string>
 							<string>serverInfo:</string>
 							<string>servers:</string>
-							<string>setTopic:</string>
 							<string>transfers:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -3381,11 +3351,13 @@
 							<string>preview:</string>
 							<string>reloadFiles:</string>
 							<string>style:</string>
+							<string>type:</string>
 							<string>up:</string>
 							<string>upload:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -3407,40 +3379,50 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>_createFolderButton</string>
 							<string>_createFolderPanel</string>
-							<string>_createFolderPopUpButton</string>
-							<string>_createFolderTextField</string>
 							<string>_deleteButton</string>
 							<string>_downloadButton</string>
+							<string>_everyonePermissionsPopUpButton</string>
 							<string>_filesBrowser</string>
 							<string>_filesController</string>
 							<string>_filesTabView</string>
+							<string>_groupPermissionsPopUpButton</string>
+							<string>_groupPopUpButton</string>
 							<string>_historyControl</string>
 							<string>_infoButton</string>
+							<string>_nameTextField</string>
+							<string>_ownerPermissionsPopUpButton</string>
+							<string>_ownerPopUpButton</string>
 							<string>_previewButton</string>
 							<string>_progressIndicator</string>
 							<string>_reloadButton</string>
 							<string>_styleControl</string>
 							<string>_titleBarMenu</string>
+							<string>_typePopUpButton</string>
 							<string>_uploadButton</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>NSButton</string>
 							<string>NSPanel</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
 							<string>NSPopUpButton</string>
-							<string>NSTextField</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
 							<string>NSBrowser</string>
 							<string>WCFilesController</string>
 							<string>NSTabView</string>
+							<string>NSPopUpButton</string>
+							<string>NSPopUpButton</string>
 							<string>NSSegmentedControl</string>
 							<string>NSButton</string>
+							<string>NSTextField</string>
+							<string>NSPopUpButton</string>
+							<string>NSPopUpButton</string>
 							<string>NSButton</string>
 							<string>NSProgressIndicator</string>
 							<string>NSButton</string>
 							<string>NSSegmentedControl</string>
 							<string>NSMenu</string>
+							<string>NSPopUpButton</string>
 							<string>NSButton</string>
 						</object>
 					</object>
@@ -3869,7 +3851,6 @@
 							<string>getInfo:</string>
 							<string>news:</string>
 							<string>nextConnection:</string>
-							<string>postNews:</string>
 							<string>previousConnection:</string>
 							<string>reconnect:</string>
 							<string>saveChat:</string>
@@ -3878,7 +3859,6 @@
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
