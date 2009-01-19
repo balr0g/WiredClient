@@ -48,7 +48,7 @@
 
 @class WCServer, WCCache, WCAccount;
 @class WCLink, WCNotificationCenter;
-@class WCAccounts, WCAdministration, WCPublicChatController, WCConsole, WCNews, WCBoard, WCServerInfo;
+@class WCAccounts, WCAdministration, WCPublicChatController, WCConsole, WCNews, WCServerInfo;
 
 @interface WCServerConnection : WCLinkConnection {
 	NSString													*_identifier;
@@ -64,8 +64,9 @@
 	WCPublicChatController										*_chatController;
 	WCConsole													*_console;
 	WCNews														*_news;
-	WCBoard														*_board;
 	WCServerInfo												*_serverInfo;
+	
+	NSMutableArray												*_connectionControllers;
 	
 	BOOL														_manuallyReconnecting;
 	BOOL														_shouldAutoReconnect;
@@ -101,7 +102,9 @@
 - (WCPublicChatController *)chatController;
 - (WCConsole *)console;
 - (WCNews *)news;
-- (WCBoard *)board;
 - (WCServerInfo *)serverInfo;
+
+- (void)addConnectionController:(WCConnectionController *)connectionController;
+- (void)removeConnectionController:(WCConnectionController *)connectionController;
 
 @end

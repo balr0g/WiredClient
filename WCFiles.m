@@ -729,16 +729,6 @@
 
 
 
-- (void)linkConnectionDidTerminate:(NSNotification *)notification {
-	[self validate];
-	
-	_subscribed = NO;
-	
-	[super linkConnectionDidTerminate:notification];
-}
-
-
-
 - (void)serverConnectionServerInfoDidChange:(NSNotification *)notification {
 	[[self window] setTitle:[[self _currentPath] path] withSubtitle:[[self connection] name]];
 	

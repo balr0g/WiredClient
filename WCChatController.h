@@ -99,7 +99,6 @@
 + (NSString *)outputForShellCommand:(NSString *)command;
 
 - (void)linkConnectionLoggedIn:(NSNotification *)notification;
-- (void)linkConnectionDidTerminate:(NSNotification *)notification;
 - (void)wiredChatJoinChatReply:(WIP7Message *)message;
 
 - (void)validate;

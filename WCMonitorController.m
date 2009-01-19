@@ -66,8 +66,7 @@
 		message = [WIP7Message messageWithName:@"wired.user.get_users" spec:WCP7Spec];
 		[[_administration connection] sendMessage:message fromObserver:self selector:@selector(wiredUserGetUsersReply:)];
 		
-		[[self class] cancelPreviousPerformRequestsWithTarget:self selector:@selector(_reloadUsers)];
-		[self performSelector:@selector(_reloadUsers) afterDelay:1.0];
+		[self performSelectorOnce:@selector(_reloadUsers) afterDelay:1.0];
 	}
 }
 
@@ -168,12 +167,6 @@
 
 
 #pragma mark -
-
-- (void)linkConnectionDidTerminate:(NSNotification *)notification {
-	[[self class] cancelPreviousPerformRequestsWithTarget:self selector:@selector(_reloadUsers)];
-}
-
-
 
 - (void)serverConnectionPrivilegesDidChange:(NSNotification *)notification {
 	[self _requestUsers];

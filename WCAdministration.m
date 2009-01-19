@@ -152,6 +152,11 @@
 
 
 - (void)dealloc {
+	[_monitorController setAdministration:NULL];
+	[_logController setAdministration:NULL];
+	[_settingsController setAdministration:NULL];
+	[_banlistController setAdministration:NULL];
+	
 	[_identifiers release];
 	[_views release];
 
@@ -187,8 +192,10 @@
 					  controller:_banlistController];
 	
 	window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0.0, 0.0, 100.0, 100.0)
-										 styleMask:NSTitledWindowMask | NSClosableWindowMask |
-												   NSMiniaturizableWindowMask | NSResizableWindowMask
+										 styleMask:NSTitledWindowMask |
+												   NSClosableWindowMask |
+												   NSMiniaturizableWindowMask |
+												   NSResizableWindowMask
 										   backing:NSBackingStoreBuffered
 											 defer:YES];
 	[window setShowsToolbarButton:NO];
@@ -296,17 +303,6 @@
 
 
 
-- (void)linkConnectionDidTerminate:(NSNotification *)notification {
-	[_monitorController linkConnectionDidTerminate:notification];
-	[_logController linkConnectionDidTerminate:notification];
-	[_settingsController linkConnectionDidTerminate:notification];
-	[_banlistController linkConnectionDidTerminate:notification];
-	
-	[super linkConnectionDidTerminate:notification];
-}
-
-
-
 - (void)serverConnectionPrivilegesDidChange:(NSNotification *)notification {
 	[_monitorController serverConnectionPrivilegesDidChange:notification];
 	[_logController serverConnectionPrivilegesDidChange:notification];
@@ -369,11 +365,6 @@
 
 
 
-- (void)linkConnectionDidTerminate:(NSNotification *)notification {
-}
-
-
-
 - (void)serverConnectionPrivilegesDidChange:(NSNotification *)notification {
 }
 
@@ -403,8 +394,8 @@
 
 #pragma mark -
 
-- (IBAction)submitSheet:(id)sender {
-	[NSApp endSheet:[sender window] returnCode:NSOKButton];
+- (void)setAdministration:(WCAdministration *)administration {
+	_administration = administration;
 }
 
 @end

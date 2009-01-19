@@ -103,14 +103,6 @@
 
 
 
-- (void)linkConnectionDidTerminate:(NSNotification *)notification {
-	[super linkConnectionDidTerminate:notification];
-
-	[self autorelease];
-}
-
-
-
 - (void)serverConnectionServerInfoDidChange:(NSNotification *)notification {
 	[[WCPublicChat publicChat] addChatController:self];
 }

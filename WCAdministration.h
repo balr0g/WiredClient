@@ -62,7 +62,6 @@
 - (void)windowDidLoad;
 - (void)linkConnectionLoggedIn:(NSNotification *)notification;
 - (void)linkConnectionDidClose:(NSNotification *)notification;
-- (void)linkConnectionDidTerminate:(NSNotification *)notification;
 - (void)serverConnectionPrivilegesDidChange:(NSNotification *)notification;
 
 - (void)controllerWindowDidBecomeKey;
@@ -70,6 +69,6 @@
 - (void)controllerDidSelect;
 - (void)controllerDidUnselect;
 
-- (void)submitSheet:(id)sender;
+- (void)setAdministration:(WCAdministration *)administration;
 
 @end

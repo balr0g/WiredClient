@@ -542,8 +542,6 @@ typedef enum _WCChatFormat					WCChatFormat;
 		addObserver:self
 		   selector:@selector(dateDidChange:)
 			   name:WCDateDidChangeNotification];
-	
-	[self retain];
 
 	return self;
 }
@@ -552,7 +550,6 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 - (void)dealloc {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	[_connection removeObserver:self];
 	
 	if(_loadedNib) {
 		[_userListMenu release];
@@ -666,13 +663,6 @@ typedef enum _WCChatFormat					WCChatFormat;
 			[[_nickTableColumn dataCell] setControlSize:NSSmallControlSize];
 			break;
 	}
-}
-
-
-
-- (void)linkConnectionDidTerminate:(NSNotification *)notification {
-	[_connection removeObserver:self];
-	_connection = NULL;
 }
 
 
@@ -1273,10 +1263,6 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 - (void)setConnection:(WCServerConnection *)connection {
 	_connection = connection;
-	
-	[_connection addObserver:self
-					selector:@selector(linkConnectionDidTerminate:)
-						name:WCLinkConnectionDidTerminateNotification];
 	
 	[_connection addObserver:self
 					selector:@selector(linkConnectionLoggedIn:)

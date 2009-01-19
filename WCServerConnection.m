@@ -94,7 +94,9 @@
 - (id)init {
 	self = [super init];
 	
-	_server = [[WCServer alloc] init];
+	_server					= [[WCServer alloc] init];
+	_cache					= [[WCCache alloc] initWithCapacity:100];
+	_connectionControllers	= [[NSMutableArray alloc] init];
 	
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
@@ -136,12 +138,6 @@
 
 
 
-- (void)release {
-	[super release];
-}
-
-
-
 - (void)dealloc {
 	[_identifier release];
 	[_theme release];
@@ -149,11 +145,6 @@
 	[_server release];
 	[_cache release];
 	
-	[_console release];
-	[_accounts release];
-	[_news release];
-	[_board release];
-	[_serverInfo release];
 	[_chatController release];
 	
 	[super dealloc];
@@ -227,8 +218,16 @@
 
 
 - (void)linkConnectionDidTerminate:(NSNotification *)notification {
+	NSEnumerator			*enumerator;
+	WCConnectionController	*controller;
+
 	[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_autoReconnect)];
 	[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_triggerAutoReconnect)];
+	
+	enumerator = [[[_connectionControllers copy] autorelease] objectEnumerator];
+	
+	while((controller = [enumerator nextObject]))
+		[controller close];
 	
 	[super linkConnectionDidTerminate:notification];
 }
@@ -332,17 +331,15 @@
 #pragma mark -
 
 - (void)connect {
-	if(!_cache) {
-		_cache			= [[WCCache alloc] initWithCapacity:100];
-
+	if(!_chatController) {
 #if defined(WCConfigurationDebug) || defined(WCConfigurationTest)
-		_console		= [[WCConsole consoleWithConnection:self] retain];
+		_console		= [WCConsole consoleWithConnection:self];
 #endif
 		
-		_accounts		= [[WCAccounts accountsWithConnection:self] retain];
-		_administration	= [[WCAdministration administrationWithConnection:self] retain];
-		_news			= [[WCNews newsWithConnection:self] retain];
-		_serverInfo		= [[WCServerInfo serverInfoWithConnection:self] retain];
+		_accounts		= [WCAccounts accountsWithConnection:self];
+		_administration	= [WCAdministration administrationWithConnection:self];
+		_news			= [WCNews newsWithConnection:self];
+		_serverInfo		= [WCServerInfo serverInfoWithConnection:self];
 
 		_chatController	= [[WCPublicChatController publicChatControllerWithConnection:self] retain];
 	}
@@ -522,14 +519,22 @@
 
 
 
-- (WCBoard *)board {
-	return _board;
+- (WCServerInfo *)serverInfo {
+	return _serverInfo;
 }
 
 
 
-- (WCServerInfo *)serverInfo {
-	return _serverInfo;
+#pragma mark -
+
+- (void)addConnectionController:(WCConnectionController *)connectionController {
+	[_connectionControllers addObject:connectionController];
+}
+
+
+
+- (void)removeConnectionController:(WCConnectionController *)connectionController {
+	[_connectionControllers removeObject:connectionController];
 }
 
 @end

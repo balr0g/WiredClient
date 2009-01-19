@@ -44,8 +44,7 @@
 @implementation WCConnectionController(Private)
 
 - (void)_WC_windowWillClose:(NSNotification *)notification {
-	if(!_singleton && [notification object] == [self window])
-		[self autorelease];
+	[_connection removeConnectionController:self];
 }
 
 
@@ -76,13 +75,11 @@
 	self = [super initWithWindowNibName:nibName];
 
 	_name			= [name retain];
-	_connection		= connection;
+	_connection		= [connection retain];
 	_singleton		= singleton;
 	
-	[_connection addObserver:self
-					selector:@selector(linkConnectionDidTerminate:)
-						name:WCLinkConnectionDidTerminateNotification];
-
+	[_connection addConnectionController:self];
+	
 	[_connection addObserver:self
 					selector:@selector(linkConnectionDidClose:)
 						name:WCLinkConnectionDidCloseNotification];
@@ -108,8 +105,6 @@
 						selector:@selector(serverConnectionWillReconnect:)
 							name:WCServerConnectionWillReconnectNotification];
 	}
-	
-	[self retain];
 
 	return self;
 }
@@ -123,7 +118,7 @@
 	[_identifier release];
 
 	[_connection removeObserver:self];
-	_connection = NULL;
+	[_connection release];
 
 	[super dealloc];
 }
@@ -136,7 +131,8 @@
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(_WC_windowWillClose:)
-			   name:NSWindowWillCloseNotification];
+			   name:NSWindowWillCloseNotification
+			 object:[self window]];
 	
 	[self themeDidChange:[[self connection] theme]];
 	[self validate];
@@ -145,18 +141,6 @@
 
 
 - (void)themeDidChange:(NSDictionary *)theme {
-}
-
-
-
-- (void)linkConnectionDidTerminate:(NSNotification *)notification {
-	[self close];
-
-	if(_singleton)
-		[self autorelease];
-
-	[_connection removeObserver:self];
-	_connection = NULL;
 }
 
 

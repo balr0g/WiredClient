@@ -277,14 +277,6 @@
 
 
 
-- (void)linkConnectionDidTerminate:(NSNotification *)notification {
-	[self _readAllPosts];
-	
-	[super linkConnectionDidTerminate:notification];
-}
-
-
-
 - (void)serverConnectionPrivilegesDidChange:(NSNotification *)notification {
 	if(!_receivedNews)
 		[self _reloadNews];

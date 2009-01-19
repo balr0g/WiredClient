@@ -94,9 +94,9 @@
 
 
 - (void)dealloc {
-	[_connection removeObserver:self];
-
 	[_url release];
+
+	[_connection removeObserver:self];
 	[_connection release];
 	
 	[super dealloc];

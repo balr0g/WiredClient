@@ -41,7 +41,6 @@
 - (id)initWithWindowNibName:(NSString *)windowNibName name:(NSString *)name connection:(WCServerConnection *)connection singleton:(BOOL)singleton;
 
 - (void)themeDidChange:(NSDictionary *)theme;
-- (void)linkConnectionDidTerminate:(NSNotification *)notification;
 - (void)linkConnectionDidClose:(NSNotification *)notification;
 - (void)linkConnectionLoggedIn:(NSNotification *)notification;
 - (void)serverConnectionServerInfoDidChange:(NSNotification *)notification;
