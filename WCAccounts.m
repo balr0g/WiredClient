@@ -269,6 +269,7 @@
 		[_boardMoveBoardsButton setState:[account boardMoveBoards]];
 		[_boardRenameBoardsButton setState:[account boardRenameBoards]];
 		[_boardDeleteBoardsButton setState:[account boardDeleteBoards]];
+		[_boardSetPermissionsButton setState:[account boardSetPermissions]];
 		[_boardAddThreadsButton setState:[account boardAddThreads]];
 		[_boardMoveThreadsButton setState:[account boardMoveThreads]];
 		[_boardDeleteThreadsButton setState:[account boardDeleteThreads]];
@@ -411,6 +412,7 @@
 	[account setBoardMoveBoards:[_boardMoveBoardsButton state]];
 	[account setBoardRenameBoards:[_boardRenameBoardsButton state]];
 	[account setBoardDeleteBoards:[_boardDeleteBoardsButton state]];
+	[account setBoardSetPermissions:[_boardSetPermissionsButton state]];
 	[account setBoardAddThreads:[_boardAddThreadsButton state]];
 	[account setBoardMoveThreads:[_boardMoveThreadsButton state]];
 	[account setBoardDeleteThreads:[_boardDeleteThreadsButton state]];
@@ -637,6 +639,7 @@
 		_boardMoveBoardsButton,
 		_boardRenameBoardsButton,
 		_boardDeleteBoardsButton,
+		_boardSetPermissionsButton,
 		_boardAddThreadsButton,
 		_boardMoveThreadsButton,
 		_boardDeleteThreadsButton,
@@ -1311,6 +1314,7 @@
 	[_boardMoveBoardsButton setState:NSOnState];
 	[_boardRenameBoardsButton setState:NSOnState];
 	[_boardDeleteBoardsButton setState:NSOnState];
+	[_boardSetPermissionsButton setState:NSOnState];
 	[_boardAddThreadsButton setState:NSOnState];
 	[_boardMoveThreadsButton setState:NSOnState];
 	[_boardDeleteThreadsButton setState:NSOnState];

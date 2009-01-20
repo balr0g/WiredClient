@@ -1190,7 +1190,7 @@
 	if(selector == @selector(renameBoard:))
 		return (board != NULL && [board isModifiable] && connected && [account boardRenameBoards]);
 	else if(selector == @selector(changePermissions:))
-		return (board != NULL && [board isModifiable] && connected/* && [account boardChangePermissions]*/);
+		return (board != NULL && [board isModifiable] && connected && [account boardSetPermissions]);
 	
 	return YES;
 }

@@ -64,6 +64,7 @@
 	[message getBool:&_boardMoveBoards forName:@"wired.account.board.move_boards"];
 	[message getBool:&_boardRenameBoards forName:@"wired.account.board.rename_boards"];
 	[message getBool:&_boardDeleteBoards forName:@"wired.account.board.delete_boards"];
+	[message getBool:&_boardSetPermissions forName:@"wired.account.board.set_permissions"];
 	[message getBool:&_boardAddThreads forName:@"wired.account.board.add_threads"];
 	[message getBool:&_boardMoveThreads forName:@"wired.account.board.move_threads"];
 	[message getBool:&_boardDeleteThreads forName:@"wired.account.board.delete_threads"];
@@ -133,6 +134,7 @@
 	[message setBool:_boardMoveBoards forName:@"wired.account.board.move_boards"];
 	[message setBool:_boardRenameBoards forName:@"wired.account.board.rename_boards"];
 	[message setBool:_boardDeleteBoards forName:@"wired.account.board.delete_boards"];
+	[message setBool:_boardSetPermissions forName:@"wired.account.board.set_permissions"];
 	[message setBool:_boardAddThreads forName:@"wired.account.board.add_threads"];
 	[message setBool:_boardMoveThreads forName:@"wired.account.board.move_threads"];
 	[message setBool:_boardDeleteThreads forName:@"wired.account.board.delete_threads"];
@@ -462,6 +464,18 @@
 
 - (BOOL)boardDeleteBoards {
 	return _boardDeleteBoards;
+}
+
+
+
+- (void)setBoardSetPermissions:(BOOL)value {
+	_boardSetPermissions = value;
+}
+
+
+
+- (BOOL)boardSetPermissions {
+	return _boardSetPermissions;
 }
 
 

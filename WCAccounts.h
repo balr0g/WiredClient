@@ -75,6 +75,7 @@
 	IBOutlet NSButton					*_boardMoveBoardsButton;
 	IBOutlet NSButton					*_boardRenameBoardsButton;
 	IBOutlet NSButton					*_boardDeleteBoardsButton;
+	IBOutlet NSButton					*_boardSetPermissionsButton;
 	IBOutlet NSButton					*_boardAddThreadsButton;
 	IBOutlet NSButton					*_boardMoveThreadsButton;
 	IBOutlet NSButton					*_boardDeleteThreadsButton;

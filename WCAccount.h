@@ -47,6 +47,7 @@
 	WIP7Bool				_boardMoveBoards;
 	WIP7Bool				_boardRenameBoards;
 	WIP7Bool				_boardDeleteBoards;
+	WIP7Bool				_boardSetPermissions;
 	WIP7Bool				_boardAddThreads;
 	WIP7Bool				_boardMoveThreads;
 	WIP7Bool				_boardDeleteThreads;
@@ -135,6 +136,8 @@
 - (BOOL)boardRenameBoards;
 - (void)setBoardDeleteBoards:(BOOL)value;
 - (BOOL)boardDeleteBoards;
+- (void)setBoardSetPermissions:(BOOL)value;
+- (BOOL)boardSetPermissions;
 - (void)setBoardAddThreads:(BOOL)value;
 - (BOOL)boardAddThreads;
 - (void)setBoardMoveThreads:(BOOL)value;
