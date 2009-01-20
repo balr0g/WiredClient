@@ -235,6 +235,11 @@
 	
 	text = [[[post text] mutableCopy] autorelease];
 	
+	[text replaceOccurrencesOfString:@"&" withString:@"&#38;"];
+	[text replaceOccurrencesOfString:@"<" withString:@"&#60;"];
+	[text replaceOccurrencesOfString:@">" withString:@"&#62;"];
+	[text replaceOccurrencesOfString:@"\"" withString:@"&#34;"];
+	[text replaceOccurrencesOfString:@"\'" withString:@"&#39;"];
 	[text replaceOccurrencesOfString:@"\n" withString:@"<br />"];
 
 	string = [[_postTemplate mutableCopy] autorelease];
