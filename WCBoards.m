@@ -56,6 +56,7 @@
 
 - (void)_reloadThread;
 - (NSString *)_HTMLStringForPost:(WCBoardPost *)post;
+- (NSString *)_textForPostText:(NSString *)text;
 
 - (void)_reloadLocationsAndSelectBoard:(WCBoard *)board;
 - (void)_addLocationsForChildrenOfBoard:(WCBoard *)board level:(NSUInteger)level;
@@ -302,6 +303,19 @@
 	[string replaceOccurrencesOfString:@"<? replystring ?>" withString:NSLS(@"Reply", @"Reply post button title")];
 	[string replaceOccurrencesOfString:@"<? editstring ?>" withString:NSLS(@"Edit", @"Edit post button title")];
 	[string replaceOccurrencesOfString:@"<? deletestring ?>" withString:NSLS(@"Delete", @"Delete post button title")];
+	
+	return string;
+}
+
+
+
+- (NSString *)_textForPostText:(NSString *)text {
+	NSMutableString		*string;
+	
+	string = [[text mutableCopy] autorelease];
+	
+	[string replaceOccurrencesOfRegex:@"(?<!(?:=|\\[|\\]))" @"(\\w+://(\\w|\\.|/|~|-|_|\\?|\\!|;|&|=|%|#|:|@|\\+|$|,|\\*|\\(|\\))+)" @"(?!(?:\\[|\\]))" withString:@"[url]$1[/url]" options:RKLCaseless];
+	[string replaceOccurrencesOfRegex:@"(?<!(?:=|\\[|\\]))" @"((\\w|\\.|_|-)+@(\\w|\\.|_|-)+)" @"(?!(?:\\[|\\]))" withString:@"[email]$1[/email]" options:RKLCaseless];
 	
 	return string;
 }
@@ -1378,7 +1392,7 @@
 		[message setUUID:[thread threadID] forName:@"wired.board.thread"];
 		[message setUUID:[post postID] forName:@"wired.board.post"];
 		[message setString:[_subjectTextField stringValue] forName:@"wired.board.subject"];
-		[message setString:[_postTextView string] forName:@"wired.board.text"];
+		[message setString:[self _textForPostText:[_postTextView string]] forName:@"wired.board.text"];
 		[[board connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardEditPostReply:)];
 	}
 	
@@ -1646,7 +1660,7 @@
 		message = [WIP7Message messageWithName:@"wired.board.add_thread" spec:WCP7Spec];
 		[message setString:[board path] forName:@"wired.board.board"];
 		[message setString:[_subjectTextField stringValue] forName:@"wired.board.subject"];
-		[message setString:[_postTextView string] forName:@"wired.board.text"];
+		[message setString:[self _textForPostText:[_postTextView string]] forName:@"wired.board.text"];
 		[[board connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardAddThreadReply:)];
 	}
 
