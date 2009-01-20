@@ -232,6 +232,9 @@
 
 - (NSString *)_HTMLStringForPost:(WCBoardPost *)post {
 	NSMutableString		*string, *text;
+	WCAccount			*account;
+	
+	account = [[post connection] account];
 	
 	text = [[[post text] mutableCopy] autorelease];
 	
@@ -242,16 +245,60 @@
 	[text replaceOccurrencesOfString:@"\'" withString:@"&#39;"];
 	[text replaceOccurrencesOfString:@"\n" withString:@"<br />"];
 
+	[text replaceOccurrencesOfRegex:@"\\[code\\](.+?)\\[/code\\]" withString:@"<blockquote><pre>$1</pre></blockquote>" options:RKLCaseless];
+	
+	while([text replaceOccurrencesOfRegex:@"<pre>(.*?)\\[+(.*?)</pre>" withString:@"<pre>$1&#91;$2</pre>" options:RKLCaseless] > 0)
+		;
+	
+	while([text replaceOccurrencesOfRegex:@"<pre>(.*?)\\]+(.*?)</pre>" withString:@"<pre>$1&#93;$2</pre>" options:RKLCaseless] > 0)
+		;
+	
+	[text replaceOccurrencesOfRegex:@"\\[b\\](.+?)\\[/b\\]" withString:@"<b>$1</b>" options:RKLCaseless];
+	[text replaceOccurrencesOfRegex:@"\\[u\\](.+?)\\[/u\\]" withString:@"<u>$1</u>" options:RKLCaseless];
+	[text replaceOccurrencesOfRegex:@"\\[i\\](.+?)\\[/i\\]" withString:@"<i>$1</i>" options:RKLCaseless];
+	[text replaceOccurrencesOfRegex:@"\\[color=(.+?)\\](.+?)\\[/color\\]" withString:@"<span style=\"color: $1\">$2</span>" options:RKLCaseless];
+	
+	[text replaceOccurrencesOfRegex:@"\\[url=(.+?)\\](.+?)\\[/url\\]" withString:@"<a href=\"$1\">$2</a>" options:RKLCaseless];
+	[text replaceOccurrencesOfRegex:@"\\[url](.+?)\\[/url\\]" withString:@"<a href=\"$1\">$1</a>" options:RKLCaseless];
+	[text replaceOccurrencesOfRegex:@"\\[email=(.+?)\\](.+?)\\[/email\\]" withString:@"<a href=\"mailto:$1\">$2</a>" options:RKLCaseless];
+	[text replaceOccurrencesOfRegex:@"\\[email](.+?)\\[/email\\]" withString:@"<a href=\"mailto:$1\">$1</a>" options:RKLCaseless];
+	[text replaceOccurrencesOfRegex:@"\\[img](.+?)\\[/img\\]" withString:@"<img src=\"$1\" alt=\"$1\" />" options:RKLCaseless];
+
+	[text replaceOccurrencesOfRegex:@"\\[quote=(.+?)\\](.+?)\\[/quote\\]"
+						 withString:[NSSWF:@"<blockquote><b>%@</b><br />$2</blockquote>", NSLS(@"$1 wrote:", @"Board quote (nick)")]
+							options:RKLCaseless];
+
+	[text replaceOccurrencesOfRegex:@"\\[quote\\](.+?)\\[/quote\\]" withString:@"<blockquote>$1</blockquote>" options:RKLCaseless];
+
 	string = [[_postTemplate mutableCopy] autorelease];
 
 	[string replaceOccurrencesOfString:@"<? from ?>" withString:[NSSWF:NSLS(@"%@ (%@)", @"Post from (nick, login)"), [post nick], [post login]]];
 	[string replaceOccurrencesOfString:@"<? subject ?>" withString:[post subject]];
-	[string replaceOccurrencesOfString:@"<? date ?>" withString:[_dateFormatter stringFromDate:[post postDate]]];
+	[string replaceOccurrencesOfString:@"<? postdate ?>" withString:[_dateFormatter stringFromDate:[post postDate]]];
+	
+	if([post editDate])
+		[string replaceOccurrencesOfString:@"<? editdate ?>" withString:[_dateFormatter stringFromDate:[post editDate]]];
+	else
+		[string replaceOccurrencesOfString:@"<div class=\"posteditdate\"><? editdate ?></div>" withString:@""];
+	
 	[string replaceOccurrencesOfString:@"<? body ?>" withString:text];
 	[string replaceOccurrencesOfString:@"<? postid ?>" withString:[post postID]];
-	[string replaceOccurrencesOfString:@"<? replydisabled ?>" withString:@""];
-	[string replaceOccurrencesOfString:@"<? editdisabled ?>" withString:@""];
-	[string replaceOccurrencesOfString:@"<? deletedisabled ?>" withString:@""];
+	
+	if([account boardAddPosts])
+		[string replaceOccurrencesOfString:@"<? replydisabled ?>" withString:@""];
+	else
+		[string replaceOccurrencesOfString:@"<? replydisabled ?>" withString:@"disabled=\"disabled\""];
+		
+	if([account boardEditAllPosts] || ([account boardEditOwnPosts] && [[[[post connection] URL] user] isEqualToString:[post login]]))
+		[string replaceOccurrencesOfString:@"<? editdisabled ?>" withString:@""];
+	else
+		[string replaceOccurrencesOfString:@"<? editdisabled ?>" withString:@"disabled=\"disabled\""];
+
+	if([account boardDeletePosts])
+		[string replaceOccurrencesOfString:@"<? deletedisabled ?>" withString:@""];
+	else
+		[string replaceOccurrencesOfString:@"<? deletedisabled ?>" withString:@"disabled=\"disabled\""];
+
 	[string replaceOccurrencesOfString:@"<? replystring ?>" withString:NSLS(@"Reply", @"Reply post button title")];
 	[string replaceOccurrencesOfString:@"<? editstring ?>" withString:NSLS(@"Edit", @"Edit post button title")];
 	[string replaceOccurrencesOfString:@"<? deletestring ?>" withString:NSLS(@"Delete", @"Delete post button title")];
@@ -409,7 +456,8 @@
 	
 	[_headerTemplate replaceOccurrencesOfString:@"<? fromstring ?>" withString:NSLS(@"From", @"Post header")];
 	[_headerTemplate replaceOccurrencesOfString:@"<? subjectstring ?>" withString:NSLS(@"Subject", @"Post header")];
-	[_headerTemplate replaceOccurrencesOfString:@"<? datestring ?>" withString:NSLS(@"Date", @"Post header")];
+	[_headerTemplate replaceOccurrencesOfString:@"<? postdatestring ?>" withString:NSLS(@"Post Date", @"Post header")];
+	[_headerTemplate replaceOccurrencesOfString:@"<? editdatestring ?>" withString:NSLS(@"Edit Date", @"Post header")];
 	
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
@@ -640,6 +688,8 @@
 	
 	if(![_receivedBoards containsObject:[connection URL]])
 		[self _getBoardsForConnection:connection];
+	
+	[self _reloadThread];
 }
 
 
@@ -1146,6 +1196,18 @@
 
 - (void)webView:(WebView *)webView didClearWindowObject:(WebScriptObject *)windowObject forFrame:(WebFrame *)frame {
 	[windowObject setValue:self forKey:@"Boards"];
+}
+
+
+
+- (void)webView:(WebView *)webView decidePolicyForNavigationAction:(NSDictionary *)action request:(NSURLRequest *)request frame:(WebFrame *)frame decisionListener:(id <WebPolicyDecisionListener>)listener {
+	if([[action objectForKey:WebActionNavigationTypeKey] unsignedIntegerValue] == WebNavigationTypeOther) {
+		[listener use];
+	} else {
+		[listener ignore];
+		
+		[[NSWorkspace sharedWorkspace] openURL:[action objectForKey:WebActionOriginalURLKey]];
+	}
 }
 
 

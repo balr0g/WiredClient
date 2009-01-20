@@ -247,6 +247,8 @@
 		A54AF98F0F13AED000AFD50E /* DropBoxBadge.icns in Resources */ = {isa = PBXBuildFile; fileRef = A54AF98A0F13AED000AFD50E /* DropBoxBadge.icns */; };
 		A54AF9900F13AED000AFD50E /* UploadsBadge.icns in Resources */ = {isa = PBXBuildFile; fileRef = A54AF98B0F13AED000AFD50E /* UploadsBadge.icns */; };
 		A558A4EF0E8526F7004C724C /* WCBan.m in Sources */ = {isa = PBXBuildFile; fileRef = A558A4ED0E8526F7004C724C /* WCBan.m */; };
+		A55C733B0F26803B006E8568 /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = A55C733A0F26803B006E8568 /* RegexKitLite.m */; };
+		A55C73440F268087006E8568 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A55C73430F268087006E8568 /* libicucore.dylib */; };
 		A565B5000D5DA94000AF91BA /* wired.xml in Resources */ = {isa = PBXBuildFile; fileRef = A565B4FF0D5DA94000AF91BA /* wired.xml */; };
 		A575129F05E4A0AF003B51D7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A575129D05E4A0AF003B51D7 /* InfoPlist.strings */; };
 		A57512EC05E4E64D003B51D7 /* WCCache.m in Sources */ = {isa = PBXBuildFile; fileRef = A57512EB05E4E64D003B51D7 /* WCCache.m */; };
@@ -653,6 +655,9 @@
 		A54AF98B0F13AED000AFD50E /* UploadsBadge.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = UploadsBadge.icns; sourceTree = "<group>"; };
 		A558A4ED0E8526F7004C724C /* WCBan.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCBan.m; sourceTree = "<group>"; };
 		A558A4EE0E8526F7004C724C /* WCBan.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCBan.h; sourceTree = "<group>"; };
+		A55C73390F26803B006E8568 /* RegexKitLite.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = RegexKitLite.h; sourceTree = "<group>"; };
+		A55C733A0F26803B006E8568 /* RegexKitLite.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = RegexKitLite.m; sourceTree = "<group>"; };
+		A55C73430F268087006E8568 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = /usr/lib/libicucore.dylib; sourceTree = "<absolute>"; };
 		A565B4FF0D5DA94000AF91BA /* wired.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = wired.xml; sourceTree = "<group>"; };
 		A575129E05E4A0AF003B51D7 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		A57512E905E4E639003B51D7 /* WCCache.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCCache.h; sourceTree = "<group>"; };
@@ -789,6 +794,7 @@
 				7739D4A10E7FFC2C00D76C47 /* WiredFoundation.framework in Frameworks */,
 				7739D4A20E7FFC2C00D76C47 /* WiredAppKit.framework in Frameworks */,
 				7739D4A30E7FFC2C00D76C47 /* WiredNetworking.framework in Frameworks */,
+				A55C73440F268087006E8568 /* libicucore.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -829,13 +835,7 @@
 			isa = PBXGroup;
 			children = (
 				A52B1C4706C408210033D317 /* Wired Client */,
-				772F6CE90F1E1A8E00CB8001 /* Views */,
-				77B5F96B097FDD2900C055E1 /* Additions */,
-				29B97315FDCFA39411CA2CEA /* Sources */,
-				A5E8BABF08748D6D0010F2A4 /* Config */,
-				29B97317FDCFA39411CA2CEA /* Resources */,
-				A54AF8D90F13AE0C00AFD50E /* Images */,
-				779951B30A122D1F00600320 /* Smileys */,
+				A55C73380F268022006E8568 /* RegexKitLite */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				A544C1C50758E107008446CF /* Subprojects */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
@@ -873,6 +873,7 @@
 			isa = PBXGroup;
 			children = (
 				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
+				A55C73450F268093006E8568 /* Linked Libraries */,
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
 			name = Frameworks;
@@ -1278,19 +1279,14 @@
 		A52B1C4706C408210033D317 /* Wired Client */ = {
 			isa = PBXGroup;
 			children = (
-				A52B1C3806C4061F0033D317 /* Main */,
-				A52B1C3E06C407190033D317 /* Preferences */,
-				A57D22F707D0C444002C306E /* Connection */,
-				A52B1C1206C4033B0033D317 /* Chat */,
-				A52B1C2C06C404580033D317 /* Files */,
-				A52B1C2A06C404290033D317 /* News */,
-				A52B1C3106C4053B0033D317 /* Accounts */,
-				A5AAD1280D86EA8B0072FFA1 /* Administration */,
-				A52B1C2E06C404FC0033D317 /* Console */,
-				77CED3990EC068D600123164 /* Boards */,
-				A52B1C3306C4056F0033D317 /* Transfers */,
-				A52B1C1306C403760033D317 /* Messages */,
-				A5492D2E0D8EAD4E002D37D7 /* Servers */,
+				A55C73330F26800B006E8568 /* Classes */,
+				772F6CE90F1E1A8E00CB8001 /* Views */,
+				77B5F96B097FDD2900C055E1 /* Additions */,
+				29B97315FDCFA39411CA2CEA /* Sources */,
+				A5E8BABF08748D6D0010F2A4 /* Config */,
+				29B97317FDCFA39411CA2CEA /* Resources */,
+				A54AF8D90F13AE0C00AFD50E /* Images */,
+				779951B30A122D1F00600320 /* Smileys */,
 			);
 			name = "Wired Client";
 			sourceTree = "<group>";
@@ -1423,6 +1419,43 @@
 				A54AF90D0F13AEBB00AFD50E /* YellowDrop.tiff */,
 			);
 			name = Images;
+			sourceTree = "<group>";
+		};
+		A55C73330F26800B006E8568 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				A52B1C3806C4061F0033D317 /* Main */,
+				A52B1C3E06C407190033D317 /* Preferences */,
+				A57D22F707D0C444002C306E /* Connection */,
+				A52B1C1206C4033B0033D317 /* Chat */,
+				A52B1C2C06C404580033D317 /* Files */,
+				A52B1C2A06C404290033D317 /* News */,
+				A52B1C3106C4053B0033D317 /* Accounts */,
+				A5AAD1280D86EA8B0072FFA1 /* Administration */,
+				A52B1C2E06C404FC0033D317 /* Console */,
+				77CED3990EC068D600123164 /* Boards */,
+				A52B1C3306C4056F0033D317 /* Transfers */,
+				A52B1C1306C403760033D317 /* Messages */,
+				A5492D2E0D8EAD4E002D37D7 /* Servers */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
+		A55C73380F268022006E8568 /* RegexKitLite */ = {
+			isa = PBXGroup;
+			children = (
+				A55C733A0F26803B006E8568 /* RegexKitLite.m */,
+				A55C73390F26803B006E8568 /* RegexKitLite.h */,
+			);
+			name = RegexKitLite;
+			sourceTree = "<group>";
+		};
+		A55C73450F268093006E8568 /* Linked Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				A55C73430F268087006E8568 /* libicucore.dylib */,
+			);
+			name = "Linked Libraries";
 			sourceTree = "<group>";
 		};
 		A57D22F707D0C444002C306E /* Connection */ = {
@@ -1923,6 +1956,7 @@
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				77B5F96F097FDD3B00C055E1 /* NSAlert-WCAdditions.m in Sources */,
 				77B5F973097FDD4500C055E1 /* NSString-WCAdditions.m in Sources */,
+				A55C733B0F26803B006E8568 /* RegexKitLite.m in Sources */,
 				A509ADAC05F7FF8400E6AE2D /* WCAboutWindow.m in Sources */,
 				A5DC7FA9057AB0A600736BBF /* WCAccount.m in Sources */,
 				A5BF5C140D795A18002E8332 /* WCAccounts.m in Sources */,

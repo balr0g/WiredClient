@@ -12,12 +12,13 @@
 	
 	div.post {
 		margin-bottom: 10px;
-		border-bottom: 1px solid #eeeeee;
+		border-bottom: 1px solid #bfbfbf;
 	}
 	
 	div.postfrom:before { content: "<? fromstring ?>:"; }
 	div.postsubject:before { content: "<? subjectstring ?>:"; }
-	div.postdate:before { content: "<? datestring ?>:"; }
+	div.postpostdate:before { content: "<? postdatestring ?>:"; }
+	div.posteditdate:before { content: "<? editdatestring ?>:"; }
 
 	div.postheader {
 		font: normal 12px "Helvetica", sans-serif;
@@ -29,7 +30,7 @@
 		text-align: right;
 		vertical-align: top;
 		float: left;
-		width: 4em;
+		width: 6em;
 		padding-right: 0.5em;
 	}
 	
@@ -40,8 +41,19 @@
 	div.postbody {
 		margin: 10px 0 10px 0;
 		padding-top: 10px;
-		border-top: 1px solid #eeeeee;
+		border-top: 1px solid #bfbfbf;
 		clear: both;
+	}
+	
+	blockquote {
+		margin: 0px 0px 0px 15px;
+		padding: 8px;
+		border: 1px solid #bfbfbf;
+		background-color: #e8e8e8;
+	}
+	
+	pre {
+		margin: 0px;
 	}
 	</style>
 </head>

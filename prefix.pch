@@ -55,6 +55,8 @@
 #import <openssl/sha.h>
 #import <openssl/ssl.h>
 
+#import "RegexKitLite.h"
+
 #import "WCConnectionController.h"
 #import "WCError.h"
 #import "WCServerConnection.h"
