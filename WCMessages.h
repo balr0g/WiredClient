@@ -59,6 +59,7 @@
 	WCConversation								*_conversations;
 	WCMessageConversation						*_messageConversations;
 	WCBroadcastConversation						*_broadcastConversations;
+	WCConversation								*_selectedConversation;
 	
 	WITextFilter								*_messageFilter;
 	WITextFilter								*_userFilter;

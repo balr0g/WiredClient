@@ -45,15 +45,16 @@
 - (void)_validate;
 - (void)_themeDidChange;
 
-- (id)_messageAtIndex:(NSUInteger)index;
-- (id)_selectedConversation;
-- (id)_selectedMessage;
-- (void)_selectMessage:(id)message;
+- (WCMessage *)_messageAtIndex:(NSUInteger)index;
+- (WCConversation *)_selectedConversation;
+- (WCMessage *)_selectedMessage;
+- (void)_selectMessage:(WCMessage *)message;
 - (void)_readMessages;
 - (void)_saveMessages;
 - (void)_removeAllMessages;
 
 - (void)_reselectConversation:(WCConversation *)conversation message:(WCMessage *)message;
+- (void)_reloadMessage;
 - (SEL)_sortSelector;
 
 @end
@@ -155,9 +156,9 @@
 
 #pragma mark -
 
-- (id)_messageAtIndex:(NSUInteger)index {
-	id				conversation;
-	NSUInteger		i;
+- (WCMessage *)_messageAtIndex:(NSUInteger)index {
+	WCConversation		*conversation;
+	NSUInteger			i;
 	
 	conversation = [self _selectedConversation];
 	
@@ -173,27 +174,14 @@
 
 
 
-- (id)_selectedConversation {
-	NSInteger		row;
-	
-	row = [_conversationsOutlineView selectedRow];
-	
-	if(row < 0)
-		return NULL;
-	
-	return [_conversationsOutlineView itemAtRow:row];
+- (WCConversation *)_selectedConversation {
+	return _selectedConversation;
 }
 
 
 
-- (id)_selectedMessage {
-	id				conversation;
+- (WCMessage *)_selectedMessage {
 	NSInteger		row;
-	
-	conversation = [self _selectedConversation];
-	
-	if(!conversation)
-		return NULL;
 	
 	row = [_messagesTableView selectedRow];
 	
@@ -205,7 +193,7 @@
 
 
 
-- (void)_selectMessage:(id)message {
+- (void)_selectMessage:(WCMessage *)message {
 	WCConversation		*conversation;
 	NSUInteger			i, index;
 	NSInteger			row;
@@ -288,6 +276,28 @@
 			: index;
 		
 		[_messagesTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:i] byExtendingSelection:NO];
+	}
+}
+
+
+
+- (void)_reloadMessage {
+	WCMessage   *message;
+	
+	message = [self _selectedMessage];
+	
+	if(!message) {
+		[_messageTextView setString:@""];
+	} else {
+		if(![message isRead]) {
+			[message setRead:YES];
+			[_conversationsOutlineView setNeedsDisplay:YES];
+			[_messagesTableView setNeedsDisplay:YES];
+			
+			[[message connection] postNotificationName:WCMessagesDidReadMessageNotification];
+		}
+		
+		[_messageTextView setString:[message message] withFilter:_messageFilter];
 	}
 }
 
@@ -378,6 +388,10 @@
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
 	[_conversations release];
+	[_messageConversations release];
+	[_broadcastConversations release];
+	
+	[_selectedConversation release];
 
 	[_conversationIcon release];
 	
@@ -1069,8 +1083,25 @@
 
 
 - (void)outlineViewSelectionDidChange:(NSNotification *)notification {
-	[[self _selectedConversation] sortMessagesUsingSelector:[self _sortSelector]];
+	WCConversation	*conversation;
+	NSInteger		row;
+	
+	row = [_conversationsOutlineView selectedRow];
+	
+	if(row < 0) {
+		[_selectedConversation release];
+		_selectedConversation = NULL;
+	} else {
+		conversation = [_conversationsOutlineView itemAtRow:row];
 
+		[conversation retain];
+		[_selectedConversation release];
+		
+		_selectedConversation = conversation;
+	}
+	
+	[[self _selectedConversation] sortMessagesUsingSelector:[self _sortSelector]];
+	
 	[_messagesTableView reloadData];
 	[_messagesTableView deselectAll:self];
 }
@@ -1125,30 +1156,14 @@
 	[_messagesTableView setHighlightedTableColumn:tableColumn];
 	[[self _selectedConversation] sortMessagesUsingSelector:[self _sortSelector]];
 	[_messagesTableView reloadData];
-	[[_messagesTableView delegate] tableViewSelectionDidChange:NULL];
+	
+	[self _reloadMessage];
 }
 
 
 
 - (void)tableViewSelectionDidChange:(NSNotification *)notification {
-	WCMessage   *message;
-	
-	message = [self _selectedMessage];
-	
-	if(!message) {
-		[_messageTextView setString:@""];
-	} else {
-		if(![message isRead]) {
-			[message setRead:YES];
-			[_conversationsOutlineView setNeedsDisplay:YES];
-			[_messagesTableView setNeedsDisplay:YES];
-					
-			[[message connection] postNotificationName:WCMessagesDidReadMessageNotification];
-		}
-		
-		[_messageTextView setString:[message message] withFilter:_messageFilter];
-	}
-	
+	[self _reloadMessage];
 	[self _validate];
 }
 

@@ -72,6 +72,8 @@
 	IBOutlet NSButton					*_postButton;
 	
 	WCBoard								*_boards;
+	WCBoard								*_selectedBoard;
+	
 	WIDateFormatter						*_dateFormatter;
 	
 	NSMutableSet						*_receivedBoards;

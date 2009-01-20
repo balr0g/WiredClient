@@ -154,26 +154,13 @@
 
 
 - (WCBoard *)_selectedBoard {
-	NSInteger		row;
-	
-	row = [_boardsOutlineView selectedRow];
-	
-	if(row < 0)
-		return NULL;
-	
-	return [_boardsOutlineView itemAtRow:row];
+	return _selectedBoard;
 }
 
 
 
 - (WCBoardThread *)_selectedThread {
-	WCBoard			*board;
 	NSInteger		row;
-	
-	board = [self _selectedBoard];
-	
-	if(!board)
-		return NULL;
 	
 	row = [_threadsTableView selectedRow];
 	
@@ -457,7 +444,16 @@
 
 
 - (void)dealloc {
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	
 	[_boards release];
+	[_selectedBoard release];
+	
+	[_dateFormatter release];
+	
+	[_headerTemplate release];
+	[_footerTemplate release];
+	[_postTemplate release];
 	
 	[super dealloc];
 }
@@ -1697,6 +1693,25 @@
 
 
 - (void)outlineViewSelectionDidChange:(NSNotification *)notification {
+	WCBoard			*board;
+	NSInteger		row;
+	
+	row = [_boardsOutlineView selectedRow];
+	
+	if(row < 0) {
+		[_selectedBoard release];
+		_selectedBoard = NULL;
+	} else {
+		board = [_boardsOutlineView itemAtRow:row];
+		
+		[board retain];
+		[_selectedBoard release];
+		
+		_selectedBoard = board;
+	}
+	
+	[[self _selectedBoard] sortThreadsUsingSelector:[self _sortSelector]];
+	
 	[_threadsTableView reloadData];
 	[_threadsTableView deselectAll:self];
 	
