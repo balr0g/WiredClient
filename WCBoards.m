@@ -57,6 +57,7 @@
 - (void)_reloadThread;
 - (NSString *)_HTMLStringForPost:(WCBoardPost *)post;
 - (NSString *)_textForPostText:(NSString *)text;
+- (NSImage *)_unreadBadgeImageForCount:(NSUInteger)count active:(BOOL)active selected:(BOOL)selected;
 
 - (void)_reloadLocationsAndSelectBoard:(WCBoard *)board;
 - (void)_addLocationsForChildrenOfBoard:(WCBoard *)board level:(NSUInteger)level;
@@ -193,7 +194,9 @@
 	
 	tableColumn = [_threadsTableView highlightedTableColumn];
 	
-	if(tableColumn == _subjectTableColumn)
+	if(tableColumn == _unreadThreadTableColumn)
+		return @selector(compareUnread:);
+	else if(tableColumn == _subjectTableColumn)
 		return @selector(compareSubject:);
 	else if(tableColumn == _nickTableColumn)
 		return @selector(compareNick:);
@@ -220,13 +223,28 @@
 	if(thread) {
 		enumerator = [[thread posts] objectEnumerator];
 		
-		while((post = [enumerator nextObject]))
+		while((post = [enumerator nextObject])) {
 			[html appendString:[self _HTMLStringForPost:post]];
+			
+			if([post isUnread]) {
+				[post setUnread:NO];
+				[_readPosts addObject:[post postID]];
+			}
+		}
+		
+		if([thread isUnread]) {
+			[thread setUnread:NO];
+			
+			[WCSettings setObject:[_readPosts allObjects] forKey:WCReadBoardPosts];
+			
+			[_boardsOutlineView setNeedsDisplay:YES];
+			[_threadsTableView setNeedsDisplay:YES];
+		}
 	}
 	
 	[html appendString:_footerTemplate];
 	
-	[[_threadWebView mainFrame] loadHTMLString:html baseURL:NULL];
+	[[_threadWebView mainFrame] loadHTMLString:html baseURL:[NSURL fileURLWithPath:[[self bundle] resourcePath]]];
 }
 
 
@@ -274,7 +292,14 @@
 	string = [[_postTemplate mutableCopy] autorelease];
 
 	[string replaceOccurrencesOfString:@"<? from ?>" withString:[NSSWF:NSLS(@"%@ (%@)", @"Post from (nick, login)"), [post nick], [post login]]];
+
 	[string replaceOccurrencesOfString:@"<? subject ?>" withString:[post subject]];
+	
+	if([post isUnread])
+		[string replaceOccurrencesOfString:@"<? unreadimage ?>" withString:@"<img class=\"postunread\" src=\"unreadpost.png\" />"];
+	else
+		[string replaceOccurrencesOfString:@"<? unreadimage ?>" withString:@""];
+	
 	[string replaceOccurrencesOfString:@"<? postdate ?>" withString:[_dateFormatter stringFromDate:[post postDate]]];
 	
 	if([post editDate])
@@ -318,6 +343,67 @@
 	[string replaceOccurrencesOfRegex:@"(?<!(?:=|\\[|\\]))" @"((\\w|\\.|_|-)+@(\\w|\\.|_|-)+)" @"(?!(?:\\[|\\]))" withString:@"[email]$1[/email]" options:RKLCaseless];
 	
 	return string;
+}
+
+
+
+- (NSImage *)_unreadBadgeImageForCount:(NSUInteger)count active:(BOOL)active selected:(BOOL)selected {
+	NSDictionary		*attributes;
+	NSColor				*backgroundColor, *textColor;
+	NSImage				*image;
+	NSSize				size;
+	
+	if(count == 0)
+		return NULL;
+	
+	if(count < 10)
+		size.width = 20.0;
+	else if(count < 100)
+		size.width = 27.0;
+	else if(count < 1000)
+		size.width = 34.0;
+	else
+		size.width = 39.0;
+	
+	size.height = 14.0;
+	
+	image = [[NSImage alloc] initWithSize:size];
+
+	[image lockFocus];
+	
+	if(selected) {
+		if(active) {
+			backgroundColor		= [NSColor whiteColor];
+			textColor			= [NSColor colorWithCalibratedRed:136.0 / 255.0 green:160.0 / 255.0 blue:214.0 / 255.0 alpha:1.0];
+		} else {
+			backgroundColor		= [NSColor whiteColor];
+			textColor			= [NSColor colorWithCalibratedWhite:166.0 / 255.0 alpha:1.0];
+		}
+	} else {
+		if(active) {
+			backgroundColor		= [NSColor colorWithCalibratedRed:136.0 / 255.0 green:160.0 / 255.0 blue:214.0 / 255.0 alpha:1.0];
+			textColor			= [NSColor whiteColor];
+		} else {
+			backgroundColor		= [NSColor colorWithCalibratedWhite:166.0 / 255.0 alpha:1.0];
+			textColor			= [NSColor whiteColor];
+		}
+	}
+	
+	[backgroundColor set];
+	[[NSBezierPath bezierPathWithRoundedRect:NSMakeRect(0.0, 0.0, size.width, size.height) cornerRadius:7.0] fill];
+	
+	attributes = [NSDictionary dictionaryWithObjectsAndKeys:
+		[NSFont boldSystemFontOfSize:11.0],
+			NSFontAttributeName,
+		textColor,
+			NSForegroundColorAttributeName,
+		NULL];
+	
+	[[NSSWF:@"%u", count] drawInRect:NSMakeRect(6.0, 0.0, size.width, size.height) withAttributes:attributes];
+	
+	[image unlockFocus];
+	
+	return [image autorelease];
 }
 
 
@@ -457,6 +543,7 @@
 	
 	_boards				= [[WCBoard rootBoard] retain];
 	_receivedBoards		= [[NSMutableSet alloc] init];
+	_readPosts			= [[NSMutableSet alloc] initWithArray:[WCSettings objectForKey:WCReadBoardPosts]];
 	
 	_headerTemplate		= [[NSMutableString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"header" ofType:@"html"]
 															  encoding:NSUTF8StringEncoding
@@ -554,6 +641,8 @@
 	[_threadsTableView setAutosaveName:@"Threads"];
     [_threadsTableView setAutosaveTableColumns:YES];
 	[_threadsTableView setDoubleAction:@selector(reply:)];
+	
+	[[_unreadThreadTableColumn headerCell] setImage:[NSImage imageNamed:@"UnreadHeader"]];
 	
 	_dateFormatter = [[WIDateFormatter alloc] init];
 	[_dateFormatter setTimeStyle:NSDateFormatterShortStyle];
@@ -749,8 +838,14 @@
 			post		= [WCBoardPost postWithMessage:message connection:connection];
 			thread		= [board threadWithID:[post threadID]];
 			
+			if(![_readPosts containsObject:[post postID]])
+				[post setUnread:YES];
+			
 			if(thread) {
 				[thread addPost:post];
+				
+				if([post isUnread])
+					[thread setUnread:YES];
 			} else {
 				thread = [WCBoardThread threadWithPost:post connection:connection];
 				
@@ -983,6 +1078,8 @@
 	connection		= [message contextInfo];
 	post			= [WCBoardPost postWithMessage:message connection:connection];
 	board			= [[_boards boardForConnection:connection] boardForPath:[post board]];
+	
+	[post setUnread:YES];
 
 	if(board == [self _selectedBoard])
 		selectedThread = [self _selectedThread];
@@ -993,6 +1090,7 @@
 	
 	if(thread) {
 		[thread addPost:post];
+		[thread setUnread:YES];
 	} else {
 		thread = [WCBoardThread threadWithPost:post connection:connection];
 		
@@ -1031,6 +1129,15 @@
 	[post setSubject:subject];
 	[post setText:text];
 	
+	[post setUnread:YES];
+	[thread setUnread:YES];
+
+	[_readPosts removeObject:[post postID]];
+	[WCSettings setObject:[_readPosts allObjects] forKey:WCReadBoardPosts];
+	
+	[_boardsOutlineView setNeedsDisplay:YES];
+	[_threadsTableView setNeedsDisplay:YES];
+	
 	if(thread == [self _selectedThread]) {
 		[_threadsTableView reloadData];
 
@@ -1056,10 +1163,25 @@
 	else
 		selectedThread = NULL;
 	
+	[post retain];
+	
 	[thread removePost:post];
 	
-	if([thread numberOfPosts] == 0)
+	if([thread numberOfPosts] == 0) {
 		[board removeThread:thread];
+	} else {
+		[_readPosts removeObject:[post postID]];
+		[WCSettings setObject:[_readPosts allObjects] forKey:WCReadBoardPosts];
+		
+		if(![thread numberOfUnreadPosts] == 0) {
+			[thread setUnread:NO];
+			
+			[_boardsOutlineView setNeedsDisplay:YES];
+			[_threadsTableView setNeedsDisplay:YES];
+		}
+	}
+			
+	[post release];
 	
 	if(board == [self _selectedBoard]) {
 		[_threadsTableView reloadData];
@@ -1735,34 +1857,25 @@
 
 
 - (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item {
-	return [item name];
+	if(tableColumn == _boardTableColumn) {
+		return [item name];
+	}
+	else if(tableColumn == _unreadBoardTableColumn) {
+		return [self _unreadBadgeImageForCount:[item numberOfUnreadThreads]
+										active:([NSApp keyWindow] == [self window])
+									  selected:([_boardsOutlineView rowForItem:item] == [_boardsOutlineView selectedRow])];
+	}
+	
+	return NULL;
 }
 
 
 
 - (void)outlineView:(NSOutlineView *)outlineView willDisplayCell:(id)cell forTableColumn:(NSTableColumn *)tableColumn item:(id)item {
-/*	NSImage			*image = NULL;
-	NSUInteger		count = 0;
-	
-	if([item isKindOfClass:[NSString class]]) {
-		image = _conversationIcon;
-
-		if([_titles indexOfObject:item] == 0)
-			count = [[self _unreadMessagesOfClass:[WCPrivateMessage class]] count];
-		else if([_titles indexOfObject:item] == 1)
-			count = [[self _unreadMessagesOfClass:[WCBroadcastMessage class]] count];
-	}
-	else if([item isKindOfClass:[WCConversation class]]) {
-		count = [[self _messagesForConversation:item unreadOnly:YES] count];
-		image = NULL;
-	}	
-
-	if(count > 0)
-		[cell setFont:[NSFont boldSystemFontOfSize:[NSFont smallSystemFontSize]]];
+	if([item numberOfUnreadThreads] > 0)
+		[cell setFont:[[cell font] fontByAddingTrait:NSBoldFontMask]];
 	else
-		[cell setFont:[NSFont systemFontOfSize:[NSFont smallSystemFontSize]]];
-	
-	[cell setImage:image];*/
+		[cell setFont:[[cell font] fontByAddingTrait:NSUnboldFontMask]];
 }
 
 
@@ -1943,6 +2056,8 @@
 	
 	thread = [self _threadAtIndex:row];
 	
+	if(tableColumn == _unreadThreadTableColumn)
+		return [thread isUnread] ? [NSImage imageNamed:@"UnreadThread"] : NULL;
 	if(tableColumn == _subjectTableColumn)
 		return [[thread postAtIndex:0] subject];
 	else if(tableColumn == _nickTableColumn)
@@ -1956,14 +2071,14 @@
 
 
 - (void)tableView:(NSTableView *)tableView willDisplayCell:(NSCell *)cell forTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
-/*	WCMessage		*message;
+	WCBoardThread		*thread;
 	
-	message = [self _messageAtIndex:row];
+	thread = [self _threadAtIndex:row];
 	
-	if(![message isRead])
-		[cell setFont:[NSFont boldSystemFontOfSize:[NSFont smallSystemFontSize]]];
+	if([thread isUnread])
+		[cell setFont:[[cell font] fontByAddingTrait:NSBoldFontMask]];
 	else
-		[cell setFont:[NSFont systemFontOfSize:[NSFont smallSystemFontSize]]];*/
+		[cell setFont:[[cell font] fontByAddingTrait:NSUnboldFontMask]];
 }
 
 

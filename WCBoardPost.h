@@ -38,6 +38,7 @@
 	NSString					*_login;
 	NSString					*_subject;
 	NSString					*_text;
+	BOOL						_unread;
 }
 
 + (id)postWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection;
@@ -55,6 +56,8 @@
 - (NSString *)subject;
 - (void)setText:(NSString *)text;
 - (NSString *)text;
+- (void)setUnread:(BOOL)unread;
+- (BOOL)isUnread;
 
 - (NSComparisonResult)compareDate:(id)object;
 

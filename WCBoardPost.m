@@ -162,6 +162,18 @@
 
 
 
+- (void)setUnread:(BOOL)unread {
+	_unread = unread;
+}
+
+
+
+- (BOOL)isUnread {
+	return _unread;
+}
+
+
+
 #pragma mark -
 
 - (NSComparisonResult)compareDate:(id)object {

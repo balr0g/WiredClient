@@ -322,6 +322,23 @@
 
 
 
+- (NSUInteger)numberOfUnreadThreads {
+	NSEnumerator		*enumerator;
+	WCBoardThread		*thread;
+	NSUInteger			count = 0;
+	
+	enumerator = [_threadsArray objectEnumerator];
+	
+	while((thread = [enumerator nextObject])) {
+		if([thread isUnread])
+			count++;
+	}
+	
+	return count;
+}
+
+
+
 - (NSArray *)threads {
 	return _threadsArray;
 }

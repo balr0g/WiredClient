@@ -40,10 +40,12 @@
 
 	IBOutlet WIOutlineView				*_boardsOutlineView;
 	IBOutlet NSTableColumn				*_boardTableColumn;
+	IBOutlet NSTableColumn				*_unreadBoardTableColumn;
 	IBOutlet NSButton					*_addBoardButton;
 	IBOutlet NSButton					*_deleteBoardButton;
 	
 	IBOutlet WITableView				*_threadsTableView;
+	IBOutlet NSTableColumn				*_unreadThreadTableColumn;
 	IBOutlet NSTableColumn				*_subjectTableColumn;
 	IBOutlet NSTableColumn				*_nickTableColumn;
 	IBOutlet NSTableColumn				*_timeTableColumn;
@@ -77,6 +79,7 @@
 	WIDateFormatter						*_dateFormatter;
 	
 	NSMutableSet						*_receivedBoards;
+	NSMutableSet						*_readPosts;
 	
 	NSMutableString						*_headerTemplate, *_footerTemplate, *_postTemplate;
 }

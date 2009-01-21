@@ -144,6 +144,8 @@
 
 #define WCWindowProperties						@"WCWindowProperties"
 
+#define WCReadBoardPosts						@"WCReadBoardPosts"
+
 #define WCDebug									@"WCDebug"
 
 

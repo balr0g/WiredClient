@@ -493,6 +493,9 @@
 			
 		[NSDictionary dictionary],
 			WCWindowProperties,
+			
+		[NSArray array],
+			WCReadBoardPosts,
 		
 		[NSNumber numberWithBool:NO],
 			WCDebug,

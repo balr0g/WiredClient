@@ -31,14 +31,18 @@
 @interface WCBoardThread : WCServerConnectionObject {
 	NSString					*_threadID;
 	NSMutableArray				*_posts;
+	BOOL						_unread;
 }
 
 + (id)threadWithPost:(WCBoardPost *)post connection:(WCServerConnection *)connection;
 - (id)initWithPost:(WCBoardPost *)post connection:(WCServerConnection *)connection;
 
 - (NSString *)threadID;
+- (void)setUnread:(BOOL)unread;
+- (BOOL)isUnread;
 
 - (NSUInteger)numberOfPosts;
+- (NSUInteger)numberOfUnreadPosts;
 - (NSArray *)posts;
 - (WCBoardPost *)postAtIndex:(NSUInteger)index;
 - (WCBoardPost *)postWithID:(NSString *)postID;
@@ -46,6 +50,7 @@
 - (void)removePost:(WCBoardPost *)post;
 - (void)removeAllPosts;
 
+- (NSComparisonResult)compareUnread:(id)object;
 - (NSComparisonResult)compareSubject:(id)object;
 - (NSComparisonResult)compareNick:(id)object;
 - (NSComparisonResult)compareDate:(id)object;

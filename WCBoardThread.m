@@ -42,6 +42,7 @@
 	
 	_posts		= [[NSMutableArray alloc] init];
 	_threadID	= [[post threadID] retain];
+	_unread		= [post isUnread];
 	
 	[_posts addObject:post];
 	
@@ -75,10 +76,39 @@
 
 
 
+- (void)setUnread:(BOOL)unread {
+	_unread = unread;
+}
+
+
+
+- (BOOL)isUnread {
+	return _unread;
+}
+
+
+
 #pragma mark -
 
 - (NSUInteger)numberOfPosts {
 	return [_posts count];
+}
+
+
+
+- (NSUInteger)numberOfUnreadPosts {
+	NSEnumerator		*enumerator;
+	WCBoardPost			*post;
+	NSUInteger			count = 0;
+	
+	enumerator = [_posts objectEnumerator];
+	
+	while((post = [enumerator nextObject])) {
+		if([post isUnread])
+			count++;
+	}
+	
+	return count;
 }
 
 
@@ -130,6 +160,17 @@
 
 
 #pragma mark -
+
+- (NSComparisonResult)compareUnread:(id)object {
+	if([self isUnread] && ![object isUnread])
+		return NSOrderedAscending;
+    else if(![self isUnread] && [object isUnread])
+        return NSOrderedDescending;
+	
+	return [self compareDate:object];
+}
+
+
 
 - (NSComparisonResult)compareSubject:(id)object {
 	NSComparisonResult		result;
