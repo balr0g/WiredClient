@@ -54,9 +54,9 @@ typedef enum _WCBoardPermissions		WCBoardPermissions;
 	NSMutableDictionary					*_threadsDictionary;
 }
 
-+ (id)rootBoard;
-+ (id)boardWithConnection:(WCServerConnection *)connection;
-+ (id)boardWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection;
++ (WCBoard *)rootBoard;
++ (WCBoard *)boardWithConnection:(WCServerConnection *)connection;
++ (WCBoard *)boardWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection;
 
 - (void)setName:(NSString *)name;
 - (NSString *)name;
@@ -81,11 +81,13 @@ typedef enum _WCBoardPermissions		WCBoardPermissions;
 - (void)removeAllBoards;
 
 - (NSUInteger)numberOfThreads;
-- (NSUInteger)numberOfUnreadThreads;
+- (NSUInteger)numberOfUnreadThreadsForConnection:(WCServerConnection *)connection includeChildBoards:(BOOL)includeChildBoards;
 - (NSArray *)threads;
 - (WCBoardThread *)threadAtIndex:(NSUInteger)index;
 - (WCBoardThread *)threadWithID:(NSString *)string;
 - (NSUInteger)indexOfThread:(WCBoardThread *)thread;
+- (WCBoardThread *)previousUnreadThreadStartingAtBoard:(WCBoard *)board thread:(WCBoardThread *)thread forwardsInThreads:(BOOL)forwardsInThreads;
+- (WCBoardThread *)nextUnreadThreadStartingAtBoard:(WCBoard *)board thread:(WCBoardThread *)thread forwardsInThreads:(BOOL)forwardsInThreads;
 - (void)addThread:(WCBoardThread *)thread sortedUsingSelector:(SEL)selector;
 - (void)removeThread:(WCBoardThread *)thread;
 - (void)removeAllThreads;

@@ -124,6 +124,7 @@
 		77A1BA230F161A8100F7D24B /* SUPublicDSAKeyFile.pem in Resources */ = {isa = PBXBuildFile; fileRef = 77A1BA220F161A8100F7D24B /* SUPublicDSAKeyFile.pem */; };
 		77B5F96F097FDD3B00C055E1 /* NSAlert-WCAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 77B5F96D097FDD3B00C055E1 /* NSAlert-WCAdditions.m */; };
 		77B5F973097FDD4500C055E1 /* NSString-WCAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 77B5F971097FDD4500C055E1 /* NSString-WCAdditions.m */; };
+		77BB1C9A0F28C20E00A402B7 /* WCBoardsWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 77BB1C990F28C20E00A402B7 /* WCBoardsWindow.m */; };
 		77C83C340B70FBD8000F8478 /* WCChatTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 77C83C320B70FBD8000F8478 /* WCChatTextView.m */; };
 		77CED3A50EC068F500123164 /* WCBoard.m in Sources */ = {isa = PBXBuildFile; fileRef = 77CED39E0EC068F500123164 /* WCBoard.m */; };
 		77CED3A60EC068F500123164 /* WCBoardPost.m in Sources */ = {isa = PBXBuildFile; fileRef = 77CED3A00EC068F500123164 /* WCBoardPost.m */; };
@@ -518,6 +519,8 @@
 		77B5F96D097FDD3B00C055E1 /* NSAlert-WCAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAlert-WCAdditions.m"; sourceTree = "<group>"; };
 		77B5F970097FDD4500C055E1 /* NSString-WCAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString-WCAdditions.h"; sourceTree = "<group>"; };
 		77B5F971097FDD4500C055E1 /* NSString-WCAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString-WCAdditions.m"; sourceTree = "<group>"; };
+		77BB1C980F28C20E00A402B7 /* WCBoardsWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCBoardsWindow.h; sourceTree = "<group>"; };
+		77BB1C990F28C20E00A402B7 /* WCBoardsWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCBoardsWindow.m; sourceTree = "<group>"; };
 		77C83C310B70FBD8000F8478 /* WCChatTextView.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCChatTextView.h; sourceTree = "<group>"; };
 		77C83C320B70FBD8000F8478 /* WCChatTextView.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCChatTextView.m; sourceTree = "<group>"; };
 		77CED39D0EC068F500123164 /* WCBoard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCBoard.h; sourceTree = "<group>"; };
@@ -1043,6 +1046,8 @@
 				77CED3A10EC068F500123164 /* WCBoards.h */,
 				77CED3A40EC068F500123164 /* WCBoardThread.m */,
 				77CED3A30EC068F500123164 /* WCBoardThread.h */,
+				77BB1C990F28C20E00A402B7 /* WCBoardsWindow.m */,
+				77BB1C980F28C20E00A402B7 /* WCBoardsWindow.h */,
 			);
 			name = Boards;
 			sourceTree = "<group>";
@@ -2038,6 +2043,7 @@
 				A5DC7FAB057AB0A600736BBF /* WCUser.m in Sources */,
 				A5DC7F84057AB05F00736BBF /* WCUserCell.m in Sources */,
 				A5DC7F09057AAF6C00736BBF /* WCUserInfo.m in Sources */,
+				77BB1C9A0F28C20E00A402B7 /* WCBoardsWindow.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

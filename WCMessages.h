@@ -26,49 +26,49 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define WCMessagesDidAddMessageNotification		@"WCMessagesDidAddMessageNotification"
-#define WCMessagesDidReadMessageNotification	@"WCMessagesDidReadMessageNotification"
+#define WCMessagesDidChangeUnreadCountNotification	@"WCMessagesDidChangeUnreadCountNotification"
 
 
 @class WCConversation, WCMessageConversation, WCBroadcastConversation, WCUser;
 
 @interface WCMessages : WIWindowController {
-	IBOutlet WISplitView						*_conversationsSplitView;
-	IBOutlet NSView								*_conversationsView;
-	IBOutlet NSView								*_messagesView;
-	IBOutlet WISplitView						*_messagesSplitView;
-	IBOutlet NSView								*_messageListView;
-	IBOutlet NSView								*_messageView;
+	IBOutlet WISplitView							*_conversationsSplitView;
+	IBOutlet NSView									*_conversationsView;
+	IBOutlet NSView									*_messagesView;
+	IBOutlet WISplitView							*_messagesSplitView;
+	IBOutlet NSView									*_messageListView;
+	IBOutlet NSView									*_messageView;
 
-	IBOutlet NSOutlineView						*_conversationsOutlineView;
-	IBOutlet NSTableColumn						*_messagesTableColumn;
+	IBOutlet NSOutlineView							*_conversationsOutlineView;
+	IBOutlet NSTableColumn							*_conversationTableColumn;
+	IBOutlet NSTableColumn							*_unreadTableColumn;
 
-	IBOutlet WITableView						*_messagesTableView;
-	IBOutlet NSTableColumn						*_userTableColumn;
-	IBOutlet NSTableColumn						*_timeTableColumn;
+	IBOutlet WITableView							*_messagesTableView;
+	IBOutlet NSTableColumn							*_userTableColumn;
+	IBOutlet NSTableColumn							*_timeTableColumn;
 
-	IBOutlet WITextView							*_messageTextView;
+	IBOutlet WITextView								*_messageTextView;
 
-	IBOutlet NSPanel							*_replyPanel;
-	IBOutlet NSTextField						*_userTextField;
-	IBOutlet NSTextView							*_replyTextView;
+	IBOutlet NSPanel								*_replyPanel;
+	IBOutlet NSTextField							*_userTextField;
+	IBOutlet NSTextView								*_replyTextView;
 
-	IBOutlet NSPanel							*_broadcastPanel;
-	IBOutlet NSTextView							*_broadcastTextView;
+	IBOutlet NSPanel								*_broadcastPanel;
+	IBOutlet NSTextView								*_broadcastTextView;
 
-	WCConversation								*_conversations;
-	WCMessageConversation						*_messageConversations;
-	WCBroadcastConversation						*_broadcastConversations;
-	WCConversation								*_selectedConversation;
+	WCConversation									*_conversations;
+	WCMessageConversation							*_messageConversations;
+	WCBroadcastConversation							*_broadcastConversations;
+	WCConversation									*_selectedConversation;
 	
-	WITextFilter								*_messageFilter;
-	WITextFilter								*_userFilter;
-	NSImage										*_conversationIcon;
+	WITextFilter									*_messageFilter;
+	WITextFilter									*_userFilter;
+	NSImage											*_conversationIcon;
 	
-	WCUser										*_messageUser;
+	WCUser											*_messageUser;
 	
-	WIDateFormatter								*_tableDateFormatter;
-	WIDateFormatter								*_dialogDateFormatter;
+	WIDateFormatter									*_tableDateFormatter;
+	WIDateFormatter									*_dialogDateFormatter;
 }
 
 + (id)messages;
@@ -76,6 +76,7 @@
 - (void)showPrivateMessageToUser:(WCUser *)user;
 - (void)showPrivateMessageToUser:(WCUser *)user message:(NSString *)message;
 - (void)showBroadcastForConnection:(WCServerConnection *)connection;
+- (NSUInteger)numberOfUnreadMessages;
 - (NSUInteger)numberOfUnreadMessagesForConnection:(WCServerConnection *)connection;
 
 - (IBAction)reply:(id)sender;

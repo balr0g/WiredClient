@@ -84,7 +84,7 @@
 	[alert setAlertStyle:NSInformationalAlertStyle];
 	[alert runNonModal];
 	
-	[message setRead:YES];
+	[message setUnread:NO];
 }
 
 
@@ -216,6 +216,7 @@
 		: index;
 	
 	[_messagesTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:i] byExtendingSelection:NO];
+	[_messagesTableView scrollRowToVisible:i];
 }
 
 
@@ -237,8 +238,8 @@
 	
 	for(i = 0; i < count; i++) {
 		message = [messages objectAtIndex:i];
-		[message setRead:YES];
-		[[message connection] postNotificationName:WCMessagesDidReadMessageNotification];
+		[message setUnread:NO];
+		[[message connection] postNotificationName:WCMessagesDidChangeUnreadCountNotification];
 	}
 }
 
@@ -289,15 +290,16 @@
 	if(!message) {
 		[_messageTextView setString:@""];
 	} else {
-		if(![message isRead]) {
-			[message setRead:YES];
+		if([message isUnread]) {
+			[message setUnread:NO];
 			[_conversationsOutlineView setNeedsDisplay:YES];
 			[_messagesTableView setNeedsDisplay:YES];
 			
-			[[message connection] postNotificationName:WCMessagesDidReadMessageNotification];
+			[[message connection] postNotificationName:WCMessagesDidChangeUnreadCountNotification];
 		}
 		
 		[_messageTextView setString:[message message] withFilter:_messageFilter];
+		[_messageTextView scrollRangeToVisible:NSMakeRange(0, 0)];
 	}
 }
 
@@ -434,7 +436,8 @@
 	[_messagesTableView setAllowsUserCustomization:YES];
 	[_messagesTableView setDoubleAction:@selector(reply:)];
 	
-	[[_messagesTableColumn dataCell] setVerticalTextOffset:3.0];
+	[[_conversationTableColumn dataCell] setVerticalTextOffset:3.0];
+	[[_unreadTableColumn dataCell] setImageAlignment:NSImageAlignRight];
 	
 	_conversations			= [[WCConversation rootConversation] retain];
 	_messageConversations	= [[WCMessageConversation rootConversation] retain];
@@ -654,7 +657,7 @@
 
 	[[WCStats stats] addUnsignedInt:1 forKey:WCStatsMessagesReceived];
 
-	[connection postNotificationName:WCMessagesDidAddMessageNotification object:message];
+	[connection postNotificationName:WCMessagesDidChangeUnreadCountNotification];
 	[connection triggerEvent:WCEventsMessageReceived info1:message];
 	
 	[self _validate];
@@ -704,7 +707,7 @@
 	if([[WCSettings eventWithTag:WCEventsBroadcastReceived] boolForKey:WCEventsShowDialog])
 		[self _showDialogForMessage:message];
 
-	[connection postNotificationName:WCMessagesDidAddMessageNotification object:message];
+	[connection postNotificationName:WCMessagesDidChangeUnreadCountNotification];
 	[connection triggerEvent:WCEventsBroadcastReceived info1:message];
 	
 	[self _validate];
@@ -808,7 +811,14 @@
 
 - (void)showNextUnreadMessage {
 	WCMessage		*message;
+	NSRect			rect;
 	
+	rect = [[_messageTextView enclosingScrollView] documentVisibleRect];
+	rect.origin.y += 0.9 * rect.size.height;
+	
+	if([_messageTextView scrollRectToVisible:rect])
+		return;
+		
 	message = [_conversations nextUnreadMessageStartingAtConversation:[self _selectedConversation]
 															  message:[self _selectedMessage]
 												   forwardsInMessages:([_messagesTableView sortOrder] == WISortAscending)];
@@ -816,14 +826,25 @@
 	if(!message)
 		message = [_conversations nextUnreadMessageStartingAtConversation:NULL message:NULL forwardsInMessages:([_messagesTableView sortOrder] == WISortAscending)];
 	
-	if(message)
+	if(message) {
+		[[self window] makeFirstResponder:_messagesTableView];
+		
 		[self _selectMessage:message];
+	}
 }
 
 
 
 - (void)showPreviousUnreadMessage {
 	WCMessage		*message;
+	NSRect			rect;
+	
+	rect = [[_messageTextView enclosingScrollView] documentVisibleRect];
+	
+	rect.origin.y -= 0.9 * rect.size.height;
+	
+	if([_messageTextView scrollRectToVisible:rect])
+		return;
 	
 	message = [_conversations previousUnreadMessageStartingAtConversation:[self _selectedConversation]
 																  message:[self _selectedMessage]
@@ -832,8 +853,11 @@
 	if(!message)
 		message = [_conversations previousUnreadMessageStartingAtConversation:NULL message:NULL forwardsInMessages:([_messagesTableView sortOrder] == WISortAscending)];
 	
-	if(message)
+	if(message) {
+		[[self window] makeFirstResponder:_messagesTableView];
+	
 		[self _selectMessage:message];
+	}
 }
 
 
@@ -877,8 +901,14 @@
 
 
 
+- (NSUInteger)numberOfUnreadMessages {
+	return [_conversations numberOfUnreadMessagesForConnection:NULL includeChildConversations:YES];
+}
+
+
+
 - (NSUInteger)numberOfUnreadMessagesForConnection:(WCServerConnection *)connection {
-	return [_conversations numberOfUnreadMessagesForConnection:connection];
+	return [_conversations numberOfUnreadMessagesForConnection:connection includeChildConversations:YES];
 }
 
 
@@ -1048,30 +1078,32 @@
 
 
 - (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item {
-	NSString		*name;
-	NSUInteger		unread;
+	if(tableColumn == _conversationTableColumn) {
+		return [item name];
+	}
+	else if(tableColumn == _unreadTableColumn) {
+		return [NSImage imageWithPillForCount:[item numberOfUnreadMessagesForConnection:NULL includeChildConversations:NO]
+							   inActiveWindow:([NSApp keyWindow] == [self window])
+								onSelectedRow:([_conversationsOutlineView rowForItem:item] == [_conversationsOutlineView selectedRow])];
+	}
 	
-	name = [item name];
-	unread = [item numberOfUnreadMessages];
-	
-	if(unread > 0)
-		name = [name stringByAppendingFormat:@" (%lu)", unread];
-	
-	return [[NSAttributedString attributedStringWithString:name] attributedStringByApplyingFilter:_userFilter];
+	return NULL;
 }
 
 
 
 - (void)outlineView:(NSOutlineView *)outlineView willDisplayCell:(id)cell forTableColumn:(NSTableColumn *)tableColumn item:(id)item {
-	if([item numberOfUnreadMessages] > 0)
-		[cell setFont:[[cell font] fontByAddingTrait:NSBoldFontMask]];
-	else
-		[cell setFont:[[cell font] fontByAddingTrait:NSUnboldFontMask]];
-	
-	if(item == _messageConversations || item == _broadcastConversations)
-		[cell setImage:_conversationIcon];
-	else
-		[cell setImage:NULL];
+	if(tableColumn == _conversationTableColumn) {
+		if([item numberOfUnreadMessagesForConnection:NULL includeChildConversations:NO] > 0)
+			[cell setFont:[[cell font] fontByAddingTrait:NSBoldFontMask]];
+		else
+			[cell setFont:[[cell font] fontByAddingTrait:NSUnboldFontMask]];
+		
+		if(item == _messageConversations || item == _broadcastConversations)
+			[cell setImage:_conversationIcon];
+		else
+			[cell setImage:NULL];
+	}
 }
 
 
@@ -1144,7 +1176,7 @@
 	
 	message = [self _messageAtIndex:row];
 	
-	if(![message isRead])
+	if([message isUnread])
 		[cell setFont:[[cell font] fontByAddingTrait:NSBoldFontMask]];
 	else
 		[cell setFont:[[cell font] fontByAddingTrait:NSUnboldFontMask]];

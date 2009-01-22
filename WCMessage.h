@@ -39,7 +39,7 @@ typedef enum _WCMessageDirection	WCMessageDirection;
 
 @interface WCMessage : WCServerConnectionObject {
 	WCMessageDirection				_direction;
-	BOOL							_read;
+	BOOL							_unread;
 	NSString						*_nick;
 	NSString						*_login;
 	NSString						*_message;
@@ -57,8 +57,8 @@ typedef enum _WCMessageDirection	WCMessageDirection;
 - (NSString *)message;
 - (NSDate *)date;
 
-- (void)setRead:(BOOL)read;
-- (BOOL)isRead;
+- (void)setUnread:(BOOL)unread;
+- (BOOL)isUnread;
 - (void)setConversation:(WCConversation *)conversation;
 - (WCConversation *)conversation;
 
@@ -70,14 +70,14 @@ typedef enum _WCMessageDirection	WCMessageDirection;
 
 @interface WCPrivateMessage : WCMessage
 
-+ (id)messageWithMessage:(NSString *)message user:(WCUser *)user connection:(WCServerConnection *)connection;
-+ (id)messageToUser:(WCUser *)user message:(NSString *)message connection:(WCServerConnection *)connection;
++ (WCPrivateMessage *)messageWithMessage:(NSString *)message user:(WCUser *)user connection:(WCServerConnection *)connection;
++ (WCPrivateMessage *)messageToUser:(WCUser *)user message:(NSString *)message connection:(WCServerConnection *)connection;
 
 @end
 
 
 @interface WCBroadcastMessage : WCMessage
 
-+ (id)broadcastWithMessage:(NSString *)message user:(WCUser *)user connection:(WCServerConnection *)connection;
++ (WCBroadcastMessage *)broadcastWithMessage:(NSString *)message user:(WCUser *)user connection:(WCServerConnection *)connection;
 
 @end

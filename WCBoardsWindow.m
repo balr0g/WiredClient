@@ -1,7 +1,7 @@
 /* $Id$ */
 
 /*
- *  Copyright (c) 2008 Axel Andersson
+ *  Copyright (c) 2006-2007 Axel Andersson
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -26,39 +26,26 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WCServerConnectionObject.h"
+#import "WCBoardsWindow.h"
 
-@interface WCBoardPost : WCServerConnectionObject {
-	NSString					*_board;
-	NSString					*_thread;
-	NSString					*_post;
-	NSDate						*_postDate;
-	NSDate						*_editDate;
-	NSString					*_nick;
-	NSString					*_login;
-	NSString					*_subject;
-	NSString					*_text;
-	BOOL						_unread;
+@implementation WCBoardsWindow
+
+- (void)sendEvent:(NSEvent *)event {
+	BOOL	handled = NO;
+	
+	if([event type] == NSKeyDown) {
+		if([event character] == ' ') {
+			if([event shiftKeyModifier])
+				[[self delegate] showPreviousUnreadThread];
+			else
+				[[self delegate] showNextUnreadThread];
+			
+			handled = YES;
+		}
+	}
+	
+	if(!handled)
+		[super sendEvent:event];
 }
-
-+ (WCBoardPost *)postWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection;
-- (id)initWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection;
-
-- (NSString *)board;
-- (NSString *)threadID;
-- (NSString *)postID;
-- (NSDate *)postDate;
-- (void)setEditDate:(NSDate *)editDate;
-- (NSDate *)editDate;
-- (NSString *)nick;
-- (NSString *)login;
-- (void)setSubject:(NSString *)subject;
-- (NSString *)subject;
-- (void)setText:(NSString *)text;
-- (NSString *)text;
-- (void)setUnread:(BOOL)unread;
-- (BOOL)isUnread;
-
-- (NSComparisonResult)compareDate:(id)object;
 
 @end

@@ -30,27 +30,6 @@
 #import "WCLinkConnection.h"
 #import "WCNotificationCenter.h"
 
-@interface WCLinkConnection(Private)
-
-- (void)_connect;
-
-@end
-
-
-@implementation WCLinkConnection(Private)
-
-- (void)_connect {
-	_sentLogin			= NO;
-	_disconnecting		= NO;
-	
-	_link = [[WCLink alloc] initLinkWithURL:[self URL]];
-	[_link setDelegate:self];
-	[_link connect];
-}
-
-@end
-
-
 @implementation WCLinkConnection
 
 - (id)init {
@@ -309,7 +288,14 @@
 #pragma mark -
 
 - (void)connect {
-	[self _connect];
+	_sentLogin			= NO;
+	_disconnecting		= NO;
+	
+	[self postNotificationName:WCLinkConnectionWillConnectNotification object:self];
+	
+	_link = [[WCLink alloc] initLinkWithURL:[self URL]];
+	[_link setDelegate:self];
+	[_link connect];
 }
 
 

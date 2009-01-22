@@ -39,6 +39,7 @@
 #import "WCNews.h"
 #import "WCNotificationCenter.h"
 #import "WCPreferences.h"
+#import "WCPublicChat.h"
 #import "WCPublicChatController.h"
 #import "WCSearch.h"
 #import "WCServer.h"
@@ -259,6 +260,9 @@
 				[_chatController printEvent:[NSSWF:NSLS(@"Disconnected from %@", @"Disconnected chat message (server)"),
 					[self name], reason]];
 			}
+			
+			[[WCPublicChat publicChat] selectChatController:_chatController];
+			[[WCPublicChat publicChat] showWindow:self];
 		}
 		
 		if(!_manuallyReconnecting && !_disconnecting)

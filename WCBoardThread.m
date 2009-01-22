@@ -31,7 +31,7 @@
 
 @implementation WCBoardThread
 
-+ (id)threadWithPost:(WCBoardPost *)post connection:(WCServerConnection *)connection {
++ (WCBoardThread *)threadWithPost:(WCBoardPost *)post connection:(WCServerConnection *)connection {
 	return [[[self alloc] initWithPost:post connection:connection] autorelease];
 }
 
@@ -84,6 +84,18 @@
 
 - (BOOL)isUnread {
 	return _unread;
+}
+
+
+
+- (void)setBoard:(WCBoard *)board {
+	_board = board;
+}
+
+
+
+- (WCBoard *)board {
+	return _board;
 }
 
 

@@ -47,24 +47,23 @@
 
 - (NSUInteger)numberOfConversations;
 - (NSArray *)conversations;
-- (id)conversationAtIndex:(NSUInteger)index;
-- (id)conversationForUser:(WCUser *)user connection:(WCServerConnection *)connection;
+- (WCConversation *)conversationAtIndex:(NSUInteger)index;
+- (WCConversation *)conversationForUser:(WCUser *)user connection:(WCServerConnection *)connection;
 - (void)addConversations:(NSArray *)conversations;
-- (void)addConversation:(id)conversation;
-- (void)removeConversation:(id)conversation;
+- (void)addConversation:(WCConversation *)conversation;
+- (void)removeConversation:(WCConversation *)conversation;
 - (void)removeAllConversations;
 
 - (NSUInteger)numberOfMessages;
-- (NSUInteger)numberOfUnreadMessages;
-- (NSUInteger)numberOfUnreadMessagesForConnection:(WCServerConnection *)connection;
+- (NSUInteger)numberOfUnreadMessagesForConnection:(WCServerConnection *)connection includeChildConversations:(BOOL)includeChildConversations;
 - (NSArray *)messages;
 - (NSArray *)unreadMessages;
-- (id)messageAtIndex:(NSUInteger)index;
-- (id)previousUnreadMessageStartingAtConversation:(id)conversation message:(id)message forwardsInMessages:(BOOL)forwardsInMessages;
-- (id)nextUnreadMessageStartingAtConversation:(id)conversation message:(id)message forwardsInMessages:(BOOL)forwardsInMessages;
+- (WCMessage *)messageAtIndex:(NSUInteger)index;
+- (WCMessage *)previousUnreadMessageStartingAtConversation:(WCConversation *)conversation message:(WCMessage *)message forwardsInMessages:(BOOL)forwardsInMessages;
+- (WCMessage *)nextUnreadMessageStartingAtConversation:(WCConversation *)conversation message:(WCMessage *)message forwardsInMessages:(BOOL)forwardsInMessages;
 - (void)sortMessagesUsingSelector:(SEL)selector;
-- (void)addMessage:(id)message;
-- (void)removeMessage:(id)message;
+- (void)addMessage:(WCMessage *)message;
+- (void)removeMessage:(WCMessage *)message;
 - (void)removeAllMessages;
 
 - (void)invalidateForConnection:(WCServerConnection *)connection;

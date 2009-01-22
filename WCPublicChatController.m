@@ -194,8 +194,6 @@
 		[_banButton setEnabled:([[[self connection] account] userBanUsers] && connected)];
 	}
 
-//	[[[self window] toolbar] validateVisibleItems];
-
 	[super validate];
 }
 

@@ -26,65 +26,69 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WCConnectionController.h"
+#define WCBoardsDidChangeUnreadCountNotification	@"WCBoardsDidChangeUnreadCountNotification"
+
 
 @class WCSourceSplitView, WCBoard;
 
 @interface WCBoards : WIWindowController {
-	IBOutlet WCSourceSplitView			*_boardsSplitView;
-	IBOutlet NSView						*_boardsView;
-	IBOutlet NSView						*_threadsView;
-	IBOutlet WISplitView				*_threadsSplitView;
-	IBOutlet NSView						*_threadListView;
-	IBOutlet NSView						*_threadView;
+	IBOutlet WCSourceSplitView						*_boardsSplitView;
+	IBOutlet NSView									*_boardsView;
+	IBOutlet NSView									*_threadsView;
+	IBOutlet WISplitView							*_threadsSplitView;
+	IBOutlet NSView									*_threadListView;
+	IBOutlet NSView									*_threadView;
 
-	IBOutlet WIOutlineView				*_boardsOutlineView;
-	IBOutlet NSTableColumn				*_boardTableColumn;
-	IBOutlet NSTableColumn				*_unreadBoardTableColumn;
-	IBOutlet NSButton					*_addBoardButton;
-	IBOutlet NSButton					*_deleteBoardButton;
+	IBOutlet WIOutlineView							*_boardsOutlineView;
+	IBOutlet NSTableColumn							*_boardTableColumn;
+	IBOutlet NSTableColumn							*_unreadBoardTableColumn;
+	IBOutlet NSButton								*_addBoardButton;
+	IBOutlet NSButton								*_deleteBoardButton;
 	
-	IBOutlet WITableView				*_threadsTableView;
-	IBOutlet NSTableColumn				*_unreadThreadTableColumn;
-	IBOutlet NSTableColumn				*_subjectTableColumn;
-	IBOutlet NSTableColumn				*_nickTableColumn;
-	IBOutlet NSTableColumn				*_timeTableColumn;
+	IBOutlet WITableView							*_threadsTableView;
+	IBOutlet NSTableColumn							*_unreadThreadTableColumn;
+	IBOutlet NSTableColumn							*_subjectTableColumn;
+	IBOutlet NSTableColumn							*_nickTableColumn;
+	IBOutlet NSTableColumn							*_timeTableColumn;
 
-	IBOutlet WebView					*_threadWebView;
+	IBOutlet WebView								*_threadWebView;
 	
-	IBOutlet NSPanel					*_addBoardPanel;
-	IBOutlet NSPopUpButton				*_locationPopUpButton;
-	IBOutlet NSTextField				*_nameTextField;
-	IBOutlet NSPopUpButton				*_addOwnerPopUpButton;
-	IBOutlet NSPopUpButton				*_addOwnerPermissionsPopUpButton;
-	IBOutlet NSPopUpButton				*_addGroupPopUpButton;
-	IBOutlet NSPopUpButton				*_addGroupPermissionsPopUpButton;
-	IBOutlet NSPopUpButton				*_addEveryonePermissionsPopUpButton;
+	IBOutlet NSPanel								*_addBoardPanel;
+	IBOutlet NSPopUpButton							*_locationPopUpButton;
+	IBOutlet NSTextField							*_nameTextField;
+	IBOutlet NSPopUpButton							*_addOwnerPopUpButton;
+	IBOutlet NSPopUpButton							*_addOwnerPermissionsPopUpButton;
+	IBOutlet NSPopUpButton							*_addGroupPopUpButton;
+	IBOutlet NSPopUpButton							*_addGroupPermissionsPopUpButton;
+	IBOutlet NSPopUpButton							*_addEveryonePermissionsPopUpButton;
 	
-	IBOutlet NSPanel					*_setPermissionsPanel;
-	IBOutlet NSPopUpButton				*_setOwnerPopUpButton;
-	IBOutlet NSPopUpButton				*_setOwnerPermissionsPopUpButton;
-	IBOutlet NSPopUpButton				*_setGroupPopUpButton;
-	IBOutlet NSPopUpButton				*_setGroupPermissionsPopUpButton;
-	IBOutlet NSPopUpButton				*_setEveryonePermissionsPopUpButton;
+	IBOutlet NSPanel								*_setPermissionsPanel;
+	IBOutlet NSPopUpButton							*_setOwnerPopUpButton;
+	IBOutlet NSPopUpButton							*_setOwnerPermissionsPopUpButton;
+	IBOutlet NSPopUpButton							*_setGroupPopUpButton;
+	IBOutlet NSPopUpButton							*_setGroupPermissionsPopUpButton;
+	IBOutlet NSPopUpButton							*_setEveryonePermissionsPopUpButton;
 
-	IBOutlet NSPanel					*_postPanel;
-	IBOutlet NSTextField				*_subjectTextField;
-	IBOutlet NSTextView					*_postTextView;
-	IBOutlet NSButton					*_postButton;
+	IBOutlet NSPanel								*_postPanel;
+	IBOutlet NSTextField							*_subjectTextField;
+	IBOutlet NSTextView								*_postTextView;
+	IBOutlet NSButton								*_postButton;
 	
-	WCBoard								*_boards;
-	WCBoard								*_selectedBoard;
+	WCBoard											*_boards;
+	WCBoard											*_selectedBoard;
 	
-	WIDateFormatter						*_dateFormatter;
+	WIDateFormatter									*_dateFormatter;
 	
-	NSMutableSet						*_receivedBoards;
-	NSMutableSet						*_readPosts;
+	NSMutableSet									*_receivedBoards;
+	NSMutableSet									*_readPosts;
 	
-	NSMutableString						*_headerTemplate, *_footerTemplate, *_postTemplate;
+	NSMutableString									*_headerTemplate, *_footerTemplate, *_postTemplate;
 }
 
 + (id)boards;
+
+- (NSUInteger)numberOfUnreadThreads;
+- (NSUInteger)numberOfUnreadThreadsForConnection:(WCServerConnection *)connection;
 
 - (IBAction)addBoard:(id)sender;
 - (IBAction)deleteBoard:(id)sender;

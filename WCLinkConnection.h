@@ -28,6 +28,7 @@
 
 #import "WCConnection.h"
 
+#define WCLinkConnectionWillConnectNotification				@"WCLinkConnectionWillConnectNotification"
 #define WCLinkConnectionDidConnectNotification				@"WCLinkConnectionDidConnectNotification"
 #define WCLinkConnectionWillDisconnectNotification			@"WCLinkConnectionWillDisconnectNotification"
 #define WCLinkConnectionDidCloseNotification				@"WCLinkConnectionDidCloseNotification"

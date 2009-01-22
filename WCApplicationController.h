@@ -37,7 +37,6 @@
 	IBOutlet NSMenuItem					*_closeWindowMenuItem;
 	
 	IBOutlet NSMenuItem					*_disconnectMenuItem;
-	IBOutlet NSMenuItem					*_deleteMenuItem;
 	
 	IBOutlet SUUpdater					*_updater;
 	

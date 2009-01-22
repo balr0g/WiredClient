@@ -37,6 +37,7 @@
 #import "WCNews.h"
 #import "WCPreferences.h"
 #import "WCPublicChat.h"
+#import "WCPublicChatController.h"
 #import "WCSearch.h"
 #import "WCServerConnection.h"
 #import "WCServers.h"
@@ -260,7 +261,7 @@ static NSInteger _WCCompareSmileyLength(id object1, id object2, void *context) {
 	login		= [bookmark objectForKey:WCBookmarksLogin];
 	password	= [[WCKeychain keychain] passwordForBookmark:bookmark];
 
-	url = [WIURL URLWithString:address scheme:@"wired"];
+	url = [WIURL URLWithString:address scheme:@"wiredp7"];
 	[url setUser:login];
 	[url setPassword:password ? password : @""];
 	
@@ -274,21 +275,19 @@ static NSInteger _WCCompareSmileyLength(id object1, id object2, void *context) {
 
 
 - (BOOL)_openConnectionWithURL:(WIURL *)url {
-/*	NSEnumerator            *enumerator;
-	WCServerConnection      *connection;
+	NSEnumerator            *enumerator;
+	WCPublicChatController	*chatController;
 	
-	enumerator = [_connections objectEnumerator];
+	enumerator = [[[WCPublicChat publicChat] chatControllers] objectEnumerator];
 	
-	while((connection = [enumerator nextObject])) {
-		if([url isEqual:[connection URL]]) {
+	while((chatController = [enumerator nextObject])) {
+		if([url isEqual:[[chatController connection] URL]]) {
+			[[WCPublicChat publicChat] selectChatController:chatController];
 			[[WCPublicChat publicChat] showWindow:self];
-
-			if(![connection isConnected])
-				[connection reconnect];
 			
 			return YES;
 		}
-	}*/
+	}
 	
 	return NO;
 }
@@ -329,23 +328,18 @@ static WCApplicationController		*sharedController;
 	
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
-		  selector:@selector(messagesDidAddMessage:)
-			   name:WCMessagesDidAddMessageNotification];
-
-	[[NSNotificationCenter defaultCenter]
-		addObserver:self
-		   selector:@selector(messagesDidReadMessage:)
-			   name:WCMessagesDidReadMessageNotification];
-
-	[[NSNotificationCenter defaultCenter]
-		addObserver:self
-		   selector:@selector(newsDidAddPost:)
-			   name:WCNewsDidAddPostNotification];
+		   selector:@selector(linkConnectionWillConnect:)
+			   name:WCLinkConnectionWillConnectNotification];
 	
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
-		   selector:@selector(newsDidReadPost:)
-			   name:WCNewsDidReadPostNotification];
+		   selector:@selector(boardsDidChangeUnreadCount:)
+			   name:WCBoardsDidChangeUnreadCountNotification];
+	
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
+		  selector:@selector(messagesDidChangeUnreadCount:)
+			   name:WCMessagesDidChangeUnreadCountNotification];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
@@ -354,13 +348,13 @@ static WCApplicationController		*sharedController;
 	
 	[[NSAppleEventManager sharedAppleEventManager]
 		setEventHandler:self
-		andSelector:@selector(handleAppleEvent:withReplyEvent:)
-		forEventClass:kInternetEventClass
-		andEventID:kAEGetURL];
+			andSelector:@selector(handleAppleEvent:withReplyEvent:)
+		  forEventClass:kInternetEventClass
+			 andEventID:kAEGetURL];
 
 	[[NSFileManager defaultManager]
 		createDirectoryAtPath:[WCApplicationSupportPath stringByStandardizingPath]
-		attributes:NULL];
+				   attributes:NULL];
 	
 	date = [[NSDate dateAtStartOfCurrentDay] dateByAddingDays:1];
 	timer = [[NSTimer alloc] initWithFireDate:date
@@ -426,15 +420,6 @@ static WCApplicationController		*sharedController;
 		[NSApp terminate:self];
 	}
 
-	[WCStats stats];
-	[WCTransfers transfers];
-	[WCMessages messages];
-	[WCBoards boards];
-	[WCSearch search];
-	
-	[_deleteMenuItem setKeyEquivalent:[NSSWF:@"%C", NSBackspaceCharacter]];
-	[_deleteMenuItem setKeyEquivalentModifierMask:NSCommandKeyMask];
-	
 	[self _update];
 	[self _updateBookmarksMenu];
 
@@ -467,7 +452,7 @@ static WCApplicationController		*sharedController;
 	count = 0;
 	
 	while((chatController = [enumerator nextObject])) {
-		if([(WCPublicChatController *) [chatController connection] isConnected])
+		if([[chatController connection] isConnected])
 			count++;
 	}
 	
@@ -514,34 +499,26 @@ static WCApplicationController		*sharedController;
 
 
 
-- (void)messagesDidAddMessage:(NSNotification *)notification {
-	if(![[notification object] isRead]) {
-		_unread++;
-		
-		[self performSelector:@selector(_updateApplicationIcon) withObject:NULL afterDelay:0.0];
-	}
+- (void)linkConnectionWillConnect:(NSNotification *)notification {
+	[WCStats stats];
+	[WCTransfers transfers];
+	[WCMessages messages];
+	[WCBoards boards];
+	[WCSearch search];
 }
 
 
 
-- (void)messagesDidReadMessage:(NSNotification *)notification {
-	_unread--;
+- (void)messagesDidChangeUnreadCount:(NSNotification *)notification {
+	_unread = [[WCMessages messages] numberOfUnreadMessages] + [[WCBoards boards] numberOfUnreadThreads];
 	
 	[self performSelector:@selector(_updateApplicationIcon) withObject:NULL afterDelay:0.0];
 }
 
 
 
-- (void)newsDidAddPost:(NSNotification *)notification {
-	_unread++;
-	
-	[self performSelector:@selector(_updateApplicationIcon) withObject:NULL afterDelay:0.0];
-}
-
-
-
-- (void)newsDidReadPost:(NSNotification *)notification {
-	_unread--;
+- (void)boardsDidChangeUnreadCount:(NSNotification *)notification {
+	_unread = [[WCMessages messages] numberOfUnreadMessages] + [[WCBoards boards] numberOfUnreadThreads];
 	
 	[self performSelector:@selector(_updateApplicationIcon) withObject:NULL afterDelay:0.0];
 }
@@ -803,7 +780,7 @@ static WCApplicationController		*sharedController;
 	enumerator = [[[WCPublicChat publicChat] chatControllers] objectEnumerator];
 	
 	while((chatController = [enumerator nextObject])) {
-		if([clickContext isEqualToString:[(WCPublicChatController *) [chatController connection] identifier]]) {
+		if([clickContext isEqualToString:[[chatController connection] identifier]]) {
 			[[WCPublicChat publicChat] selectChatController:chatController];
 			[[WCPublicChat publicChat] showWindow:self];
 		}

@@ -26,20 +26,23 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-@class WCBoardPost;
+@class WCBoard, WCBoardPost;
 
 @interface WCBoardThread : WCServerConnectionObject {
 	NSString					*_threadID;
 	NSMutableArray				*_posts;
 	BOOL						_unread;
+	WCBoard						*_board;
 }
 
-+ (id)threadWithPost:(WCBoardPost *)post connection:(WCServerConnection *)connection;
++ (WCBoardThread *)threadWithPost:(WCBoardPost *)post connection:(WCServerConnection *)connection;
 - (id)initWithPost:(WCBoardPost *)post connection:(WCServerConnection *)connection;
 
 - (NSString *)threadID;
 - (void)setUnread:(BOOL)unread;
 - (BOOL)isUnread;
+- (void)setBoard:(WCBoard *)board;
+- (WCBoard *)board;
 
 - (NSUInteger)numberOfPosts;
 - (NSUInteger)numberOfUnreadPosts;

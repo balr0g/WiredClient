@@ -52,12 +52,12 @@
 - (WCBoardThread *)_selectedThread;
 
 - (void)_selectThread:(WCBoardThread *)thread;
+- (void)_reselectThread:(WCBoardThread *)thread;
 - (SEL)_sortSelector;
 
 - (void)_reloadThread;
 - (NSString *)_HTMLStringForPost:(WCBoardPost *)post;
 - (NSString *)_textForPostText:(NSString *)text;
-- (NSImage *)_unreadBadgeImageForCount:(NSUInteger)count active:(BOOL)active selected:(BOOL)selected;
 
 - (void)_reloadLocationsAndSelectBoard:(WCBoard *)board;
 - (void)_addLocationsForChildrenOfBoard:(WCBoard *)board level:(NSUInteger)level;
@@ -177,6 +177,23 @@
 #pragma mark -
 
 - (void)_selectThread:(WCBoardThread *)thread {
+	WCBoard			*board;
+	NSInteger		row;
+	
+	board = [thread board];
+	row = [_boardsOutlineView rowForItem:board];
+	
+	if(row < 0)
+		return;
+	
+	[_boardsOutlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
+	
+	[self _reselectThread:thread];
+}
+
+
+
+- (void)_reselectThread:(WCBoardThread *)thread {
 	NSUInteger		index;
 	
 	index = [self _indexOfThread:thread];
@@ -343,67 +360,6 @@
 	[string replaceOccurrencesOfRegex:@"(?<!(?:=|\\[|\\]))" @"((\\w|\\.|_|-)+@(\\w|\\.|_|-)+)" @"(?!(?:\\[|\\]))" withString:@"[email]$1[/email]" options:RKLCaseless];
 	
 	return string;
-}
-
-
-
-- (NSImage *)_unreadBadgeImageForCount:(NSUInteger)count active:(BOOL)active selected:(BOOL)selected {
-	NSDictionary		*attributes;
-	NSColor				*backgroundColor, *textColor;
-	NSImage				*image;
-	NSSize				size;
-	
-	if(count == 0)
-		return NULL;
-	
-	if(count < 10)
-		size.width = 20.0;
-	else if(count < 100)
-		size.width = 27.0;
-	else if(count < 1000)
-		size.width = 34.0;
-	else
-		size.width = 39.0;
-	
-	size.height = 14.0;
-	
-	image = [[NSImage alloc] initWithSize:size];
-
-	[image lockFocus];
-	
-	if(selected) {
-		if(active) {
-			backgroundColor		= [NSColor whiteColor];
-			textColor			= [NSColor colorWithCalibratedRed:136.0 / 255.0 green:160.0 / 255.0 blue:214.0 / 255.0 alpha:1.0];
-		} else {
-			backgroundColor		= [NSColor whiteColor];
-			textColor			= [NSColor colorWithCalibratedWhite:166.0 / 255.0 alpha:1.0];
-		}
-	} else {
-		if(active) {
-			backgroundColor		= [NSColor colorWithCalibratedRed:136.0 / 255.0 green:160.0 / 255.0 blue:214.0 / 255.0 alpha:1.0];
-			textColor			= [NSColor whiteColor];
-		} else {
-			backgroundColor		= [NSColor colorWithCalibratedWhite:166.0 / 255.0 alpha:1.0];
-			textColor			= [NSColor whiteColor];
-		}
-	}
-	
-	[backgroundColor set];
-	[[NSBezierPath bezierPathWithRoundedRect:NSMakeRect(0.0, 0.0, size.width, size.height) cornerRadius:7.0] fill];
-	
-	attributes = [NSDictionary dictionaryWithObjectsAndKeys:
-		[NSFont boldSystemFontOfSize:11.0],
-			NSFontAttributeName,
-		textColor,
-			NSForegroundColorAttributeName,
-		NULL];
-	
-	[[NSSWF:@"%u", count] drawInRect:NSMakeRect(6.0, 0.0, size.width, size.height) withAttributes:attributes];
-	
-	[image unlockFocus];
-	
-	return [image autorelease];
 }
 
 
@@ -634,6 +590,7 @@
 	[_boardsOutlineView registerForDraggedTypes:[NSArray arrayWithObjects:WCBoardPboardType, WCThreadPboardType, NULL]];
 
 	[[_boardTableColumn dataCell] setVerticalTextOffset:3.0];
+	[[_unreadBoardTableColumn dataCell] setImageAlignment:NSImageAlignRight];
 
 	[_threadsTableView setDefaultHighlightedTableColumnIdentifier:@"Time"];
 	[_threadsTableView setDefaultSortOrder:WISortAscending];
@@ -850,6 +807,7 @@
 				thread = [WCBoardThread threadWithPost:post connection:connection];
 				
 				[board addThread:thread sortedUsingSelector:[self _sortSelector]];
+				[thread setBoard:board];
 			}
 		}
 	}
@@ -857,6 +815,8 @@
 		[_receivedBoards addObject:[connection URL]];
 
 		[_threadsTableView reloadData];
+
+		[connection postNotificationName:WCBoardsDidChangeUnreadCountNotification];
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
 		// handle error
@@ -888,7 +848,7 @@
 		[_boardsOutlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
 		
 		if(selectedThread)
-			[self _selectThread:selectedThread];
+			[self _reselectThread:selectedThread];
 		
 		[self _reloadThread];
 	}
@@ -1029,7 +989,7 @@
 		[_threadsTableView reloadData];
 		
 		if(selectedThread)
-			[self _selectThread:selectedThread];
+			[self _reselectThread:selectedThread];
 		
 		[self _reloadThread];
 	}
@@ -1055,13 +1015,14 @@
 	[thread retain];
 	[oldBoard removeThread:thread];
 	[newBoard addThread:thread sortedUsingSelector:[self _sortSelector]];
+	[thread setBoard:newBoard];
 	[thread release];
 	
 	if(oldBoard == [self _selectedBoard] || newBoard == [self _selectedBoard]) {
 		[_threadsTableView reloadData];
 		
 		if(selectedThread)
-			[self _selectThread:selectedThread];
+			[self _reselectThread:selectedThread];
 		
 		[self _reloadThread];
 	}
@@ -1095,6 +1056,7 @@
 		thread = [WCBoardThread threadWithPost:post connection:connection];
 		
 		[board addThread:thread sortedUsingSelector:[self _sortSelector]];
+		[thread setBoard:board];
 	}
 	
 	if(board == [self _selectedBoard]) {
@@ -1103,8 +1065,10 @@
 		if(thread == selectedThread)
 			[self _reloadThread];
 		else if(selectedThread)
-			[self _selectThread:selectedThread];
+			[self _reselectThread:selectedThread];
 	}
+
+	[connection postNotificationName:WCBoardsDidChangeUnreadCountNotification];
 }
 
 
@@ -1189,8 +1153,10 @@
 		[self _reloadThread];
 		
 		if(selectedThread)
-			[self _selectThread:selectedThread];
+			[self _reselectThread:selectedThread];
 	}
+	
+	[connection postNotificationName:WCBoardsDidChangeUnreadCountNotification];
 }
 
 
@@ -1414,6 +1380,72 @@
 	
 	if(valid)
 		[super submitSheet:sender];
+}
+
+
+
+#pragma mark -
+
+- (void)showNextUnreadThread {
+	WCBoardThread	*thread;
+	NSRect			rect;
+	
+	rect = [[[[[_threadWebView mainFrame] frameView] documentView] enclosingScrollView] documentVisibleRect];
+	rect.origin.y += 0.9 * rect.size.height;
+	
+	if([[[[_threadWebView mainFrame] frameView] documentView] scrollRectToVisible:rect])
+		return;
+	
+	thread = [_boards nextUnreadThreadStartingAtBoard:[self _selectedBoard]
+											   thread:[self _selectedThread]
+									forwardsInThreads:([_threadsTableView sortOrder] == WISortAscending)];
+	
+	if(!thread)
+		thread = [_boards nextUnreadThreadStartingAtBoard:NULL thread:NULL forwardsInThreads:([_threadsTableView sortOrder] == WISortAscending)];
+	
+	if(thread) {
+		[[self window] makeFirstResponder:_threadsTableView];
+		
+		[self _selectThread:thread];
+	}
+}
+
+
+
+- (void)showPreviousUnreadThread {
+	WCBoardThread	*thread;
+	NSRect			rect;
+	
+	rect = [[[[[_threadWebView mainFrame] frameView] documentView] enclosingScrollView] documentVisibleRect];
+	rect.origin.y -= 0.9 * rect.size.height;
+	
+	if([[[[_threadWebView mainFrame] frameView] documentView] scrollRectToVisible:rect])
+		return;
+	
+	thread = [_boards previousUnreadThreadStartingAtBoard:[self _selectedBoard]
+												   thread:[self _selectedThread]
+										forwardsInThreads:([_threadsTableView sortOrder] == WISortAscending)];
+	
+	if(!thread)
+		thread = [_boards previousUnreadThreadStartingAtBoard:NULL thread:NULL forwardsInThreads:([_threadsTableView sortOrder] == WISortAscending)];
+
+	if(thread) {
+		[[self window] makeFirstResponder:_threadsTableView];
+		
+		[self _selectThread:thread];
+	}
+}
+
+
+
+- (NSUInteger)numberOfUnreadThreads {
+	return [_boards numberOfUnreadThreadsForConnection:NULL includeChildBoards:YES];
+}
+
+
+
+- (NSUInteger)numberOfUnreadThreadsForConnection:(WCServerConnection *)connection {
+	return [_boards numberOfUnreadThreadsForConnection:connection includeChildBoards:YES];
 }
 
 
@@ -1861,9 +1893,9 @@
 		return [item name];
 	}
 	else if(tableColumn == _unreadBoardTableColumn) {
-		return [self _unreadBadgeImageForCount:[item numberOfUnreadThreads]
-										active:([NSApp keyWindow] == [self window])
-									  selected:([_boardsOutlineView rowForItem:item] == [_boardsOutlineView selectedRow])];
+		return [NSImage imageWithPillForCount:[item numberOfUnreadThreadsForConnection:NULL includeChildBoards:NO]
+							   inActiveWindow:([NSApp keyWindow] == [self window])
+								onSelectedRow:([_boardsOutlineView rowForItem:item] == [_boardsOutlineView selectedRow])];
 	}
 	
 	return NULL;
@@ -1872,10 +1904,12 @@
 
 
 - (void)outlineView:(NSOutlineView *)outlineView willDisplayCell:(id)cell forTableColumn:(NSTableColumn *)tableColumn item:(id)item {
-	if([item numberOfUnreadThreads] > 0)
-		[cell setFont:[[cell font] fontByAddingTrait:NSBoldFontMask]];
-	else
-		[cell setFont:[[cell font] fontByAddingTrait:NSUnboldFontMask]];
+	if(tableColumn == _boardTableColumn) {
+		if([item numberOfUnreadThreadsForConnection:NULL includeChildBoards:NO] > 0)
+			[cell setFont:[[cell font] fontByAddingTrait:NSBoldFontMask]];
+		else
+			[cell setFont:[[cell font] fontByAddingTrait:NSUnboldFontMask]];
+	}
 }
 
 

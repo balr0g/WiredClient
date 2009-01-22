@@ -31,14 +31,14 @@
 
 @interface WCMessage(Private)
 
-- (id)_initWithDirection:(WCMessageDirection)direction message:(NSString *)message user:(WCUser *)user read:(BOOL)read connection:(WCServerConnection *)connection;
+- (id)_initWithDirection:(WCMessageDirection)direction message:(NSString *)message user:(WCUser *)user unread:(BOOL)unread connection:(WCServerConnection *)connection;
 
 @end
 
 
 @implementation WCMessage(Private)
 
-- (id)_initWithDirection:(WCMessageDirection)direction message:(NSString *)message user:(WCUser *)user read:(BOOL)read connection:(WCServerConnection *)connection {
+- (id)_initWithDirection:(WCMessageDirection)direction message:(NSString *)message user:(WCUser *)user unread:(BOOL)unread connection:(WCServerConnection *)connection {
 	self = [super initWithConnection:connection];
 
 	_direction		= direction;
@@ -46,7 +46,7 @@
 	_login			= [[user login] retain];
 	_message		= [message retain];
 	_date			= [[NSDate date] retain];
-	_read			= read;
+	_unread			= unread;
 	
 	_user			= user;
 
@@ -79,7 +79,7 @@
     }
 	
 	_direction		= [coder decodeIntForKey:@"WCMessageDirection"];
-	_read			= [coder decodeBoolForKey:@"WCMessageRead"];
+	_unread			= ![coder decodeBoolForKey:@"WCMessageRead"];
 	_nick			= [[coder decodeObjectForKey:@"WCMessageUserNick"] retain];
 	_login			= [[coder decodeObjectForKey:@"WCMessageUserLogin"] retain];
 	_message		= [[coder decodeObjectForKey:@"WCMessageMessage"] retain];
@@ -94,7 +94,7 @@
     [coder encodeInt:[[self class] version] forKey:@"WCMessageVersion"];
 	
 	[coder encodeInt:_direction forKey:@"WCMessageDirection"];
-	[coder encodeBool:_read forKey:@"WCMessageRead"];
+	[coder encodeBool:!_unread forKey:@"WCMessageRead"];
 	[coder encodeObject:_nick forKey:@"WCMessageUserNick"];
 	[coder encodeObject:_login forKey:@"WCMessageUserLogin"];
 	[coder encodeObject:_message forKey:@"WCMessageMessage"];
@@ -125,12 +125,7 @@
 	else
 		type = @"broadcast";
 	
-	return [NSSWF:@"<%@ %p>{type = %@, user = %@, date = %@}",
-		[self className],
-		self,
-		type,
-		[self nick],
-		[self date]];
+	return [NSSWF:@"<%@ %p>{type = %@, user = %@, date = %@}", [self className], self, type, [self nick], [self date]];
 }
 
 
@@ -181,14 +176,14 @@
 
 #pragma mark -
 
-- (void)setRead:(BOOL)read {
-	_read = read;
+- (void)setUnread:(BOOL)unread {
+	_unread = unread;
 }
 
 
 
-- (BOOL)isRead {
-	return _read;
+- (BOOL)isUnread {
+	return _unread;
 }
 
 
@@ -230,14 +225,14 @@
 
 @implementation WCPrivateMessage
 
-+ (id)messageWithMessage:(NSString *)message user:(WCUser *)user connection:(WCServerConnection *)connection {
-	return [[[self alloc] _initWithDirection:WCMessageFrom message:message user:user read:NO connection:connection] autorelease];
++ (WCPrivateMessage *)messageWithMessage:(NSString *)message user:(WCUser *)user connection:(WCServerConnection *)connection {
+	return [[[self alloc] _initWithDirection:WCMessageFrom message:message user:user unread:YES connection:connection] autorelease];
 }
 
 
 
-+ (id)messageToUser:(WCUser *)user message:(NSString *)message connection:(WCServerConnection *)connection {
-	return [[[self alloc] _initWithDirection:WCMessageTo message:message user:user read:YES connection:connection] autorelease];
++ (WCPrivateMessage *)messageToUser:(WCUser *)user message:(NSString *)message connection:(WCServerConnection *)connection {
+	return [[[self alloc] _initWithDirection:WCMessageTo message:message user:user unread:NO connection:connection] autorelease];
 }
 
 @end
@@ -246,8 +241,8 @@
 
 @implementation WCBroadcastMessage
 
-+ (id)broadcastWithMessage:(NSString *)message user:(WCUser *)user connection:(WCServerConnection *)connection {
-	return [[[self alloc] _initWithDirection:WCMessageFrom message:message user:user read:NO connection:connection] autorelease];
++ (WCBroadcastMessage *)broadcastWithMessage:(NSString *)message user:(WCUser *)user connection:(WCServerConnection *)connection {
+	return [[[self alloc] _initWithDirection:WCMessageFrom message:message user:user unread:YES connection:connection] autorelease];
 }
 
 @end

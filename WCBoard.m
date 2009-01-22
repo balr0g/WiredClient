@@ -34,6 +34,7 @@
 - (id)_initWithPath:(NSString *)path name:(NSString *)name connection:(WCServerConnection *)connection ;
 
 - (WCBoard *)_boardWithName:(NSString *)name;
+- (WCBoardThread *)_unreadThreadStartingAtBoard:(WCBoard *)startingBoard thread:(WCBoardThread *)startingThread forwardsInBoards:(BOOL)forwardsInBoards forwardsInThreads:(BOOL)forwardsInThreads passed:(BOOL *)passed;
 
 @end
 
@@ -70,25 +71,64 @@
 	return NULL;
 }
 
+
+
+#pragma mark -
+
+- (WCBoardThread *)_unreadThreadStartingAtBoard:(WCBoard *)startingBoard thread:(WCBoardThread *)startingThread forwardsInBoards:(BOOL)forwardsInBoards forwardsInThreads:(BOOL)forwardsInThreads passed:(BOOL *)passed {
+	WCBoard			*board;
+	WCBoardThread	*thread;
+	NSUInteger		i, count;
+	
+	count = [_threadsArray count];
+	
+	for(i = 0; i < count; i++) {
+		thread = [_threadsArray objectAtIndex:forwardsInThreads ? i : count - i - 1];
+		
+		if((startingBoard == NULL || startingBoard == self) &&
+		   (startingThread == NULL || startingThread == thread))
+			*passed = YES;
+		
+		if(*passed && thread != startingThread/* && [thread isUnread]*/)
+			return thread;
+	}
+	
+	count = [_boards count];
+	
+	for(i = 0; i < count; i++) {
+		board = [_boards objectAtIndex:forwardsInBoards ? i : count - i - 1];
+		thread = [board _unreadThreadStartingAtBoard:startingBoard
+											  thread:startingThread
+									forwardsInBoards:forwardsInBoards
+								   forwardsInThreads:forwardsInThreads
+											  passed:passed];
+		
+		if(thread)
+			return thread;
+	}
+	
+	return NULL;
+}
+
 @end
 
 
 
 @implementation WCBoard
 
-+ (id)rootBoard {
++ (WCBoard *)rootBoard {
 	return [[[self alloc] _initWithPath:@"/" name:@"<root>" connection:NULL] autorelease];
 }
 
 
 
-+ (id)boardWithConnection:(WCServerConnection *)connection {
++ (WCBoard *)boardWithConnection:(WCServerConnection *)connection {
 	return [[[self alloc] _initWithPath:@"/" name:[connection name] connection:connection] autorelease];
 }
 
 
 
-+ (id)boardWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection {
++ (WCBoard *)boardWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection {
 	NSString		*path, *owner, *group;
 	WCBoard			*board;
 	NSUInteger		permissions;
@@ -322,19 +362,29 @@
 
 
 
-- (NSUInteger)numberOfUnreadThreads {
-	NSEnumerator		*enumerator;
+- (NSUInteger)numberOfUnreadThreadsForConnection:(WCServerConnection *)connection includeChildBoards:(BOOL)includeChildBoards {
 	WCBoardThread		*thread;
-	NSUInteger			count = 0;
+	NSUInteger			i, count, unread = 0;
 	
-	enumerator = [_threadsArray objectEnumerator];
+	count = [_threadsArray count];
 	
-	while((thread = [enumerator nextObject])) {
-		if([thread isUnread])
-			count++;
+	for(i = 0; i < count; i++) {
+		thread = [_threadsArray objectAtIndex:i];
+
+		if(!connection || [thread connection] == connection) {
+			if([thread isUnread])
+				unread++;
+		}
 	}
 	
-	return count;
+	if(includeChildBoards) {
+		count = [_boards count];
+		
+		for(i = 0; i < count; i++)
+			unread += [[_boards objectAtIndex:i] numberOfUnreadThreadsForConnection:connection includeChildBoards:includeChildBoards];
+	}
+	
+	return unread;
 }
 
 
@@ -359,6 +409,22 @@
 
 - (NSUInteger)indexOfThread:(WCBoardThread *)thread {
 	return [_threadsArray indexOfObject:thread];
+}
+
+
+
+- (WCBoardThread *)previousUnreadThreadStartingAtBoard:(WCBoard *)board thread:(WCBoardThread *)thread forwardsInThreads:(BOOL)forwardsInThreads {
+	BOOL	passed = NO;
+	
+	return [self _unreadThreadStartingAtBoard:board thread:thread forwardsInBoards:NO forwardsInThreads:!forwardsInThreads passed:&passed];
+}
+
+
+
+- (WCBoardThread *)nextUnreadThreadStartingAtBoard:(WCBoard *)board thread:(WCBoardThread *)thread forwardsInThreads:(BOOL)forwardsInThreads {
+	BOOL	passed = NO;
+	
+	return [self _unreadThreadStartingAtBoard:board thread:thread forwardsInBoards:YES forwardsInThreads:forwardsInThreads passed:&passed];
 }
 
 

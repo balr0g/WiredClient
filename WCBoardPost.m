@@ -30,7 +30,7 @@
 
 @implementation WCBoardPost
 
-+ (id)postWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection {
++ (WCBoardPost *)postWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection {
 	return [[[self alloc] initWithMessage:message connection:connection] autorelease];
 }
 

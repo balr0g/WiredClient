@@ -34,7 +34,7 @@
 
 - (id)_initWithName:(NSString *)name expandable:(BOOL)expandable connection:(WCServerConnection *)connection;
 
-- (id)_unreadMessageStartingAtConversation:(id)startingConversation message:(id)startingMessage forwardsInConversations:(BOOL)forwardsInConversations forwardsInMessages:(BOOL)forwardsInMessages passed:(BOOL)passed;
+- (WCMessage *)_unreadMessageStartingAtConversation:(WCConversation *)startingConversation message:(WCMessage *)startingMessage forwardsInConversations:(BOOL)forwardsInConversations forwardsInMessages:(BOOL)forwardsInMessages passed:(BOOL *)passed;
 
 @end
 
@@ -54,7 +54,7 @@
 
 #pragma mark -
 
-- (id)_unreadMessageStartingAtConversation:(id)startingConversation message:(id)startingMessage forwardsInConversations:(BOOL)forwardsInConversations forwardsInMessages:(BOOL)forwardsInMessages passed:(BOOL)passed {
+- (WCMessage *)_unreadMessageStartingAtConversation:(WCConversation *)startingConversation message:(WCMessage *)startingMessage forwardsInConversations:(BOOL)forwardsInConversations forwardsInMessages:(BOOL)forwardsInMessages passed:(BOOL *)passed {
 	WCConversation	*conversation;
 	WCMessage		*message;
 	NSUInteger		i, count;
@@ -66,9 +66,9 @@
 		
 		if((startingConversation == NULL || startingConversation == self) &&
 		   (startingMessage == NULL || startingMessage == message))
-			passed = YES;
+			*passed = YES;
 		
-		if(passed && ![message isRead])
+		if(*passed && message != startingMessage && [message isUnread])
 			return message;
 	}
 	
@@ -175,6 +175,14 @@
 
 #pragma mark -
 
+- (NSString *)description {
+	return [NSSWF:@"<%@ %p>{name = %@}", [self className], self, [self name]];
+}
+
+
+
+#pragma mark -
+
 - (NSString *)name {
 	return _name;
 }
@@ -201,13 +209,13 @@
 
 
 
-- (id)conversationAtIndex:(NSUInteger)index {
+- (WCConversation *)conversationAtIndex:(NSUInteger)index {
 	return [_conversations objectAtIndex:index];
 }
 
 
 
-- (id)conversationForUser:(WCUser *)user connection:(WCServerConnection *)connection {
+- (WCConversation *)conversationForUser:(WCUser *)user connection:(WCServerConnection *)connection {
 	WCConversation		*conversation;
 	NSUInteger			i, count;
 
@@ -231,13 +239,13 @@
 
 
 
-- (void)addConversation:(id)conversation {
+- (void)addConversation:(WCConversation *)conversation {
 	[_conversations addObject:conversation];
 }
 
 
 
-- (void)removeConversation:(id)conversation {
+- (void)removeConversation:(WCConversation *)conversation {
 	[_conversations removeObject:conversation];
 }
 
@@ -257,13 +265,7 @@
 
 
 
-- (NSUInteger)numberOfUnreadMessages {
-	return [self numberOfUnreadMessagesForConnection:NULL];
-}
-
-
-
-- (NSUInteger)numberOfUnreadMessagesForConnection:(WCServerConnection *)connection {
+- (NSUInteger)numberOfUnreadMessagesForConnection:(WCServerConnection *)connection includeChildConversations:(BOOL)includeChildConversations {
 	WCMessage		*message;
 	NSUInteger		i, count, unread;
 	
@@ -274,15 +276,17 @@
 		message = [_messages objectAtIndex:i];
 		
 		if(!connection || [message connection] == connection) {
-			if(![message isRead])
+			if([message isUnread])
 				unread++;
 		}
 	}
 	
-	count = [_conversations count];
-	
-	for(i = 0; i < count; i++)
-		unread += [[_conversations objectAtIndex:i] numberOfUnreadMessages];
+	if(includeChildConversations) {
+		count = [_conversations count];
+		
+		for(i = 0; i < count; i++)
+			unread += [[_conversations objectAtIndex:i] numberOfUnreadMessagesForConnection:connection includeChildConversations:includeChildConversations];
+	}
 	
 	return unread;
 }
@@ -306,7 +310,7 @@
 	for(i = 0; i < count; i++) {
 		message = [_messages objectAtIndex:i];
 		
-		if(![message isRead])
+		if([message isUnread])
 			[messages addObject:message];
 	}
 	
@@ -320,20 +324,24 @@
 
 
 
-- (id)messageAtIndex:(NSUInteger)index {
+- (WCMessage *)messageAtIndex:(NSUInteger)index {
 	return [_messages objectAtIndex:index];
 }
 
 
 
-- (id)previousUnreadMessageStartingAtConversation:(id)conversation message:(id)message forwardsInMessages:(BOOL)forwardsInMessages {
-	return [self _unreadMessageStartingAtConversation:conversation message:message forwardsInConversations:NO forwardsInMessages:!forwardsInMessages passed:NO];
+- (WCMessage *)previousUnreadMessageStartingAtConversation:(WCConversation *)conversation message:(WCMessage *)message forwardsInMessages:(BOOL)forwardsInMessages {
+	BOOL	passed = NO;
+	
+	return [self _unreadMessageStartingAtConversation:conversation message:message forwardsInConversations:NO forwardsInMessages:!forwardsInMessages passed:&passed];
 }
 
 
 
-- (id)nextUnreadMessageStartingAtConversation:(id)conversation message:(id)message forwardsInMessages:(BOOL)forwardsInMessages {
-	return [self _unreadMessageStartingAtConversation:conversation message:message forwardsInConversations:YES forwardsInMessages:forwardsInMessages passed:NO];
+- (WCMessage *)nextUnreadMessageStartingAtConversation:(WCConversation *)conversation message:(WCMessage *)message forwardsInMessages:(BOOL)forwardsInMessages {
+	BOOL	passed = NO;
+	
+	return [self _unreadMessageStartingAtConversation:conversation message:message forwardsInConversations:YES forwardsInMessages:forwardsInMessages passed:&passed];
 }
 
 
@@ -344,14 +352,14 @@
 
 
 
-- (void)addMessage:(id)message {
+- (void)addMessage:(WCMessage *)message {
 	[message setConversation:self];
 	[_messages addObject:message];
 }
 
 
 
-- (void)removeMessage:(id)message {
+- (void)removeMessage:(WCMessage *)message {
 	[message setConversation:NULL];
 	[_messages removeObject:message];
 }
