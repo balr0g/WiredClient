@@ -39,11 +39,12 @@
 
 @interface WCMessages(Private)
 
-- (void)_showDialogForMessage:(WCMessage *)message;
-- (NSString *)_stringForMessageString:(NSString *)string;
-
 - (void)_validate;
 - (void)_themeDidChange;
+
+- (void)_showDialogForMessage:(WCMessage *)message;
+- (NSString *)_stringForMessageString:(NSString *)string;
+- (void)_applyMessageAttributesToAttributedString:(NSMutableAttributedString *)attributedString;
 
 - (WCMessage *)_messageAtIndex:(NSUInteger)index;
 - (WCConversation *)_selectedConversation;
@@ -61,6 +62,63 @@
 
 
 @implementation WCMessages(Private)
+
+- (void)_validate {
+	[[[self window] toolbar] validateVisibleItems];
+}
+
+
+
+- (void)_themeDidChange {
+	NSDictionary		*theme;
+	
+	theme = [WCSettings themeWithIdentifier:[WCSettings objectForKey:WCTheme]];
+	
+	[_messageColor release];
+	_messageColor = [WIColorFromString([theme objectForKey:WCThemesMessagesTextColor]) retain];
+	
+	[_messageFont release];
+	_messageFont = [WIFontFromString([theme objectForKey:WCThemesMessagesFont]) retain];
+	
+	[_messageTextView setFont:_messageFont];
+	[_messageTextView setTextColor:_messageColor];
+	[_messageTextView setBackgroundColor:WIColorFromString([theme objectForKey:WCThemesMessagesBackgroundColor])];
+
+	[_messageTextView setLinkTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
+		WIColorFromString([theme objectForKey:WCThemesURLsColor]),
+			NSForegroundColorAttributeName,
+		[NSNumber numberWithInt:NSSingleUnderlineStyle],
+			NSUnderlineStyleAttributeName,
+		NULL]];
+	
+	[_replyTextView setFont:_messageFont];
+	[_replyTextView setTextColor:_messageColor];
+	[_replyTextView setInsertionPointColor:_messageColor];
+	[_replyTextView setBackgroundColor:WIColorFromString([theme objectForKey:WCThemesMessagesBackgroundColor])];
+
+	[_broadcastTextView setFont:_messageFont];
+	[_broadcastTextView setTextColor:_messageColor];
+	[_broadcastTextView setInsertionPointColor:_messageColor];
+	[_broadcastTextView setBackgroundColor:WIColorFromString([theme objectForKey:WCThemesMessagesBackgroundColor])];
+	
+	[_messagesTableView setUsesAlternatingRowBackgroundColors:[theme boolForKey:WCThemesMessageListAlternateRows]];
+
+	if([theme boolForKey:WCThemesShowSmileys] != _showSmileys) {
+		_showSmileys = !_showSmileys;
+		
+		if(_showSmileys) {
+			[WCChatController applySmileyAttributesToAttributedString:[_messageTextView textStorage]];
+		} else {
+			[[_messageTextView textStorage] replaceAttachmentsWithStrings];
+			
+			[self _applyMessageAttributesToAttributedString:[_messageTextView textStorage]];
+		}
+	}
+}
+
+
+
+#pragma mark -
 
 - (void)_showDialogForMessage:(WCMessage *)message {
 	NSAlert		*alert;
@@ -113,43 +171,13 @@
 
 
 
-#pragma mark -
-
-- (void)_validate {
-	[[[self window] toolbar] validateVisibleItems];
-}
-
-
-
-- (void)_themeDidChange {
-	NSDictionary		*theme;
+- (void)_applyMessageAttributesToAttributedString:(NSMutableAttributedString *)attributedString {
+	NSRange		range;
 	
-	theme = [WCSettings themeWithIdentifier:[WCSettings objectForKey:WCTheme]];
+	range = NSMakeRange(0, [attributedString length]);
 	
-	[_messageTextView setFont:WIFontFromString([theme objectForKey:WCThemesMessagesFont])];
-	[_messageTextView setTextColor:WIColorFromString([theme objectForKey:WCThemesMessagesTextColor])];
-	[_messageTextView setBackgroundColor:WIColorFromString([theme objectForKey:WCThemesMessagesBackgroundColor])];
-
-	[_messageTextView setLinkTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
-		WIColorFromString([theme objectForKey:WCThemesChatURLsColor]),
-			NSForegroundColorAttributeName,
-		[NSNumber numberWithInt:NSSingleUnderlineStyle],
-			NSUnderlineStyleAttributeName,
-		NULL]];
-	
-	[_replyTextView setFont:WIFontFromString([theme objectForKey:WCThemesMessagesFont])];
-	[_replyTextView setTextColor:WIColorFromString([theme objectForKey:WCThemesMessagesTextColor])];
-	[_replyTextView setBackgroundColor:WIColorFromString([theme objectForKey:WCThemesMessagesBackgroundColor])];
-	[_replyTextView setInsertionPointColor:WIColorFromString([theme objectForKey:WCThemesMessagesTextColor])];
-
-	[_broadcastTextView setFont:WIFontFromString([theme objectForKey:WCThemesMessagesFont])];
-	[_broadcastTextView setTextColor:WIColorFromString([theme objectForKey:WCThemesMessagesTextColor])];
-	[_broadcastTextView setBackgroundColor:WIColorFromString([theme objectForKey:WCThemesMessagesBackgroundColor])];
-	[_broadcastTextView setInsertionPointColor:WIColorFromString([theme objectForKey:WCThemesMessagesTextColor])];
-	
-//	[_messageTextView setString:[[_messageTextView textStorage] string] withFilter:_messageFilter];
-
-	[_messagesTableView setUsesAlternatingRowBackgroundColors:[theme boolForKey:WCThemesMessageListAlternateRows]];
+	[attributedString addAttribute:NSForegroundColorAttributeName value:_messageColor range:range];
+	[attributedString addAttribute:NSFontAttributeName value:_messageFont range:range];
 }
 
 
@@ -283,7 +311,8 @@
 
 
 - (void)_reloadMessage {
-	WCMessage   *message;
+	NSMutableAttributedString	*attributedString;
+	WCMessage					*message;
 	
 	message = [self _selectedMessage];
 	
@@ -298,7 +327,16 @@
 			[[message connection] postNotificationName:WCMessagesDidChangeUnreadCountNotification];
 		}
 		
-		[_messageTextView setString:[message message] withFilter:_messageFilter];
+		attributedString = [NSMutableAttributedString attributedStringWithString:[message message]];
+		
+		[self _applyMessageAttributesToAttributedString:attributedString];
+		[WCChatController applyURLAttributesToAttributedString:attributedString];
+		
+		if(_showSmileys)
+			[WCChatController applySmileyAttributesToAttributedString:attributedString];
+		
+		[[_messageTextView textStorage] setAttributedString:attributedString];
+		
 		[_messageTextView scrollRangeToVisible:NSMakeRange(0, 0)];
 	}
 }
@@ -341,9 +379,6 @@
 
 	_conversationIcon	= [[NSImage imageNamed:@"Conversation"] retain];
 	
-	_messageFilter		= [[WITextFilter alloc] initWithSelectors:@selector(filterURLs:), @selector(filterWiredSmilies:), 0];
-	_userFilter			= [[WITextFilter alloc] initWithSelectors:@selector(filterWiredSmallSmilies:), 0];
-
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(applicationWillTerminate:)
@@ -397,8 +432,7 @@
 
 	[_conversationIcon release];
 	
-	[_messageFilter release];
-	[_userFilter release];
+	[_messageColor release];
 	[_conversationIcon release];
 	
 	[_tableDateFormatter release];
@@ -465,9 +499,6 @@
 	[_conversationsOutlineView reloadData];
 	[_conversationsOutlineView expandItem:_messageConversations];
 	[_conversationsOutlineView expandItem:_broadcastConversations];
-	
-	[_messageTextView setEditable:NO];
-	[_messageTextView setUsesFindPanel:YES];
 	
 	_tableDateFormatter = [[WIDateFormatter alloc] init];
 	[_tableDateFormatter setTimeStyle:NSDateFormatterShortStyle];
@@ -1149,18 +1180,15 @@
 
 
 - (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)column row:(NSInteger)row {
-	NSString			*string;
-	WCMessage			*message;
+	WCMessage		*message;
 	
 	message = [self _messageAtIndex:row];
 	
 	if(column == _userTableColumn) {
 		if([message direction] == WCMessageTo)
-			string = [NSSWF:NSLS(@"To: %@", @"Message to (nick)"), [message nick]];
+			return [NSSWF:NSLS(@"To: %@", @"Message to (nick)"), [message nick]];
 		else
-			string = [NSSWF:NSLS(@"From: %@", @"Message from (nick)"), [message nick]];
-
-		return [[NSAttributedString attributedStringWithString:string] attributedStringByApplyingFilter:_userFilter];
+			return [NSSWF:NSLS(@"From: %@", @"Message from (nick)"), [message nick]];
 	}
 	else if(column == _timeTableColumn) {
 		return [_tableDateFormatter stringFromDate:[message date]];

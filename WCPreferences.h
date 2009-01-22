@@ -64,21 +64,25 @@
 	IBOutlet NSButton								*_deleteThemeButton;
 	IBOutlet NSButton								*_selectThemeButton;
 	
+	IBOutlet NSColorWell							*_themesURLsColorWell;
 	IBOutlet NSTextField							*_themesChatFontTextField;
 	IBOutlet NSButton								*_themesChatFontButton;
 	IBOutlet NSColorWell							*_themesChatTextColorWell;
 	IBOutlet NSColorWell							*_themesChatBackgroundColorWell;
 	IBOutlet NSColorWell							*_themesChatURLsColorWell;
 	IBOutlet NSColorWell							*_themesChatEventsColorWell;
+	IBOutlet NSColorWell							*_themesChatTimestampEveryLineColorWell;
 	IBOutlet NSTextField							*_themesMessagesFontTextField;
 	IBOutlet NSButton								*_themesMessagesFontButton;
 	IBOutlet NSColorWell							*_themesMessagesTextColorWell;
 	IBOutlet NSColorWell							*_themesMessagesBackgroundColorWell;
-	IBOutlet NSTextField							*_themesNewsFontTextField;
-	IBOutlet NSButton								*_themesNewsFontButton;
-	IBOutlet NSColorWell							*_themesNewsTextColorWell;
-	IBOutlet NSColorWell							*_themesNewsBackgroundColorWell;
+	IBOutlet NSTextField							*_themesBoardsFontTextField;
+	IBOutlet NSButton								*_themesBoardsFontButton;
+	IBOutlet NSColorWell							*_themesBoardsTextColorWell;
+	IBOutlet NSColorWell							*_themesBoardsBackgroundColorWell;
 	
+	IBOutlet NSButton								*_themesShowSmileysButton;
+	IBOutlet NSButton								*_themesChatTimestampEveryLineButton;
 	IBOutlet NSMatrix								*_themesUserListIconSizeMatrix;
 	IBOutlet NSButton								*_themesUserListAlternateRowsButton;
 	IBOutlet NSButton								*_themesMessageListAlternateRowsButton;
@@ -107,9 +111,6 @@
 	IBOutlet NSTextField							*_chatTabCompleteNicksTextField;
 	IBOutlet NSButton								*_chatTimestampChatButton;
 	IBOutlet NSTextField							*_chatTimestampChatIntervalTextField;
-	IBOutlet NSButton								*_chatTimestampEveryLineButton;
-	IBOutlet NSColorWell							*_chatTimestampEveryLineColorWell;
-	IBOutlet NSButton								*_chatShowSmileysButton;
 	
 	IBOutlet NSTableView							*_highlightsTableView;
 	IBOutlet NSButton								*_addHighlightButton;

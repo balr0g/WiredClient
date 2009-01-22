@@ -27,6 +27,7 @@
  */
 
 #import "WCPrivateChatController.h"
+#import "WCUser.h"
 
 @implementation WCPrivateChatController
 
@@ -43,12 +44,6 @@
 #pragma mark -
 
 - (void)awakeFromNib {
-	[[NSNotificationCenter defaultCenter]
-		addObserver:self
-		   selector:@selector(windowWillClose:)
-			   name:NSWindowWillCloseNotification
-			 object:[_privateChat window]];
-
 	[_userListTableView registerForDraggedTypes:[NSArray arrayWithObject:WCUserPboardType]];
 	
 	[super awakeFromNib];
@@ -57,12 +52,6 @@
 
 
 #pragma mark -
-
-- (void)windowWillClose:(NSNotification *)notification {
-	[self autorelease];
-}
-
-
 
 - (void)wiredChatCreateChatReply:(WIP7Message *)message {
 	WIP7Message		*reply;
@@ -98,7 +87,7 @@
 
 
 - (void)wiredChatUserDeclineInvitation:(WIP7Message *)message {
-/*	WCUser		*user;
+	WCUser		*user;
 	WIP7UInt32	uid, cid;
 
 	[message getUInt32:&cid forName:@"wired.chat.id"];
@@ -108,14 +97,13 @@
 	
 	[message getUInt32:&uid forName:@"wired.user.id"];
 
-	user = [[[self connection] chat] userWithUserID:uid];
+	user = [[[self connection] chatController] userWithUserID:uid];
 	
 	if(!user)
 		return;
 
-	[self printEvent:[NSSWF:
-		NSLS(@"%@ has declined invitation", @"Private chat decline message (nick)"),
-		[user nick]]];*/
+	[self printEvent:[NSSWF:NSLS(@"%@ has declined invitation", @"Private chat decline message (nick)"),
+		[user nick]]];
 }
 
 

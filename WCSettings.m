@@ -42,6 +42,8 @@
 #define _WCChatUserListIconSizeLarge				1
 #define _WCChatUserListIconSizeSmall				0
 
+#define _WCShowSmileys							@"WCShowSmileys"
+#define _WCTimestampEveryLine					@"WCTimestampEveryLine"
 #define _WCTimestampEveryLineColor				@"WCTimestampEveryLineColor"
 
 #define _WCMessagesTextColor					@"WCMessagesTextColor"
@@ -76,112 +78,132 @@
 @implementation WCSettings(Private)
 
 + (void)_upgrade {
-	NSEnumerator			*enumerator;
+	NSEnumerator			*enumerator, *keyEnumerator;
 	NSDictionary			*defaultTheme;
-	NSMutableDictionary		*theme;
-	NSArray					*bookmarks;
-	NSMutableArray			*newBookmarks;
-	NSDictionary			*bookmark;
-	NSMutableDictionary		*newBookmark;
-	NSString				*password;
+	NSArray					*themes, *bookmarks;
+	NSMutableArray			*newThemes, *newBookmarks;
+	NSDictionary			*theme, *bookmark;
+	NSMutableDictionary		*newTheme, *newBookmark;
+	NSString				*key, *password;
 	
-	/* Convert font/color settings */
 	defaultTheme = [[[self defaults] objectForKey:WCThemes] objectAtIndex:0];
 	
+	/* Convert old font/color settings to theme */
 	if([[self objectForKey:WCThemes] isEqualToArray:[NSArray arrayWithObject:defaultTheme]]) {
-		theme = [[defaultTheme mutableCopy] autorelease];
-			
+		newTheme = [[defaultTheme mutableCopy] autorelease];
+		
+		if([self objectForKey:_WCChatURLsColor]) {
+			[newTheme setObject:WIStringFromColor([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCChatURLsColor]])
+						 forKey:WCThemesURLsColor];
+		}
+		
 		if([self objectForKey:_WCChatTextColor]) {
-			[theme setObject:WIStringFromColor([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCChatTextColor]])
-					  forKey:WCThemesChatTextColor];
+			[newTheme setObject:WIStringFromColor([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCChatTextColor]])
+						 forKey:WCThemesChatTextColor];
 		}
 		
 		if([self objectForKey:_WCChatBackgroundColor]) {
-			[theme setObject:WIStringFromColor([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCChatBackgroundColor]])
-					  forKey:WCThemesChatBackgroundColor];
+			[newTheme setObject:WIStringFromColor([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCChatBackgroundColor]])
+						 forKey:WCThemesChatBackgroundColor];
 		}
-
+		
 		if([self objectForKey:_WCChatEventsColor]) {
-			[theme setObject:WIStringFromColor([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCChatEventsColor]])
-					  forKey:WCThemesChatEventsColor];
+			[newTheme setObject:WIStringFromColor([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCChatEventsColor]])
+						 forKey:WCThemesChatEventsColor];
 		}
-
-		if([self objectForKey:_WCChatURLsColor]) {
-			[theme setObject:WIStringFromColor([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCChatURLsColor]])
-					  forKey:WCThemesChatURLsColor];
+		
+		if([self objectForKey:_WCTimestampEveryLineColor]) {
+			[newTheme setObject:WIStringFromColor([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCTimestampEveryLineColor]])
+						 forKey:WCThemesChatTimestampEveryLineColor];
 		}
-
+		
+		if([self objectForKey:_WCShowSmileys]) {
+			[newTheme setObject:[self objectForKey:_WCShowSmileys]
+						 forKey:WCThemesShowSmileys];
+		}
+		
+		if([self objectForKey:_WCTimestampEveryLine]) {
+			[newTheme setObject:[self objectForKey:_WCTimestampEveryLine]
+						 forKey:WCThemesChatTimestampEveryLine];
+		}
+		
+		if([self objectForKey:_WCTimestampEveryLineColor]) {
+			[newTheme setObject:WIStringFromColor([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCTimestampEveryLineColor]])
+						 forKey:WCThemesChatTimestampEveryLineColor];
+		}
+		
 		if([self objectForKey:_WCChatFont]) {
-			[theme setObject:WIStringFromFont([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCChatFont]])
-					  forKey:WCThemesChatFont];
+			[newTheme setObject:WIStringFromFont([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCChatFont]])
+						 forKey:WCThemesChatFont];
 		}
-
+		
 		if([self objectForKey:_WCMessagesTextColor]) {
-			[theme setObject:WIStringFromColor([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCMessagesTextColor]])
-					  forKey:WCThemesMessagesTextColor];
+			[newTheme setObject:WIStringFromColor([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCMessagesTextColor]])
+						 forKey:WCThemesMessagesTextColor];
 		}
 		
 		if([self objectForKey:_WCMessagesBackgroundColor]) {
-			[theme setObject:WIStringFromColor([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCMessagesBackgroundColor]])
-					  forKey:WCThemesMessagesBackgroundColor];
+			[newTheme setObject:WIStringFromColor([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCMessagesBackgroundColor]])
+						 forKey:WCThemesMessagesBackgroundColor];
 		}
 		
 		if([self objectForKey:_WCMessagesFont]) {
-			[theme setObject:WIStringFromFont([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCMessagesFont]])
-					  forKey:WCThemesMessagesFont];
+			[newTheme setObject:WIStringFromFont([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCMessagesFont]])
+						 forKey:WCThemesMessagesFont];
 		}
 		
 		if([self objectForKey:_WCMessagesListAlternateRows]) {
-			[theme setObject:[self objectForKey:_WCMessagesListAlternateRows]
-					  forKey:WCThemesMessageListAlternateRows];
+			[newTheme setObject:[self objectForKey:_WCMessagesListAlternateRows]
+						 forKey:WCThemesMessageListAlternateRows];
 		}
 		
 		if([self objectForKey:_WCNewsTextColor]) {
-			[theme setObject:WIStringFromColor([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCNewsTextColor]])
-					  forKey:WCThemesNewsTextColor];
+			[newTheme setObject:WIStringFromColor([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCNewsTextColor]])
+						 forKey:WCThemesBoardsTextColor];
 		}
 		
 		if([self objectForKey:_WCNewsBackgroundColor]) {
-			[theme setObject:WIStringFromColor([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCNewsBackgroundColor]])
-					  forKey:WCThemesNewsBackgroundColor];
+			[newTheme setObject:WIStringFromColor([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCNewsBackgroundColor]])
+						 forKey:WCThemesBoardsBackgroundColor];
 		}
 		
 		if([self objectForKey:_WCNewsFont]) {
-			[theme setObject:WIStringFromFont([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCNewsFont]])
-					  forKey:WCThemesNewsFont];
+			[newTheme setObject:WIStringFromFont([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCNewsFont]])
+						 forKey:WCThemesBoardsFont];
 		}
 		
 		if([self objectForKey:_WCFilesAlternateRows]) {
-			[theme setObject:[self objectForKey:_WCFilesAlternateRows]
-					  forKey:WCThemesFileListAlternateRows];
+			[newTheme setObject:[self objectForKey:_WCFilesAlternateRows]
+						 forKey:WCThemesFileListAlternateRows];
 		}
-
+		
 		if([self objectForKey:_WCTransfersShowProgressBar]) {
-			[theme setObject:[self objectForKey:_WCTransfersShowProgressBar]
-					  forKey:WCThemesTransferListShowProgressBar];
+			[newTheme setObject:[self objectForKey:_WCTransfersShowProgressBar]
+						 forKey:WCThemesTransferListShowProgressBar];
 		}
-
+		
 		if([self objectForKey:_WCTransfersAlternateRows]) {
-			[theme setObject:[self objectForKey:_WCTransfersAlternateRows]
-					  forKey:WCThemesTransferListAlternateRows];
+			[newTheme setObject:[self objectForKey:_WCTransfersAlternateRows]
+						 forKey:WCThemesTransferListAlternateRows];
 		}
-
+		
 		if([self objectForKey:_WCTrackersAlternateRows]) {
-			[theme setObject:[self objectForKey:_WCTrackersAlternateRows]
-					  forKey:WCThemesTrackerListAlternateRows];
+			[newTheme setObject:[self objectForKey:_WCTrackersAlternateRows]
+						 forKey:WCThemesTrackerListAlternateRows];
 		}
-
-		if(![theme isEqualToDictionary:defaultTheme]) {
-			[theme setObject:@"Wired Client 1.x" forKey:WCThemesName];
-			[theme setObject:[NSString UUIDString] forKey:WCThemesIdentifier];
+		
+		if(![newTheme isEqualToDictionary:defaultTheme]) {
+			[newTheme setObject:@"Wired Client 1.x" forKey:WCThemesName];
+			[newTheme setObject:[NSString UUIDString] forKey:WCThemesIdentifier];
 			
-			[self addObject:theme toArrayForKey:WCThemes];
+			[self addObject:newTheme toArrayForKey:WCThemes];
 		}
 
 /*		[self removeObjectForKey:_WCChatTextColor];
 		[self removeObjectForKey:_WCChatBackgroundColor];
 		[self removeObjectForKey:_WCChatEventsColor];
 		[self removeObjectForKey:_WCChatURLsColor];
+		[self removeObjectForKey:_WCTimestampEveryLineColor];
 		[self removeObjectForKey:_WCChatFont];
 		[self removeObjectForKey:_WCMessagesTextColor];
 		[self removeObjectForKey:_WCMessagesBackgroundColor];
@@ -196,13 +218,26 @@
 		[self removeObjectForKey:_WCTrackersAlternateRows];*/
 	}
 	
-	if([self objectForKey:_WCTimestampEveryLineColor]) {
-		[self setObject:WIStringFromColor([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCTimestampEveryLineColor]])
-				 forKey:WCChatTimestampEveryLineColor];
+	/* Convert themes */
+	themes			= [self objectForKey:WCThemes];
+	newThemes		= [NSMutableArray array];
+	enumerator		= [themes objectEnumerator];
+	
+	while((theme = [enumerator nextObject])) {
+		newTheme		= [[theme mutableCopy] autorelease];
+		keyEnumerator	= [defaultTheme keyEnumerator];
 		
-		[self removeObjectForKey:_WCTimestampEveryLineColor];
+		while((key = [keyEnumerator nextObject])) {
+			if(![theme objectForKey:key])
+				[newTheme setObject:[defaultTheme objectForKey:key] forKey:key];
+		}
+		
+		[newThemes addObject:newTheme];
 	}
 	
+	[self setObject:newThemes forKey:WCThemes];
+
+	/* Set default theme */
 	if(![self themeWithIdentifier:[self objectForKey:WCTheme]])
 		[self setObject:[[[self objectForKey:WCThemes] objectAtIndex:0] objectForKey:WCThemesIdentifier] forKey:WCTheme];
 	
@@ -362,17 +397,20 @@
 			[NSDictionary dictionaryWithObjectsAndKeys:
 				NSLS(@"Basic", @"Theme"),										WCThemesName,
 				themesIdentifier,												WCThemesIdentifier,
+				WIStringFromColor([NSColor blueColor]),							WCThemesURLsColor,
 				WIStringFromFont([NSFont userFixedPitchFontOfSize:9.0]),		WCThemesChatFont,
 				WIStringFromColor([NSColor blackColor]),						WCThemesChatTextColor,
 				WIStringFromColor([NSColor whiteColor]),						WCThemesChatBackgroundColor,
-				WIStringFromColor([NSColor blueColor]),							WCThemesChatURLsColor,
 				WIStringFromColor([NSColor redColor]),							WCThemesChatEventsColor,
+				WIStringFromColor([NSColor redColor]),							WCThemesChatTimestampEveryLineColor,
 				WIStringFromFont([NSFont userFixedPitchFontOfSize:9.0]),		WCThemesMessagesFont,
 				WIStringFromColor([NSColor blackColor]),						WCThemesMessagesTextColor,
 				WIStringFromColor([NSColor whiteColor]),						WCThemesMessagesBackgroundColor,
-				WIStringFromFont([NSFont fontWithName:@"Helvetica" size:12.0]),	WCThemesNewsFont,
-				WIStringFromColor([NSColor blackColor]),						WCThemesNewsTextColor,
-				WIStringFromColor([NSColor whiteColor]),						WCThemesNewsBackgroundColor,
+				WIStringFromFont([NSFont fontWithName:@"Helvetica" size:13.0]),	WCThemesBoardsFont,
+				WIStringFromColor([NSColor blackColor]),						WCThemesBoardsTextColor,
+				WIStringFromColor([NSColor whiteColor]),						WCThemesBoardsBackgroundColor,
+				[NSNumber numberWithBool:NO],									WCThemesShowSmileys,
+				[NSNumber numberWithBool:NO],									WCThemesChatTimestampEveryLine,
 				[NSNumber numberWithInteger:WCThemesUserListIconSizeLarge],		WCThemesUserListIconSize,
 				[NSNumber numberWithBool:NO],									WCThemesUserListAlternateRows,
 				[NSNumber numberWithBool:NO],									WCThemesMessageListAlternateRows,
@@ -399,12 +437,6 @@
 			WCChatTimestampChat,
 		[NSNumber numberWithInt:300],
 			WCChatTimestampChatInterval,
-		[NSNumber numberWithBool:NO],
-			WCChatTimestampEveryLine,
-		WIStringFromColor([NSColor redColor]),
-			WCChatTimestampEveryLineColor,
-		[NSNumber numberWithBool:NO],
-			WCChatShowSmileys,
 
 		[NSArray array],
 			WCHighlights,

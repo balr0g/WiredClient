@@ -77,6 +77,9 @@
 	WCBoard											*_boards;
 	WCBoard											*_selectedBoard;
 	
+	NSFont											*_threadFont;
+	NSColor											*_threadColor;
+	NSColor											*_backgroundColor;
 	WIDateFormatter									*_dateFormatter;
 	
 	NSMutableSet									*_receivedBoards;

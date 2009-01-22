@@ -47,7 +47,7 @@
 	IBOutlet NSTableColumn							*_userTableColumn;
 	IBOutlet NSTableColumn							*_timeTableColumn;
 
-	IBOutlet WITextView								*_messageTextView;
+	IBOutlet NSTextView								*_messageTextView;
 
 	IBOutlet NSPanel								*_replyPanel;
 	IBOutlet NSTextField							*_userTextField;
@@ -61,8 +61,9 @@
 	WCBroadcastConversation							*_broadcastConversations;
 	WCConversation									*_selectedConversation;
 	
-	WITextFilter									*_messageFilter;
-	WITextFilter									*_userFilter;
+	NSFont											*_messageFont;
+	NSColor											*_messageColor;
+	BOOL											_showSmileys;
 	NSImage											*_conversationIcon;
 	
 	WCUser											*_messageUser;

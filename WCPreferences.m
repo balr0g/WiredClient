@@ -98,20 +98,26 @@
 	if(row >= 0 && (NSUInteger) row < [[WCSettings objectForKey:WCThemes] count]) {
 		theme = [[WCSettings objectForKey:WCThemes] objectAtIndex:row];
 		
+		[_themesURLsColorWell setColor:WIColorFromString([theme objectForKey:WCThemesURLsColor])];
+
 		[_themesChatFontTextField setStringValue:[WIFontFromString([theme objectForKey:WCThemesChatFont]) displayNameWithSize]];
 		[_themesChatTextColorWell setColor:WIColorFromString([theme objectForKey:WCThemesChatTextColor])];
 		[_themesChatBackgroundColorWell setColor:WIColorFromString([theme objectForKey:WCThemesChatBackgroundColor])];
-		[_themesChatURLsColorWell setColor:WIColorFromString([theme objectForKey:WCThemesChatURLsColor])];
 		[_themesChatEventsColorWell setColor:WIColorFromString([theme objectForKey:WCThemesChatEventsColor])];
+		[_themesChatTimestampEveryLineColorWell setColor:WIColorFromString([theme objectForKey:WCThemesChatTimestampEveryLineColor])];
 
 		[_themesMessagesFontTextField setStringValue:[WIFontFromString([theme objectForKey:WCThemesMessagesFont]) displayNameWithSize]];
 		[_themesMessagesTextColorWell setColor:WIColorFromString([theme objectForKey:WCThemesMessagesTextColor])];
 		[_themesMessagesBackgroundColorWell setColor:WIColorFromString([theme objectForKey:WCThemesMessagesBackgroundColor])];
 
-		[_themesNewsFontTextField setStringValue:[WIFontFromString([theme objectForKey:WCThemesNewsFont]) displayNameWithSize]];
-		[_themesNewsTextColorWell setColor:WIColorFromString([theme objectForKey:WCThemesNewsTextColor])];
-		[_themesNewsBackgroundColorWell setColor:WIColorFromString([theme objectForKey:WCThemesNewsBackgroundColor])];
+		[_themesBoardsFontTextField setStringValue:[WIFontFromString([theme objectForKey:WCThemesBoardsFont]) displayNameWithSize]];
+		[_themesBoardsTextColorWell setColor:WIColorFromString([theme objectForKey:WCThemesBoardsTextColor])];
+		[_themesBoardsBackgroundColorWell setColor:WIColorFromString([theme objectForKey:WCThemesBoardsBackgroundColor])];
 
+		[_themesShowSmileysButton setState:[theme boolForKey:WCThemesShowSmileys]];
+
+		[_themesChatTimestampEveryLineButton setState:[theme boolForKey:WCThemesChatTimestampEveryLine]];
+		
 		[_themesUserListIconSizeMatrix selectCellWithTag:[theme integerForKey:WCThemesUserListIconSize]];
 		[_themesUserListAlternateRowsButton setState:[theme boolForKey:WCThemesUserListAlternateRows]];
 		
@@ -585,9 +591,6 @@
 	[_chatTabCompleteNicksTextField setStringValue:[WCSettings objectForKey:WCChatTabCompleteNicksString]];
 	[_chatTimestampChatButton setState:[WCSettings boolForKey:WCChatTimestampChat]];
 	[_chatTimestampChatIntervalTextField setStringValue:[NSSWF:@"%.0f", [WCSettings doubleForKey:WCChatTimestampChatInterval] / 60.0]];
-	[_chatTimestampEveryLineButton setState:[WCSettings boolForKey:WCChatTimestampEveryLine]];
-	[_chatTimestampEveryLineColorWell setColor:WIColorFromString([WCSettings objectForKey:WCChatTimestampEveryLineColor])];
-	[_chatShowSmileysButton setState:[WCSettings boolForKey:WCChatShowSmileys]];
 
 	[_eventsVolumeSlider setFloatValue:[WCSettings floatForKey:WCEventsVolume]];
 
@@ -699,9 +702,6 @@
 	[WCSettings setObject:[_chatTabCompleteNicksTextField stringValue] forKey:WCChatTabCompleteNicksString];
 	[WCSettings setBool:[_chatTimestampChatButton state] forKey:WCChatTimestampChat];
 	[WCSettings setInt:[_chatTimestampChatIntervalTextField intValue] * 60 forKey:WCChatTimestampChatInterval];
-	[WCSettings setBool:[_chatTimestampEveryLineButton state] forKey:WCChatTimestampEveryLine];
-	[WCSettings setObject:WIStringFromColor([_chatTimestampEveryLineColorWell color]) forKey:WCChatTimestampEveryLineColor];
-	[WCSettings setBool:[_chatShowSmileysButton state] forKey:WCChatShowSmileys];
 
 	[WCSettings setBool:[_filesOpenFoldersInNewWindowsButton state] forKey:WCOpenFoldersInNewWindows];
 	[WCSettings setBool:[_filesQueueTransfersButton state] forKey:WCQueueTransfers];
@@ -724,17 +724,20 @@
 	theme = [NSDictionary dictionaryWithObjectsAndKeys:
 		NSLS(@"Untitled", @"Untitled theme"),							WCThemesName,
 		[NSString UUIDString],											WCThemesIdentifier,
+		WIStringFromColor([NSColor blueColor]),							WCThemesURLsColor,
 		WIStringFromFont([NSFont userFixedPitchFontOfSize:9.0]),		WCThemesChatFont,
 		WIStringFromColor([NSColor blackColor]),						WCThemesChatTextColor,
 		WIStringFromColor([NSColor whiteColor]),						WCThemesChatBackgroundColor,
-		WIStringFromColor([NSColor blueColor]),							WCThemesChatURLsColor,
 		WIStringFromColor([NSColor redColor]),							WCThemesChatEventsColor,
+		WIStringFromColor([NSColor redColor]),							WCThemesChatTimestampEveryLineColor,
 		WIStringFromFont([NSFont userFixedPitchFontOfSize:9.0]),		WCThemesMessagesFont,
 		WIStringFromColor([NSColor blackColor]),						WCThemesMessagesTextColor,
 		WIStringFromColor([NSColor whiteColor]),						WCThemesMessagesBackgroundColor,
-		WIStringFromFont([NSFont fontWithName:@"Helvetica" size:12.0]),	WCThemesNewsFont,
-		WIStringFromColor([NSColor blackColor]),						WCThemesNewsTextColor,
-		WIStringFromColor([NSColor whiteColor]),						WCThemesNewsBackgroundColor,
+		WIStringFromFont([NSFont fontWithName:@"Helvetica" size:13.0]),	WCThemesBoardsFont,
+		WIStringFromColor([NSColor blackColor]),						WCThemesBoardsTextColor,
+		WIStringFromColor([NSColor whiteColor]),						WCThemesBoardsBackgroundColor,
+		[NSNumber numberWithBool:NO],									WCThemesShowSmileys,
+		[NSNumber numberWithBool:NO],									WCThemesChatTimestampEveryLine,
 		[NSNumber numberWithInteger:WCThemesUserListIconSizeLarge],		WCThemesUserListIconSize,
 		[NSNumber numberWithBool:NO],									WCThemesUserListAlternateRows,
 		[NSNumber numberWithBool:NO],									WCThemesMessageListAlternateRows,
@@ -926,20 +929,32 @@
 	oldTheme		= [[[[WCSettings objectForKey:WCThemes] objectAtIndex:row] retain] autorelease];
 	theme			= [[oldTheme mutableCopy] autorelease];
 
+	[theme setObject:WIStringFromColor([_themesURLsColorWell color]) forKey:WCThemesURLsColor];
+	
 	[theme setObject:WIStringFromColor([_themesChatTextColorWell color]) forKey:WCThemesChatTextColor];
 	[theme setObject:WIStringFromColor([_themesChatBackgroundColorWell color]) forKey:WCThemesChatBackgroundColor];
-	[theme setObject:WIStringFromColor([_themesChatURLsColorWell color]) forKey:WCThemesChatURLsColor];
 	[theme setObject:WIStringFromColor([_themesChatEventsColorWell color]) forKey:WCThemesChatEventsColor];
+	[theme setObject:WIStringFromColor([_themesChatTimestampEveryLineColorWell color]) forKey:WCThemesChatTimestampEveryLineColor];
+	
 	[theme setObject:WIStringFromColor([_themesMessagesTextColorWell color]) forKey:WCThemesMessagesTextColor];
 	[theme setObject:WIStringFromColor([_themesMessagesBackgroundColorWell color]) forKey:WCThemesMessagesBackgroundColor];
-	[theme setObject:WIStringFromColor([_themesNewsTextColorWell color]) forKey:WCThemesNewsTextColor];
-	[theme setObject:WIStringFromColor([_themesNewsBackgroundColorWell color]) forKey:WCThemesNewsBackgroundColor];
+	[theme setObject:WIStringFromColor([_themesBoardsTextColorWell color]) forKey:WCThemesBoardsTextColor];
+	[theme setObject:WIStringFromColor([_themesBoardsBackgroundColorWell color]) forKey:WCThemesBoardsBackgroundColor];
+	
+	[theme setBool:[_themesShowSmileysButton state] forKey:WCThemesShowSmileys];
+	
+	[theme setBool:[_themesChatTimestampEveryLineButton state] forKey:WCThemesChatTimestampEveryLine];
+	
 	[theme setInteger:[_themesUserListIconSizeMatrix selectedTag] forKey:WCThemesUserListIconSize];
 	[theme setBool:[_themesUserListAlternateRowsButton state] forKey:WCThemesUserListAlternateRows];
+	
 	[theme setBool:[_themesMessageListAlternateRowsButton state] forKey:WCThemesMessageListAlternateRows];
+	
 	[theme setBool:[_themesFileListAlternateRowsButton state] forKey:WCThemesFileListAlternateRows];
+	
 	[theme setBool:[_themesTransferListShowProgressBarButton state] forKey:WCThemesTransferListShowProgressBar];
 	[theme setBool:[_themesTransferListAlternateRowsButton state] forKey:WCThemesTransferListAlternateRows];
+	
 	[theme setBool:[_themesTrackerListAlternateRowsButton state] forKey:WCThemesTrackerListAlternateRows];
 
 	if(![oldTheme isEqualToDictionary:theme]) {
@@ -968,9 +983,9 @@
 		[fontManager setSelectedFont:WIFontFromString([theme objectForKey:WCThemesMessagesFont]) isMultiple:NO];
 		[fontManager setAction:@selector(setMessagesFont:)];
 	}
-	else if(sender == _themesNewsFontButton) {
-		[fontManager setSelectedFont:WIFontFromString([theme objectForKey:WCThemesNewsFont]) isMultiple:NO];
-		[fontManager setAction:@selector(setNewsFont:)];
+	else if(sender == _themesBoardsFontButton) {
+		[fontManager setSelectedFont:WIFontFromString([theme objectForKey:WCThemesBoardsFont]) isMultiple:NO];
+		[fontManager setAction:@selector(setBoardsFont:)];
 	}
 	
 	[fontManager orderFrontFontPanel:self];
@@ -1016,19 +1031,19 @@
 
 
 
-- (void)setNewsFont:(id)sender {
+- (void)setBoardsFont:(id)sender {
 	NSMutableDictionary		*theme;
 	NSFont					*font, *newFont;
 	
 	theme		= [[[[WCSettings objectForKey:WCThemes] objectAtIndex:[_themesTableView selectedRow]] mutableCopy] autorelease];
-	font		= WIFontFromString([theme objectForKey:WCThemesNewsFont]);
+	font		= WIFontFromString([theme objectForKey:WCThemesBoardsFont]);
 	newFont		= [sender convertFont:font];
 	
-	[theme setObject:WIStringFromFont(newFont) forKey:WCThemesNewsFont];
+	[theme setObject:WIStringFromFont(newFont) forKey:WCThemesBoardsFont];
 	
 	[WCSettings replaceObjectAtIndex:[_themesTableView selectedRow] withObject:theme inArrayForKey:WCThemes];
 	
-	[_themesNewsFontTextField setStringValue:[newFont displayNameWithSize]];
+	[_themesBoardsFontTextField setStringValue:[newFont displayNameWithSize]];
 
 	[[NSNotificationCenter defaultCenter] postNotificationName:WCThemeDidChangeNotification object:theme];
 }
@@ -1243,6 +1258,8 @@
 		[WCSettings removeObjectAtIndex:[row integerValue] fromArrayForKey:WCHighlights];
 		
 		[_highlightsTableView reloadData];
+		
+		[[NSNotificationCenter defaultCenter] postNotificationName:WCPreferencesDidChangeNotification];
 	}
 	
 	[row release];
@@ -1287,6 +1304,8 @@
 		[WCSettings replaceObjectAtIndex:row withObject:highlight inArrayForKey:WCHighlights];
 		
 		[_highlightsTableView reloadData];
+		
+		[[NSNotificationCenter defaultCenter] postNotificationName:WCPreferencesDidChangeNotification];
 	}
 }
 
@@ -1343,6 +1362,8 @@
 		[WCSettings removeObjectAtIndex:[row integerValue] fromArrayForKey:WCIgnores];
 		
 		[_ignoresTableView reloadData];
+		
+		[[NSNotificationCenter defaultCenter] postNotificationName:WCPreferencesDidChangeNotification];
 	}
 	
 	[row release];
@@ -1654,6 +1675,8 @@
 			[dictionary setObject:object forKey:WCHighlightsPattern];
 		
 		[WCSettings replaceObjectAtIndex:row withObject:dictionary inArrayForKey:WCHighlights];
+		
+		[[NSNotificationCenter defaultCenter] postNotificationName:WCPreferencesDidChangeNotification];
 	}
 	else if(tableView == _ignoresTableView) {
 		dictionary = [[[[WCSettings objectForKey:WCIgnores] objectAtIndex:row] mutableCopy] autorelease];
@@ -1664,6 +1687,8 @@
 			[dictionary setObject:object forKey:WCIgnoresLogin];
 	
 		[WCSettings replaceObjectAtIndex:row withObject:dictionary inArrayForKey:WCIgnores];
+		
+		[[NSNotificationCenter defaultCenter] postNotificationName:WCPreferencesDidChangeNotification];
 	}
 	else if(tableView == _trackerBookmarksTableView) {
 		dictionary = [[[[WCSettings objectForKey:WCTrackerBookmarks] objectAtIndex:row] mutableCopy] autorelease];

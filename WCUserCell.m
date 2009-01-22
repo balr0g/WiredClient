@@ -53,8 +53,6 @@
 	[_statusAttributes setObject:style forKey:NSParagraphStyleAttributeName];
 	[_statusAttributes setObject:[NSColor grayColor] forKey:NSForegroundColorAttributeName];
 	
-	_filter = [[WITextFilter alloc] initWithSelectors:@selector(filterWiredSmallSmilies:), 0];
-	
 	[self setFont:[NSFont systemFontOfSize:12.0]];
 }
 
@@ -91,8 +89,6 @@
 	[_nickAttributes release];
 	[_statusAttributes release];
 	
-	[_filter release];
-
 	[super dealloc];
 }
 
@@ -108,7 +104,6 @@
 	cell->_statusCell		= [_statusCell retain];
 	cell->_nickAttributes	= [_nickAttributes retain];
 	cell->_statusAttributes	= [_statusAttributes retain];
-	cell->_filter			= [_filter retain];
 	
 	return cell;
 }
@@ -185,14 +180,14 @@
 					   range:NSMakeRange(0, [string length])];
 	}
 		
-	[_nickCell setAttributedStringValue:[string attributedStringByApplyingFilter:_filter]];
+	[_nickCell setAttributedStringValue:string];
 	[_nickCell drawWithFrame:rect inView:view];
 	
 	if([self controlSize] == NSRegularControlSize && [status length] > 0) {
 		rect	= NSMakeRect(frame.origin.x, frame.origin.y + offset + 19.0, frame.size.width, 14.0);
 		string	= [NSAttributedString attributedStringWithString:status attributes:_statusAttributes];
 		
-		[_statusCell setAttributedStringValue:[string attributedStringByApplyingFilter:_filter]];
+		[_statusCell setAttributedStringValue:string];
 		[_statusCell drawWithFrame:rect inView:view];
 	}
 }

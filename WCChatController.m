@@ -32,6 +32,7 @@
 #import "WCChatController.h"
 #import "WCChatWindow.h"
 #import "WCMessages.h"
+#import "WCPreferences.h"
 #import "WCStats.h"
 #import "WCTopic.h"
 #import "WCUser.h"
@@ -57,6 +58,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 @interface WCChatController(Private)
 
+- (void)_updatePreferences;
 - (void)_updateSaveChatForPanel:(NSSavePanel *)savePanel;
 
 - (void)_setTopic:(WCTopic *)topic;
@@ -78,6 +80,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 - (NSString *)_stringByCompletingString:(NSString *)string;
 - (NSString *)_stringByDecomposingAttributedString:(NSAttributedString *)attributedString;
+- (void)_applyChatAttributesToAttributedString:(NSMutableAttributedString *)attributedString;
 
 - (BOOL)_isHighlightedChat:(NSString *)chat;
 
@@ -85,6 +88,31 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 
 @implementation WCChatController(Private)
+
+- (void)_updatePreferences {
+	NSMutableArray		*highlightPatterns, *highlightColors;
+	NSEnumerator		*enumerator;
+	NSDictionary		*highlight;
+	
+	highlightPatterns	= [NSMutableArray array];
+	highlightColors		= [NSMutableArray array];
+	
+	enumerator = [[WCSettings objectForKey:WCHighlights] objectEnumerator];
+	
+	while((highlight = [enumerator nextObject])) {
+		[highlightPatterns addObject:[highlight objectForKey:WCHighlightsPattern]];
+		[highlightColors addObject:WIColorFromString([highlight objectForKey:WCHighlightsColor])];
+	}
+	
+	if(![highlightPatterns isEqualToArray:_highlightPatterns] || ![highlightColors isEqualToArray:_highlightColors]) {
+		[_highlightPatterns setArray:highlightPatterns];
+		[_highlightColors setArray:highlightColors];
+	
+		[self _applyChatAttributesToAttributedString:[_chatOutputTextView textStorage]];
+	}
+}
+
+
 
 - (void)_updateSaveChatForPanel:(NSSavePanel *)savePanel {
 	WCChatFormat		format;
@@ -113,18 +141,14 @@ typedef enum _WCChatFormat					WCChatFormat;
 #pragma mark -
 
 - (void)_setTopic:(WCTopic *)topic {
-	NSMutableAttributedString	*string;
-	
 	[topic retain];
 	[_topic release];
 	
 	_topic = topic;
 	
 	if([[_topic topic] length] > 0) {
-		string = [NSMutableAttributedString attributedStringWithString:[_topic topic]];
-		
 		[_topicTextField setToolTip:[_topic topic]];
-		[_topicTextField setAttributedStringValue:[string attributedStringByApplyingFilter:_topicFilter]];
+		[_topicTextField setStringValue:[_topic topic]];
 		[_topicNickTextField setStringValue:[NSSWF:
 			 NSLS(@"%@ \u2014 %@", @"Chat topic set by (nick, time)"),
 			 [_topic nick],
@@ -141,14 +165,23 @@ typedef enum _WCChatFormat					WCChatFormat;
 #pragma mark -
 
 - (void)_printString:(NSString *)string {
-	float		position;
+	NSMutableAttributedString	*attributedString;
+	CGFloat						position;
 	
 	position = [[_chatOutputScrollView verticalScroller] floatValue];
 	
 	if([[_chatOutputTextView textStorage] length] > 0)
 		[[[_chatOutputTextView textStorage] mutableString] appendString:@"\n"];
 	
-	[_chatOutputTextView appendString:string withFilter:_chatFilter];
+	attributedString = [NSMutableAttributedString attributedStringWithString:string];
+	
+	[self _applyChatAttributesToAttributedString:attributedString];
+	[[self class] applyURLAttributesToAttributedString:attributedString];
+	
+	if(_showSmileys)
+		[[self class] applySmileyAttributesToAttributedString:attributedString];
+	
+	[[_chatOutputTextView textStorage] appendAttributedString:attributedString];
 	
 	if(position == 1.0)
 		[_chatOutputTextView performSelectorOnce:@selector(scrollToBottom) withObject:NULL afterDelay:0.05];
@@ -177,59 +210,47 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 
 - (void)_printTopic {
-	[self printEvent:[NSSWF:
-					  NSLS(@"%@ changed topic to %@", @"Topic changed (nick, topic)"),
-					  [_topic nick], [_topic topic]]];
+	[self printEvent:[NSSWF: NSLS(@"%@ changed topic to %@", @"Topic changed (nick, topic)"),
+		[_topic nick], [_topic topic]]];
 }
 
 
 
 - (void)_printUserJoin:(WCUser *)user {
-	[self printEvent:[NSSWF:
-					  NSLS(@"%@ has joined", @"Client has joined message (nick)"),
-					  [user nick]]];
+	[self printEvent:[NSSWF:NSLS(@"%@ has joined", @"Client has joined message (nick)"),
+		[user nick]]];
 }
 
 
 
 - (void)_printUserLeave:(WCUser *)user {
-	[self printEvent:[NSSWF:
-					  NSLS(@"%@ has left", @"Client has left message (nick)"),
-					  [user nick]]];
+	[self printEvent:[NSSWF:NSLS(@"%@ has left", @"Client has left message (nick)"),
+		[user nick]]];
 }
 
 
 
 - (void)_printUserChange:(WCUser *)user nick:(NSString *)nick {
-	[self printEvent:[NSSWF:
-					  NSLS(@"%@ is now known as %@", @"Client rename message (oldnick, newnick)"),
-					  [user nick],
-					  nick]];
+	[self printEvent:[NSSWF:NSLS(@"%@ is now known as %@", @"Client rename message (oldnick, newnick)"),
+		[user nick], nick]];
 }
 
 
 
 - (void)_printUserChange:(WCUser *)user status:(NSString *)status {
-	[self printEvent:[NSSWF:
-					  NSLS(@"%@ changed status to %@", @"Client status changed message (nick, status)"),
-					  [user nick],
-					  status]];
+	[self printEvent:[NSSWF:NSLS(@"%@ changed status to %@", @"Client status changed message (nick, status)"),
+		[user nick], status]];
 }
 
 
 
 - (void)_printUserKick:(WCUser *)victim by:(WCUser *)killer message:(NSString *)message {
 	if([message length] > 0) {
-		[self printEvent:[NSSWF:
-						  NSLS(@"%@ was kicked by %@ (%@)", @"Client kicked message (victim, killer, message)"),
-						  [victim nick],
-						  [killer nick],
-						  message]];
+		[self printEvent:[NSSWF:NSLS(@"%@ was kicked by %@ (%@)", @"Client kicked message (victim, killer, message)"),
+			[victim nick], [killer nick], message]];
 	} else {
-		[self printEvent:[NSSWF:
-						  NSLS(@"%@ was kicked by %@", @"Client kicked message (victim, killer)"),
-						  [victim nick],
-						  [killer nick]]];
+		[self printEvent:[NSSWF:NSLS(@"%@ was kicked by %@", @"Client kicked message (victim, killer)"),
+			[victim nick], [killer nick]]];
 	}
 }
 
@@ -237,16 +258,11 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 - (void)_printUserBan:(WCUser *)victim by:(WCUser *)killer message:(NSString *)message {
 	if([message length] > 0) {
-		[self printEvent:[NSSWF:
-						  NSLS(@"%@ was banned by %@ (%@)", @"Client banned message (victim, killer, message)"),
-						  [victim nick],
-						  [killer nick],
-						  message]];
+		[self printEvent:[NSSWF:NSLS(@"%@ was banned by %@ (%@)", @"Client banned message (victim, killer, message)"),
+			[victim nick], [killer nick], message]];
 	} else {
-		[self printEvent:[NSSWF:
-						  NSLS(@"%@ was banned by %@", @"Client banned message (victim, killer)"),
-						  [victim nick],
-						  [killer nick]]];
+		[self printEvent:[NSSWF:NSLS(@"%@ was banned by %@", @"Client banned message (victim, killer)"),
+			[victim nick], [killer nick]]];
 	}
 }
 
@@ -255,21 +271,23 @@ typedef enum _WCChatFormat					WCChatFormat;
 - (void)_printChat:(NSString *)chat by:(WCUser *)user {
 	NSString	*output, *nick;
 	NSInteger	offset, length;
+	BOOL		timestamp;
 	
-	offset = [WCSettings boolForKey:WCChatTimestampEveryLine] ? WCChatPrepend - 4 : WCChatPrepend;
-	nick = [user nick];
-	length = offset - [nick length];
+	timestamp	= [[[self connection] theme] boolForKey:WCThemesChatTimestampEveryLine];
+	offset		= timestamp ? WCChatPrepend - 4 : WCChatPrepend;
+	nick		= [user nick];
+	length		= offset - [nick length];
 	
 	if(length < 0)
 		nick = [nick substringToIndex:offset];
 	
 	output = [NSSWF:NSLS(@"%@: %@", @"Chat message, Wired style (nick, message)"),
-			  nick, chat];
+		nick, chat];
 	
 	if(length > 0)
 		output = [NSSWF:@"%*s%@", length, " ", output];
 	
-	if([WCSettings boolForKey:WCChatTimestampEveryLine])
+	if(timestamp)
 		output = [NSSWF:@"%@ %@", [_timestampEveryLineDateFormatter stringFromDate:[NSDate date]], output];
 	
 	[self _printString:output];
@@ -281,9 +299,9 @@ typedef enum _WCChatFormat					WCChatFormat;
 	NSString	*output;
 	
 	output = [NSSWF:NSLS(@" *** %@ %@", @"Action chat message, Wired style (nick, message)"),
-			  [user nick], chat];
+		[user nick], chat];
 	
-	if([WCSettings boolForKey:WCChatTimestampEveryLine])
+	if([[[self connection] theme] boolForKey:WCThemesChatTimestampEveryLine])
 		output = [NSSWF:@"%@ %@", [_timestampEveryLineDateFormatter stringFromDate:[NSDate date]], output];
 	
 	[self _printString:output];
@@ -295,16 +313,16 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 - (NSArray *)_commands {
 	return [NSArray arrayWithObjects:
-			@"/me",
-			@"/exec",
-			@"/nick",
-			@"/status",
-			@"/stats",
-			@"/clear",
-			@"/topic",
-			@"/broadcast",
-			@"/ping",
-			NULL];
+		@"/me",
+		@"/exec",
+		@"/nick",
+		@"/status",
+		@"/stats",
+		@"/clear",
+		@"/topic",
+		@"/broadcast",
+		@"/ping",
+		NULL];
 }
 
 
@@ -466,16 +484,121 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 
 
+- (void)_applyChatAttributesToAttributedString:(NSMutableAttributedString *)attributedString {
+	static NSCharacterSet		*whitespaceSet, *nonWhitespaceSet, *nonTimestampSet, *nonHighlightSet;
+	NSMutableCharacterSet		*characterSet;
+	NSScanner					*scanner;
+	NSString					*word, *chat;
+	NSRange						range, nickRange, patternRange;
+	NSUInteger					i, highlightCount, length;
+
+	if(!whitespaceSet) {
+		whitespaceSet		= [[NSCharacterSet whitespaceAndNewlineCharacterSet] retain];
+		nonWhitespaceSet	= [[whitespaceSet invertedSet] retain];
+		
+		characterSet		= [[NSMutableCharacterSet decimalDigitCharacterSet] mutableCopy];
+		[characterSet addCharactersInString:@":."];
+		[characterSet invert];
+		nonTimestampSet		= [characterSet copy];
+		[characterSet release];
+		
+		nonHighlightSet		= [[NSCharacterSet alphanumericCharacterSet] retain];
+	}
+	
+	range = NSMakeRange(0, [attributedString length]);
+	
+	[attributedString addAttribute:NSForegroundColorAttributeName value:_chatColor range:range];
+	[attributedString addAttribute:NSFontAttributeName value:_chatFont range:range];
+	
+	highlightCount = [_highlightPatterns count];
+	
+	scanner = [NSScanner scannerWithString:[attributedString string]];
+	[scanner setCharactersToBeSkipped:NULL];
+
+	while(![scanner isAtEnd]) {
+		[scanner skipUpToCharactersFromSet:nonWhitespaceSet];
+		range.location = [scanner scanLocation];
+		
+		if(![scanner scanUpToCharactersFromSet:whitespaceSet intoString:&word])
+			break;
+		
+		range.length = [scanner scanLocation] - range.location;
+		
+		if([word rangeOfCharacterFromSet:nonTimestampSet].location == NSNotFound ||
+		   [word isEqualToString:@"PM"] || [word isEqualToString:@"AM"]) {
+			[attributedString addAttribute:NSForegroundColorAttributeName value:_timestampEveryLineColor range:range];
+			
+			continue;
+		}
+		
+		if([word isEqualToString:@"<<<"]) {
+			if([scanner scanUpToString:@">>>" intoString:NULL]) {
+				range.length = [scanner scanLocation] - range.location + 3;
+
+				[attributedString addAttribute:NSForegroundColorAttributeName value:_eventsColor range:range];
+				
+				[scanner scanUpToString:@"\n" intoString:NULL];
+
+				continue;
+			}
+		}
+		
+		if([word isEqualToString:@"*"] || [word isEqualToString:@"***"]) {
+			[scanner scanUpToString:@"\n" intoString:NULL];
+
+			continue;
+		}
+		
+		nickRange = range;
+
+		if([word hasSuffix:@":"]) {
+			nickRange.length--;
+
+			if(![scanner isAtEnd])
+				[scanner setScanLocation:[scanner scanLocation] + 1];
+		} else {
+			[scanner scanUpToString:@":" intoString:NULL];
+			
+			nickRange.length = [scanner scanLocation] - range.location;
+
+			if(![scanner isAtEnd])
+			   [scanner setScanLocation:[scanner scanLocation] + 1];
+		}
+		
+		if([scanner scanUpToString:@"\n" intoString:&chat]) {
+			length = [chat length];
+			
+			for(i = 0; i < highlightCount; i++) {
+				patternRange = [chat rangeOfString:[_highlightPatterns objectAtIndex:i] options:NSCaseInsensitiveSearch];
+				
+				if(patternRange.location != NSNotFound) {
+					if(patternRange.location + patternRange.length == length ||
+					   ![[NSCharacterSet alphanumericCharacterSet] characterIsMember:
+						 [chat characterAtIndex:patternRange.location + patternRange.length]]) {
+						[attributedString addAttribute:NSForegroundColorAttributeName
+												 value:[_highlightColors objectAtIndex:i]
+												 range:nickRange];
+						
+						break;
+					}
+				}
+			}
+		}
+	}
+}
+
+
+
 #pragma mark -
 
 - (BOOL)_isHighlightedChat:(NSString *)chat {
 	NSEnumerator		*enumerator;
-	NSDictionary		*highlight;
+	NSString			*pattern;
 	
-	enumerator = [[WCSettings objectForKey:WCHighlights] objectEnumerator];
+	enumerator = [_highlightPatterns objectEnumerator];
 	
-	while((highlight = [enumerator nextObject])) {
-		if([chat rangeOfString:[highlight objectForKey:WCHighlightsPattern] options:NSCaseInsensitiveSearch].location != NSNotFound)
+	while((pattern = [enumerator nextObject])) {
+		if([chat rangeOfString:pattern options:NSCaseInsensitiveSearch].location != NSNotFound)
 			return YES;
 	}
 	
@@ -527,21 +650,224 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 
 
++ (void)applyURLAttributesToAttributedString:(NSMutableAttributedString *)attributedString {
+	static NSCharacterSet	*whitespaceSet, *nonWhitespaceSet, *skipSet;
+	CFStringRef				string, word, subWord;
+	CFRange					searchRange, foundRange, wordRange, subRange;
+	WIURL					*url;
+	NSUInteger				length, wordLength, i;
+	CFIndex					index;
+	BOOL					interesting;
+	
+	if(!whitespaceSet) {
+		whitespaceSet		= [[NSCharacterSet whitespaceAndNewlineCharacterSet] retain];
+		nonWhitespaceSet	= [[whitespaceSet invertedSet] retain];
+		skipSet				= [[NSCharacterSet characterSetWithCharactersInString:@",.?()[]{}<>"] retain];
+	}
+	
+	string = (CFStringRef) [attributedString string];
+	length = CFStringGetLength(string);
+
+	searchRange.location = 0;
+	searchRange.length = length;
+	
+	while(searchRange.location != kCFNotFound) {
+		if(!CFStringFindCharacterFromSet(string, (CFCharacterSetRef) nonWhitespaceSet, searchRange, 0, &foundRange))
+			break;
+		
+		wordRange.location = foundRange.location;
+		searchRange.location = foundRange.location;
+		searchRange.length = length - searchRange.location;
+
+		if(!CFStringFindCharacterFromSet(string, (CFCharacterSetRef) whitespaceSet, searchRange, 0, &foundRange)) {
+			wordRange.length = length - wordRange.location;
+			searchRange.location = kCFNotFound;
+		} else {
+			wordRange.length = foundRange.location - wordRange.location;
+			searchRange.location = foundRange.location + foundRange.length;
+			searchRange.length = length - searchRange.location;
+		}
+		
+		if(wordRange.length >= 8) {
+			word = CFStringCreateWithSubstring(NULL, string, wordRange);
+			
+			interesting = NO;
+			
+			if(!interesting) {
+				index = CFStringFind(string, CFSTR("://"), 0).location;
+				
+				if(index != kCFNotFound && index != 0)
+					interesting = YES;
+			}
+			
+			if(!interesting) {
+				index = CFStringFind(string, CFSTR("www."), 0).location;
+				
+				if(index != kCFNotFound && index != 0)
+					interesting = YES;
+			}
+
+			if(interesting) {
+				i = 0;
+				wordLength = wordRange.length;
+				subRange.location = 0;
+				subRange.length = wordLength;
+				
+				while(i < wordLength && CFCharacterSetIsCharacterMember((CFCharacterSetRef) skipSet, CFStringGetCharacterAtIndex(word, i))) {
+					wordRange.location++;
+					wordRange.length--;
+
+					subRange.location++;
+					subRange.length--;
+
+					i++;
+				}
+				
+				if(subRange.length == 0) {
+					CFRelease(word);
+					
+					continue;
+				}
+				
+				i = wordLength;
+				
+				while(i > 0 && CFCharacterSetIsCharacterMember((CFCharacterSetRef) skipSet, CFStringGetCharacterAtIndex(word, i - 1))) {
+					wordRange.length--;
+					subRange.length--;
+					
+					i--;
+				}
+				
+				if(subRange.length == 0) {
+					CFRelease(word);
+					
+					continue;
+				}
+				
+				if((NSUInteger) subRange.length != wordLength) {
+					subWord = CFStringCreateWithSubstring(NULL, word, subRange);
+					
+					CFRelease(word);
+					word = subWord;
+				}
+				
+				url = [WIURL URLWithString:(NSString *) word];
+				
+				if(url) {
+					[attributedString addAttribute:NSLinkAttributeName
+											 value:[url URL]
+											 range:NSMakeRange(wordRange.location, wordRange.length)];
+				}
+			}
+	
+			CFRelease(word);
+		}
+	}
+}
+
+
+
++ (void)applySmileyAttributesToAttributedString:(NSMutableAttributedString *)attributedString {
+	static NSCharacterSet		*whitespaceSet;
+	WCApplicationController		*controller;
+	NSDictionary				*attributes;
+	NSMutableString				*string;
+	NSAttributedString			*smileyString;
+	NSFileWrapper				*wrapper;
+	NSTextAttachment			*attachment;
+	NSEnumerator				*enumerator;
+	NSString					*key, *substring, *smiley, *character;
+	NSRange						range, searchRange;
+	NSUInteger					length, options;
+	BOOL						found;
+	
+	if(!whitespaceSet)
+		whitespaceSet = [[NSCharacterSet whitespaceAndNewlineCharacterSet] retain];
+		
+	controller	= [WCApplicationController sharedController];
+	string		= [attributedString mutableString];
+	length		= [attributedString length];
+	enumerator	= [[controller allSmileys] objectEnumerator];
+	
+	while((key = [enumerator nextObject])) {
+		searchRange.location = 0;
+		searchRange.length = length;
+		
+		while((range = [string rangeOfString:key options:NSCaseInsensitiveSearch range:searchRange]).location != NSNotFound) {
+			found = NO;
+			
+			if(!((range.location > 0 &&
+				![whitespaceSet characterIsMember:[string characterAtIndex:range.location - 1]]) ||
+			   (range.location + range.length < length &&
+				![whitespaceSet characterIsMember:[string characterAtIndex:range.location + range.length]]))) {
+				substring	= [string substringWithRange:range];
+				smiley		= [controller pathForSmiley:substring];
+				
+				if(smiley) {
+					attributes = [attributedString attributesAtIndex:range.location effectiveRange:NULL];
+					
+					if(![attributes objectForKey:NSLinkAttributeName]) {
+						wrapper					= [[NSFileWrapper alloc] initWithPath:smiley];
+						attachment				= [[WITextAttachment alloc] initWithFileWrapper:wrapper string:substring];
+						smileyString			= [NSAttributedString attributedStringWithAttachment:attachment];
+						
+						[attributedString replaceCharactersInRange:range withAttributedString:smileyString];
+						
+						length					-= range.length - 1;
+						searchRange.location	= range.location + 1;
+						searchRange.length		= length - searchRange.location;
+						
+						range.length			= 1;
+						character				= [substring substringFromIndex:[substring length] - 1];
+						options					= NSCaseInsensitiveSearch | NSAnchoredSearch;
+						
+						while((range = [string rangeOfString:character options:options range:searchRange]).location != NSNotFound) {
+							[attributedString replaceCharactersInRange:range withAttributedString:attributedString];
+							
+							searchRange.location++;
+							searchRange.length--;
+						}
+						
+						[attachment release];
+						[wrapper release];
+						
+						found = YES;
+					}
+				}
+			}
+			
+			if(!found) {
+				searchRange.location = range.location + range.length;
+				searchRange.length = length - searchRange.location;
+			}
+		}
+	}
+}
+
+
+
 #pragma mark -
 
 - (id)init {
 	self = [super init];
 	
-	_commandHistory = [[NSMutableArray alloc] init];
-	_users			= [[NSMutableDictionary alloc] init];
-	_allUsers		= [[NSMutableArray alloc] init];
-	_shownUsers		= [[NSMutableArray alloc] init];
-	_pings			= [[NSMutableDictionary alloc] init];
+	_commandHistory			= [[NSMutableArray alloc] init];
+	_users					= [[NSMutableDictionary alloc] init];
+	_allUsers				= [[NSMutableArray alloc] init];
+	_shownUsers				= [[NSMutableArray alloc] init];
+	_pings					= [[NSMutableDictionary alloc] init];
+	_highlightPatterns		= [[NSMutableArray alloc] init];
+	_highlightColors		= [[NSMutableArray alloc] init];
 	
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(dateDidChange:)
 			   name:WCDateDidChangeNotification];
+
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
+		   selector:@selector(preferencesDidChange:)
+			   name:WCPreferencesDidChangeNotification];
 
 	return self;
 }
@@ -565,8 +891,12 @@ typedef enum _WCChatFormat					WCChatFormat;
 	
 	[_commandHistory release];
 	
-	[_chatFilter release];
-	[_topicFilter release];
+	[_chatColor release];
+	[_eventsColor release];
+	[_timestampEveryLineColor release];
+	[_highlightPatterns release];
+	[_highlightColors release];
+	
 	[_timestamp release];
 	[_topic release];
 	
@@ -584,13 +914,8 @@ typedef enum _WCChatFormat					WCChatFormat;
 #pragma mark -
 
 - (void)awakeFromNib {
-	[_chatOutputTextView setEditable:NO];
-	[_chatOutputTextView setUsesFindPanel:YES];
 	[_userListTableView setTarget:self];
 	[_userListTableView setDoubleAction:@selector(sendPrivateMessage:)];
-	
-	_chatFilter = [[WITextFilter alloc] initWithSelectors:@selector(filterWiredChat:), @selector(filterURLs:), @selector(filterWiredSmilies:), 0];
-	_topicFilter = [[WITextFilter alloc] initWithSelectors:@selector(filterURLs:), @selector(filterWiredSmallSmilies:), 0];
 	
 	_timestampDateFormatter = [[WIDateFormatter alloc] init];
 	[_timestampDateFormatter setTimeStyle:NSDateFormatterShortStyle];
@@ -603,6 +928,8 @@ typedef enum _WCChatFormat					WCChatFormat;
 	[_topicDateFormatter setTimeStyle:NSDateFormatterShortStyle];
 	[_topicDateFormatter setDateStyle:NSDateFormatterMediumStyle];
 	[_topicDateFormatter setNaturalLanguageStyle:WIDateFormatterCapitalizedNaturalLanguageStyle];
+	
+	[self _updatePreferences];
 }
 
 
@@ -610,8 +937,9 @@ typedef enum _WCChatFormat					WCChatFormat;
 #pragma mark -
 
 - (void)themeDidChange:(NSDictionary *)theme {
-	NSFont		*font;
-	NSColor		*color;
+	NSFont			*font;
+	NSColor			*color;
+	BOOL			reload = NO;
 	
 	font = WIFontFromString([theme objectForKey:WCThemesChatFont]);
 
@@ -619,6 +947,9 @@ typedef enum _WCChatFormat					WCChatFormat;
 		[_chatOutputTextView setFont:font];
 		[_chatInputTextView setFont:font];
 		[_setTopicTextView setFont:font];
+		
+		[_chatFont release];
+		_chatFont = [font retain];
 	}
 	
 	color = WIColorFromString([theme objectForKey:WCThemesChatBackgroundColor]);
@@ -631,22 +962,58 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 	color = WIColorFromString([theme objectForKey:WCThemesChatTextColor]);
 
-	if(![[_chatOutputTextView textColor] isEqualTo:color]) {
+	if(![color isEqualTo:_chatColor]) {
 		[_chatOutputTextView setTextColor:color];
 		[_chatInputTextView setTextColor:color];
 		[_chatInputTextView setInsertionPointColor:color];
 		[_setTopicTextView setTextColor:color];
 		[_setTopicTextView setInsertionPointColor:color];
 
-		[_chatOutputTextView setString:[_chatOutputTextView string] withFilter:_chatFilter];
+		[_chatColor release];
+		_chatColor = [color retain];
+	
+		reload = YES;
 	}
 	
+	color = WIColorFromString([theme objectForKey:WCThemesChatEventsColor]);
+	
+	if(![color isEqualTo:_eventsColor]) {
+		[_eventsColor release];
+		_eventsColor = [color retain];
+	
+		reload = YES;
+	}
+	
+	color = WIColorFromString([theme objectForKey:WCThemesChatTimestampEveryLineColor]);
+	
+	if(![color isEqualTo:_timestampEveryLineColor]) {
+		[_timestampEveryLineColor release];
+		_timestampEveryLineColor = [color retain];
+		
+		reload = YES;
+	}
+	
+	if([theme boolForKey:WCThemesShowSmileys] != _showSmileys) {
+		_showSmileys = !_showSmileys;
+		
+		if(_showSmileys) {
+			[[self class] applySmileyAttributesToAttributedString:[_chatOutputTextView textStorage]];
+		} else {
+			[[_chatOutputTextView textStorage] replaceAttachmentsWithStrings];
+		
+			reload = YES;
+		}
+	}
+
 	[_chatOutputTextView setLinkTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
-		WIColorFromString([theme objectForKey:WCThemesChatURLsColor]),
+		WIColorFromString([theme objectForKey:WCThemesURLsColor]),
 			NSForegroundColorAttributeName,
 		[NSNumber numberWithInt:NSSingleUnderlineStyle],
 			NSUnderlineStyleAttributeName,
 		NULL]];
+	
+	if(reload)
+		[self _applyChatAttributesToAttributedString:[_chatOutputTextView textStorage]];
 
 	[_userListTableView setUsesAlternatingRowBackgroundColors:[[theme objectForKey:WCThemesUserListAlternateRows] boolValue]];
 	
@@ -663,6 +1030,14 @@ typedef enum _WCChatFormat					WCChatFormat;
 			[[_nickTableColumn dataCell] setControlSize:NSSmallControlSize];
 			break;
 	}
+	
+	[_userListTableView setNeedsDisplay:YES];
+}
+
+
+
+- (void)preferencesDidChange:(NSNotification *)notification {
+	[self _updatePreferences];
 }
 
 
@@ -1403,7 +1778,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 	
 	output = [NSSWF:NSLS(@"<<< %@ >>>", @"Chat event (message)"), message];
 	
-	if([WCSettings boolForKey:WCChatTimestampEveryLine])
+	if([[[self connection] theme] boolForKey:WCThemesChatTimestampEveryLine])
 		output = [NSSWF:@"%@ %@", [_timestampEveryLineDateFormatter stringFromDate:[NSDate date]], output];
 	
 	[self _printString:output];

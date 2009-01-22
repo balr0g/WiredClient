@@ -33,13 +33,12 @@
 
 
 @interface WCNews : WCConnectionController {
-	IBOutlet WITextView					*_newsTextView;
+	IBOutlet NSTextView					*_newsTextView;
 
 	IBOutlet NSPanel					*_postPanel;
 	IBOutlet NSTextView					*_postTextView;
 
 	NSMutableArray						*_posts;
-	WITextFilter						*_newsFilter;
 	WIDateFormatter						*_dateFormatter;
 	NSUInteger							_unread;
 	

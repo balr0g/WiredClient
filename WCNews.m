@@ -55,7 +55,6 @@
 							  singleton:YES];
 	
 	_posts = [[NSMutableArray alloc] init]; 
-	_newsFilter = [[WITextFilter alloc] initWithSelectors:@selector(filterURLs:), @selector(filterWiredSmilies:), 0];
 	
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
@@ -149,7 +148,7 @@
 	[attributedString appendAttributedString:header];
 	[attributedString appendAttributedString:entry];
 	
-	return [attributedString attributedStringByApplyingFilter:_newsFilter];
+	return attributedString;
 }
 
 
@@ -184,7 +183,6 @@
 
 - (void)dealloc {
 	[_posts release];
-	[_newsFilter release];
 	[_dateFormatter release];
 	
 	[super dealloc];

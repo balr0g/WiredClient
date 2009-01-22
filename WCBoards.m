@@ -28,6 +28,7 @@
 
 #import "WCAccount.h"
 #import "WCAccounts.h"
+#import "WCApplicationController.h"
 #import "WCBoard.h"
 #import "WCBoards.h"
 #import "WCBoardPost.h"
@@ -86,6 +87,20 @@
 
 
 - (void)_themeDidChange {
+	NSDictionary		*theme;
+	
+	theme = [WCSettings themeWithIdentifier:[WCSettings objectForKey:WCTheme]];
+	
+	[_threadFont release];
+	_threadFont = [WIFontFromString([theme objectForKey:WCThemesBoardsFont]) retain];
+
+	[_threadColor release];
+	_threadColor = [WIColorFromString([theme objectForKey:WCThemesBoardsTextColor]) retain];
+
+	[_backgroundColor release];
+	_backgroundColor = [WIColorFromString([theme objectForKey:WCThemesBoardsBackgroundColor]) retain];
+	
+	[self _reloadThread];
 }
 
 
@@ -237,6 +252,11 @@
 	
 	html = [NSMutableString stringWithString:_headerTemplate];
 	
+	[html replaceOccurrencesOfString:@"<? fontname ?>" withString:[_threadFont fontName]];
+	[html replaceOccurrencesOfString:@"<? fontsize ?>" withString:[NSSWF:@"%.0fpx", [_threadFont pointSize]]];
+	[html replaceOccurrencesOfString:@"<? textcolor ?>" withString:[NSSWF:@"#%.6x", [_threadColor HTMLValue]]];
+	[html replaceOccurrencesOfString:@"<? backgroundcolor ?>" withString:[NSSWF:@"#%.6x", [_backgroundColor HTMLValue]]];
+
 	if(thread) {
 		enumerator = [[thread posts] objectEnumerator];
 		
@@ -267,12 +287,15 @@
 
 
 - (NSString *)_HTMLStringForPost:(WCBoardPost *)post {
+	NSEnumerator		*enumerator;
+	NSDictionary		*theme;
 	NSMutableString		*string, *text;
+	NSString			*smiley, *path;
 	WCAccount			*account;
 	
-	account = [[post connection] account];
-	
-	text = [[[post text] mutableCopy] autorelease];
+	theme		= [[post connection] theme];
+	account		= [[post connection] account];
+	text		= [[[post text] mutableCopy] autorelease];
 	
 	[text replaceOccurrencesOfString:@"&" withString:@"&#38;"];
 	[text replaceOccurrencesOfString:@"<" withString:@"&#60;"];
@@ -305,6 +328,16 @@
 							options:RKLCaseless];
 
 	[text replaceOccurrencesOfRegex:@"\\[quote\\](.+?)\\[/quote\\]" withString:@"<blockquote>$1</blockquote>" options:RKLCaseless];
+	
+	if([theme boolForKey:WCThemesShowSmileys]) {
+		enumerator = [[[WCApplicationController sharedController] allSmileys] objectEnumerator];
+		
+		while((smiley = [enumerator nextObject])) {
+			path = [[WCApplicationController sharedController] pathForSmiley:smiley];
+			
+			[text replaceOccurrencesOfString:smiley withString:[NSSWF:@"<img src=\"%@\" alt=\"%@\" />", path, smiley]];
+		}
+	}
 
 	string = [[_postTemplate mutableCopy] autorelease];
 
@@ -559,6 +592,9 @@
 	[_boards release];
 	[_selectedBoard release];
 	
+	[_threadFont release];
+	[_threadColor release];
+	[_backgroundColor release];
 	[_dateFormatter release];
 	
 	[_headerTemplate release];

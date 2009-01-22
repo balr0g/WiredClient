@@ -36,8 +36,6 @@
 	
 	NSMutableDictionary			*_nickAttributes;
 	NSMutableDictionary			*_statusAttributes;
-	
-	WITextFilter				*_filter;
 }
 
 - (void)setIgnored:(BOOL)value;

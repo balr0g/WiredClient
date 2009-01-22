@@ -26,6 +26,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-@interface WCChatTextView : WITextView
+@interface WCChatTextView : NSTextView
 
 @end

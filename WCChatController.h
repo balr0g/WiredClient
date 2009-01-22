@@ -35,7 +35,7 @@
 #define WCUserPboardType					@"WCUserPboardType"
 
 
-@class WCChatWindow, WCServerConnection, WCTopic, WCUser;
+@class WCChatTextView, WCChatWindow, WCServerConnection, WCTopic, WCUser;
 
 @interface WCChatController : WIObject {
 	IBOutlet WISplitView					*_userListSplitView;
@@ -45,7 +45,7 @@
 	IBOutlet NSTextField					*_topicNickTextField;
 	IBOutlet WISplitView					*_chatSplitView;
 	IBOutlet NSScrollView					*_chatOutputScrollView;
-	IBOutlet WITextView						*_chatOutputTextView;
+	IBOutlet WCChatTextView					*_chatOutputTextView;
 	IBOutlet NSScrollView					*_chatInputScrollView;
 	IBOutlet NSTextView						*_chatInputTextView;
 
@@ -82,8 +82,14 @@
 	NSMutableArray							*_allUsers, *_shownUsers;
 	BOOL									_receivedUserList;
 	
-	WITextFilter							*_chatFilter;
-	WITextFilter							*_topicFilter;
+	NSFont									*_chatFont;
+	NSColor									*_chatColor;
+	NSColor									*_eventsColor;
+	NSColor									*_timestampEveryLineColor;
+	NSMutableArray							*_highlightPatterns;
+	NSMutableArray							*_highlightColors;
+	BOOL									_showSmileys;
+	
 	NSDate									*_timestamp;
 	WCTopic									*_topic;
 	
@@ -97,6 +103,8 @@
 }
 
 + (NSString *)outputForShellCommand:(NSString *)command;
++ (void)applyURLAttributesToAttributedString:(NSMutableAttributedString *)attributedString;
++ (void)applySmileyAttributesToAttributedString:(NSMutableAttributedString *)attributedString;
 
 - (void)linkConnectionLoggedIn:(NSNotification *)notification;
 - (void)wiredChatJoinChatReply:(WIP7Message *)message;
