@@ -95,16 +95,11 @@
 	[message setUInt32:[self chatID] forName:@"wired.chat.id"];
 	[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredChatJoinChatReply:)];
 	
+	[[WCPublicChat publicChat] addChatController:self];
 	[[WCPublicChat publicChat] selectChatController:self];
 	[[WCPublicChat publicChat] showWindow:self];
 	
 	[super linkConnectionLoggedIn:notification];
-}
-
-
-
-- (void)serverConnectionServerInfoDidChange:(NSNotification *)notification {
-	[[WCPublicChat publicChat] addChatController:self];
 }
 
 
@@ -222,10 +217,6 @@
 
 - (void)setConnection:(WCServerConnection *)connection {
 	[super setConnection:connection];
-	
-	[_connection addObserver:self
-					selector:@selector(serverConnectionServerInfoDidChange:)
-						name:WCServerConnectionServerInfoDidChangeNotification];
 	
 	[_connection addObserver:self selector:@selector(wiredChatInvitation:) messageName:@"wired.chat.invitation"];
 }

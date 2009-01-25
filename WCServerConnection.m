@@ -232,6 +232,9 @@
 	
 	[_connectionControllers removeAllObjects];
 	
+	[_chatController release];
+	_chatController = NULL;
+	
 	[super linkConnectionDidTerminate:notification];
 }
 

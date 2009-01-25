@@ -876,6 +876,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 - (void)dealloc {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	[_connection removeObserver:self];
 	
 	if(_loadedNib) {
 		[_userListMenu release];
@@ -884,6 +885,8 @@ typedef enum _WCChatFormat					WCChatFormat;
 	}
 	
 	[_saveChatView release];
+	
+	[_connection release];
 	
 	[_users release];
 	[_allUsers release];
@@ -1630,6 +1633,9 @@ typedef enum _WCChatFormat					WCChatFormat;
 #pragma mark -
 
 - (void)setConnection:(WCServerConnection *)connection {
+	[connection retain];
+	[_connection release];
+	
 	_connection = connection;
 	
 	[_connection addObserver:self
