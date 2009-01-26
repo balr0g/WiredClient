@@ -491,6 +491,21 @@
     [self update];
 }
 
+- (void)setIcon:(NSImage *)icon forTabViewItem:(NSTabViewItem *)tabViewItem
+{
+	NSEnumerator *enumerator;
+	PSMTabBarCell *cell;
+	
+	enumerator = [_cells objectEnumerator];
+	
+	while ((cell = [enumerator nextObject])){
+		if ([cell representedObject] == tabViewItem){
+			[cell setIcon:icon];
+			break;
+		}
+	}
+}
+
 #pragma mark -
 #pragma mark Hide/Show
 

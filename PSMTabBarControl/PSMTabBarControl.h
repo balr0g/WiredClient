@@ -113,6 +113,9 @@ enum {
 // special effects
 - (void)hideTabBar:(BOOL)hide animate:(BOOL)animate;
 
+// cell management
+- (void)setIcon:(NSImage *)icon forTabViewItem:(NSTabViewItem *)tabViewItem;
+
 @end
 
 

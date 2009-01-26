@@ -69,6 +69,7 @@
 - (void)dealloc
 {
     [_indicator release];
+	[_icon release];
     [super dealloc];
 }
 
@@ -212,6 +213,20 @@
 - (void)setHasIcon:(BOOL)value
 {
     _hasIcon = value;
+    [_controlView update]; // binding notice is too fast
+}
+
+- (NSImage *)icon
+{
+	return _icon;
+}
+
+- (void)setIcon:(NSImage *)icon
+{
+	[icon retain];
+	[_icon release];
+	_icon = icon;
+	_hasIcon = _icon ? YES : NO;
     [_controlView update]; // binding notice is too fast
 }
 
