@@ -172,6 +172,8 @@
 	[_name release];
 	[_path release];
 	[_boards release];
+	[_threadsArray release];
+	[_threadsDictionary release];
 	
 	[super dealloc];
 }

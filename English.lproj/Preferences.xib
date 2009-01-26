@@ -8,8 +8,7 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="2926"/>
-			<integer value="2508"/>
+			<integer value="2265"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -363,7 +362,7 @@
 				<string key="NSClassName">NSView</string>
 			</object>
 			<object class="NSCustomView" id="998492791">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -456,7 +455,6 @@
 								</object>
 								<string key="NSFrame">{{1, 1}, {136, 291}}</string>
 								<reference key="NSSuperview" ref="663120375"/>
-								<reference key="NSNextKeyView" ref="95561297"/>
 								<reference key="NSDocView" ref="95561297"/>
 								<reference key="NSBGColor" ref="480837796"/>
 								<int key="NScvFlags">4</int>
@@ -483,7 +481,6 @@
 						</object>
 						<string key="NSFrame">{{20, 41}, {138, 293}}</string>
 						<reference key="NSSuperview" ref="998492791"/>
-						<reference key="NSNextKeyView" ref="344923077"/>
 						<int key="NSsFlags">530</int>
 						<reference key="NSVScroller" ref="123752636"/>
 						<reference key="NSHScroller" ref="539924306"/>
@@ -1503,7 +1500,7 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 							<reference key="NSControlView" ref="141214098"/>
 							<int key="NSButtonFlags">-2031075073</int>
 							<int key="NSButtonFlags2">34</int>
-							<object class="NSCustomResource" key="NSNormalImage" id="915355226">
+							<object class="NSCustomResource" key="NSNormalImage">
 								<string key="NSClassName">NSImage</string>
 								<string key="NSResourceName">Action</string>
 							</object>
@@ -1518,7 +1515,10 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 								<int key="NSKeyEquivModMask">1048576</int>
 								<int key="NSMnemonicLoc">2147483647</int>
 								<int key="NSState">1</int>
-								<reference key="NSImage" ref="915355226"/>
+								<object class="NSCustomResource" key="NSImage" id="119795196">
+									<string key="NSClassName">NSImage</string>
+									<string key="NSResourceName">Action</string>
+								</object>
 								<object class="NSCustomResource" key="NSOnImage" id="110064247">
 									<string key="NSClassName">NSImage</string>
 									<string key="NSResourceName">NSMenuCheckmark</string>
@@ -1591,7 +1591,6 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 					</object>
 				</object>
 				<string key="NSFrameSize">{522, 354}</string>
-				<reference key="NSSuperview"/>
 				<string key="NSClassName">NSView</string>
 			</object>
 			<object class="NSCustomView" id="1022735794">
@@ -2116,10 +2115,7 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 							<reference key="NSControlView" ref="497149438"/>
 							<int key="NSButtonFlags">-2031075073</int>
 							<int key="NSButtonFlags2">34</int>
-							<object class="NSCustomResource" key="NSNormalImage">
-								<string key="NSClassName">NSImage</string>
-								<string key="NSResourceName">Action</string>
-							</object>
+							<reference key="NSNormalImage" ref="119795196"/>
 							<string key="NSAlternateContents"/>
 							<string key="NSKeyEquivalent"/>
 							<int key="NSPeriodicDelay">400</int>
@@ -2131,7 +2127,7 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 								<int key="NSKeyEquivModMask">1048576</int>
 								<int key="NSMnemonicLoc">2147483647</int>
 								<int key="NSState">1</int>
-								<reference key="NSImage" ref="915355226"/>
+								<reference key="NSImage" ref="119795196"/>
 								<reference key="NSOnImage" ref="110064247"/>
 								<reference key="NSMixedImage" ref="728786444"/>
 								<string key="NSAction">_popUpItemAction:</string>
@@ -2167,7 +2163,7 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 				<string key="NSClassName">NSView</string>
 			</object>
 			<object class="NSCustomView" id="239399745">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">292</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -2894,18 +2890,17 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 					</object>
 				</object>
 				<string key="NSFrameSize">{522, 284}</string>
-				<reference key="NSSuperview"/>
 				<string key="NSClassName">NSView</string>
 			</object>
 			<object class="NSCustomView" id="556871628">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">292</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<object class="NSPopUpButton" id="702347">
 						<reference key="NSNextResponder" ref="556871628"/>
 						<int key="NSvFlags">256</int>
-						<string key="NSFrame">{{122, 137}, {196, 26}}</string>
+						<string key="NSFrame">{{122, 137}, {305, 26}}</string>
 						<reference key="NSSuperview" ref="556871628"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSPopUpButtonCell" key="NSCell" id="124298001">
@@ -3217,6 +3212,7 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 					</object>
 				</object>
 				<string key="NSFrameSize">{522, 236}</string>
+				<reference key="NSSuperview"/>
 				<string key="NSClassName">NSView</string>
 			</object>
 			<object class="NSCustomView" id="799140676">
@@ -3795,7 +3791,7 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 							<reference key="NSControlView" ref="344689216"/>
 							<int key="NSButtonFlags">-2031075073</int>
 							<int key="NSButtonFlags2">34</int>
-							<reference key="NSNormalImage" ref="915355226"/>
+							<reference key="NSNormalImage" ref="119795196"/>
 							<string key="NSAlternateContents"/>
 							<string key="NSKeyEquivalent"/>
 							<int key="NSPeriodicDelay">400</int>
@@ -3807,7 +3803,7 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 								<int key="NSKeyEquivModMask">1048576</int>
 								<int key="NSMnemonicLoc">2147483647</int>
 								<int key="NSState">1</int>
-								<reference key="NSImage" ref="915355226"/>
+								<reference key="NSImage" ref="119795196"/>
 								<reference key="NSOnImage" ref="110064247"/>
 								<reference key="NSMixedImage" ref="728786444"/>
 								<string key="NSAction">_popUpItemAction:</string>
@@ -8827,7 +8823,7 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 					<reference ref="5"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
-					<string>{{-8, 664}, {522, 354}}</string>
+					<string>{{-8, 652}, {522, 354}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<object class="NSMutableArray">
 						<bool key="EncodedWithXMLCoder">YES</bool>

@@ -156,6 +156,7 @@
 - (void)dealloc {
 	[_bans release];
 	[_shownBans release];
+	[_dateFormatter release];
 	
 	[super dealloc];
 }
@@ -288,8 +289,9 @@
 
 
 - (IBAction)deleteBan:(id)sender {
-	NSString	*title;
-	NSUInteger	count;
+	NSAlert			*alert;
+	NSString		*title;
+	NSUInteger		count;
 
 	if(![[_administration connection] isConnected])
 		return;
@@ -309,16 +311,16 @@
 			count];
 	}
 
-	NSBeginAlertSheet(title,
-					  NSLS(@"Delete", @"Delete ban dialog button title"),
-					  NSLS(@"Cancel", @"Delete ban dialog button title"),
-					  NULL,
-					  [_administration window],
-					  self,
-					  @selector(deleteSheetDidEnd:returnCode:contextInfo:),
-					  NULL,
-					  NULL,
-					  NSLS(@"This cannot be undone.", @"Delete ban dialog description"));
+	alert = [[NSAlert alloc] init];
+	[alert setMessageText:title];
+	[alert setInformativeText:NSLS(@"This cannot be undone.", @"Delete ban dialog description")];
+	[alert addButtonWithTitle:NSLS(@"Delete", @"Delete ban dialog button title")];
+	[alert addButtonWithTitle:NSLS(@"Cancel", @"Delete ban dialog button title")];
+	[alert beginSheetModalForWindow:[_administration window]
+					  modalDelegate:self
+					 didEndSelector:@selector(deleteSheetDidEnd:returnCode:contextInfo:)
+						contextInfo:NULL];
+	[alert release];
 }
 
 
@@ -328,7 +330,7 @@
 	WIP7Message		*message;
 	WCBan			*ban;
 	
-	if(returnCode == NSAlertDefaultReturn) {
+	if(returnCode == NSAlertFirstButtonReturn) {
 		enumerator = [[self _selectedBans] objectEnumerator];
 		
 		while((ban = [enumerator nextObject])) {

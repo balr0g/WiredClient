@@ -49,8 +49,6 @@
 - (NSString *)name;
 - (WCServerConnection *)connection;
 
-- (BOOL)beginConfirmDisconnectSheetModalForWindow:(NSWindow *)window modalDelegate:(id)delegate didEndSelector:(SEL)selector contextInfo:(void *)contextInfo;
-
 - (void)validate;
 
 @end

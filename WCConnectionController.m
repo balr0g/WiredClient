@@ -187,29 +187,6 @@
 
 #pragma mark -
 
-- (BOOL)beginConfirmDisconnectSheetModalForWindow:(NSWindow *)window modalDelegate:(id)delegate didEndSelector:(SEL)selector contextInfo:(void *)contextInfo {
-	if([WCSettings boolForKey:WCConfirmDisconnect] && [[self connection] isConnected]) {
-		NSBeginAlertSheet(NSLS(@"Are you sure you want to disconnect?", @"Disconnect dialog title"),
-						  NSLS(@"Disconnect", @"Disconnect dialog button"),
-						  NSLS(@"Cancel", @"Disconnect dialog button title"),
-						  NULL,
-						  window,
-						  delegate,
-						  selector,
-						  NULL,
-						  contextInfo,
-						  NSLS(@"Disconnecting will close any ongoing file transfers.", @"Disconnect dialog description"));
-		
-		return NO;
-	}
-	
-	return YES;
-}
-
-
-
-#pragma mark -
-
 - (void)validate {
 }
 

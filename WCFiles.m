@@ -1180,8 +1180,9 @@
 
 
 - (IBAction)deleteFiles:(id)sender {
-	NSString	*title;
-	NSUInteger	count;
+	NSAlert			*alert;
+	NSString		*title;
+	NSUInteger		count;
 
 	if(![[self connection] isConnected])
 		return;
@@ -1201,16 +1202,16 @@
 			count];
 	}
 
-	NSBeginAlertSheet(title,
-					  NSLS(@"Delete", @"Delete file button title"),
-					  NSLS(@"Cancel", @"Delete file button title"),
-					  NULL,
-					  [self window],
-					  self,
-					  @selector(deleteSheetDidEnd:returnCode:contextInfo:),
-					  NULL,
-					  NULL,
-					  NSLS(@"This cannot be undone.", @"Delete file dialog description"));
+	alert = [[NSAlert alloc] init];
+	[alert setMessageText:title];
+	[alert setInformativeText:NSLS(@"This cannot be undone.", @"Delete file dialog description")];
+	[alert addButtonWithTitle:NSLS(@"Delete", @"Delete file button title")];
+	[alert addButtonWithTitle:NSLS(@"Cancel", @"Delete file button title")];
+	[alert beginSheetModalForWindow:[self window]
+					  modalDelegate:self
+					 didEndSelector:@selector(deleteSheetDidEnd:returnCode:contextInfo:)
+						contextInfo:NULL];
+	[alert release];
 }
 
 
@@ -1221,7 +1222,7 @@
 	WCFile			*file;
 	NSString		*path;
 
-	if(returnCode == NSAlertDefaultReturn) {
+	if(returnCode == NSAlertFirstButtonReturn) {
 		enumerator = [[self _selectedFiles] objectEnumerator];
 
 		if(_type == WCFilesStyleBrowser) {

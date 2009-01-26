@@ -147,6 +147,7 @@
 	[_server release];
 	[_cache release];
 	
+	[_connectionControllers release];
 	[_chatController release];
 	
 	[super dealloc];

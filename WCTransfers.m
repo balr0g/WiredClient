@@ -274,13 +274,13 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	
 	if([[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isDirectory]) {
 		if(!(isDirectory && [file isFolder])) {
-			alert = [NSAlert alertWithMessageText:NSLS(@"File Exists", @"Transfers overwrite alert title")
-									defaultButton:NSLS(@"Cancel", @"Transfers overwrite alert button")
-								  alternateButton:NSLS(@"Overwrite", @"Transfers overwrite alert button")
-									  otherButton:NULL
-						informativeTextWithFormat:[NSSWF:NSLS(@"The file \u201c%@\u201d already exists. Overwrite?", @"Transfers overwrite alert title"), path]];
+			alert = [[[NSAlert alloc] init] autorelease];
+			[alert setMessageText:NSLS(@"File Exists", @"Transfers overwrite alert title")];
+			[alert setInformativeText:[NSSWF:NSLS(@"The file \u201c%@\u201d already exists. Overwrite?", @"Transfers overwrite alert title"), path]];
+			[alert addButtonWithTitle:NSLS(@"Cancel", @"Transfers overwrite alert button")];
+			[alert addButtonWithTitle:NSLS(@"Overwrite", @"Transfers overwrite alert button")];
 			
-			if([alert runModal] == NSAlertDefaultReturn)
+			if([alert runModal] == NSAlertFirstButtonReturn)
 				return NO;
 			
 			[[NSFileManager defaultManager] removeFileAtPath:path handler:NULL];

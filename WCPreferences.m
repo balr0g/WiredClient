@@ -759,6 +759,7 @@
 
 
 - (IBAction)deleteTheme:(id)sender {
+	NSAlert			*alert;
 	NSString		*name;
 	NSInteger		row;
 	
@@ -769,16 +770,16 @@
 	
 	name = [[[WCSettings objectForKey:WCThemes] objectAtIndex:row] objectForKey:WCThemesName];
 	
-	NSBeginAlertSheet([NSSWF:NSLS(@"Are you sure you want to delete \u201c%@\u201d?", @"Delete theme dialog title (theme)"), name],
-					  NSLS(@"Delete", @"Delete theme dialog button title"),
-					  NSLS(@"Cancel", @"Delete theme dialog button title"),
-					  NULL,
-					  [self window],
-					  self,
-					  @selector(deleteThemeSheetDidEnd:returnCode:contextInfo:),
-					  NULL,
-					  [[NSNumber alloc] initWithInteger:row],
-					  NSLS(@"This cannot be undone.", @"Delete theme dialog description"));
+	alert = [[NSAlert alloc] init];
+	[alert setMessageText:[NSSWF:NSLS(@"Are you sure you want to delete \u201c%@\u201d?", @"Delete theme dialog title (theme)"), name]];
+	[alert setInformativeText:NSLS(@"This cannot be undone.", @"Delete theme dialog description")];
+	[alert addButtonWithTitle:NSLS(@"Delete", @"Delete theme dialog button title")];
+	[alert addButtonWithTitle:NSLS(@"Cancel", @"Delete theme button title")];
+	[alert beginSheetModalForWindow:[self window]
+					  modalDelegate:self
+					 didEndSelector:@selector(deleteThemeSheetDidEnd:returnCode:contextInfo:)
+						contextInfo:[[NSNumber alloc] initWithInteger:row]];
+	[alert release];
 }
 
 
@@ -786,7 +787,7 @@
 - (void)deleteThemeSheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
 	NSNumber	*row = contextInfo;
 
-	if(returnCode == NSAlertDefaultReturn) {
+	if(returnCode == NSAlertFirstButtonReturn) {
 		[WCSettings removeObjectAtIndex:[row unsignedIntegerValue] fromArrayForKey:WCThemes];
 
 		[_themesTableView reloadData];
@@ -1078,8 +1079,9 @@
 
 
 - (IBAction)deleteBookmark:(id)sender {
-	NSString	*name;
-	NSInteger	row;
+	NSAlert			*alert;
+	NSString		*name;
+	NSInteger		row;
 	
 	row = [_bookmarksTableView selectedRow];
 	
@@ -1088,16 +1090,16 @@
 	
 	name = [[[WCSettings objectForKey:WCBookmarks] objectAtIndex:row] objectForKey:WCBookmarksName];
 	
-	NSBeginAlertSheet([NSSWF:NSLS(@"Are you sure you want to delete \u201c%@\u201d?", @"Delete bookmark dialog title (bookmark)"), name],
-					  NSLS(@"Delete", @"Delete bookmark dialog button title"),
-					  NSLS(@"Cancel", @"Delete bookmark dialog button title"),
-					  NULL,
-					  [self window],
-					  self,
-					  @selector(deleteBookmarkSheetDidEnd:returnCode:contextInfo:),
-					  NULL,
-					  [[NSNumber alloc] initWithInteger:row],
-					  NSLS(@"This cannot be undone.", @"Delete bookmark dialog description"));
+	alert = [[NSAlert alloc] init];
+	[alert setMessageText:[NSSWF:NSLS(@"Are you sure you want to delete \u201c%@\u201d?", @"Delete bookmark dialog title (bookmark)"), name]];
+	[alert setInformativeText:NSLS(@"This cannot be undone.", @"Delete bookmark dialog description")];
+	[alert addButtonWithTitle:NSLS(@"Delete", @"Delete bookmark dialog button title")];
+	[alert addButtonWithTitle:NSLS(@"Cancel", @"Delete bookmark button title")];
+	[alert beginSheetModalForWindow:[self window]
+					  modalDelegate:self
+					 didEndSelector:@selector(deleteBookmarkSheetDidEnd:returnCode:contextInfo:)
+						contextInfo:[[NSNumber alloc] initWithInteger:row]];
+	[alert release];
 }
 
 
@@ -1105,7 +1107,7 @@
 - (void)deleteBookmarkSheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
 	NSNumber	*row = contextInfo;
 
-	if(returnCode == NSAlertDefaultReturn) {
+	if(returnCode == NSAlertFirstButtonReturn) {
 		[[WCKeychain keychain] deletePasswordForBookmark:[[WCSettings objectForKey:WCBookmarks] objectAtIndex:[row integerValue]]];
 		
 		[WCSettings removeObjectAtIndex:[row integerValue] fromArrayForKey:WCBookmarks];
@@ -1230,6 +1232,7 @@
 
 
 - (IBAction)deleteHighlight:(id)sender {
+	NSAlert		*alert;
 	NSInteger	row;
 	
 	row = [_highlightsTableView selectedRow];
@@ -1237,16 +1240,16 @@
 	if(row < 0)
 		return;
 
-	NSBeginAlertSheet(NSLS(@"Are you sure you want to delete the selected highlight?", @"Delete highlight dialog title (bookmark)"),
-					  NSLS(@"Delete", @"Delete highlight dialog button title"),
-					  NSLS(@"Cancel", @"Delete highlight dialog button title"),
-					  NULL,
-					  [self window],
-					  self,
-					  @selector(deleteHighlightSheetDidEnd:returnCode:contextInfo:),
-					  NULL,
-					  [[NSNumber alloc] initWithInteger:row],
-					  NSLS(@"This cannot be undone.", @"Delete highlight dialog description"));
+	alert = [[NSAlert alloc] init];
+	[alert setMessageText:NSLS(@"Are you sure you want to delete the selected highlight?", @"Delete highlight dialog title (bookmark)")];
+	[alert setInformativeText:NSLS(@"This cannot be undone.", @"Delete highlight dialog description")];
+	[alert addButtonWithTitle:NSLS(@"Delete", @"Delete highlight dialog button title")];
+	[alert addButtonWithTitle:NSLS(@"Cancel", @"Delete highlight button title")];
+	[alert beginSheetModalForWindow:[self window]
+					  modalDelegate:self
+					 didEndSelector:@selector(deleteHighlightSheetDidEnd:returnCode:contextInfo:)
+						contextInfo:[[NSNumber alloc] initWithInteger:row]];
+	[alert release];
 }
 
 
@@ -1254,7 +1257,7 @@
 - (void)deleteHighlightSheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
 	NSNumber	*row = contextInfo;
 
-	if(returnCode == NSAlertDefaultReturn) {
+	if(returnCode == NSAlertFirstButtonReturn) {
 		[WCSettings removeObjectAtIndex:[row integerValue] fromArrayForKey:WCHighlights];
 		
 		[_highlightsTableView reloadData];
@@ -1334,6 +1337,7 @@
 
 
 - (IBAction)deleteIgnore:(id)sender {
+	NSAlert		*alert;
 	NSInteger	row;
 
 	row = [_ignoresTableView selectedRow];
@@ -1341,16 +1345,16 @@
 	if(row < 0)
 		return;
 
-	NSBeginAlertSheet(NSLS(@"Are you sure you want to delete the selected ignore?", @"Delete ignore dialog title (bookmark)"),
-					  NSLS(@"Delete", @"Delete ignore dialog button title"),
-					  NSLS(@"Cancel", @"Delete ignore dialog button title"),
-					  NULL,
-					  [self window],
-					  self,
-					  @selector(deleteIgnoreSheetDidEnd:returnCode:contextInfo:),
-					  NULL,
-					  [[NSNumber alloc] initWithInteger:row],
-					  NSLS(@"This cannot be undone.", @"Delete ignore dialog description"));
+	alert = [[NSAlert alloc] init];
+	[alert setMessageText:NSLS(@"Are you sure you want to delete the selected ignore?", @"Delete ignore dialog title (bookmark)")];
+	[alert setInformativeText:NSLS(@"This cannot be undone.", @"Delete ignore dialog description")];
+	[alert addButtonWithTitle:NSLS(@"Delete", @"Delete ignore dialog button title")];
+	[alert addButtonWithTitle:NSLS(@"Cancel", @"Delete ignore button title")];
+	[alert beginSheetModalForWindow:[self window]
+					  modalDelegate:self
+					 didEndSelector:@selector(deleteIgnoreSheetDidEnd:returnCode:contextInfo:)
+						contextInfo:[[NSNumber alloc] initWithInteger:row]];
+	[alert release];
 }
 
 
@@ -1358,7 +1362,7 @@
 - (void)deleteIgnoreSheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
 	NSNumber	*row = contextInfo;
 	
-	if(returnCode == NSAlertDefaultReturn) {
+	if(returnCode == NSAlertFirstButtonReturn) {
 		[WCSettings removeObjectAtIndex:[row integerValue] fromArrayForKey:WCIgnores];
 		
 		[_ignoresTableView reloadData];
@@ -1473,6 +1477,7 @@
 #pragma mark -
 
 - (IBAction)deleteTrackerBookmark:(id)sender {
+	NSAlert		*alert;
 	NSString	*name;
 	NSInteger	row;
 	
@@ -1483,16 +1488,16 @@
 	
 	name = [[[WCSettings objectForKey:WCTrackerBookmarks] objectAtIndex:row] objectForKey:WCTrackerBookmarksName];
 	
-	NSBeginAlertSheet([NSSWF:NSLS(@"Are you sure you want to delete \u201c%@\u201d?", @"Delete tracker bookmark dialog title (bookmark)"), name],
-					  NSLS(@"Delete", @"Delete tracker bookmark dialog button title"),
-					  NSLS(@"Cancel", @"Delete tracker bookmark dialog button title"),
-					  NULL,
-					  [self window],
-					  self,
-					  @selector(deleteTrackerBookmarkSheetDidEnd:returnCode:contextInfo:),
-					  NULL,
-					  [[NSNumber alloc] initWithInteger:row],
-					  NSLS(@"This cannot be undone.", @"Delete tracker bookmark dialog description"));
+	alert = [[NSAlert alloc] init];
+	[alert setMessageText:[NSSWF:NSLS(@"Are you sure you want to delete \u201c%@\u201d?", @"Delete tracker bookmark dialog title (bookmark)"), name]];
+	[alert setInformativeText:NSLS(@"This cannot be undone.", @"Delete tracker bookmark dialog description")];
+	[alert addButtonWithTitle:NSLS(@"Delete", @"Delete tracker bookmark dialog button title")];
+	[alert addButtonWithTitle:NSLS(@"Cancel", @"Delete tracker bookmark button title")];
+	[alert beginSheetModalForWindow:[self window]
+					  modalDelegate:self
+					 didEndSelector:@selector(deleteTrackerBookmarkSheetDidEnd:returnCode:contextInfo:)
+						contextInfo:[[NSNumber alloc] initWithInteger:row]];
+	[alert release];
 }
 
 
@@ -1500,7 +1505,7 @@
 - (void)deleteTrackerBookmarkSheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
 	NSNumber	*row = contextInfo;
 
-	if(returnCode == NSAlertDefaultReturn) {
+	if(returnCode == NSAlertFirstButtonReturn) {
 		[WCSettings removeObjectAtIndex:[row integerValue] fromArrayForKey:WCTrackerBookmarks];
 		
 		[_trackerBookmarksTableView reloadData];

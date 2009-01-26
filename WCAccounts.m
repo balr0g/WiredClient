@@ -83,16 +83,17 @@
 		name = [_nameTextField stringValue];
 		
 		if([name length] > 0) {
-			alert = [NSAlert alertWithMessageText:[NSSWF:NSLS(@"Save changes to the \u201c%@\u201d account?", @"Save account dialog title (name)"), name]
-									defaultButton:NSLS(@"Save", @"Save account dialog button")
-								  alternateButton:NSLS(@"Don't Save", @"Save account dialog button")
-									  otherButton:NSLS(@"Cancel", @"Save account dialog button")
-						informativeTextWithFormat:NSLS(@"If you don't save the changes, they will be lost.", @"Save account dialog description")];
-			
+			alert = [[NSAlert alloc] init];
+			[alert setMessageText:[NSSWF:NSLS(@"Save changes to the \u201c%@\u201d account?", @"Save account dialog title (name)"), name]];
+			[alert setInformativeText:NSLS(@"If you don't save the changes, they will be lost.", @"Save account dialog description")];
+			[alert addButtonWithTitle:NSLS(@"Save", @"Save account dialog button")];
+			[alert addButtonWithTitle:NSLS(@"Cancel", @"Save account dialog button")];
+			[alert addButtonWithTitle:NSLS(@"Don't Save", @"Save account dialog button")];
 			[alert beginSheetModalForWindow:[self window]
 							  modalDelegate:self
 							 didEndSelector:@selector(saveSheetDidEnd:returnCode:contextInfo:)
 								contextInfo:[[NSNumber alloc] initWithInteger:row]];
+			[alert release];
 		}
 		
 		return NO;
@@ -1113,8 +1114,9 @@
 
 
 - (IBAction)delete:(id)sender {
-	NSString	*title;
-	NSUInteger	count;
+	NSAlert			*alert;
+	NSString		*title;
+	NSUInteger		count;
 
 	if(![[self connection] isConnected])
 		return;
@@ -1134,16 +1136,16 @@
 			count];
 	}
 
-	NSBeginAlertSheet(title,
-					  NSLS(@"Delete", @"Delete account dialog button title"),
-					  NSLS(@"Cancel", @"Delete account dialog button title"),
-					  NULL,
-					  [self window],
-					  self,
-					  @selector(deleteSheetDidEnd:returnCode:contextInfo:),
-					  NULL,
-					  NULL,
-					  NSLS(@"This cannot be undone.", @"Delete account dialog description"));
+	alert = [[NSAlert alloc] init];
+	[alert setMessageText:title];
+	[alert setInformativeText:NSLS(@"This cannot be undone.", @"Delete account dialog description")];
+	[alert addButtonWithTitle:NSLS(@"Delete", @"Delete account dialog button title")];
+	[alert addButtonWithTitle:NSLS(@"Cancel", @"Delete account dialog button title")];
+	[alert beginSheetModalForWindow:[self window]
+					  modalDelegate:self
+					 didEndSelector:@selector(deleteSheetDidEnd:returnCode:contextInfo:)
+						contextInfo:NULL];
+	[alert release];
 }
 
 
@@ -1153,7 +1155,7 @@
 	WIP7Message		*message;
 	WCAccount		*account;
 
-	if(returnCode == NSAlertDefaultReturn) {
+	if(returnCode == NSAlertFirstButtonReturn) {
 		enumerator = [[self _selectedAccounts] objectEnumerator];
 
 		while((account = [enumerator nextObject])) {
@@ -1239,8 +1241,8 @@
 	NSNumber	*number = contextInfo;
 	NSInteger	row = [number integerValue];
 
-	if(row != -2 || returnCode != NSAlertOtherReturn) {
-		if(returnCode == NSAlertDefaultReturn) {
+	if(row != -2 || returnCode != NSAlertSecondButtonReturn) {
+		if(returnCode == NSAlertFirstButtonReturn) {
 			[self _saveAndClear:YES];
 		} else {
 			[_editedAccount release];

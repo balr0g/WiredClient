@@ -125,6 +125,17 @@
 
 @implementation WCSettingsController
 
+- (void)dealloc {
+	[_trackers release];
+	[_categories release];
+	
+	[super dealloc];
+}
+
+
+
+#pragma mark -
+
 - (void)windowDidLoad {
 	NSComboBoxCell		*comboBoxCell;
 	
@@ -207,11 +218,13 @@
 		
 		[_registerWithTrackersButton setState:registerWithTrackers];
 		
+		[_trackers release];
 		_trackers = [[message listForName:@"wired.settings.trackers"] mutableCopy];
 		[_trackersTableView reloadData];
 
 		[_enableTrackerButton setState:tracker];
 		
+		[_categories release];
 		_categories = [[message listForName:@"wired.tracker.categories"] mutableCopy];
 		[_categoriesTableView reloadData];
 	}

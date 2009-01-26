@@ -133,14 +133,12 @@
 	else
 		title = [NSSWF:NSLS(@"Broadcast from %@ on %@ at %@", @"Broadcast dialog title (nick, server, time)"), nick, server, time];
 	
-	alert = [NSAlert alertWithMessageText:title
-							defaultButton:nil
-						  alternateButton:nil
-							  otherButton:nil
-				informativeTextWithFormat:@"%@", [message message]];
-	
+	alert = [[NSAlert alloc] init];
+	[alert setMessageText:title];
+	[alert setInformativeText:[message message]];
 	[alert setAlertStyle:NSInformationalAlertStyle];
 	[alert runNonModal];
+	[alert release];
 	
 	[message setUnread:NO];
 }
@@ -1071,22 +1069,24 @@
 
 
 - (IBAction)clearMessages:(id)sender {
-	NSBeginAlertSheet(NSLS(@"Are you sure you want to clear the message history?", @"Clear messages dialog title"),
-					  NSLS(@"Clear", @"Clear messages dialog button"),
-					  NSLS(@"Cancel", @"Clear messages dialog button"),
-					  NULL,
-					  [self window],
-					  self,
-					  @selector(clearSheetDidEnd:returnCode:contextInfo:),
-					  NULL,
-					  NULL,
-					  NSLS(@"This cannot be undone.", @"Clear messages dialog description"));
+	NSAlert			*alert;
+	
+	alert = [[NSAlert alloc] init];
+	[alert setMessageText:NSLS(@"Are you sure you want to clear the message history?", @"Clear messages dialog title")];
+	[alert setInformativeText:NSLS(@"This cannot be undone.", @"Clear messages dialog description")];
+	[alert addButtonWithTitle:NSLS(@"Clear", @"Clear messages dialog button")];
+	[alert addButtonWithTitle:NSLS(@"Cancel", @"Clear messages dialog button")];
+	[alert beginSheetModalForWindow:[self window]
+					  modalDelegate:self
+					 didEndSelector:@selector(clearSheetDidEnd:returnCode:contextInfo:)
+						contextInfo:NULL];
+	[alert release];
 }
 
 
 
 - (void)clearSheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-	if(returnCode == NSAlertDefaultReturn) {
+	if(returnCode == NSAlertFirstButtonReturn) {
 		[self _readMessages];
 		
 		[self _removeAllMessages];

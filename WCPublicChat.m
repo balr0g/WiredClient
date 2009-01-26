@@ -111,17 +111,19 @@
 #pragma mark -
 
 - (BOOL)_beginConfirmDisconnectSheetModalForWindow:(NSWindow *)window connection:(WCServerConnection *)connection modalDelegate:(id)delegate didEndSelector:(SEL)selector contextInfo:(void *)contextInfo {
+	NSAlert		*alert;
+	
 	if([WCSettings boolForKey:WCConfirmDisconnect] && [connection isConnected]) {
-		NSBeginAlertSheet(NSLS(@"Are you sure you want to disconnect?", @"Disconnect dialog title"),
-						  NSLS(@"Disconnect", @"Disconnect dialog button"),
-						  NSLS(@"Cancel", @"Disconnect dialog button title"),
-						  NULL,
-						  window,
-						  delegate,
-						  selector,
-						  NULL,
-						  contextInfo,
-						  NSLS(@"Disconnecting will close any ongoing file transfers.", @"Disconnect dialog description"));
+		alert = [[NSAlert alloc] init];
+		[alert setMessageText:NSLS(@"Are you sure you want to disconnect?", @"Disconnect dialog title")];
+		[alert setInformativeText:NSLS(@"Disconnecting will close any ongoing file transfers.", @"Disconnect dialog description")];
+		[alert addButtonWithTitle:NSLS(@"Disconnect", @"Disconnect dialog button")];
+		[alert addButtonWithTitle:NSLS(@"Cancel", @"Disconnect dialog button title")];
+		[alert beginSheetModalForWindow:window
+						  modalDelegate:delegate
+						 didEndSelector:selector
+							contextInfo:contextInfo];
+		[alert release];
 		
 		return NO;
 	}
@@ -581,7 +583,7 @@
 - (void)disconnectSheetDidEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo {
 	WCServerConnection		*connection = contextInfo;
 	
-	if(returnCode == NSAlertDefaultReturn)
+	if(returnCode == NSAlertFirstButtonReturn)
 		[connection disconnect];
 	
 	[connection release];
@@ -785,7 +787,7 @@
 
 
 - (void)closeTabSheetDidEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo {
-	if(returnCode == NSAlertDefaultReturn)
+	if(returnCode == NSAlertFirstButtonReturn)
 		[self _closeSelectedTabViewItem];
 }
 

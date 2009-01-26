@@ -265,11 +265,11 @@ static NSInteger _WCCompareSmileyLength(id object1, id object2, void *context) {
 	[url setUser:login];
 	[url setPassword:password ? password : @""];
 	
-	if(![self _openConnectionWithURL:url]) {
+//	if(![self _openConnectionWithURL:url]) {
 		connect = [WCConnect connectWithURL:url bookmark:bookmark];
 		[connect showWindow:self];
 		[connect connect:self];
-	}
+//	}
 }
 
 
