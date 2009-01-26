@@ -260,14 +260,26 @@
 	NSArray			*messages;
 	WCMessage		*message;
 	NSUInteger		i, count;
+	BOOL			changedUnread = NO;
 	
 	messages = [_conversations unreadMessages];
 	count = [messages count];
 	
 	for(i = 0; i < count; i++) {
 		message = [messages objectAtIndex:i];
-		[message setUnread:NO];
-		[[message connection] postNotificationName:WCMessagesDidChangeUnreadCountNotification];
+		
+		if([message isUnread]) {
+			[message setUnread:NO];
+			
+			changedUnread = YES;
+		}
+	}
+
+	if(changedUnread) {
+		[[NSNotificationCenter defaultCenter] postNotificationName:WCMessagesDidChangeUnreadCountNotification];
+
+		[_conversationsOutlineView setNeedsDisplay:YES];
+		[_messagesTableView setNeedsDisplay:YES];
 	}
 }
 
@@ -324,7 +336,7 @@
 			[_conversationsOutlineView setNeedsDisplay:YES];
 			[_messagesTableView setNeedsDisplay:YES];
 			
-			[[message connection] postNotificationName:WCMessagesDidChangeUnreadCountNotification];
+			[[NSNotificationCenter defaultCenter] postNotificationName:WCMessagesDidChangeUnreadCountNotification];
 		}
 		
 		attributedString = [NSMutableAttributedString attributedStringWithString:[message message]];
@@ -688,7 +700,7 @@
 
 	[[WCStats stats] addUnsignedInt:1 forKey:WCStatsMessagesReceived];
 
-	[connection postNotificationName:WCMessagesDidChangeUnreadCountNotification];
+	[[NSNotificationCenter defaultCenter] postNotificationName:WCMessagesDidChangeUnreadCountNotification];
 	[connection triggerEvent:WCEventsMessageReceived info1:message];
 	
 	[self _validate];
@@ -738,7 +750,7 @@
 	if([[WCSettings eventWithTag:WCEventsBroadcastReceived] boolForKey:WCEventsShowDialog])
 		[self _showDialogForMessage:message];
 
-	[connection postNotificationName:WCMessagesDidChangeUnreadCountNotification];
+	[[NSNotificationCenter defaultCenter] postNotificationName:WCMessagesDidChangeUnreadCountNotification];
 	[connection triggerEvent:WCEventsBroadcastReceived info1:message];
 	
 	[self _validate];

@@ -247,6 +247,7 @@
 	NSMutableString		*html;
 	WCBoardThread		*thread;
 	WCBoardPost			*post;
+	BOOL				changedUnread = NO;
 	
 	thread = [self _selectedThread];
 	
@@ -266,22 +267,30 @@
 			if([post isUnread]) {
 				[post setUnread:NO];
 				[_readPosts addObject:[post postID]];
+				
+				changedUnread = YES;
 			}
 		}
 		
 		if([thread isUnread]) {
 			[thread setUnread:NO];
 			
-			[WCSettings setObject:[_readPosts allObjects] forKey:WCReadBoardPosts];
-			
-			[_boardsOutlineView setNeedsDisplay:YES];
-			[_threadsTableView setNeedsDisplay:YES];
+			changedUnread = YES;
 		}
 	}
 	
 	[html appendString:_footerTemplate];
 	
 	[[_threadWebView mainFrame] loadHTMLString:html baseURL:[NSURL fileURLWithPath:[[self bundle] resourcePath]]];
+	
+	if(changedUnread) {
+		[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
+			
+		[WCSettings setObject:[_readPosts allObjects] forKey:WCReadBoardPosts];
+		
+		[_boardsOutlineView setNeedsDisplay:YES];
+		[_threadsTableView setNeedsDisplay:YES];
+	}
 }
 
 
@@ -852,7 +861,7 @@
 
 		[_threadsTableView reloadData];
 
-		[connection postNotificationName:WCBoardsDidChangeUnreadCountNotification];
+		[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
 		// handle error
@@ -1104,7 +1113,7 @@
 			[self _reselectThread:selectedThread];
 	}
 
-	[connection postNotificationName:WCBoardsDidChangeUnreadCountNotification];
+	[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
 }
 
 
@@ -1192,7 +1201,7 @@
 			[self _reselectThread:selectedThread];
 	}
 	
-	[connection postNotificationName:WCBoardsDidChangeUnreadCountNotification];
+	[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
 }
 
 

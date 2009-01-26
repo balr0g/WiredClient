@@ -96,6 +96,14 @@
 		[item setMinSize:size];
 		[item setMaxSize:size];
 	}
+
+	item = [[[self window] toolbar] itemWithIdentifier:@"Messages"];
+	
+	[item setImage:[[NSImage imageNamed:@"Messages"] badgedImageWithInt:[[WCMessages messages] numberOfUnreadMessages]]];
+
+	item = [[[self window] toolbar] itemWithIdentifier:@"Boards"];
+	
+	[item setImage:[[NSImage imageNamed:@"Boards"] badgedImageWithInt:[[WCBoards boards] numberOfUnreadThreads]]];
 }
 
 
@@ -176,6 +184,16 @@
 		   selector:@selector(serverConnectionServerInfoDidChange:)
 			   name:WCServerConnectionServerInfoDidChangeNotification];
 	
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
+		   selector:@selector(boardsDidChangeUnreadCount:)
+			   name:WCBoardsDidChangeUnreadCountNotification];
+	
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
+		   selector:@selector(messagesDidChangeUnreadCount:)
+			   name:WCMessagesDidChangeUnreadCountNotification];
+	
 	[self window];
 	
 	return self;
@@ -222,6 +240,8 @@
 	[[[self window] contentView] addSubview:_tabBarControl];
 	[_chatTabView setDelegate:_tabBarControl];
 	
+	[self _updateToolbarForConnection:NULL];
+
 	[super windowDidLoad];
 }
 
@@ -378,6 +398,18 @@
 	[[_chatTabView tabViewItemWithIdentifier:[connection identifier]] setLabel:[connection name]];
 	
 	[self _updateToolbarForConnection:connection];
+}
+
+
+
+- (void)boardsDidChangeUnreadCount:(NSNotification *)notification {
+	[self _updateToolbarForConnection:[[self selectedChatController] connection]];
+}
+
+
+
+- (void)messagesDidChangeUnreadCount:(NSNotification *)notification {
+	[self _updateToolbarForConnection:[[self selectedChatController] connection]];
 }
 
 
