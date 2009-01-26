@@ -29,6 +29,7 @@
 #import "WCAccount.h"
 #import "WCChatWindow.h"
 #import "WCPrivateChat.h"
+#import "WCPrivateChatInvitation.h"
 #import "WCPublicChat.h"
 #import "WCPublicChatController.h"
 #import "WCServer.h"
@@ -105,13 +106,9 @@
 
 
 - (void)wiredChatInvitation:(WIP7Message *)message {
-	NSEnumerator	*enumerator;
-	NSString		*title, *description;
-	NSPanel			*panel;
-	NSControl		*control;
-	WCUser			*user;
-	NSUInteger		i = 0;
-	WIP7UInt32		uid, cid;
+	WCPrivateChatInvitation		*privateChatInvitation;
+	WCUser						*user;
+	WIP7UInt32					uid, cid;
 
 	[message getUInt32:&cid forName:@"wired.chat.id"];
 	[message getUInt32:&uid forName:@"wired.user.id"];
@@ -120,43 +117,12 @@
 
 	if(!user || [user isIgnored])
 		return;
+
+	privateChatInvitation = [WCPrivateChatInvitation privateChatInvitationWithConnection:[self connection]
+																					user:user
+																				  chatID:cid];
 	
-	// XXX: This must be refactored similar to trunk
-
-	title = [NSSWF:
-		NSLS(@"%@ has invited you to a private chat.", @"Private chat invite dialog title (nick)"),
-		[user nick]];
-	description	= [NSSWF:
-		NSLS(@"Join to open a separate private chat with %@.", @"Private chat invite dialog description (nick)"),
-		[user nick]];
-	panel = NSGetAlertPanel(title, description,
-		NSLS(@"Join", @"Private chat invite button title"),
-		NSLS(@"Ignore", @"Private chat invite button title"),
-		NSLS(@"Decline", @"Private chat invite button title"));
-
-	enumerator = [[[panel contentView] subviews] objectEnumerator];
-
-	while((control = [enumerator nextObject])) {
-		if([control isKindOfClass:[NSButton class]]) {
-			[control setTarget:self];
-
-			switch(i++) {
-				case 0:
-					[control setAction:@selector(joinChat:)];
-					break;
-
-				case 1:
-					[control setAction:@selector(ignoreChat:)];
-					break;
-
-				case 2:
-					[control setAction:@selector(declineChat:)];
-					break;
-			}
-		}
-	}
-
-	[panel makeKeyAndOrderFront:self];
+	[privateChatInvitation showWindow:self];
 
 	[[self connection] triggerEvent:WCEventsChatInvitationReceived info1:user];
 }
@@ -274,39 +240,6 @@
 
 
 #pragma mark -
-
-- (void)joinChat:(id)sender {
-	WCPrivateChat	*chat;
-
-	chat = [WCPrivateChat privateChatWithConnection:[self connection] chatID:[sender tag]];
-	[chat showWindow:self];
-
-	[[sender window] orderOut:self];
-	NSReleaseAlertPanel([sender window]);
-}
-
-
-
-- (void)declineChat:(id)sender {
-	WIP7Message		*message;
-	
-	message = [WIP7Message messageWithName:@"wired.chat.decline_invitation" spec:WCP7Spec];
-	[message setUInt32:[sender tag] forName:@"wired.chat.id"];
-	[[self connection] sendMessage:message];
-
-	[[sender window] orderOut:self];
-	NSReleaseAlertPanel([sender window]);
-}
-
-
-
-- (void)ignoreChat:(id)sender {
-	[[sender window] orderOut:self];
-
-	NSReleaseAlertPanel([sender window]);
-}
-
-
 
 - (void)banner:(id)sender {
 	[[[self connection] serverInfo] showWindow:self];

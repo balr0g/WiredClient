@@ -253,6 +253,8 @@
 		A558A4EF0E8526F7004C724C /* WCBan.m in Sources */ = {isa = PBXBuildFile; fileRef = A558A4ED0E8526F7004C724C /* WCBan.m */; };
 		A55C733B0F26803B006E8568 /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = A55C733A0F26803B006E8568 /* RegexKitLite.m */; };
 		A55C73440F268087006E8568 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A55C73430F268087006E8568 /* libicucore.dylib */; };
+		A55C7C060F2E4F8A006E8568 /* PrivateChatInvitation.xib in Resources */ = {isa = PBXBuildFile; fileRef = A55C7C040F2E4F8A006E8568 /* PrivateChatInvitation.xib */; };
+		A55C7C0D0F2E500A006E8568 /* WCPrivateChatInvitation.m in Sources */ = {isa = PBXBuildFile; fileRef = A55C7C0C0F2E500A006E8568 /* WCPrivateChatInvitation.m */; };
 		A565B5000D5DA94000AF91BA /* wired.xml in Resources */ = {isa = PBXBuildFile; fileRef = A565B4FF0D5DA94000AF91BA /* wired.xml */; };
 		A575129F05E4A0AF003B51D7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A575129D05E4A0AF003B51D7 /* InfoPlist.strings */; };
 		A57512EC05E4E64D003B51D7 /* WCCache.m in Sources */ = {isa = PBXBuildFile; fileRef = A57512EB05E4E64D003B51D7 /* WCCache.m */; };
@@ -666,6 +668,9 @@
 		A55C73390F26803B006E8568 /* RegexKitLite.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = RegexKitLite.h; sourceTree = "<group>"; };
 		A55C733A0F26803B006E8568 /* RegexKitLite.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = RegexKitLite.m; sourceTree = "<group>"; };
 		A55C73430F268087006E8568 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = /usr/lib/libicucore.dylib; sourceTree = "<absolute>"; };
+		A55C7C050F2E4F8A006E8568 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/PrivateChatInvitation.xib; sourceTree = "<group>"; };
+		A55C7C0B0F2E500A006E8568 /* WCPrivateChatInvitation.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCPrivateChatInvitation.h; sourceTree = "<group>"; };
+		A55C7C0C0F2E500A006E8568 /* WCPrivateChatInvitation.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCPrivateChatInvitation.m; sourceTree = "<group>"; };
 		A565B4FF0D5DA94000AF91BA /* wired.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = wired.xml; sourceTree = "<group>"; };
 		A575129E05E4A0AF003B51D7 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		A57512E905E4E639003B51D7 /* WCCache.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCCache.h; sourceTree = "<group>"; };
@@ -1072,6 +1077,8 @@
 				A5DC7EF6057AAF6C00736BBF /* WCPrivateChat.h */,
 				A541A7820F115AC500D1EE94 /* WCPrivateChatController.m */,
 				A541A7810F115AC500D1EE94 /* WCPrivateChatController.h */,
+				A55C7C0C0F2E500A006E8568 /* WCPrivateChatInvitation.m */,
+				A55C7C0B0F2E500A006E8568 /* WCPrivateChatInvitation.h */,
 				A5DC7ED1057AAF2900736BBF /* WCPublicChat.m */,
 				A5DC7ED0057AAF2900736BBF /* WCPublicChat.h */,
 				A541A7850F115ACB00D1EE94 /* WCPublicChatController.m */,
@@ -1108,6 +1115,7 @@
 			isa = PBXGroup;
 			children = (
 				778C6A750E66CFB800DBF2E3 /* PrivateChat.xib */,
+				A55C7C040F2E4F8A006E8568 /* PrivateChatInvitation.xib */,
 				A54AF80D0F138CE300AFD50E /* PublicChat.xib */,
 				A54AF8080F138CB900AFD50E /* PublicChatWindow.xib */,
 				77CFB9560E66D1B100F2D5F8 /* SaveChat.xib */,
@@ -1893,6 +1901,7 @@
 				7712242D0F27421D00984433 /* UnreadThread.tiff in Resources */,
 				7712242E0F27421D00984433 /* UnreadHeader.tiff in Resources */,
 				77256AD10F2DFF6800EA5816 /* GrayDrop.tiff in Resources */,
+				A55C7C060F2E4F8A006E8568 /* PrivateChatInvitation.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2042,6 +2051,7 @@
 				A5DC7F84057AB05F00736BBF /* WCUserCell.m in Sources */,
 				A5DC7F09057AAF6C00736BBF /* WCUserInfo.m in Sources */,
 				77BB1C9A0F28C20E00A402B7 /* WCBoardsWindow.m in Sources */,
+				A55C7C0D0F2E500A006E8568 /* WCPrivateChatInvitation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2242,6 +2252,14 @@
 				A54AF80E0F138CE300AFD50E /* English */,
 			);
 			name = PublicChat.xib;
+			sourceTree = "<group>";
+		};
+		A55C7C040F2E4F8A006E8568 /* PrivateChatInvitation.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A55C7C050F2E4F8A006E8568 /* English */,
+			);
+			name = PrivateChatInvitation.xib;
 			sourceTree = "<group>";
 		};
 		A575129D05E4A0AF003B51D7 /* InfoPlist.strings */ = {
