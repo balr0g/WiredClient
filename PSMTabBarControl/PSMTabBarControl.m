@@ -853,7 +853,7 @@
             if ([[cell representedObject] isEqualTo:[tabView selectedTabViewItem]])
                 [menuItem setState:NSOnState];
             if([cell hasIcon])
-                [menuItem setImage:[[[[cell representedObject] identifier] content] icon]];
+                [menuItem setImage:[cell icon]];
             if([cell count] > 0)
                 [menuItem setTitle:[[menuItem title] stringByAppendingFormat:@" (%d)",[cell count]]];
             [overflowMenu addItem:menuItem];
