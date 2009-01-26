@@ -98,6 +98,7 @@
 	_server					= [[WCServer alloc] init];
 	_cache					= [[WCCache alloc] initWithCapacity:100];
 	_connectionControllers	= [[NSMutableArray alloc] init];
+	_identifier				= [[NSString UUIDString] retain];
 	
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
@@ -129,7 +130,7 @@
 				 name:WCChatSelfWasKickedNotification];
 
 	[self addObserver:self
-			 selector:@selector(chatSelfWasKicked:)
+			 selector:@selector(chatSelfWasBanned:)
 				 name:WCChatSelfWasBannedNotification];
 
 	[self addObserver:self selector:@selector(wiredAccountPrivileges:) messageName:@"wired.account.privileges"];
@@ -332,6 +333,12 @@
 
 
 - (void)chatSelfWasKicked:(NSNotification *)notification {
+	_shouldAutoReconnect = NO;
+}
+
+
+
+- (void)chatSelfWasBanned:(NSNotification *)notification {
 	_shouldAutoReconnect = NO;
 }
 

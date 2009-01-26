@@ -186,6 +186,21 @@
 	
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
+		   selector:@selector(chatRegularChatDidAppear:)
+			   name:WCChatRegularChatDidAppearNotification];
+	
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
+		   selector:@selector(chatHighlightedChatDidAppear:)
+			   name:WCChatHighlightedChatDidAppearNotification];
+	
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
+		   selector:@selector(chatEventDidAppear:)
+			   name:WCChatEventDidAppearNotification];
+	
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
 		   selector:@selector(boardsDidChangeUnreadCount:)
 			   name:WCBoardsDidChangeUnreadCountNotification];
 	
@@ -402,6 +417,57 @@
 
 
 
+- (void)chatRegularChatDidAppear:(NSNotification *)notification {
+	NSTabViewItem			*tabViewItem;
+	NSColor					*color;
+	WCServerConnection		*connection;
+	
+	connection		= [notification object];
+	tabViewItem		= [_chatTabView tabViewItemWithIdentifier:[connection identifier]];
+	
+	if(tabViewItem != [_chatTabView selectedTabViewItem]) {
+		color = [WIColorFromString([[connection theme] objectForKey:WCThemesChatTextColor]) colorWithAlphaComponent:0.5];
+
+		[_tabBarControl setIcon:[[NSImage imageNamed:@"GrayDrop"] tintedImageWithColor:color] forTabViewItem:tabViewItem];
+	}
+}
+
+
+
+- (void)chatHighlightedChatDidAppear:(NSNotification *)notification {
+	NSTabViewItem			*tabViewItem;
+	NSColor					*color;
+	WCServerConnection		*connection;
+	
+	connection		= [notification object];
+	tabViewItem		= [_chatTabView tabViewItemWithIdentifier:[connection identifier]];
+	
+	if(tabViewItem != [_chatTabView selectedTabViewItem]) {
+		color = [[[notification userInfo] objectForKey:WCChatHighlightColorKey] colorWithAlphaComponent:0.5];
+
+		[_tabBarControl setIcon:[[NSImage imageNamed:@"GrayDrop"] tintedImageWithColor:color] forTabViewItem:tabViewItem];
+	}
+}
+
+
+
+- (void)chatEventDidAppear:(NSNotification *)notification {
+	NSTabViewItem			*tabViewItem;
+	NSColor					*color;
+	WCServerConnection		*connection;
+	
+	connection		= [notification object];
+	tabViewItem		= [_chatTabView tabViewItemWithIdentifier:[connection identifier]];
+	
+	if(tabViewItem != [_chatTabView selectedTabViewItem]) {
+		color = [WIColorFromString([[connection theme] objectForKey:WCThemesChatEventsColor]) colorWithAlphaComponent:0.5];
+
+		[_tabBarControl setIcon:[[NSImage imageNamed:@"GrayDrop"] tintedImageWithColor:color] forTabViewItem:tabViewItem];
+	}
+}
+
+
+
 - (void)boardsDidChangeUnreadCount:(NSNotification *)notification {
 	[self _updateToolbarForConnection:[[self selectedChatController] connection]];
 }
@@ -420,6 +486,8 @@
 	chatController = [_chatControllers objectForKey:[tabViewItem identifier]];
 	
 	[self _updateToolbarForConnection:[chatController connection]];
+
+	[_tabBarControl setIcon:NULL forTabViewItem:tabViewItem];
 }
 
 
@@ -737,10 +805,10 @@
 	NSTabViewItem		*tabViewItem;
 	NSString			*identifier;
 	
-	if([_chatControllers objectForKey:[[chatController connection] identifier]] != NULL)
-		return;
+	identifier = [[chatController connection] identifier];
 	
-	identifier = [NSString UUIDString];
+	if([_chatControllers objectForKey:identifier] != NULL)
+		return;
 	
 	[[chatController connection] setIdentifier:identifier];
 	
@@ -750,7 +818,7 @@
 		[_noConnectionTextField setHidden:YES];
 	
 	tabViewItem = [[[NSTabViewItem alloc] initWithIdentifier:identifier] autorelease];
-	[tabViewItem setLabel:NSLS(@"Connecting...", @"Chat tab title")];
+	[tabViewItem setLabel:[[chatController connection] name]];
 	[tabViewItem setView:[chatController view]];
 	
 	[_chatTabView addTabViewItem:tabViewItem];

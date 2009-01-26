@@ -26,80 +26,85 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define WCChatUsersDidChangeNotification	@"WCChatUsersDidChangeNotification"
-#define WCChatUserAppearedNotification		@"WCChatUserAppearedNotification"
-#define WCChatUserDisappearedNotification	@"WCChatUserDisappearedNotification"
-#define WCChatSelfWasKickedNotification		@"WCChatSelfWasKickedNotification"
-#define WCChatSelfWasBannedNotification		@"WCChatSelfWasBannedNotification"
+#define WCChatUsersDidChangeNotification			@"WCChatUsersDidChangeNotification"
+#define WCChatUserAppearedNotification				@"WCChatUserAppearedNotification"
+#define WCChatUserDisappearedNotification			@"WCChatUserDisappearedNotification"
+#define WCChatSelfWasKickedNotification				@"WCChatSelfWasKickedNotification"
+#define WCChatSelfWasBannedNotification				@"WCChatSelfWasBannedNotification"
+#define WCChatRegularChatDidAppearNotification		@"WCChatRegularChatDidAppearNotification"
+#define WCChatHighlightedChatDidAppearNotification	@"WCChatHighlightedChatDidAppearNotification"
+#define WCChatEventDidAppearNotification			@"WCChatEventDidAppearNotification"
 
-#define WCUserPboardType					@"WCUserPboardType"
+#define WCChatHighlightColorKey						@"WCChatHighlightColorKey"
+
+#define WCUserPboardType							@"WCUserPboardType"
 
 
 @class WCChatTextView, WCChatWindow, WCServerConnection, WCTopic, WCUser;
 
 @interface WCChatController : WIObject {
-	IBOutlet WISplitView					*_userListSplitView;
+	IBOutlet WISplitView							*_userListSplitView;
 
-	IBOutlet NSView							*_chatView;
-	IBOutlet NSTextField					*_topicTextField;
-	IBOutlet NSTextField					*_topicNickTextField;
-	IBOutlet WISplitView					*_chatSplitView;
-	IBOutlet NSScrollView					*_chatOutputScrollView;
-	IBOutlet WCChatTextView					*_chatOutputTextView;
-	IBOutlet NSScrollView					*_chatInputScrollView;
-	IBOutlet NSTextView						*_chatInputTextView;
+	IBOutlet NSView									*_chatView;
+	IBOutlet NSTextField							*_topicTextField;
+	IBOutlet NSTextField							*_topicNickTextField;
+	IBOutlet WISplitView							*_chatSplitView;
+	IBOutlet NSScrollView							*_chatOutputScrollView;
+	IBOutlet WCChatTextView							*_chatOutputTextView;
+	IBOutlet NSScrollView							*_chatInputScrollView;
+	IBOutlet NSTextView								*_chatInputTextView;
 
-	IBOutlet NSView							*_userListView;
-	IBOutlet NSButton						*_privateMessageButton;
-	IBOutlet NSButton						*_infoButton;
-	IBOutlet NSButton						*_kickButton;
-	IBOutlet WITableView					*_userListTableView;
-	IBOutlet NSTableColumn					*_iconTableColumn;
-	IBOutlet NSTableColumn					*_nickTableColumn;
+	IBOutlet NSView									*_userListView;
+	IBOutlet NSButton								*_privateMessageButton;
+	IBOutlet NSButton								*_infoButton;
+	IBOutlet NSButton								*_kickButton;
+	IBOutlet WITableView							*_userListTableView;
+	IBOutlet NSTableColumn							*_iconTableColumn;
+	IBOutlet NSTableColumn							*_nickTableColumn;
 
-	IBOutlet NSPanel						*_setTopicPanel;
-	IBOutlet NSTextView						*_setTopicTextView;
+	IBOutlet NSPanel								*_setTopicPanel;
+	IBOutlet NSTextView								*_setTopicTextView;
 
-	IBOutlet NSMenu							*_userListMenu;
-	IBOutlet NSMenuItem						*_sendPrivateMessageMenuItem;
-	IBOutlet NSMenuItem						*_getInfoMenuItem;
-	IBOutlet NSMenuItem						*_ignoreMenuItem;
+	IBOutlet NSMenu									*_userListMenu;
+	IBOutlet NSMenuItem								*_sendPrivateMessageMenuItem;
+	IBOutlet NSMenuItem								*_getInfoMenuItem;
+	IBOutlet NSMenuItem								*_ignoreMenuItem;
 	
-	IBOutlet NSPanel						*_kickMessagePanel;
-	IBOutlet NSTextField					*_kickMessageTextField;
+	IBOutlet NSPanel								*_kickMessagePanel;
+	IBOutlet NSTextField							*_kickMessageTextField;
 
-	IBOutlet NSView							*_saveChatView;
-	IBOutlet NSPopUpButton					*_saveChatFileFormatPopUpButton;
-	IBOutlet NSPopUpButton					*_saveChatPlainTextEncodingPopUpButton;
+	IBOutlet NSView									*_saveChatView;
+	IBOutlet NSPopUpButton							*_saveChatFileFormatPopUpButton;
+	IBOutlet NSPopUpButton							*_saveChatPlainTextEncodingPopUpButton;
 	
-	WCServerConnection						*_connection;
+	WCServerConnection								*_connection;
 
-	NSMutableArray							*_commandHistory;
-	NSUInteger								_currentCommand;
-	NSString								*_currentString;
+	NSMutableArray									*_commandHistory;
+	NSUInteger										_currentCommand;
+	NSString										*_currentString;
 	
-	NSMutableDictionary						*_users;
-	NSMutableArray							*_allUsers, *_shownUsers;
-	BOOL									_receivedUserList;
+	NSMutableDictionary								*_users;
+	NSMutableArray									*_allUsers, *_shownUsers;
+	BOOL											_receivedUserList;
 	
-	NSFont									*_chatFont;
-	NSColor									*_chatColor;
-	NSColor									*_eventsColor;
-	NSColor									*_timestampEveryLineColor;
-	NSMutableArray							*_highlightPatterns;
-	NSMutableArray							*_highlightColors;
-	BOOL									_showSmileys;
+	NSFont											*_chatFont;
+	NSColor											*_chatColor;
+	NSColor											*_eventsColor;
+	NSColor											*_timestampEveryLineColor;
+	NSMutableArray									*_highlightPatterns;
+	NSMutableArray									*_highlightColors;
+	BOOL											_showSmileys;
 	
-	NSDate									*_timestamp;
-	WCTopic									*_topic;
+	NSDate											*_timestamp;
+	WCTopic											*_topic;
 	
-	WIDateFormatter							*_timestampDateFormatter;
-	WIDateFormatter							*_timestampEveryLineDateFormatter;
-	WIDateFormatter							*_topicDateFormatter;
+	WIDateFormatter									*_timestampDateFormatter;
+	WIDateFormatter									*_timestampEveryLineDateFormatter;
+	WIDateFormatter									*_topicDateFormatter;
 	
-	NSMutableDictionary						*_pings;
+	NSMutableDictionary								*_pings;
 	
-	BOOL									_loadedNib;
+	BOOL											_loadedNib;
 }
 
 + (NSString *)outputForShellCommand:(NSString *)command;

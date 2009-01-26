@@ -82,7 +82,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 - (NSString *)_stringByDecomposingAttributedString:(NSAttributedString *)attributedString;
 - (void)_applyChatAttributesToAttributedString:(NSMutableAttributedString *)attributedString;
 
-- (BOOL)_isHighlightedChat:(NSString *)chat;
+- (NSColor *)_highlightColorForChat:(NSString *)chat;
 
 @end
 
@@ -489,8 +489,8 @@ typedef enum _WCChatFormat					WCChatFormat;
 	NSMutableCharacterSet		*characterSet;
 	NSScanner					*scanner;
 	NSString					*word, *chat;
-	NSRange						range, nickRange, patternRange;
-	NSUInteger					i, highlightCount, length;
+	NSColor						*color;
+	NSRange						range, nickRange;
 
 	if(!whitespaceSet) {
 		whitespaceSet		= [[NSCharacterSet whitespaceAndNewlineCharacterSet] retain];
@@ -509,8 +509,6 @@ typedef enum _WCChatFormat					WCChatFormat;
 	
 	[attributedString addAttribute:NSForegroundColorAttributeName value:_chatColor range:range];
 	[attributedString addAttribute:NSFontAttributeName value:_chatFont range:range];
-	
-	highlightCount = [_highlightPatterns count];
 	
 	scanner = [NSScanner scannerWithString:[attributedString string]];
 	[scanner setCharactersToBeSkipped:NULL];
@@ -566,23 +564,10 @@ typedef enum _WCChatFormat					WCChatFormat;
 		}
 		
 		if([scanner scanUpToString:@"\n" intoString:&chat]) {
-			length = [chat length];
+			color = [self _highlightColorForChat:chat];
 			
-			for(i = 0; i < highlightCount; i++) {
-				patternRange = [chat rangeOfString:[_highlightPatterns objectAtIndex:i] options:NSCaseInsensitiveSearch];
-				
-				if(patternRange.location != NSNotFound) {
-					if(patternRange.location + patternRange.length == length ||
-					   ![[NSCharacterSet alphanumericCharacterSet] characterIsMember:
-						 [chat characterAtIndex:patternRange.location + patternRange.length]]) {
-						[attributedString addAttribute:NSForegroundColorAttributeName
-												 value:[_highlightColors objectAtIndex:i]
-												 range:nickRange];
-						
-						break;
-					}
-				}
-			}
+			if(color != NULL)
+				[attributedString addAttribute:NSForegroundColorAttributeName value:color range:nickRange];
 		}
 	}
 }
@@ -591,18 +576,27 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 #pragma mark -
 
-- (BOOL)_isHighlightedChat:(NSString *)chat {
-	NSEnumerator		*enumerator;
-	NSString			*pattern;
+- (NSColor *)_highlightColorForChat:(NSString *)chat {
+	NSCharacterSet		*alphanumericCharacterSet;
+	NSRange				range;
+	NSUInteger			i, count, length, index;
 	
-	enumerator = [_highlightPatterns objectEnumerator];
+	alphanumericCharacterSet	= [NSCharacterSet alphanumericCharacterSet];
+	length						= [chat length];
+	count						= [_highlightPatterns count];
 	
-	while((pattern = [enumerator nextObject])) {
-		if([chat rangeOfString:pattern options:NSCaseInsensitiveSearch].location != NSNotFound)
-			return YES;
+	for(i = 0; i < count; i++) {
+		range = [chat rangeOfString:[_highlightPatterns objectAtIndex:i] options:NSCaseInsensitiveSearch];
+
+		if(range.location != NSNotFound) {
+			index = range.location + range.length;
+			
+			if(index == length || ![alphanumericCharacterSet characterIsMember:[chat characterAtIndex:index]])
+				return [_highlightColors objectAtIndex:i];
+		}
 	}
 	
-	return NO;
+	return NULL;
 }
 
 @end
@@ -1202,6 +1196,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 - (void)wiredChatSayOrMe:(WIP7Message *)message {
 	NSString		*name, *chat;
+	NSColor			*color;
 	WCUser			*user;
 	WIP7UInt32		cid, uid;
 	
@@ -1227,10 +1222,19 @@ typedef enum _WCChatFormat					WCChatFormat;
 	else
 		[self _printActionChat:chat by:user];
 	
-	if([self _isHighlightedChat:chat])
+	color = [self _highlightColorForChat:chat];
+	
+	if(color != NULL) {
+		[[self connection] postNotificationName:WCChatHighlightedChatDidAppearNotification
+										 object:[self connection]
+									   userInfo:[NSDictionary dictionaryWithObject:color forKey:WCChatHighlightColorKey]];
+
 		[[self connection] triggerEvent:WCEventsHighlightedChatReceived info1:user info2:chat];
-	else
+	} else {
+		[[self connection] postNotificationName:WCChatRegularChatDidAppearNotification object:[self connection]];
+		
 		[[self connection] triggerEvent:WCEventsChatReceived info1:user info2:chat];
+	}
 }
 
 
@@ -1788,6 +1792,8 @@ typedef enum _WCChatFormat					WCChatFormat;
 		output = [NSSWF:@"%@ %@", [_timestampEveryLineDateFormatter stringFromDate:[NSDate date]], output];
 	
 	[self _printString:output];
+	
+	[[self connection] postNotificationName:WCChatEventDidAppearNotification object:[self connection]];
 }
 
 

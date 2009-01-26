@@ -435,7 +435,7 @@
 			WCChatTabCompleteNicksString,
 		[NSNumber numberWithBool:NO],
 			WCChatTimestampChat,
-		[NSNumber numberWithInt:300],
+		[NSNumber numberWithInt:600],
 			WCChatTimestampChatInterval,
 
 		[NSArray array],
