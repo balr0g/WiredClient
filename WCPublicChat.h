@@ -36,6 +36,7 @@
 	PSMTabBarControl					*_tabBarControl;
 	
 	NSMutableDictionary					*_chatControllers;
+	NSMutableDictionary					*_chatActivity;
 }
 
 + (id)publicChat;

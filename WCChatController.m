@@ -167,8 +167,10 @@ typedef enum _WCChatFormat					WCChatFormat;
 - (void)_printString:(NSString *)string {
 	NSMutableAttributedString	*attributedString;
 	CGFloat						position;
+	BOOL						wasEnabled;
 	
-	position = [[_chatOutputScrollView verticalScroller] floatValue];
+	position	= [[_chatOutputScrollView verticalScroller] floatValue];
+	wasEnabled	= [[_chatOutputScrollView verticalScroller] isEnabled];
 	
 	if([[_chatOutputTextView textStorage] length] > 0)
 		[[[_chatOutputTextView textStorage] mutableString] appendString:@"\n"];
@@ -183,7 +185,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 	
 	[[_chatOutputTextView textStorage] appendAttributedString:attributedString];
 	
-	if(position == 1.0)
+	if(position == 1.0 || !wasEnabled)
 		[_chatOutputTextView performSelectorOnce:@selector(scrollToBottom) withObject:NULL afterDelay:0.05];
 }
 

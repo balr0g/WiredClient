@@ -44,6 +44,15 @@
 #import "WCServerInfo.h"
 #import "WCUser.h"
 
+enum _WCChatActivity {
+	WCChatNoActivity						= 0,
+	WCChatEventActivity,
+	WCChatRegularChatActivity,
+	WCChatHighlightedChatActivity,
+};
+typedef enum _WCChatActivity				WCChatActivity;
+
+
 @interface WCPublicChat(Private)
 
 - (void)_updateToolbarForConnection:(WCServerConnection *)connection;
@@ -149,6 +158,7 @@
 	[[chatController connection] terminate];
 	
 	[_chatControllers removeObjectForKey:identifier];
+	[_chatActivity removeObjectForKey:identifier];
 	
 	[_chatTabView removeTabViewItem:tabViewItem];
 	
@@ -179,7 +189,8 @@
 - (id)init {
 	self = [super initWithWindowNibName:@"PublicChatWindow"];
 	
-	_chatControllers = [[NSMutableDictionary alloc] init];
+	_chatControllers	= [[NSMutableDictionary alloc] init];
+	_chatActivity		= [[NSMutableDictionary alloc] init];
 	
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
@@ -222,6 +233,7 @@
 	[_tabBarControl release];
 	
 	[_chatControllers release];
+	[_chatActivity release];
 	
 	[super dealloc];
 }
@@ -423,14 +435,18 @@
 	NSTabViewItem			*tabViewItem;
 	NSColor					*color;
 	WCServerConnection		*connection;
+	WCChatActivity			activity;
 	
 	connection		= [notification object];
+	activity		= [[_chatActivity objectForKey:[connection identifier]] integerValue];
 	tabViewItem		= [_chatTabView tabViewItemWithIdentifier:[connection identifier]];
 	
-	if(tabViewItem != [_chatTabView selectedTabViewItem]) {
+	if(tabViewItem != [_chatTabView selectedTabViewItem] && activity < WCChatRegularChatActivity) {
 		color = [WIColorFromString([[connection theme] objectForKey:WCThemesChatTextColor]) colorWithAlphaComponent:0.5];
 
 		[_tabBarControl setIcon:[[NSImage imageNamed:@"GrayDrop"] tintedImageWithColor:color] forTabViewItem:tabViewItem];
+		
+		[_chatActivity setObject:[NSNumber numberWithInteger:WCChatRegularChatActivity] forKey:[connection identifier]];
 	}
 }
 
@@ -440,14 +456,18 @@
 	NSTabViewItem			*tabViewItem;
 	NSColor					*color;
 	WCServerConnection		*connection;
+	WCChatActivity			activity;
 	
 	connection		= [notification object];
+	activity		= [[_chatActivity objectForKey:[connection identifier]] integerValue];
 	tabViewItem		= [_chatTabView tabViewItemWithIdentifier:[connection identifier]];
 	
-	if(tabViewItem != [_chatTabView selectedTabViewItem]) {
+	if(tabViewItem != [_chatTabView selectedTabViewItem] && activity < WCChatHighlightedChatActivity) {
 		color = [[[notification userInfo] objectForKey:WCChatHighlightColorKey] colorWithAlphaComponent:0.5];
 
 		[_tabBarControl setIcon:[[NSImage imageNamed:@"GrayDrop"] tintedImageWithColor:color] forTabViewItem:tabViewItem];
+		
+		[_chatActivity setObject:[NSNumber numberWithInteger:WCChatHighlightedChatActivity] forKey:[connection identifier]];
 	}
 }
 
@@ -457,14 +477,18 @@
 	NSTabViewItem			*tabViewItem;
 	NSColor					*color;
 	WCServerConnection		*connection;
+	WCChatActivity			activity;
 	
 	connection		= [notification object];
+	activity		= [[_chatActivity objectForKey:[connection identifier]] integerValue];
 	tabViewItem		= [_chatTabView tabViewItemWithIdentifier:[connection identifier]];
 	
-	if(tabViewItem != [_chatTabView selectedTabViewItem]) {
+	if(tabViewItem != [_chatTabView selectedTabViewItem] && activity < WCChatEventActivity) {
 		color = [WIColorFromString([[connection theme] objectForKey:WCThemesChatEventsColor]) colorWithAlphaComponent:0.5];
 
 		[_tabBarControl setIcon:[[NSImage imageNamed:@"GrayDrop"] tintedImageWithColor:color] forTabViewItem:tabViewItem];
+		
+		[_chatActivity setObject:[NSNumber numberWithInteger:WCChatEventActivity] forKey:[connection identifier]];
 	}
 }
 
@@ -489,6 +513,7 @@
 	
 	[self _updateToolbarForConnection:[chatController connection]];
 
+	[_chatActivity removeObjectForKey:[[chatController connection] identifier]];
 	[_tabBarControl setIcon:NULL forTabViewItem:tabViewItem];
 }
 
