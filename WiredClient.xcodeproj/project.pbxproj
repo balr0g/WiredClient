@@ -1626,6 +1626,7 @@
 				8D1107290486CEB800E47090 /* Resources */,
 				8D11072C0486CEB800E47090 /* Sources */,
 				8D11072E0486CEB800E47090 /* Frameworks */,
+				773202500F3091D700A85BAE /* Run Script (Codesign) */,
 				A5DC7E2A057AA99B00736BBF /* Run Script (Version) */,
 			);
 			buildRules = (
@@ -1908,6 +1909,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		773202500F3091D700A85BAE /* Run Script (Codesign) */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 12;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script (Codesign)";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/bin/codesign -f -s \"Mac OS X Developer: Axel Andersson\" \"$BUILT_PRODUCTS_DIR/$WRAPPER_NAME\" || exit 0\n";
+			showEnvVarsInLog = 0;
+		};
 		77F05B7F0751E75A004F4E0E /* Run Script (Localize) */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
