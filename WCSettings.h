@@ -110,7 +110,7 @@
 #define WCEventsUserLeft								6
 #define WCEventsChatReceived							7
 #define WCEventsMessageReceived							8
-#define WCEventsNewsPosted								9
+//#define WCEventsNewsPosted								9 // replace with board events
 #define WCEventsBroadcastReceived						10
 #define WCEventsTransferStarted							11
 #define WCEventsTransferFinished						12

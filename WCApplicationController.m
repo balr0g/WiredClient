@@ -34,7 +34,6 @@
 #import "WCKeychain.h"
 #import "WCMessage.h"
 #import "WCMessages.h"
-#import "WCNews.h"
 #import "WCPreferences.h"
 #import "WCPublicChat.h"
 #import "WCPublicChatController.h"
@@ -59,7 +58,7 @@
 #define WCGrowlHighlightedChatReceived	@"Highlighted chat received"
 #define WCGrowlChatInvitationReceived	@"Private chat invitation received"
 #define WCGrowlMessageReceived			@"Message received"
-#define WCGrowlNewsPosted				@"News posted"
+//#define WCGrowlNewsPosted				@"News posted" // replace with board notifications
 #define WCGrowlBroadcastReceived		@"Broadcast received"
 #define WCGrowlTransferStarted			@"Transfer started"
 #define WCGrowlTransferFinished			@"Transfer finished"
@@ -661,7 +660,7 @@ static WCApplicationController		*sharedController;
 									   clickContext:[connection identifier]];
 			break;
 		
-		case WCEventsNewsPosted:
+/*		case WCEventsNewsPosted:
 			[GrowlApplicationBridge notifyWithTitle:NSLS(@"News posted", @"Growl event news posted title")
 										description:[NSSWF:@"%@: %@", info1, info2]
 								   notificationName:WCGrowlNewsPosted
@@ -669,7 +668,7 @@ static WCApplicationController		*sharedController;
 										   priority:0.0
 										   isSticky:NO
 									   clickContext:[connection identifier]];
-			break;
+			break;*/
 		
 		case WCEventsBroadcastReceived:
 			[GrowlApplicationBridge notifyWithTitle:NSLS(@"Broadcast received", @"Growl event broadcast received title")
@@ -751,7 +750,7 @@ static WCApplicationController		*sharedController;
 			WCGrowlHighlightedChatReceived,
 			WCGrowlChatInvitationReceived,
 			WCGrowlMessageReceived,
-			WCGrowlNewsPosted,
+//			WCGrowlNewsPosted,
 			WCGrowlBroadcastReceived,
 			WCGrowlTransferStarted,
 			WCGrowlTransferFinished,
@@ -761,7 +760,7 @@ static WCApplicationController		*sharedController;
 			WCGrowlServerDisconnected,
 			WCGrowlHighlightedChatReceived,
 			WCGrowlMessageReceived,
-			WCGrowlNewsPosted,
+//			WCGrowlNewsPosted,
 			WCGrowlBroadcastReceived,
 			WCGrowlTransferFinished,
 			NULL],

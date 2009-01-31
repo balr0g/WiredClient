@@ -137,7 +137,6 @@
 		77CFB9720E66D1F600F2D5F8 /* Search.xib in Resources */ = {isa = PBXBuildFile; fileRef = 77CFB9700E66D1F600F2D5F8 /* Search.xib */; };
 		77CFB9750E66D20200F2D5F8 /* Files.xib in Resources */ = {isa = PBXBuildFile; fileRef = 77CFB9730E66D20200F2D5F8 /* Files.xib */; };
 		77CFB9780E66D20900F2D5F8 /* FileInfo.xib in Resources */ = {isa = PBXBuildFile; fileRef = 77CFB9760E66D20900F2D5F8 /* FileInfo.xib */; };
-		77CFB97D0E66D25100F2D5F8 /* News.xib in Resources */ = {isa = PBXBuildFile; fileRef = 77CFB97B0E66D25100F2D5F8 /* News.xib */; };
 		77CFB9820E66D28100F2D5F8 /* Transfers.xib in Resources */ = {isa = PBXBuildFile; fileRef = 77CFB9800E66D28100F2D5F8 /* Transfers.xib */; };
 		77CFB9870E66D2C300F2D5F8 /* Messages.xib in Resources */ = {isa = PBXBuildFile; fileRef = 77CFB9850E66D2C300F2D5F8 /* Messages.xib */; };
 		77CFB98C0E66D35800F2D5F8 /* Accounts.xib in Resources */ = {isa = PBXBuildFile; fileRef = 77CFB98A0E66D35800F2D5F8 /* Accounts.xib */; };
@@ -149,7 +148,6 @@
 		77CFBCBC0E66EFD200F2D5F8 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77CFBCB30E66EFCF00F2D5F8 /* Sparkle.framework */; };
 		77CFBCBD0E66EFD500F2D5F8 /* Sparkle.framework in Copy Files (Frameworks) */ = {isa = PBXBuildFile; fileRef = 77CFBCB30E66EFCF00F2D5F8 /* Sparkle.framework */; };
 		77E2888E0A2D9E9B00035403 /* WCFilesTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 77E2888C0A2D9E9B00035403 /* WCFilesTableView.m */; };
-		77E49F820DE6FF8D00703987 /* WCNewsPost.m in Sources */ = {isa = PBXBuildFile; fileRef = 77E49F800DE6FF8D00703987 /* WCNewsPost.m */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		A509A96305F3B8F000E6AE2D /* WiredClient.icns in Resources */ = {isa = PBXBuildFile; fileRef = A509A96205F3B8F000E6AE2D /* WiredClient.icns */; };
@@ -284,7 +282,6 @@
 		A5DC7EE3057AAF2900736BBF /* WCSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = A5DC7ED3057AAF2900736BBF /* WCSearch.m */; };
 		A5DC7EE5057AAF2900736BBF /* WCConsole.m in Sources */ = {isa = PBXBuildFile; fileRef = A5DC7ED5057AAF2900736BBF /* WCConsole.m */; };
 		A5DC7EE8057AAF2900736BBF /* WCTransfers.m in Sources */ = {isa = PBXBuildFile; fileRef = A5DC7ED8057AAF2900736BBF /* WCTransfers.m */; };
-		A5DC7EEA057AAF2900736BBF /* WCNews.m in Sources */ = {isa = PBXBuildFile; fileRef = A5DC7EDA057AAF2900736BBF /* WCNews.m */; };
 		A5DC7EEB057AAF2900736BBF /* WCMessages.m in Sources */ = {isa = PBXBuildFile; fileRef = A5DC7EDB057AAF2900736BBF /* WCMessages.m */; };
 		A5DC7F09057AAF6C00736BBF /* WCUserInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A5DC7EF9057AAF6C00736BBF /* WCUserInfo.m */; };
 		A5DC7F0A057AAF6C00736BBF /* WCPrivateChat.m in Sources */ = {isa = PBXBuildFile; fileRef = A5DC7EFA057AAF6C00736BBF /* WCPrivateChat.m */; };
@@ -539,7 +536,6 @@
 		77CFB9710E66D1F600F2D5F8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Search.xib; sourceTree = "<group>"; };
 		77CFB9740E66D20200F2D5F8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Files.xib; sourceTree = "<group>"; };
 		77CFB9770E66D20900F2D5F8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/FileInfo.xib; sourceTree = "<group>"; };
-		77CFB97C0E66D25100F2D5F8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/News.xib; sourceTree = "<group>"; };
 		77CFB9810E66D28100F2D5F8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Transfers.xib; sourceTree = "<group>"; };
 		77CFB9860E66D2C300F2D5F8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Messages.xib; sourceTree = "<group>"; };
 		77CFB98B0E66D35800F2D5F8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Accounts.xib; sourceTree = "<group>"; };
@@ -550,8 +546,6 @@
 		77CFBCB30E66EFCF00F2D5F8 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 		77E2888C0A2D9E9B00035403 /* WCFilesTableView.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCFilesTableView.m; sourceTree = "<group>"; };
 		77E2888D0A2D9E9B00035403 /* WCFilesTableView.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCFilesTableView.h; sourceTree = "<group>"; };
-		77E49F800DE6FF8D00703987 /* WCNewsPost.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCNewsPost.m; sourceTree = "<group>"; };
-		77E49F810DE6FF8D00703987 /* WCNewsPost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCNewsPost.h; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A509A96205F3B8F000E6AE2D /* WiredClient.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = WiredClient.icns; sourceTree = "<group>"; };
 		A509A98305F4A6D300E6AE2D /* WiredTransfer.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = WiredTransfer.icns; sourceTree = "<group>"; };
@@ -723,8 +717,6 @@
 		A5DC7ED5057AAF2900736BBF /* WCConsole.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCConsole.m; sourceTree = "<group>"; };
 		A5DC7ED7057AAF2900736BBF /* WCMessages.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCMessages.h; sourceTree = "<group>"; };
 		A5DC7ED8057AAF2900736BBF /* WCTransfers.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCTransfers.m; sourceTree = "<group>"; };
-		A5DC7ED9057AAF2900736BBF /* WCNews.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCNews.h; sourceTree = "<group>"; };
-		A5DC7EDA057AAF2900736BBF /* WCNews.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCNews.m; sourceTree = "<group>"; };
 		A5DC7EDB057AAF2900736BBF /* WCMessages.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCMessages.m; sourceTree = "<group>"; };
 		A5DC7EDE057AAF2900736BBF /* WCTransfers.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCTransfers.h; sourceTree = "<group>"; };
 		A5DC7EF6057AAF6C00736BBF /* WCPrivateChat.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCPrivateChat.h; sourceTree = "<group>"; };
@@ -1132,26 +1124,6 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
-		A52B1C2A06C404290033D317 /* News */ = {
-			isa = PBXGroup;
-			children = (
-				A52B1C2B06C404440033D317 /* Resources */,
-				A5DC7EDA057AAF2900736BBF /* WCNews.m */,
-				A5DC7ED9057AAF2900736BBF /* WCNews.h */,
-				77E49F800DE6FF8D00703987 /* WCNewsPost.m */,
-				77E49F810DE6FF8D00703987 /* WCNewsPost.h */,
-			);
-			name = News;
-			sourceTree = "<group>";
-		};
-		A52B1C2B06C404440033D317 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				77CFB97B0E66D25100F2D5F8 /* News.xib */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-		};
 		A52B1C2C06C404580033D317 /* Files */ = {
 			isa = PBXGroup;
 			children = (
@@ -1449,7 +1421,6 @@
 				A57D22F707D0C444002C306E /* Connection */,
 				A52B1C1206C4033B0033D317 /* Chat */,
 				A52B1C2C06C404580033D317 /* Files */,
-				A52B1C2A06C404290033D317 /* News */,
 				A52B1C3106C4053B0033D317 /* Accounts */,
 				A5AAD1280D86EA8B0072FFA1 /* Administration */,
 				A52B1C2E06C404FC0033D317 /* Console */,
@@ -1773,7 +1744,6 @@
 				77CFB9750E66D20200F2D5F8 /* Files.xib in Resources */,
 				778C6A410E66B37F00DBF2E3 /* MainMenu.xib in Resources */,
 				77CFB9870E66D2C300F2D5F8 /* Messages.xib in Resources */,
-				77CFB97D0E66D25100F2D5F8 /* News.xib in Resources */,
 				778C6A670E66B44900DBF2E3 /* Preferences.xib in Resources */,
 				77CFB96F0E66D1EC00F2D5F8 /* Preview.xib in Resources */,
 				778C6A770E66CFB800DBF2E3 /* PrivateChat.xib in Resources */,
@@ -2036,8 +2006,6 @@
 				778E8616096D27B500258FE6 /* WCMessagesWindow.m in Sources */,
 				A5F802980D8E378300A84685 /* WCMonitorCell.m in Sources */,
 				A5AAD1480D86F15C0072FFA1 /* WCMonitorController.m in Sources */,
-				A5DC7EEA057AAF2900736BBF /* WCNews.m in Sources */,
-				77E49F820DE6FF8D00703987 /* WCNewsPost.m in Sources */,
 				A526D7D80D5F00B200F30E6F /* WCNotificationCenter.m in Sources */,
 				A5DC7ECA057AAEAD00736BBF /* WCPreferences.m in Sources */,
 				A5DC7F0A057AAF6C00736BBF /* WCPrivateChat.m in Sources */,
@@ -2196,14 +2164,6 @@
 				77CFB9770E66D20900F2D5F8 /* English */,
 			);
 			name = FileInfo.xib;
-			sourceTree = "<group>";
-		};
-		77CFB97B0E66D25100F2D5F8 /* News.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				77CFB97C0E66D25100F2D5F8 /* English */,
-			);
-			name = News.xib;
 			sourceTree = "<group>";
 		};
 		77CFB9800E66D28100F2D5F8 /* Transfers.xib */ = {

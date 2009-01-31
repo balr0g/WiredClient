@@ -34,7 +34,6 @@
 #import "WCFiles.h"
 #import "WCKeychain.h"
 #import "WCMessages.h"
-#import "WCNews.h"
 #import "WCPreferences.h"
 #import "WCPrivateChat.h"
 #import "WCPublicChat.h"
@@ -291,13 +290,6 @@ typedef enum _WCChatActivity				WCChatActivity;
 												 target:self
 												 action:@selector(serverInfo:)];
 	}
-	else if([identifier isEqualToString:@"News"]) {
-		return [NSToolbarItem toolbarItemWithIdentifier:identifier
-												   name:NSLS(@"News", @"News toolbar item")
-												content:[NSImage imageNamed:@"News"]
-												 target:self
-												 action:@selector(news:)];
-	}
 	else if([identifier isEqualToString:@"Boards"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
 												   name:NSLS(@"Boards", @"Boards toolbar item")
@@ -378,7 +370,6 @@ typedef enum _WCChatActivity				WCChatActivity;
 	return [NSArray arrayWithObjects:
 		@"Banner",
 		NSToolbarSpaceItemIdentifier,
-		@"News",
 		@"Boards",
 		@"Messages",
 		@"Files",
@@ -397,7 +388,6 @@ typedef enum _WCChatActivity				WCChatActivity;
 - (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar *)toolbar {
 	return [NSArray arrayWithObjects:
 		@"Banner",
-		@"News",
 		@"Boards",
 		@"Messages",
 		@"Files",
@@ -550,9 +540,8 @@ typedef enum _WCChatActivity				WCChatActivity;
 		return (connection != NULL && ![connection isConnected] && ![connection isManuallyReconnecting]);
 	else if(selector == @selector(files:) || selector == @selector(broadcast:))
 		return [connection isConnected];
-	else if(selector == @selector(serverInfo:) || selector == @selector(news:) ||
-			selector == @selector(accounts:) || selector == @selector(administration:) ||
-			selector == @selector(console:))
+	else if(selector == @selector(serverInfo:) || selector == @selector(accounts:) ||
+			selector == @selector(administration:) || selector == @selector(console:))
 		return (connection != NULL);
 	else if(selector == @selector(nextConnection:) || selector == @selector(previousConnection:))
 		return ([_chatControllers count] > 1);
@@ -577,9 +566,8 @@ typedef enum _WCChatActivity				WCChatActivity;
 		return (connection != NULL && ![connection isConnected] && ![connection isManuallyReconnecting]);
 	else if(selector == @selector(files:))
 		return (connection != NULL && [connection isConnected]);
-	else if(selector == @selector(serverInfo:) || selector == @selector(news:) ||
-			selector == @selector(accounts:) || selector == @selector(administration:) ||
-			selector == @selector(console:))
+	else if(selector == @selector(serverInfo:) || selector == @selector(accounts:) ||
+			selector == @selector(administration:) || selector == @selector(console:))
 		return (connection != NULL);
 	
 	return YES;
@@ -632,16 +620,6 @@ typedef enum _WCChatActivity				WCChatActivity;
 	connection = [[self selectedChatController] connection];
 	
 	[[connection serverInfo] showWindow:self];
-}
-
-
-
-- (IBAction)news:(id)sender {
-	WCServerConnection		*connection;
-	
-	connection = [[self selectedChatController] connection];
-	
-	[[connection news] showWindow:self];
 }
 
 

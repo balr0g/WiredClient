@@ -44,7 +44,6 @@
 - (IBAction)disconnect:(id)sender;
 - (IBAction)reconnect:(id)sender;
 - (IBAction)serverInfo:(id)sender;
-- (IBAction)news:(id)sender;
 - (IBAction)files:(id)sender;
 - (IBAction)accounts:(id)sender;
 - (IBAction)administration:(id)sender;

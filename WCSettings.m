@@ -472,9 +472,9 @@
 			[NSDictionary dictionaryWithObjectsAndKeys:
 				[NSNumber numberWithInt:WCEventsMessageReceived],			WCEventsEvent,
 				NULL],
-			[NSDictionary dictionaryWithObjectsAndKeys:
+/*			[NSDictionary dictionaryWithObjectsAndKeys:
 				[NSNumber numberWithInt:WCEventsNewsPosted],				WCEventsEvent,
-				NULL],
+				NULL],*/
 			[NSDictionary dictionaryWithObjectsAndKeys:
 				[NSNumber numberWithInt:WCEventsBroadcastReceived],			WCEventsEvent,
 				NULL],

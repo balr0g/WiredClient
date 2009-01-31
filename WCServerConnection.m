@@ -36,7 +36,6 @@
 #import "WCConsole.h"
 #import "WCLink.h"
 #import "WCMessages.h"
-#import "WCNews.h"
 #import "WCNotificationCenter.h"
 #import "WCPreferences.h"
 #import "WCPublicChat.h"
@@ -355,7 +354,6 @@
 		
 		_accounts		= [WCAccounts accountsWithConnection:self];
 		_administration	= [WCAdministration administrationWithConnection:self];
-		_news			= [WCNews newsWithConnection:self];
 		_serverInfo		= [WCServerInfo serverInfoWithConnection:self];
 
 		_chatController	= [[WCPublicChatController publicChatControllerWithConnection:self] retain];
@@ -526,12 +524,6 @@
 
 - (WCConsole *)console {
 	return _console;
-}
-
-
-
-- (WCNews *)news {
-	return _news;
 }
 
 
