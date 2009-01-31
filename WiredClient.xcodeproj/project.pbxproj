@@ -1978,6 +1978,7 @@
 				77CED3A50EC068F500123164 /* WCBoard.m in Sources */,
 				77CED3A60EC068F500123164 /* WCBoardPost.m in Sources */,
 				77CED3A70EC068F500123164 /* WCBoards.m in Sources */,
+				77BB1C9A0F28C20E00A402B7 /* WCBoardsWindow.m in Sources */,
 				77CED3A80EC068F500123164 /* WCBoardThread.m in Sources */,
 				A57512EC05E4E64D003B51D7 /* WCCache.m in Sources */,
 				A541A7800F115A6800D1EE94 /* WCChatController.m in Sources */,
@@ -2010,6 +2011,7 @@
 				A5DC7ECA057AAEAD00736BBF /* WCPreferences.m in Sources */,
 				A5DC7F0A057AAF6C00736BBF /* WCPrivateChat.m in Sources */,
 				A541A7830F115AC500D1EE94 /* WCPrivateChatController.m in Sources */,
+				A55C7C0D0F2E500A006E8568 /* WCPrivateChatInvitation.m in Sources */,
 				A5DC7EE1057AAF2900736BBF /* WCPublicChat.m in Sources */,
 				A541A7860F115ACB00D1EE94 /* WCPublicChatController.m in Sources */,
 				A5DC7EE3057AAF2900736BBF /* WCSearch.m in Sources */,
@@ -2034,8 +2036,6 @@
 				A5DC7FAB057AB0A600736BBF /* WCUser.m in Sources */,
 				A5DC7F84057AB05F00736BBF /* WCUserCell.m in Sources */,
 				A5DC7F09057AAF6C00736BBF /* WCUserInfo.m in Sources */,
-				77BB1C9A0F28C20E00A402B7 /* WCBoardsWindow.m in Sources */,
-				A55C7C0D0F2E500A006E8568 /* WCPrivateChatInvitation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
