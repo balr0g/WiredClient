@@ -1114,6 +1114,8 @@
 	}
 
 	[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
+	
+	[connection triggerEvent:WCEventsBoardPostReceived info1:[post nick] info2:[post text]];
 }
 
 
