@@ -33,14 +33,10 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		771223FC0F273FFE00984433 /* unreadpost.png in Resources */ = {isa = PBXBuildFile; fileRef = 771223FB0F273FFE00984433 /* unreadpost.png */; };
 		7712242D0F27421D00984433 /* UnreadThread.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 7712242B0F27421D00984433 /* UnreadThread.tiff */; };
 		7712242E0F27421D00984433 /* UnreadHeader.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 7712242C0F27421D00984433 /* UnreadHeader.tiff */; };
 		771E6D510755F506000F9195 /* WCConversation.m in Sources */ = {isa = PBXBuildFile; fileRef = 771E6D4F0755F506000F9195 /* WCConversation.m */; };
 		77256AD10F2DFF6800EA5816 /* GrayDrop.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 77256AD00F2DFF6800EA5816 /* GrayDrop.tiff */; };
-		772F6E9A0F1E3BED00CB8001 /* footer.html in Resources */ = {isa = PBXBuildFile; fileRef = 772F6E970F1E3BED00CB8001 /* footer.html */; };
-		772F6E9B0F1E3BED00CB8001 /* header.html in Resources */ = {isa = PBXBuildFile; fileRef = 772F6E980F1E3BED00CB8001 /* header.html */; };
-		772F6E9C0F1E3BED00CB8001 /* post.html in Resources */ = {isa = PBXBuildFile; fileRef = 772F6E990F1E3BED00CB8001 /* post.html */; };
 		7739D4A10E7FFC2C00D76C47 /* WiredFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 779AB7D70E5C480A0031B6CE /* WiredFoundation.framework */; };
 		7739D4A20E7FFC2C00D76C47 /* WiredAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 779AB7D90E5C480A0031B6CE /* WiredAppKit.framework */; };
 		7739D4A30E7FFC2C00D76C47 /* WiredNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 774897940CC8A63300E95A83 /* WiredNetworking.framework */; };
@@ -158,6 +154,10 @@
 		A515FD380D61ED4800922A2D /* WCInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = A515FD370D61ED4800922A2D /* WCInfoController.m */; };
 		A526D7D80D5F00B200F30E6F /* WCNotificationCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A526D7D70D5F00B200F30E6F /* WCNotificationCenter.m */; };
 		A52B301C05E6F0A300C651A4 /* WCServerInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A52B301A05E6F0A300C651A4 /* WCServerInfo.m */; };
+		A5326A8F0F37981C004180AA /* PostHeader.html in Resources */ = {isa = PBXBuildFile; fileRef = A5326A8C0F37981C004180AA /* PostHeader.html */; };
+		A5326A900F37981C004180AA /* PostFooter.html in Resources */ = {isa = PBXBuildFile; fileRef = A5326A8D0F37981C004180AA /* PostFooter.html */; };
+		A5326A910F37981C004180AA /* Post.html in Resources */ = {isa = PBXBuildFile; fileRef = A5326A8E0F37981C004180AA /* Post.html */; };
+		A5326A930F379826004180AA /* UnreadPost.png in Resources */ = {isa = PBXBuildFile; fileRef = A5326A920F379826004180AA /* UnreadPost.png */; };
 		A541A7800F115A6800D1EE94 /* WCChatController.m in Sources */ = {isa = PBXBuildFile; fileRef = A541A77F0F115A6800D1EE94 /* WCChatController.m */; };
 		A541A7830F115AC500D1EE94 /* WCPrivateChatController.m in Sources */ = {isa = PBXBuildFile; fileRef = A541A7820F115AC500D1EE94 /* WCPrivateChatController.m */; };
 		A541A7860F115ACB00D1EE94 /* WCPublicChatController.m in Sources */ = {isa = PBXBuildFile; fileRef = A541A7850F115ACB00D1EE94 /* WCPublicChatController.m */; };
@@ -427,15 +427,11 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32CA4F630368D1EE00C91783 /* prefix.pch */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = prefix.pch; sourceTree = "<group>"; };
-		771223FB0F273FFE00984433 /* unreadpost.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = unreadpost.png; sourceTree = "<group>"; };
 		7712242B0F27421D00984433 /* UnreadThread.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = UnreadThread.tiff; sourceTree = "<group>"; };
 		7712242C0F27421D00984433 /* UnreadHeader.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = UnreadHeader.tiff; sourceTree = "<group>"; };
 		771E6D4E0755F506000F9195 /* WCConversation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCConversation.h; sourceTree = "<group>"; };
 		771E6D4F0755F506000F9195 /* WCConversation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCConversation.m; sourceTree = "<group>"; };
 		77256AD00F2DFF6800EA5816 /* GrayDrop.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = GrayDrop.tiff; sourceTree = "<group>"; };
-		772F6E970F1E3BED00CB8001 /* footer.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = footer.html; sourceTree = "<group>"; };
-		772F6E980F1E3BED00CB8001 /* header.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = header.html; sourceTree = "<group>"; };
-		772F6E990F1E3BED00CB8001 /* post.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = post.html; sourceTree = "<group>"; };
 		777D36C40987E125005B5EC1 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = /System/Library/Frameworks/WebKit.framework; sourceTree = "<absolute>"; };
 		777D3F6509890273005B5EC1 /* WCChatWindow.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCChatWindow.m; sourceTree = "<group>"; };
 		777D3F6709890278005B5EC1 /* WCChatWindow.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCChatWindow.h; sourceTree = "<group>"; };
@@ -559,6 +555,10 @@
 		A526D7D70D5F00B200F30E6F /* WCNotificationCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCNotificationCenter.m; sourceTree = "<group>"; };
 		A52B301905E6F0A300C651A4 /* WCServerInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCServerInfo.h; sourceTree = "<group>"; };
 		A52B301A05E6F0A300C651A4 /* WCServerInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCServerInfo.m; sourceTree = "<group>"; };
+		A5326A8C0F37981C004180AA /* PostHeader.html */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.html; path = PostHeader.html; sourceTree = "<group>"; };
+		A5326A8D0F37981C004180AA /* PostFooter.html */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.html; path = PostFooter.html; sourceTree = "<group>"; };
+		A5326A8E0F37981C004180AA /* Post.html */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.html; path = Post.html; sourceTree = "<group>"; };
+		A5326A920F379826004180AA /* UnreadPost.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = UnreadPost.png; sourceTree = "<group>"; };
 		A541A77E0F115A6800D1EE94 /* WCChatController.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCChatController.h; sourceTree = "<group>"; };
 		A541A77F0F115A6800D1EE94 /* WCChatController.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCChatController.m; sourceTree = "<group>"; };
 		A541A7810F115AC500D1EE94 /* WCPrivateChatController.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCPrivateChatController.h; sourceTree = "<group>"; };
@@ -897,17 +897,6 @@
 			name = Views;
 			sourceTree = "<group>";
 		};
-		772F6E960F1E3BEC00CB8001 /* BoardsTemplates */ = {
-			isa = PBXGroup;
-			children = (
-				772F6E970F1E3BED00CB8001 /* footer.html */,
-				772F6E980F1E3BED00CB8001 /* header.html */,
-				772F6E990F1E3BED00CB8001 /* post.html */,
-				771223FB0F273FFE00984433 /* unreadpost.png */,
-			);
-			path = BoardsTemplates;
-			sourceTree = "<group>";
-		};
 		779951B30A122D1F00600320 /* Smileys */ = {
 			isa = PBXGroup;
 			children = (
@@ -1049,8 +1038,11 @@
 		77CED3BA0EC0692100123164 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				772F6E960F1E3BEC00CB8001 /* BoardsTemplates */,
 				77CED3B70EC0691E00123164 /* Boards.xib */,
+				A5326A8C0F37981C004180AA /* PostHeader.html */,
+				A5326A8D0F37981C004180AA /* PostFooter.html */,
+				A5326A8E0F37981C004180AA /* Post.html */,
+				A5326A920F379826004180AA /* UnreadPost.png */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1758,13 +1750,13 @@
 				77CFB95C0E66D1BB00F2D5F8 /* UserInfo.xib in Resources */,
 				779951580A122B8A00600320 /* Smileys.plist in Resources */,
 				A565B5000D5DA94000AF91BA /* wired.xml in Resources */,
+				A5326A8F0F37981C004180AA /* PostHeader.html in Resources */,
+				A5326A900F37981C004180AA /* PostFooter.html in Resources */,
+				A5326A910F37981C004180AA /* Post.html in Resources */,
+				A5326A930F379826004180AA /* UnreadPost.png in Resources */,
 				A509A96305F3B8F000E6AE2D /* WiredClient.icns in Resources */,
 				A509A98405F4A6D300E6AE2D /* WiredTransfer.icns in Resources */,
 				A509A99005F4EB9D00E6AE2D /* WiredScheme.icns in Resources */,
-				772F6E9A0F1E3BED00CB8001 /* footer.html in Resources */,
-				772F6E9B0F1E3BED00CB8001 /* header.html in Resources */,
-				772F6E9C0F1E3BED00CB8001 /* post.html in Resources */,
-				771223FC0F273FFE00984433 /* unreadpost.png in Resources */,
 				A54AF98C0F13AED000AFD50E /* AliasBadge.icns in Resources */,
 				A54AF98D0F13AED000AFD50E /* Folder.icns in Resources */,
 				A54AF98E0F13AED000AFD50E /* Executable.icns in Resources */,

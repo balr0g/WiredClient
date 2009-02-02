@@ -89,7 +89,7 @@
 		   (startingThread == NULL || startingThread == thread))
 			*passed = YES;
 		
-		if(*passed && thread != startingThread/* && [thread isUnread]*/)
+		if(*passed && thread != startingThread && [thread isUnread])
 			return thread;
 	}
 	

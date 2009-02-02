@@ -355,7 +355,7 @@
 	[string replaceOccurrencesOfString:@"<? subject ?>" withString:[post subject]];
 	
 	if([post isUnread])
-		[string replaceOccurrencesOfString:@"<? unreadimage ?>" withString:@"<img class=\"postunread\" src=\"unreadpost.png\" />"];
+		[string replaceOccurrencesOfString:@"<? unreadimage ?>" withString:@"<img class=\"postunread\" src=\"UnreadPost.png\" />"];
 	else
 		[string replaceOccurrencesOfString:@"<? unreadimage ?>" withString:@""];
 	
@@ -543,13 +543,13 @@
 	_receivedBoards		= [[NSMutableSet alloc] init];
 	_readPosts			= [[NSMutableSet alloc] initWithArray:[WCSettings objectForKey:WCReadBoardPosts]];
 	
-	_headerTemplate		= [[NSMutableString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"header" ofType:@"html"]
+	_headerTemplate		= [[NSMutableString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"PostHeader" ofType:@"html"]
 															  encoding:NSUTF8StringEncoding
 																 error:NULL];
-	_footerTemplate		= [[NSMutableString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"footer" ofType:@"html"]
+	_footerTemplate		= [[NSMutableString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"PostFooter" ofType:@"html"]
 															  encoding:NSUTF8StringEncoding
 																 error:NULL];
-	_postTemplate		= [[NSMutableString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"post" ofType:@"html"]
+	_postTemplate		= [[NSMutableString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"Post" ofType:@"html"]
 															encoding:NSUTF8StringEncoding
 															   error:NULL];
 	
