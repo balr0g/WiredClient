@@ -539,7 +539,7 @@ static WCApplicationController		*sharedController;
 		sound = [event objectForKey:WCEventsSound];
 		
 		if(sound)
-			[NSSound playSoundNamed:sound];
+			[NSSound playSoundNamed:sound atVolume:[WCSettings floatForKey:WCEventsVolume]];
 	}
 	
 	if([event boolForKey:WCEventsBounceInDock])
