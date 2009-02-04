@@ -42,9 +42,10 @@
 
 @implementation WCLink(Private)
 
-- (BOOL)_messageLoopWithError:(WIError **)error {
+- (BOOL)_messageLoopWithError:(WIError **)outError {
 	NSAutoreleasePool		*pool;
 	WIP7Message				*message;
+	WIError					*error;
 	BOOL					state;
 	NSUInteger				i = 0;
 	NSInteger				code;
@@ -68,18 +69,18 @@
 			break;
 		
 		[_lock lock];
-		message = [_p7Socket readMessageWithTimeout:1.0 error:error];
+		message = [_p7Socket readMessageWithTimeout:1.0 error:&error];
 		[_lock unlock];
 		
 		if(!message) {
-			code = [[[*error userInfo] objectForKey:WILibWiredErrorKey] code];
+			code = [[[error userInfo] objectForKey:WILibWiredErrorKey] code];
 			
 			if(code == ETIMEDOUT)
 				continue;
 			else if(code == WI_ERROR_SOCKET_EOF)
-				*error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientServerDisconnected];
-			
-			[*error retain];
+				*outError = [[WCError alloc] initWithDomain:WCWiredClientErrorDomain code:WCWiredClientServerDisconnected];
+			else
+				*outError = [error retain];
 			
 			break;
 		}
@@ -89,8 +90,6 @@
 	}
 	
 	[pool release];
-	
-	[*error autorelease];
 	
 	return NO;
 }
