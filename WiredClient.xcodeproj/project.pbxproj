@@ -2333,8 +2333,7 @@
 				GCC_PREFIX_HEADER = prefix.pch;
 				HEADER_SEARCH_PATHS = "\"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/WiredNetworking.framework/Headers\"";
 				INFOPLIST_FILE = Info.plist;
-				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-DTEST";
-				INFOPLIST_PREPROCESS = YES;
+				PRODUCT_IDENTIFIER = com.zanka.WiredClientDebugP7;
 				PRODUCT_NAME = "Wired Client";
 				WRAPPER_EXTENSION = app;
 			};
@@ -2368,7 +2367,6 @@
 				"MACOSX_DEPLOYMENT_TARGET[arch=ppc64]" = 10.5;
 				"MACOSX_DEPLOYMENT_TARGET[arch=ppc]" = 10.4;
 				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
-				PRODUCT_IDENTIFIER = com.zanka.WiredClientDebugP7;
 				"SDKROOT[arch=i386]" = macosx10.4;
 				"SDKROOT[arch=ppc64]" = macosx10.5;
 				"SDKROOT[arch=ppc]" = macosx10.4;
@@ -2387,8 +2385,7 @@
 				GCC_PREFIX_HEADER = prefix.pch;
 				HEADER_SEARCH_PATHS = "\"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/WiredNetworking.framework/Headers\"";
 				INFOPLIST_FILE = Info.plist;
-				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-DDEBUG";
-				INFOPLIST_PREPROCESS = YES;
+				PRODUCT_IDENTIFIER = com.zanka.WiredClientDebugP7;
 				PRODUCT_NAME = "Wired Client";
 				WRAPPER_EXTENSION = app;
 			};
@@ -2405,8 +2402,7 @@
 				GCC_PREFIX_HEADER = prefix.pch;
 				HEADER_SEARCH_PATHS = "\"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/WiredNetworking.framework/Headers\"";
 				INFOPLIST_FILE = Info.plist;
-				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-DRELEASE";
-				INFOPLIST_PREPROCESS = YES;
+				PRODUCT_IDENTIFIER = com.zanka.WiredClient;
 				PRODUCT_NAME = "Wired Client";
 				WRAPPER_EXTENSION = app;
 			};
@@ -2453,7 +2449,6 @@
 				"MACOSX_DEPLOYMENT_TARGET[arch=ppc64]" = 10.5;
 				"MACOSX_DEPLOYMENT_TARGET[arch=ppc]" = 10.4;
 				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
-				PRODUCT_IDENTIFIER = com.zanka.WiredClientDebugP7;
 				"SDKROOT[arch=i386]" = macosx10.4;
 				"SDKROOT[arch=ppc64]" = macosx10.5;
 				"SDKROOT[arch=ppc]" = macosx10.4;
@@ -2475,7 +2470,6 @@
 				"MACOSX_DEPLOYMENT_TARGET[arch=ppc64]" = 10.5;
 				"MACOSX_DEPLOYMENT_TARGET[arch=ppc]" = 10.4;
 				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
-				PRODUCT_IDENTIFIER = com.zanka.WiredClient;
 				"SDKROOT[arch=i386]" = macosx10.4;
 				"SDKROOT[arch=ppc64]" = macosx10.5;
 				"SDKROOT[arch=ppc]" = macosx10.4;
