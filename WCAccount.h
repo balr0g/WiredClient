@@ -44,6 +44,7 @@
 #define WCAccountFieldAccounts					5
 #define WCAccountFieldAdministration			6
 #define WCAccountFieldLimits					7
+#define WCAccountFieldReadOnly				@"WCAccountFieldReadOnly"
 
 
 @interface WCAccount : WIObject {
@@ -53,6 +54,7 @@
 + (NSArray *)fields;
 
 + (id)account;
++ (id)accountWithName:(NSString *)name;
 + (id)accountWithMessage:(WIP7Message *)message;
 
 - (WIP7Message *)createAccountMessage;
@@ -125,6 +127,8 @@
 
 - (void)setValue:(id)value forKey:(NSString *)key;
 - (id)valueForKey:(NSString *)key;
+- (void)setValues:(NSDictionary *)values;
+- (NSDictionary *)values;
 
 - (NSComparisonResult)compareName:(WCAccount *)account;
 - (NSComparisonResult)compareType:(WCAccount *)account;

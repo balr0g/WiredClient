@@ -29,7 +29,6 @@
 #import "WCAccount.h"
 #import "WCServerConnection.h"
 
-
 @interface WCAccount(Private)
 
 - (id)_initWithMessage:(WIP7Message *)message;
@@ -46,9 +45,7 @@
 	NSDictionary	*field;
 	id				value;
 	
-	self = [super init];
-	
-	_values = [[NSMutableDictionary alloc] init];
+	self = [self init];
 	
 	enumerator = [[[self class] fields] objectEnumerator];
 	
@@ -93,26 +90,28 @@
 	enumerator = [[[self class] fields] objectEnumerator];
 	
 	while((field = [enumerator nextObject])) {
-		value = [_values objectForKey:[field objectForKey:WCAccountFieldKey]];
-		
-		if(value) {
-			switch([[field objectForKey:WCAccountFieldType] intValue]) {
-				case WCAccountFieldString:
-					[message setString:value forName:[field objectForKey:WCAccountFieldName]];
-					break;
-				
-				case WCAccountFieldDate:
-					[message setDate:value forName:[field objectForKey:WCAccountFieldName]];
-					break;
+		if(![[field objectForKey:WCAccountFieldReadOnly] boolValue]) {
+			value = [self valueForKey:[field objectForKey:WCAccountFieldKey]];
+			
+			if(value) {
+				switch([[field objectForKey:WCAccountFieldType] intValue]) {
+					case WCAccountFieldString:
+						[message setString:value forName:[field objectForKey:WCAccountFieldName]];
+						break;
+					
+					case WCAccountFieldDate:
+						[message setDate:value forName:[field objectForKey:WCAccountFieldName]];
+						break;
 
-				case WCAccountFieldNumber:
-				case WCAccountFieldBoolean:
-					[message setNumber:value forName:[field objectForKey:WCAccountFieldName]];
-					break;
+					case WCAccountFieldNumber:
+					case WCAccountFieldBoolean:
+						[message setNumber:value forName:[field objectForKey:WCAccountFieldName]];
+						break;
 
-				case WCAccountFieldList:
-					[message setList:value forName:[field objectForKey:WCAccountFieldName]];
-					break;
+					case WCAccountFieldList:
+						[message setList:value forName:[field objectForKey:WCAccountFieldName]];
+						break;
+				}
 			}
 		}
 	}
@@ -142,21 +141,25 @@
 				@"creationDate",										WCAccountFieldKey,
 				@"wired.account.creation_time",							WCAccountFieldName,
 				[NSNumber numberWithInt:WCAccountFieldDate],			WCAccountFieldType,
+				[NSNumber numberWithBool:YES],							WCAccountFieldReadOnly,
 				NULL],
 			[NSDictionary dictionaryWithObjectsAndKeys:
 				@"modificationDate",									WCAccountFieldKey,
 				@"wired.account.modification_time",						WCAccountFieldName,
 				[NSNumber numberWithInt:WCAccountFieldDate],			WCAccountFieldType,
+				[NSNumber numberWithBool:YES],							WCAccountFieldReadOnly,
 				NULL],
 			[NSDictionary dictionaryWithObjectsAndKeys:
 				@"loginDate",											WCAccountFieldKey,
 				@"wired.account.login_time",							WCAccountFieldName,
 				[NSNumber numberWithInt:WCAccountFieldDate],			WCAccountFieldType,
+				[NSNumber numberWithBool:YES],							WCAccountFieldReadOnly,
 				NULL],
 			[NSDictionary dictionaryWithObjectsAndKeys:
 				@"editedBy",											WCAccountFieldKey,
 				@"wired.account.edited_by",								WCAccountFieldName,
 				[NSNumber numberWithInt:WCAccountFieldString],			WCAccountFieldType,
+				[NSNumber numberWithBool:YES],							WCAccountFieldReadOnly,
 				NULL],
 			[NSDictionary dictionaryWithObjectsAndKeys:
 				@"group",												WCAccountFieldKey,
@@ -607,8 +610,29 @@
 
 
 
++ (id)accountWithName:(NSString *)name {
+	WCAccount		*account;
+	
+	account = [[self alloc] init];
+	[account setValue:name forKey:@"name"];
+	
+	return [account autorelease];
+}
+
+
+
 + (id)accountWithMessage:(WIP7Message *)message {
 	return [[[self alloc] _initWithMessage:message] autorelease];
+}
+
+
+
+- (id)init {
+	self = [super init];
+	
+	_values = [[NSMutableDictionary alloc] init];
+	
+	return self;
 }
 
 
@@ -653,385 +677,385 @@
 #pragma mark -
 
 - (NSString *)name {
-	return [_values objectForKey:NSStringFromSelector(_cmd)];
+	return [self valueForKey:NSStringFromSelector(_cmd)];
 }
 
 
 
 - (NSDate *)modificationDate {
-	return [_values objectForKey:NSStringFromSelector(_cmd)];
+	return [self valueForKey:NSStringFromSelector(_cmd)];
 }
 
 
 
 - (NSDate *)creationDate {
-	return [_values objectForKey:NSStringFromSelector(_cmd)];
+	return [self valueForKey:NSStringFromSelector(_cmd)];
 }
 
 
 
 - (NSString *)editedBy {
-	return [_values objectForKey:NSStringFromSelector(_cmd)];
+	return [self valueForKey:NSStringFromSelector(_cmd)];
 }
 
 
 
 - (NSString *)files {
-	return [_values objectForKey:NSStringFromSelector(_cmd)];
+	return [self valueForKey:NSStringFromSelector(_cmd)];
 }
 
 
 
 - (BOOL)userCannotSetNick {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)userGetInfo {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)userKickUsers {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)userBanUsers {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)userCannotBeDisconnected {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)userGetUsers {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)chatSetTopic {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)chatCreateChats {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)messageSendMessages {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)messageBroadcast {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)boardReadBoards {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)boardAddBoards {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)boardMoveBoards {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)boardRenameBoards {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)boardDeleteBoards {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)boardSetPermissions {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)boardAddThreads {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)boardMoveThreads {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)boardDeleteThreads {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)boardAddPosts {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)boardEditOwnPosts {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)boardEditAllPosts {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)boardDeletePosts {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)fileListFiles {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)fileGetInfo {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)fileCreateDirectories {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)fileCreateLinks {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)fileMoveFiles {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)fileRenameFiles {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)fileSetType {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)fileSetComment {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)fileSetPermissions {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)fileSetExecutable {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)fileDeleteFiles {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)fileAccessAllDropboxes {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (NSUInteger)fileRecursiveListDepthLimit {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] unsignedIntegerValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] unsignedIntegerValue];
 }
 
 
 
 - (BOOL)transferDownloadFiles {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)transferUploadFiles {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)transferUploadDirectories {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)transferUploadAnywhere {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (NSUInteger)transferDownloadLimit {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] unsignedIntegerValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] unsignedIntegerValue];
 }
 
 
 
 - (NSUInteger)transferUploadLimit {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] unsignedIntegerValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] unsignedIntegerValue];
 }
 
 
 
 - (NSUInteger)transferDownloadSpeedLimit {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] unsignedIntegerValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] unsignedIntegerValue];
 }
 
 
 
 - (NSUInteger)transferUploadSpeedLimit {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] unsignedIntegerValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] unsignedIntegerValue];
 }
 
 
 
 - (BOOL)accountChangePassword {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)accountListAccounts {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)accountReadAccounts {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)accountCreateAccounts {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)accountEditAccounts {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)accountDeleteAccounts {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)accountRaiseAccountPrivileges {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)logViewLog {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)settingsGetSettings {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)settingsSetSettings {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)trackerListServers {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)banlistGetBans {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)banlistAddBans {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)banlistDeleteBans {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)trackerRegisterServers {
-	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+	return [[self valueForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
@@ -1049,6 +1073,19 @@
 
 - (id)valueForKey:(NSString *)key {
 	return [_values objectForKey:key];
+}
+
+
+
+- (void)setValues:(NSDictionary *)values {
+	[_values release];
+	_values = [values mutableCopy];
+}
+
+
+
+- (NSDictionary *)values {
+	return _values;
 }
 
 
@@ -1103,31 +1140,31 @@
 #pragma mark -
 
 - (NSDate *)loginDate {
-	return [_values objectForKey:NSStringFromSelector(_cmd)];
+	return [self valueForKey:NSStringFromSelector(_cmd)];
 }
 
 
 
 - (NSString *)fullName {
-	return [_values objectForKey:NSStringFromSelector(_cmd)];
+	return [self valueForKey:NSStringFromSelector(_cmd)];
 }
 
 
 
 - (NSString *)group {
-	return [_values objectForKey:NSStringFromSelector(_cmd)];
+	return [self valueForKey:NSStringFromSelector(_cmd)];
 }
 
 
 
 - (NSArray *)groups {
-	return [_values objectForKey:NSStringFromSelector(_cmd)];
+	return [self valueForKey:NSStringFromSelector(_cmd)];
 }
 
 
 
 - (NSString *)password {
-	return [_values objectForKey:NSStringFromSelector(_cmd)];
+	return [self valueForKey:NSStringFromSelector(_cmd)];
 }
 
 @end

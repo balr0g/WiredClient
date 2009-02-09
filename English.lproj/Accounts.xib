@@ -2558,7 +2558,7 @@
 																	</object>
 																</object>
 																<double key="NSRowHeight">1.500000e+01</double>
-																<int key="NSTvFlags">1916796928</int>
+																<int key="NSTvFlags">2051014656</int>
 																<int key="NSGridStyleMask">3</int>
 																<int key="NSColumnAutoresizingStyle">4</int>
 																<int key="NSDraggingSourceMaskForLocal">15</int>
@@ -3897,6 +3897,22 @@
 						<reference key="destination" ref="426929960"/>
 					</object>
 					<int key="connectionID">905</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_allSettingsMenuItem</string>
+						<reference key="source" ref="928066612"/>
+						<reference key="destination" ref="256082872"/>
+					</object>
+					<int key="connectionID">906</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_settingsDefinedAtThisLevelMenuItem</string>
+						<reference key="source" ref="928066612"/>
+						<reference key="destination" ref="44060726"/>
+					</object>
+					<int key="connectionID">907</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -6479,8 +6495,8 @@
 					<reference ref="5"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
-					<string>{{142, 47}, {765, 561}}</string>
-					<string>{{142, 47}, {765, 561}}</string>
+					<string>{{83, 115}, {765, 561}}</string>
+					<string>{{83, 115}, {765, 561}}</string>
 					<reference ref="5"/>
 					<integer value="0"/>
 					<reference ref="5"/>
@@ -6852,7 +6868,7 @@
 					<reference ref="5"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{865, 550}, {221, 37}}</string>
+					<string>{{368, 584}, {221, 37}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
@@ -6908,7 +6924,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">905</int>
+			<int key="maxID">907</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -6972,6 +6988,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>add:</string>
 							<string>changePassword:</string>
+							<string>clearSetting:</string>
 							<string>delete:</string>
 							<string>group:</string>
 							<string>reload:</string>
@@ -7003,6 +7020,7 @@
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
+							<string>id</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="outlets">
@@ -7018,6 +7036,7 @@
 							<string>_accountReadAccountsButton</string>
 							<string>_accountsTabView</string>
 							<string>_accountsTableView</string>
+							<string>_allSettingsMenuItem</string>
 							<string>_banlistAddBansButton</string>
 							<string>_banlistDeleteBansButton</string>
 							<string>_banlistGetBansButton</string>
@@ -7076,6 +7095,7 @@
 							<string>_selectAllTrackerPrivilegesButton</string>
 							<string>_selectAllUsersPrivilegesButton</string>
 							<string>_settingTableColumn</string>
+							<string>_settingsDefinedAtThisLevelMenuItem</string>
 							<string>_settingsGetSettingsButton</string>
 							<string>_settingsOutlineView</string>
 							<string>_settingsSetSettingsButton</string>
@@ -7112,6 +7132,7 @@
 							<string>NSButton</string>
 							<string>NSTabView</string>
 							<string>WITableView</string>
+							<string>NSMenuItem</string>
 							<string>NSButton</string>
 							<string>NSButton</string>
 							<string>NSButton</string>
@@ -7170,6 +7191,7 @@
 							<string>NSButton</string>
 							<string>NSButton</string>
 							<string>NSTableColumn</string>
+							<string>NSMenuItem</string>
 							<string>NSButton</string>
 							<string>WIOutlineView</string>
 							<string>NSButton</string>

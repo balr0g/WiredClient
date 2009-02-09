@@ -120,6 +120,8 @@
 	IBOutlet NSButton					*_trackerRegisterServersButton;
 	
 	IBOutlet NSPopUpButton				*_showPopUpButton;
+	IBOutlet NSMenuItem					*_allSettingsMenuItem;
+	IBOutlet NSMenuItem					*_settingsDefinedAtThisLevelMenuItem;
 	
 	IBOutlet WIOutlineView				*_settingsOutlineView;
 	IBOutlet NSTableColumn				*_settingTableColumn;
@@ -129,7 +131,7 @@
 	IBOutlet NSSecureTextField			*_changePasswordTextField;
 	
 	NSArray								*_allSettings;
-	NSArray								*_shownSettings;
+	NSMutableArray						*_shownSettings;
 	
 	NSArray								*_groupControls;
 	NSMutableArray						*_allControls;
@@ -138,7 +140,9 @@
 	NSImage								*_userImage, *_groupImage;
 	NSUInteger							_users, _groups;
 	
-	WCAccount							*_editedAccount;
+	WCAccount							*_account;
+	WCAccount							*_underlyingAccount;
+	
 	BOOL								_editingAccount;
 	BOOL								_creatingAccount;
 	BOOL								_accountTouched;
@@ -173,8 +177,8 @@
 - (IBAction)selectAllUsersPrivileges:(id)sender;
 - (IBAction)selectAllAccountsPrivileges:(id)sender;
 - (IBAction)selectAllAdministrationPrivileges:(id)sender;
-
 - (IBAction)show:(id)sender;
+- (IBAction)clearSetting:(id)sender;
 
 @end
 
