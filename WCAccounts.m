@@ -31,9 +31,16 @@
 #import "WCAccounts.h"
 #import "WCServerConnection.h"
 
+#define	WCAccountsFieldCell					@"WCAccountsFieldCell"
+#define	WCAccountsFieldSettings				@"WCAccountsFieldSettings"
+
 @interface WCAccounts(Private)
 
 - (id)_initAccountsWithConnection:(WCServerConnection *)connection;
+
+- (NSCell *)_booleanSettingCell;
+- (NSCell *)_numberSettingCell;
+- (NSDictionary *)_settingForRow:(NSInteger)row;
 
 - (BOOL)_verifyUnsavedAndSelectRow:(NSInteger)row;
 - (void)_saveAndClear:(BOOL)clear;
@@ -56,19 +63,160 @@
 @implementation WCAccounts(Private)
 
 - (id)_initAccountsWithConnection:(WCServerConnection *)connection {
+	NSEnumerator			*enumerator;
+	NSMutableDictionary		*setting;
+	NSDictionary			*field;
+	NSMutableArray			*basicsSettings, *filesSettings, *boardsSettings, *trackerSettings, *usersSettings, *accountsSettings, *administrationSettings, *limitsSettings;
+	NSNumber				*section;
+	
 	self = [super initWithWindowNibName:@"Accounts"
 								   name:NSLS(@"Accounts", @"Accounts window title")
 							 connection:connection
 							  singleton:YES];
+	
+	_allAccounts			= [[NSMutableArray alloc] init];
+	_shownAccounts			= [[NSMutableArray alloc] init];
+	_userImage				= [[NSImage imageNamed:@"User"] retain];
+	_groupImage				= [[NSImage imageNamed:@"Group"] retain];
 
-	_allAccounts	= [[NSMutableArray alloc] init];
-	_shownAccounts	= [[NSMutableArray alloc] init];
-	_userImage		= [[NSImage imageNamed:@"User"] retain];
-	_groupImage		= [[NSImage imageNamed:@"Group"] retain];
+	basicsSettings			= [NSMutableArray array];
+	filesSettings			= [NSMutableArray array];
+	boardsSettings			= [NSMutableArray array];
+	trackerSettings			= [NSMutableArray array];
+	usersSettings			= [NSMutableArray array];
+	accountsSettings		= [NSMutableArray array];
+	administrationSettings	= [NSMutableArray array];
+	limitsSettings			= [NSMutableArray array];
+	enumerator				= [[WCAccount fields] objectEnumerator];
+	
+	while((field = [enumerator nextObject])) {
+		setting = [[field mutableCopy] autorelease];
+		
+		switch([[setting objectForKey:WCAccountFieldType] intValue]) {
+			case WCAccountFieldBoolean:
+				[setting setObject:[self _booleanSettingCell] forKey:WCAccountsFieldCell];
+				break;
 
+			case WCAccountFieldNumber:
+				[setting setObject:[self _numberSettingCell] forKey:WCAccountsFieldCell];
+				break;
+		}
+		
+		section = [setting objectForKey:WCAccountFieldSection];
+		
+		if(section) {
+			switch([section intValue]) {
+				case WCAccountFieldBasics:
+					[basicsSettings addObject:setting];
+					break;
+
+				case WCAccountFieldFiles:
+					[filesSettings addObject:setting];
+					break;
+
+				case WCAccountFieldBoards:
+					[boardsSettings addObject:setting];
+					break;
+
+				case WCAccountFieldTracker:
+					[trackerSettings addObject:setting];
+					break;
+
+				case WCAccountFieldUsers:
+					[usersSettings addObject:setting];
+					break;
+
+				case WCAccountFieldAccounts:
+					[accountsSettings addObject:setting];
+					break;
+
+				case WCAccountFieldAdministration:
+					[administrationSettings addObject:setting];
+					break;
+
+				case WCAccountFieldLimits:
+					[limitsSettings addObject:setting];
+					break;
+			}
+		}
+	}
+	
+	_allSettings = [[NSArray alloc] initWithObjects:
+		[NSDictionary dictionaryWithObjectsAndKeys:
+			NSLS(@"Basics", @"Account section"),			WCAccountFieldLocalizedName,
+			basicsSettings,									WCAccountsFieldSettings,
+			NULL],	
+		[NSDictionary dictionaryWithObjectsAndKeys:
+			NSLS(@"Files", @"Account section"),				WCAccountFieldLocalizedName,
+			filesSettings,									WCAccountsFieldSettings,
+			NULL],
+		[NSDictionary dictionaryWithObjectsAndKeys:
+			NSLS(@"Boards", @"Account section"),			WCAccountFieldLocalizedName,
+			boardsSettings,									WCAccountsFieldSettings,
+			NULL],
+		[NSDictionary dictionaryWithObjectsAndKeys:
+			NSLS(@"Tracker", @"Account section"),			WCAccountFieldLocalizedName,
+			trackerSettings,								WCAccountsFieldSettings,
+			NULL],
+		[NSDictionary dictionaryWithObjectsAndKeys:
+			NSLS(@"Users", @"Account section"),				WCAccountFieldLocalizedName,
+			usersSettings,									WCAccountsFieldSettings,
+			NULL],
+		[NSDictionary dictionaryWithObjectsAndKeys:
+			NSLS(@"Accounts", @"Account section"),			WCAccountFieldLocalizedName,
+			accountsSettings,								WCAccountsFieldSettings,
+			NULL],
+		[NSDictionary dictionaryWithObjectsAndKeys:
+			NSLS(@"Administration", @"Account section"),	WCAccountFieldLocalizedName,
+			administrationSettings,							WCAccountsFieldSettings,
+			NULL],
+		[NSDictionary dictionaryWithObjectsAndKeys:
+			NSLS(@"Limits", @"Account section"),			WCAccountFieldLocalizedName,
+			limitsSettings,									WCAccountsFieldSettings,
+			NULL],
+		NULL];
+	
+	_shownSettings = [_allSettings copy];
+	
 	[self window];
 
 	return self;
+}
+
+
+
+#pragma mark -
+
+- (NSCell *)_booleanSettingCell {
+	NSButtonCell		*cell;
+	
+	cell = [[NSButtonCell alloc] initTextCell:@""];
+	[cell setButtonType:NSSwitchButton];
+	[cell setControlSize:NSSmallControlSize];
+	[cell setEditable:YES];
+	[cell setEnabled:YES];
+	
+	return [cell autorelease];
+}
+
+
+
+- (NSCell *)_numberSettingCell {
+	NSTextFieldCell		*cell;
+	
+	cell = [[NSTextFieldCell alloc] initTextCell:@""];
+	[cell setControlSize:NSSmallControlSize];
+	[cell setEditable:YES];
+	[cell setSelectable:YES];
+	[cell setFont:[NSFont smallSystemFont]];
+	
+	return [cell autorelease];
+}
+
+
+
+- (NSDictionary *)_settingForRow:(NSInteger)row {
+	return [_shownSettings objectAtIndex:row];
 }
 
 
@@ -366,12 +514,14 @@
 			[_trackerListServersButton setState:NSOnState];
 		}
 	}
+	
+	[_settingsOutlineView reloadData];
 }
 
 
 
 - (void)_writeToAccount:(WCAccount *)account {
-	NSString		*password, *group;
+/*	NSString		*password, *group;
 	
 	[account setName:[_nameTextField stringValue]];
 	
@@ -455,7 +605,7 @@
 	[account setBanlistAddBans:[_banlistAddBansButton state]];
 	[account setBanlistDeleteBans:[_banlistDeleteBansButton state]];
 	[account setTrackerListServers:[_trackerListServersButton state]];
-	[account setTrackerRegisterServers:[_trackerRegisterServersButton state]];
+	[account setTrackerRegisterServers:[_trackerRegisterServersButton state]];*/
 }
 
 
@@ -571,6 +721,9 @@
 
 
 - (void)dealloc {
+	[_allSettings release];
+	[_shownSettings release];
+	
 	[_groupControls release];
 	[_allControls release];
 	
@@ -593,6 +746,7 @@
 	NSEnumerator	*enumerator;
 	NSToolbar		*toolbar;
 	NSControl		*control;
+	NSDictionary	*setting;
 
 	toolbar = [[NSToolbar alloc] initWithIdentifier:@"Accounts"];
 	[toolbar setDelegate:self];
@@ -706,6 +860,11 @@
 			[control setAction:@selector(touch:)];
 		}
 	}
+	
+	enumerator = [_shownSettings objectEnumerator];
+	
+	while((setting = [enumerator nextObject]))
+		[_settingsOutlineView expandItem:setting];
 
 	[self _validateAccount:NULL];
 	[self _readFromAccount:NULL];
@@ -1221,7 +1380,7 @@
 		else
 			group = @"";
 
-		[(WCUserAccount *) _editedAccount setGroup:group];
+//		[(WCUserAccount *) _editedAccount setGroup:group];
 		
 		[self _validateAccount:_editedAccount];
 	}
@@ -1377,6 +1536,12 @@
 
 
 
+- (IBAction)show:(id)sender {
+	NSLog(@"show:");
+}
+
+
+
 #pragma mark -
 
 - (void)controlTextDidChange:(NSNotification *)notification {
@@ -1412,7 +1577,7 @@
 
 
 - (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
-	WCAccount	*account;
+	WCAccount		*account;
 
 	account = [self _accountAtIndex:row];
 
@@ -1438,6 +1603,8 @@
 		else
 			[cell setImage:_groupImage];
 	}
+	
+	[cell setBackgroundColor:[NSColor yellowColor]];
 }
 
 
@@ -1481,6 +1648,77 @@
 		
 		[self validate];
 	}
+}
+
+
+
+#pragma mark -
+
+- (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item {
+	if(!item)
+		return [_shownSettings count];
+	
+	return [[item objectForKey:WCAccountsFieldSettings] count];
+}
+
+
+
+- (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(id)item {
+	if(!item)
+		return [_shownSettings objectAtIndex:index];
+	
+	return [[item objectForKey:WCAccountsFieldSettings] objectAtIndex:index];
+}
+
+
+
+- (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item {
+	id			value;
+	
+	if(tableColumn == _settingTableColumn) {
+		return [item objectForKey:WCAccountFieldLocalizedName];
+	}
+	else if(tableColumn == _valueTableColumn) {
+		value = [_editedAccount valueForKey:[item objectForKey:WCAccountFieldKey]];
+		
+		if([[item objectForKey:WCAccountFieldType] intValue] == WCAccountFieldNumber && [value intValue] == 0)
+			return NULL;
+		
+		return value;
+	}
+
+	return NULL;
+}
+
+
+
+- (void)outlineView:(NSOutlineView *)outlineView willDisplayCell:(id)cell forTableColumn:(NSTableColumn *)tableColumn item:(id)item {
+	if(tableColumn == _settingTableColumn) {
+		if([_editedAccount valueForKey:[item objectForKey:WCAccountFieldKey]])
+			[cell setFont:[[cell font] fontByAddingTrait:NSBoldFontMask]];
+		else
+			[cell setFont:[[cell font] fontByAddingTrait:NSUnboldFontMask]];
+	}
+}
+
+
+
+- (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item {
+	return ([[item objectForKey:WCAccountsFieldSettings] count] > 0);
+}
+
+@end
+
+
+
+@implementation WCAccountsTableColumn
+
+- (id)dataCellForRow:(NSInteger)row {
+	NSDictionary		*setting;
+	
+	setting = [(NSOutlineView *) [self tableView] itemAtRow:row];
+	
+	return [setting objectForKey:WCAccountsFieldCell];
 }
 
 @end

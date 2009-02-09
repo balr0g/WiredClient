@@ -26,72 +26,31 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define WCAccountFieldName					@"WCAccountFieldName"
+#define WCAccountFieldLocalizedName			@"WCAccountFieldLocalizedName"
+#define WCAccountFieldKey					@"WCAccountFieldKey"
+#define WCAccountFieldType					@"WCAccountFieldType"
+#define WCAccountFieldString					0
+#define WCAccountFieldDate						1
+#define WCAccountFieldNumber					2
+#define WCAccountFieldBoolean					3
+#define WCAccountFieldList						4
+#define WCAccountFieldSection				@"WCAccountFieldSection"
+#define WCAccountFieldBasics					0
+#define WCAccountFieldFiles						1
+#define WCAccountFieldBoards					2
+#define WCAccountFieldTracker					3
+#define WCAccountFieldUsers						4
+#define WCAccountFieldAccounts					5
+#define WCAccountFieldAdministration			6
+#define WCAccountFieldLimits					7
+
+
 @interface WCAccount : WIObject {
-	NSString				*_name;
-	NSDate					*_creationDate;
-	NSDate					*_modificationDate;
-	NSString				*_editedBy;
-	NSString				*_files;
-	WIP7Bool				_userCannotSetNick;
-	WIP7Bool				_userGetInfo;
-	WIP7Bool				_userKickUsers;
-	WIP7Bool				_userBanUsers;
-	WIP7Bool				_userCannotBeDisconnected;
-	WIP7Bool				_userGetUsers;
-	WIP7Bool				_chatSetTopic;
-	WIP7Bool				_chatCreateChats;
-	WIP7Bool				_messageSendMessages;
-	WIP7Bool				_messageBroadcast;
-	WIP7Bool				_boardReadBoards;
-	WIP7Bool				_boardAddBoards;
-	WIP7Bool				_boardMoveBoards;
-	WIP7Bool				_boardRenameBoards;
-	WIP7Bool				_boardDeleteBoards;
-	WIP7Bool				_boardSetPermissions;
-	WIP7Bool				_boardAddThreads;
-	WIP7Bool				_boardMoveThreads;
-	WIP7Bool				_boardDeleteThreads;
-	WIP7Bool				_boardAddPosts;
-	WIP7Bool				_boardEditOwnPosts;
-	WIP7Bool				_boardEditAllPosts;
-	WIP7Bool				_boardDeletePosts;
-	WIP7Bool				_fileListFiles;
-	WIP7Bool				_fileGetInfo;
-	WIP7Bool				_fileCreateDirectories;
-	WIP7Bool				_fileCreateLinks;
-	WIP7Bool				_fileMoveFiles;
-	WIP7Bool				_fileRenameFiles;
-	WIP7Bool				_fileSetType;
-	WIP7Bool				_fileSetComment;
-	WIP7Bool				_fileSetPermissions;
-	WIP7Bool				_fileSetExecutable;
-	WIP7Bool				_fileDeleteFiles;
-	WIP7Bool				_fileAccessAllDropboxes;
-	WIP7UInt32				_fileRecursiveListDepthLimit;
-	WIP7Bool				_transferDownloadFiles;
-	WIP7Bool				_transferUploadFiles;
-	WIP7Bool				_transferUploadDirectories;
-	WIP7Bool				_transferUploadAnywhere;
-	WIP7UInt32				_transferDownloadLimit;
-	WIP7UInt32				_transferUploadLimit;
-	WIP7UInt32				_transferDownloadSpeedLimit;
-	WIP7UInt32				_transferUploadSpeedLimit;
-	WIP7Bool				_accountChangePassword;
-	WIP7Bool				_accountListAccounts;
-	WIP7Bool				_accountReadAccounts;
-	WIP7Bool				_accountCreateAccounts;
-	WIP7Bool				_accountEditAccounts;
-	WIP7Bool				_accountDeleteAccounts;
-	WIP7Bool				_accountRaiseAccountPrivileges;
-	WIP7Bool				_logViewLog;
-	WIP7Bool				_settingsGetSettings;
-	WIP7Bool				_settingsSetSettings;
-	WIP7Bool				_banlistGetBans;
-	WIP7Bool				_banlistAddBans;
-	WIP7Bool				_banlistDeleteBans;
-	WIP7Bool				_trackerListServers;
-	WIP7Bool				_trackerRegisterServers;
+	NSMutableDictionary						*_values;
 }
+
++ (NSArray *)fields;
 
 + (id)account;
 + (id)accountWithMessage:(WIP7Message *)message;
@@ -99,131 +58,73 @@
 - (WIP7Message *)createAccountMessage;
 - (WIP7Message *)editAccountMessage;
 
-- (void)setName:(NSString *)name;
 - (NSString *)name;
 - (NSDate *)creationDate;
 - (NSDate *)modificationDate;
 - (NSString *)editedBy;
-- (void)setFiles:(NSString *)files;
 - (NSString *)files;
-- (void)setUserCannotSetNick:(BOOL)value;
 - (BOOL)userCannotSetNick;
-- (void)setUserGetInfo:(BOOL)value;
 - (BOOL)userGetInfo;
-- (void)setUserKickUsers:(BOOL)value;
 - (BOOL)userKickUsers;
-- (void)setUserBanUsers:(BOOL)value;
 - (BOOL)userBanUsers;
-- (void)setUserCannotBeDisconnected:(BOOL)value;
 - (BOOL)userCannotBeDisconnected;
-- (void)setUserGetUsers:(BOOL)value;
 - (BOOL)userGetUsers;
-- (void)setChatSetTopic:(BOOL)value;
 - (BOOL)chatSetTopic;
-- (void)setChatCreateChats:(BOOL)value;
 - (BOOL)chatCreateChats;
-- (void)setMessageSendMessages:(BOOL)value;
 - (BOOL)messageSendMessages;
-- (void)setMessageBroadcast:(BOOL)value;
 - (BOOL)messageBroadcast;
-- (void)setBoardReadBoards:(BOOL)value;
 - (BOOL)boardReadBoards;
-- (void)setBoardAddBoards:(BOOL)value;
 - (BOOL)boardAddBoards;
-- (void)setBoardMoveBoards:(BOOL)value;
 - (BOOL)boardMoveBoards;
-- (void)setBoardRenameBoards:(BOOL)value;
 - (BOOL)boardRenameBoards;
-- (void)setBoardDeleteBoards:(BOOL)value;
 - (BOOL)boardDeleteBoards;
-- (void)setBoardSetPermissions:(BOOL)value;
 - (BOOL)boardSetPermissions;
-- (void)setBoardAddThreads:(BOOL)value;
 - (BOOL)boardAddThreads;
-- (void)setBoardMoveThreads:(BOOL)value;
 - (BOOL)boardMoveThreads;
-- (void)setBoardDeleteThreads:(BOOL)value;
 - (BOOL)boardDeleteThreads;
-- (void)setBoardAddPosts:(BOOL)value;
 - (BOOL)boardAddPosts;
-- (void)setBoardEditOwnPosts:(BOOL)value;
 - (BOOL)boardEditOwnPosts;
-- (void)setBoardEditAllPosts:(BOOL)value;
 - (BOOL)boardEditAllPosts;
-- (void)setBoardDeletePosts:(BOOL)value;
 - (BOOL)boardDeletePosts;
-- (void)setFileListFiles:(BOOL)value;
 - (BOOL)fileListFiles;
-- (void)setFileGetInfo:(BOOL)value;
 - (BOOL)fileGetInfo;
-- (void)setFileCreateDirectories:(BOOL)value;
 - (BOOL)fileCreateDirectories;
-- (void)setFileCreateLinks:(BOOL)value;
 - (BOOL)fileCreateLinks;
-- (void)setFileMoveFiles:(BOOL)value;
 - (BOOL)fileMoveFiles;
-- (void)setFileRenameFiles:(BOOL)value;
 - (BOOL)fileRenameFiles;
-- (void)setFileSetType:(BOOL)value;
 - (BOOL)fileSetType;
-- (void)setFileSetComment:(BOOL)value;
 - (BOOL)fileSetComment;
-- (void)setFileSetPermissions:(BOOL)value;
 - (BOOL)fileSetPermissions;
-- (void)setFileSetExecutable:(BOOL)value;
 - (BOOL)fileSetExecutable;
-- (void)setFileDeleteFiles:(BOOL)value;
 - (BOOL)fileDeleteFiles;
-- (void)setFileAccessAllDropboxes:(BOOL)value;
 - (BOOL)fileAccessAllDropboxes;
-- (void)setFileRecursiveListDepthLimit:(NSUInteger)value;
 - (NSUInteger)fileRecursiveListDepthLimit;
-- (void)setTransferDownloadFiles:(BOOL)value;
 - (BOOL)transferDownloadFiles;
-- (void)setTransferUploadFiles:(BOOL)value;
 - (BOOL)transferUploadFiles;
-- (void)setTransferUploadDirectories:(BOOL)value;
 - (BOOL)transferUploadDirectories;
-- (void)setTransferUploadAnywhere:(BOOL)value;
 - (BOOL)transferUploadAnywhere;
-- (void)setTransferDownloadLimit:(NSUInteger)value;
 - (NSUInteger)transferDownloadLimit;
-- (void)setTransferUploadLimit:(NSUInteger)value;
 - (NSUInteger)transferUploadLimit;
-- (void)setTransferDownloadSpeedLimit:(NSUInteger)value;
 - (NSUInteger)transferDownloadSpeedLimit;
-- (void)setTransferUploadSpeedLimit:(NSUInteger)value;
 - (NSUInteger)transferUploadSpeedLimit;
-- (void)setAccountChangePassword:(BOOL)value;
 - (BOOL)accountChangePassword;
-- (void)setAccountListAccounts:(BOOL)value;
 - (BOOL)accountListAccounts;
-- (void)setAccountReadAccounts:(BOOL)value;
 - (BOOL)accountReadAccounts;
-- (void)setAccountCreateAccounts:(BOOL)value;
 - (BOOL)accountCreateAccounts;
-- (void)setAccountEditAccounts:(BOOL)value;
 - (BOOL)accountEditAccounts;
-- (void)setAccountDeleteAccounts:(BOOL)value;
 - (BOOL)accountDeleteAccounts;
-- (void)setAccountRaiseAccountPrivileges:(BOOL)value;
 - (BOOL)accountRaiseAccountPrivileges;
-- (void)setLogViewLog:(BOOL)value;
 - (BOOL)logViewLog;
-- (void)setSettingsGetSettings:(BOOL)value;
 - (BOOL)settingsGetSettings;
-- (void)setSettingsSetSettings:(BOOL)value;
 - (BOOL)settingsSetSettings;
-- (void)setBanlistGetBans:(BOOL)value;
 - (BOOL)banlistGetBans;
-- (void)setBanlistAddBans:(BOOL)value;
 - (BOOL)banlistAddBans;
-- (void)setBanlistDeleteBans:(BOOL)value;
 - (BOOL)banlistDeleteBans;
-- (void)setTrackerListServers:(BOOL)value;
 - (BOOL)trackerListServers;
-- (void)setTrackerRegisterServers:(BOOL)value;
 - (BOOL)trackerRegisterServers;
+
+- (void)setValue:(id)value forKey:(NSString *)key;
+- (id)valueForKey:(NSString *)key;
 
 - (NSComparisonResult)compareName:(WCAccount *)account;
 - (NSComparisonResult)compareType:(WCAccount *)account;
@@ -231,22 +132,12 @@
 @end
 
 
-@interface WCUserAccount : WCAccount {
-	NSDate					*_loginDate;
-	NSString				*_fullName;
-	NSString				*_group;
-	NSArray					*_groups;
-	NSString				*_password;
-}
+@interface WCUserAccount : WCAccount
 
 - (NSDate *)loginDate;
-- (void)setFullName:(NSString *)name;
 - (NSString *)fullName;
-- (void)setGroup:(NSString *)group;
 - (NSString *)group;
-- (void)setGroups:(NSArray *)groups;
 - (NSArray *)groups;
-- (void)setPassword:(NSString *)password;
 - (NSString *)password;
 
 @end

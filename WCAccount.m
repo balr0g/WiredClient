@@ -29,6 +29,7 @@
 #import "WCAccount.h"
 #import "WCServerConnection.h"
 
+
 @interface WCAccount(Private)
 
 - (id)_initWithMessage:(WIP7Message *)message;
@@ -41,73 +42,41 @@
 @implementation WCAccount(Private)
 
 - (id)_initWithMessage:(WIP7Message *)message {
+	NSEnumerator	*enumerator;
+	NSDictionary	*field;
+	id				value;
+	
 	self = [super init];
+	
+	_values = [[NSMutableDictionary alloc] init];
+	
+	enumerator = [[[self class] fields] objectEnumerator];
+	
+	while((field = [enumerator nextObject])) {
+		value = NULL;
+		
+		switch([[field objectForKey:WCAccountFieldType] intValue]) {
+			case WCAccountFieldString:
+				value = [message stringForName:[field objectForKey:WCAccountFieldName]];
+				break;
+			
+			case WCAccountFieldDate:
+				value = [message dateForName:[field objectForKey:WCAccountFieldName]];
+				break;
 
-	_name				= [[message stringForName:@"wired.account.name"] retain];
-	_creationDate		= [[message dateForName:@"wired.account.creation_time"] retain];
-	_modificationDate	= [[message dateForName:@"wired.account.modification_time"] retain];
-	_editedBy			= [[message stringForName:@"wired.account.edited_by"] retain];
-	_files				= [[message stringForName:@"wired.account.files"] retain];
+			case WCAccountFieldNumber:
+			case WCAccountFieldBoolean:
+				value = [message numberForName:[field objectForKey:WCAccountFieldName]];
+				break;
 
-	[message getBool:&_userCannotSetNick forName:@"wired.account.user.cannot_set_nick"];
-	[message getBool:&_userGetInfo forName:@"wired.account.user.get_info"];
-	[message getBool:&_userKickUsers forName:@"wired.account.user.kick_users"];
-	[message getBool:&_userBanUsers forName:@"wired.account.user.ban_users"];
-	[message getBool:&_userCannotBeDisconnected forName:@"wired.account.user.cannot_be_disconnected"];
-	[message getBool:&_userGetUsers forName:@"wired.account.user.get_users"];
-	[message getBool:&_chatSetTopic forName:@"wired.account.chat.set_topic"];
-	[message getBool:&_chatCreateChats forName:@"wired.account.chat.create_chats"];
-	[message getBool:&_messageSendMessages forName:@"wired.account.message.send_messages"];
-	[message getBool:&_messageBroadcast forName:@"wired.account.message.broadcast"];
-	[message getBool:&_boardReadBoards forName:@"wired.account.board.read_boards"];
-	[message getBool:&_boardAddBoards forName:@"wired.account.board.add_boards"];
-	[message getBool:&_boardMoveBoards forName:@"wired.account.board.move_boards"];
-	[message getBool:&_boardRenameBoards forName:@"wired.account.board.rename_boards"];
-	[message getBool:&_boardDeleteBoards forName:@"wired.account.board.delete_boards"];
-	[message getBool:&_boardSetPermissions forName:@"wired.account.board.set_permissions"];
-	[message getBool:&_boardAddThreads forName:@"wired.account.board.add_threads"];
-	[message getBool:&_boardMoveThreads forName:@"wired.account.board.move_threads"];
-	[message getBool:&_boardDeleteThreads forName:@"wired.account.board.delete_threads"];
-	[message getBool:&_boardAddPosts forName:@"wired.account.board.add_posts"];
-	[message getBool:&_boardEditOwnPosts forName:@"wired.account.board.edit_own_posts"];
-	[message getBool:&_boardEditAllPosts forName:@"wired.account.board.edit_all_posts"];
-	[message getBool:&_boardDeletePosts forName:@"wired.account.board.delete_posts"];
-	[message getBool:&_fileListFiles forName:@"wired.account.file.list_files"];
-	[message getBool:&_fileGetInfo forName:@"wired.account.file.get_info"];
-	[message getBool:&_fileCreateDirectories forName:@"wired.account.file.create_directories"];
-	[message getBool:&_fileCreateLinks forName:@"wired.account.file.create_links"];
-	[message getBool:&_fileMoveFiles forName:@"wired.account.file.move_files"];
-	[message getBool:&_fileRenameFiles forName:@"wired.account.file.rename_files"];
-	[message getBool:&_fileSetType forName:@"wired.account.file.set_type"];
-	[message getBool:&_fileSetComment forName:@"wired.account.file.set_comment"];
-	[message getBool:&_fileSetPermissions forName:@"wired.account.file.set_permissions"];
-	[message getBool:&_fileSetExecutable forName:@"wired.account.file.set_executable"];
-	[message getBool:&_fileDeleteFiles forName:@"wired.account.file.delete_files"];
-	[message getBool:&_fileAccessAllDropboxes forName:@"wired.account.file.access_all_dropboxes"];
-	[message getUInt32:&_fileRecursiveListDepthLimit forName:@"wired.account.file.recursive_list_depth_limit"];
-	[message getBool:&_transferDownloadFiles forName:@"wired.account.transfer.download_files"];
-	[message getBool:&_transferUploadFiles forName:@"wired.account.transfer.upload_files"];
-	[message getBool:&_transferUploadDirectories forName:@"wired.account.transfer.upload_directories"];
-	[message getBool:&_transferUploadAnywhere forName:@"wired.account.transfer.upload_anywhere"];
-	[message getUInt32:&_transferDownloadLimit forName:@"wired.account.transfer.download_limit"];
-	[message getUInt32:&_transferUploadLimit forName:@"wired.account.transfer.upload_limit"];
-	[message getUInt32:&_transferDownloadSpeedLimit forName:@"wired.account.transfer.download_speed_limit"];
-	[message getUInt32:&_transferUploadSpeedLimit forName:@"wired.account.transfer.upload_speed_limit"];
-	[message getBool:&_accountChangePassword forName:@"wired.account.account.change_password"];
-	[message getBool:&_accountListAccounts forName:@"wired.account.account.list_accounts"];
-	[message getBool:&_accountReadAccounts forName:@"wired.account.account.read_accounts"];
-	[message getBool:&_accountCreateAccounts forName:@"wired.account.account.create_accounts"];
-	[message getBool:&_accountEditAccounts forName:@"wired.account.account.edit_accounts"];
-	[message getBool:&_accountDeleteAccounts forName:@"wired.account.account.delete_accounts"];
-	[message getBool:&_accountRaiseAccountPrivileges forName:@"wired.account.account.raise_account_privileges"];
-	[message getBool:&_logViewLog forName:@"wired.account.log.view_log"];
-	[message getBool:&_settingsGetSettings forName:@"wired.account.settings.get_settings"];
-	[message getBool:&_settingsSetSettings forName:@"wired.account.settings.set_settings"];
-	[message getBool:&_banlistGetBans forName:@"wired.account.banlist.get_bans"];
-	[message getBool:&_banlistAddBans forName:@"wired.account.banlist.add_bans"];
-	[message getBool:&_banlistDeleteBans forName:@"wired.account.banlist.delete_bans"];
-	[message getBool:&_trackerListServers forName:@"wired.account.tracker.list_servers"];
-	[message getBool:&_trackerRegisterServers forName:@"wired.account.tracker.register_servers"];
+			case WCAccountFieldList:
+				value = [message listForName:[field objectForKey:WCAccountFieldName]];
+				break;
+		}
+		
+		if(value)
+			[_values setObject:value forKey:[field objectForKey:WCAccountFieldKey]];
+	}
 
 	return self;
 }
@@ -117,73 +86,520 @@
 #pragma mark -
 
 - (void)_writeToMessage:(WIP7Message *)message {
-	[message setString:_name forName:@"wired.account.name"];
-	[message setString:_files forName:@"wired.account.files"];
-	[message setBool:_userCannotSetNick forName:@"wired.account.user.cannot_set_nick"];
-	[message setBool:_userGetInfo forName:@"wired.account.user.get_info"];
-	[message setBool:_userKickUsers forName:@"wired.account.user.kick_users"];
-	[message setBool:_userBanUsers forName:@"wired.account.user.ban_users"];
-	[message setBool:_userCannotBeDisconnected forName:@"wired.account.user.cannot_be_disconnected"];
-	[message setBool:_userGetUsers forName:@"wired.account.user.get_users"];
-	[message setBool:_chatSetTopic forName:@"wired.account.chat.set_topic"];
-	[message setBool:_chatCreateChats forName:@"wired.account.chat.create_chats"];
-	[message setBool:_messageSendMessages forName:@"wired.account.message.send_messages"];
-	[message setBool:_messageBroadcast forName:@"wired.account.message.broadcast"];
-	[message setBool:_boardReadBoards forName:@"wired.account.board.read_boards"];
-	[message setBool:_boardAddBoards forName:@"wired.account.board.add_boards"];
-	[message setBool:_boardMoveBoards forName:@"wired.account.board.move_boards"];
-	[message setBool:_boardRenameBoards forName:@"wired.account.board.rename_boards"];
-	[message setBool:_boardDeleteBoards forName:@"wired.account.board.delete_boards"];
-	[message setBool:_boardSetPermissions forName:@"wired.account.board.set_permissions"];
-	[message setBool:_boardAddThreads forName:@"wired.account.board.add_threads"];
-	[message setBool:_boardMoveThreads forName:@"wired.account.board.move_threads"];
-	[message setBool:_boardDeleteThreads forName:@"wired.account.board.delete_threads"];
-	[message setBool:_boardAddPosts forName:@"wired.account.board.add_posts"];
-	[message setBool:_boardEditOwnPosts forName:@"wired.account.board.edit_own_posts"];
-	[message setBool:_boardEditAllPosts forName:@"wired.account.board.edit_all_posts"];
-	[message setBool:_boardDeletePosts forName:@"wired.account.board.delete_posts"];
-	[message setBool:_fileListFiles forName:@"wired.account.file.list_files"];
-	[message setBool:_fileGetInfo forName:@"wired.account.file.get_info"];
-	[message setBool:_fileCreateDirectories forName:@"wired.account.file.create_directories"];
-	[message setBool:_fileCreateLinks forName:@"wired.account.file.create_links"];
-	[message setBool:_fileMoveFiles forName:@"wired.account.file.move_files"];
-	[message setBool:_fileRenameFiles forName:@"wired.account.file.rename_files"];
-	[message setBool:_fileSetType forName:@"wired.account.file.set_type"];
-	[message setBool:_fileSetComment forName:@"wired.account.file.set_comment"];
-	[message setBool:_fileSetPermissions forName:@"wired.account.file.set_permissions"];
-	[message setBool:_fileSetExecutable forName:@"wired.account.file.set_executable"];
-	[message setBool:_fileDeleteFiles forName:@"wired.account.file.delete_files"];
-	[message setBool:_fileAccessAllDropboxes forName:@"wired.account.file.access_all_dropboxes"];
-	[message setUInt32:_fileRecursiveListDepthLimit forName:@"wired.account.file.recursive_list_depth_limit"];
-	[message setBool:_transferDownloadFiles forName:@"wired.account.transfer.download_files"];
-	[message setBool:_transferUploadFiles forName:@"wired.account.transfer.upload_files"];
-	[message setBool:_transferUploadDirectories forName:@"wired.account.transfer.upload_directories"];
-	[message setBool:_transferUploadAnywhere forName:@"wired.account.transfer.upload_anywhere"];
-	[message setUInt32:_transferDownloadLimit forName:@"wired.account.transfer.download_limit"];
-	[message setUInt32:_transferUploadLimit forName:@"wired.account.transfer.upload_limit"];
-	[message setUInt32:_transferDownloadSpeedLimit forName:@"wired.account.transfer.download_speed_limit"];
-	[message setUInt32:_transferUploadSpeedLimit forName:@"wired.account.transfer.upload_speed_limit"];
-	[message setBool:_accountChangePassword forName:@"wired.account.account.change_password"];
-	[message setBool:_accountListAccounts forName:@"wired.account.account.list_accounts"];
-	[message setBool:_accountReadAccounts forName:@"wired.account.account.read_accounts"];
-	[message setBool:_accountCreateAccounts forName:@"wired.account.account.create_accounts"];
-	[message setBool:_accountEditAccounts forName:@"wired.account.account.edit_accounts"];
-	[message setBool:_accountDeleteAccounts forName:@"wired.account.account.delete_accounts"];
-	[message setBool:_accountRaiseAccountPrivileges forName:@"wired.account.account.raise_account_privileges"];
-	[message setBool:_logViewLog forName:@"wired.account.log.view_log"];
-	[message setBool:_settingsGetSettings forName:@"wired.account.settings.get_settings"];
-	[message setBool:_settingsSetSettings forName:@"wired.account.settings.set_settings"];
-	[message setBool:_banlistGetBans forName:@"wired.account.banlist.get_bans"];
-	[message setBool:_banlistAddBans forName:@"wired.account.banlist.add_bans"];
-	[message setBool:_banlistDeleteBans forName:@"wired.account.banlist.delete_bans"];
-	[message setBool:_trackerListServers forName:@"wired.account.tracker.list_servers"];
-	[message setBool:_trackerRegisterServers forName:@"wired.account.tracker.register_servers"];
+	NSEnumerator	*enumerator;
+	NSDictionary	*field;
+	id				value;
+	
+	enumerator = [[[self class] fields] objectEnumerator];
+	
+	while((field = [enumerator nextObject])) {
+		value = [_values objectForKey:[field objectForKey:WCAccountFieldKey]];
+		
+		if(value) {
+			switch([[field objectForKey:WCAccountFieldType] intValue]) {
+				case WCAccountFieldString:
+					[message setString:value forName:[field objectForKey:WCAccountFieldName]];
+					break;
+				
+				case WCAccountFieldDate:
+					[message setDate:value forName:[field objectForKey:WCAccountFieldName]];
+					break;
+
+				case WCAccountFieldNumber:
+				case WCAccountFieldBoolean:
+					[message setNumber:value forName:[field objectForKey:WCAccountFieldName]];
+					break;
+
+				case WCAccountFieldList:
+					[message setList:value forName:[field objectForKey:WCAccountFieldName]];
+					break;
+			}
+		}
+	}
 }
 
 @end
 
 
 @implementation WCAccount
+
++ (NSArray *)fields {
+	static NSArray		*fields;
+	
+	if(!fields) {
+		fields = [[NSArray alloc] initWithObjects:
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"name",												WCAccountFieldKey,
+				@"wired.account.name",									WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldString],			WCAccountFieldType,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"fullName",											WCAccountFieldKey,
+				@"wired.account.full_name",								WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldString],			WCAccountFieldType,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"creationDate",										WCAccountFieldKey,
+				@"wired.account.creation_time",							WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldDate],			WCAccountFieldType,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"modificationDate",									WCAccountFieldKey,
+				@"wired.account.modification_time",						WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldDate],			WCAccountFieldType,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"loginDate",											WCAccountFieldKey,
+				@"wired.account.login_time",							WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldDate],			WCAccountFieldType,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"editedBy",											WCAccountFieldKey,
+				@"wired.account.edited_by",								WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldString],			WCAccountFieldType,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"group",												WCAccountFieldKey,
+				@"wired.account.group",									WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldString],			WCAccountFieldType,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"groups",												WCAccountFieldKey,
+				@"wired.account.groups",								WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldList],			WCAccountFieldType,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"password",											WCAccountFieldKey,
+				@"wired.account.password",								WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldString],			WCAccountFieldType,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"files",												WCAccountFieldKey,
+				@"wired.account.files",									WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldString],			WCAccountFieldType,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"userCannotSetNick",									WCAccountFieldKey,
+				NSLS(@"Cannot Set Nick", @"Account field name"),		WCAccountFieldLocalizedName,
+				@"wired.account.user.cannot_set_nick",					WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldBasics],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"userGetInfo",											WCAccountFieldKey,
+				NSLS(@"Get User Info", @"Account field name"),			WCAccountFieldLocalizedName,
+				@"wired.account.user.get_info",							WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldBasics],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"userKickUsers",										WCAccountFieldKey,
+				NSLS(@"Kick Users", @"Account field name"),				WCAccountFieldLocalizedName,
+				@"wired.account.user.kick_users",						WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldUsers],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"userBanUsers",										WCAccountFieldKey,
+				NSLS(@"Ban Users", @"Account field name"),				WCAccountFieldLocalizedName,
+				@"wired.account.user.ban_users",						WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldUsers],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"userCannotBeDisconnected",							WCAccountFieldKey,
+				NSLS(@"Cannot Be Disconnected", @"Account field name"),	WCAccountFieldLocalizedName,
+				@"wired.account.user.cannot_be_disconnected",			WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldUsers],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"userGetUsers",										WCAccountFieldKey,
+				NSLS(@"Monitor Users", @"Account field name"),			WCAccountFieldLocalizedName,
+				@"wired.account.user.get_users",						WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldAdministration],	WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"chatSetTopic",										WCAccountFieldKey,
+				NSLS(@"Set Chat Topic", @"Account field name"),			WCAccountFieldLocalizedName,
+				@"wired.account.chat.set_topic",						WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldBasics],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"chatCreateChats",										WCAccountFieldKey,
+				NSLS(@"Create Chats", @"Account field name"),			WCAccountFieldLocalizedName,
+				@"wired.account.chat.create_chats",						WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldBasics],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"messageSendMessages",									WCAccountFieldKey,
+				NSLS(@"Send Messages", @"Account field name"),			WCAccountFieldLocalizedName,
+				@"wired.account.message.send_messages",					WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldBasics],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"messageBroadcast",									WCAccountFieldKey,
+				NSLS(@"Broadcast Messages", @"Account field name"),		WCAccountFieldLocalizedName,
+				@"wired.account.message.broadcast",						WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldBasics],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"boardReadBoards",										WCAccountFieldKey,
+				NSLS(@"Read Boards", @"Account field name"),			WCAccountFieldLocalizedName,
+				@"wired.account.board.read_boards",						WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldBoards],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"boardAddBoards",										WCAccountFieldKey,
+				NSLS(@"Add Boards", @"Account field name"),				WCAccountFieldLocalizedName,
+				@"wired.account.board.add_boards",						WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldBoards],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"boardMoveBoards",										WCAccountFieldKey,
+				NSLS(@"Move Boards", @"Account field name"),			WCAccountFieldLocalizedName,
+				@"wired.account.board.move_boards",						WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldBoards],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"boardRenameBoards",									WCAccountFieldKey,
+				NSLS(@"Rename Boards", @"Account field name"),			WCAccountFieldLocalizedName,
+				@"wired.account.board.rename_boards",					WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldBoards],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"boardDeleteBoards",									WCAccountFieldKey,
+				NSLS(@"Delete Boards", @"Account field name"),			WCAccountFieldLocalizedName,
+				@"wired.account.board.delete_boards",					WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldBoards],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"boardSetPermissions",									WCAccountFieldKey,
+				NSLS(@"Set Board Permissions", @"Account field name"),	WCAccountFieldLocalizedName,
+				@"wired.account.board.set_permissions",					WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldBoards],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"boardAddThreads",										WCAccountFieldKey,
+				NSLS(@"Add Threads", @"Account field name"),			WCAccountFieldLocalizedName,
+				@"wired.account.board.add_threads",						WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldBoards],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"boardMoveThreads",									WCAccountFieldKey,
+				NSLS(@"Move Threads", @"Account field name"),			WCAccountFieldLocalizedName,
+				@"wired.account.board.move_threads",					WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldBoards],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"boardDeleteThreads",									WCAccountFieldKey,
+				NSLS(@"Delete Threads", @"Account field name"),			WCAccountFieldLocalizedName,
+				@"wired.account.board.delete_threads",					WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldBoards],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"boardAddPosts",										WCAccountFieldKey,
+				NSLS(@"Add Posts", @"Account field name"),				WCAccountFieldLocalizedName,
+				@"wired.account.board.add_posts",						WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldBoards],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"boardEditOwnPosts",									WCAccountFieldKey,
+				NSLS(@"Edit Own Posts", @"Account field name"),			WCAccountFieldLocalizedName,
+				@"wired.account.board.edit_own_posts",					WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldBoards],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"boardEditAllPosts",									WCAccountFieldKey,
+				NSLS(@"Edit All Posts", @"Account field name"),			WCAccountFieldLocalizedName,
+				@"wired.account.board.edit_all_posts",					WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldBoards],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"boardDeletePosts",									WCAccountFieldKey,
+				NSLS(@"Delete Posts", @"Account field name"),			WCAccountFieldLocalizedName,
+				@"wired.account.board.delete_posts",					WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldBoards],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"fileListFiles",										WCAccountFieldKey,
+				NSLS(@"List Files", @"Account field name"),				WCAccountFieldLocalizedName,
+				@"wired.account.file.list_files",						WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldFiles],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"fileGetInfo",											WCAccountFieldKey,
+				NSLS(@"Get File Info", @"Account field name"),			WCAccountFieldLocalizedName,
+				@"wired.account.file.get_info",							WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldFiles],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"fileCreateDirectories",								WCAccountFieldKey,
+				NSLS(@"Create Directories", @"Account field name"),		WCAccountFieldLocalizedName,
+				@"wired.account.file.create_directories",				WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldFiles],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"fileCreateLinks",										WCAccountFieldKey,
+				NSLS(@"Create Links", @"Account field name"),			WCAccountFieldLocalizedName,
+				@"wired.account.file.create_links",						WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldFiles],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"fileMoveFiles",										WCAccountFieldKey,
+				NSLS(@"Move Files", @"Account field name"),				WCAccountFieldLocalizedName,
+				@"wired.account.file.move_files",						WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldFiles],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"fileRenameFiles",										WCAccountFieldKey,
+				NSLS(@"Rename Files", @"Account field name"),			WCAccountFieldLocalizedName,
+				@"wired.account.file.rename_files",						WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldFiles],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"fileSetType",											WCAccountFieldKey,
+				NSLS(@"Set Folder Type", @"Account field name"),		WCAccountFieldLocalizedName,
+				@"wired.account.file.set_type",							WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldFiles],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"fileSetComment",										WCAccountFieldKey,
+				NSLS(@"Set Comments", @"Account field name"),			WCAccountFieldLocalizedName,
+				@"wired.account.file.set_comment",						WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldFiles],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"fileSetPermissions",									WCAccountFieldKey,
+				NSLS(@"Set Permissions", @"Account field name"),		WCAccountFieldLocalizedName,
+				@"wired.account.file.set_permissions",					WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldFiles],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"fileSetExecutable",									WCAccountFieldKey,
+				NSLS(@"Set Executable", @"Account field name"),			WCAccountFieldLocalizedName,
+				@"wired.account.file.set_executable",					WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldFiles],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"fileDeleteFiles",										WCAccountFieldKey,
+				NSLS(@"Delete Files", @"Account field name"),			WCAccountFieldLocalizedName,
+				@"wired.account.file.delete_files",						WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldFiles],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"fileAccessAllDropboxes",								WCAccountFieldKey,
+				NSLS(@"Access All Drop Boxes", @"Account field name"),	WCAccountFieldLocalizedName,
+				@"wired.account.file.access_all_dropboxes",				WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldFiles],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"fileRecursiveListDepthLimit",							WCAccountFieldKey,
+				NSLS(@"Download Folder Depth", @"Account field name"),	WCAccountFieldLocalizedName,
+				@"wired.account.file.recursive_list_depth_limit",		WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldNumber],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldLimits],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"transferDownloadFiles",								WCAccountFieldKey,
+				NSLS(@"Download Files", @"Account field name"),			WCAccountFieldLocalizedName,
+				@"wired.account.transfer.download_files",				WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldFiles],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"transferUploadFiles",									WCAccountFieldKey,
+				NSLS(@"Upload Files", @"Account field name"),			WCAccountFieldLocalizedName,
+				@"wired.account.transfer.upload_files",					WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldFiles],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"transferUploadDirectories",							WCAccountFieldKey,
+				NSLS(@"Upload Folders", @"Account field name"),			WCAccountFieldLocalizedName,
+				@"wired.account.transfer.upload_directories",			WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldFiles],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"transferUploadAnywhere",								WCAccountFieldKey,
+				NSLS(@"Upload Anywhere", @"Account field name"),		WCAccountFieldLocalizedName,
+				@"wired.account.transfer.upload_anywhere",				WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldFiles],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"transferDownloadLimit",								WCAccountFieldKey,
+				NSLS(@"Downloads", @"Account field name"),				WCAccountFieldLocalizedName,
+				@"wired.account.transfer.download_limit",				WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldNumber],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldLimits],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"transferUploadLimit",									WCAccountFieldKey,
+				NSLS(@"Uploads", @"Account field name"),				WCAccountFieldLocalizedName,
+				@"wired.account.transfer.upload_limit",					WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldNumber],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldLimits],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"transferDownloadSpeedLimit",							WCAccountFieldKey,
+				NSLS(@"Download Speed (KB/s)", @"Account field name"),	WCAccountFieldLocalizedName,
+				@"wired.account.transfer.download_speed_limit",			WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldNumber],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldLimits],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"transferUploadSpeedLimit",							WCAccountFieldKey,
+				NSLS(@"Upload Speed (KB/s)", @"Account field name"),	WCAccountFieldLocalizedName,
+				@"wired.account.transfer.upload_speed_limit",			WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldNumber],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldLimits],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"accountChangePassword",								WCAccountFieldKey,
+				NSLS(@"Change Password", @"Account field name"),		WCAccountFieldLocalizedName,
+				@"wired.account.account.change_password",				WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldAccounts],		WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"accountListAccounts",									WCAccountFieldKey,
+				NSLS(@"List Accounts", @"Account field name"),			WCAccountFieldLocalizedName,
+				@"wired.account.account.list_accounts",					WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldAccounts],		WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"accountReadAccounts",									WCAccountFieldKey,
+				NSLS(@"Read Accounts", @"Account field name"),			WCAccountFieldLocalizedName,
+				@"wired.account.account.read_accounts",					WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldAccounts],		WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"accountCreateAccounts",								WCAccountFieldKey,
+				NSLS(@"Create Accounts", @"Account field name"),		WCAccountFieldLocalizedName,
+				@"wired.account.account.create_accounts",				WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldAccounts],		WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"accountEditAccounts",									WCAccountFieldKey,
+				NSLS(@"Edit Accounts", @"Account field name"),			WCAccountFieldLocalizedName,
+				@"wired.account.account.edit_accounts",					WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldAccounts],		WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"accountDeleteAccounts",								WCAccountFieldKey,
+				NSLS(@"Delete Accounts", @"Account field name"),		WCAccountFieldLocalizedName,
+				@"wired.account.account.delete_accounts",				WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldAccounts],		WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"accountRaiseAccountPrivileges",						WCAccountFieldKey,
+				NSLS(@"Raise Privileges", @"Account field name"),		WCAccountFieldLocalizedName,
+				@"wired.account.account.raise_account_privileges",		WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldAccounts],		WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"logViewLog",											WCAccountFieldKey,
+				NSLS(@"View Log", @"Account field name"),				WCAccountFieldLocalizedName,
+				@"wired.account.log.view_log",							WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldAdministration],	WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"settingsGetSettings",									WCAccountFieldKey,
+				NSLS(@"Read Settings", @"Account field name"),			WCAccountFieldLocalizedName,
+				@"wired.account.settings.get_settings",					WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldAdministration],	WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"settingsSetSettings",									WCAccountFieldKey,
+				NSLS(@"Edit Settings", @"Account field name"),			WCAccountFieldLocalizedName,
+				@"wired.account.settings.set_settings",					WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldAdministration],	WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"banlistGetBans",										WCAccountFieldKey,
+				NSLS(@"Read Banlist", @"Account field name"),			WCAccountFieldLocalizedName,
+				@"wired.account.banlist.get_bans",						WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldAdministration],	WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"banlistAddBans",										WCAccountFieldKey,
+				NSLS(@"Add Bans", @"Account field name"),				WCAccountFieldLocalizedName,
+				@"wired.account.banlist.add_bans",						WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldAdministration],	WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"banlistDeleteBans",									WCAccountFieldKey,
+				NSLS(@"Delete Bans", @"Account field name"),			WCAccountFieldLocalizedName,
+				@"wired.account.banlist.delete_bans",					WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldAdministration],	WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"trackerListServers",									WCAccountFieldKey,
+				NSLS(@"List Servers", @"Account field name"),			WCAccountFieldLocalizedName,
+				@"wired.account.tracker.list_servers",					WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldTracker],			WCAccountFieldSection,
+				NULL],
+			[NSDictionary dictionaryWithObjectsAndKeys:
+				@"trackerRegisterServers",								WCAccountFieldKey,
+				NSLS(@"Register Servers", @"Account field name"),		WCAccountFieldLocalizedName,
+				@"wired.account.tracker.register_servers",				WCAccountFieldName,
+				[NSNumber numberWithInt:WCAccountFieldBoolean],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldTracker],			WCAccountFieldSection,
+				NULL],
+			NULL];
+	}
+	
+	return fields;
+}
+
+
+
+#pragma mark -
 
 + (id)account {
 	return [[[self alloc] init] autorelease];
@@ -198,12 +614,8 @@
 
 
 - (void)dealloc {
-	[_name release];
-	[_creationDate release];
-	[_modificationDate release];
-	[_editedBy release];
-	[_files release];
-
+	[_values release];
+	
 	[super dealloc];
 }
 
@@ -240,758 +652,403 @@
 
 #pragma mark -
 
-- (void)setName:(NSString *)name {
-	[name retain];
-	[_name release];
-	
-	_name = name;
-}
-
-
-
 - (NSString *)name {
-	return _name;
+	return [_values objectForKey:NSStringFromSelector(_cmd)];
 }
 
 
 
 - (NSDate *)modificationDate {
-	return _modificationDate;
+	return [_values objectForKey:NSStringFromSelector(_cmd)];
 }
 
 
 
 - (NSDate *)creationDate {
-	return _creationDate;
+	return [_values objectForKey:NSStringFromSelector(_cmd)];
 }
 
 
 
 - (NSString *)editedBy {
-	return _editedBy;
-}
-
-
-
-- (void)setFiles:(NSString *)files {
-	[files retain];
-	[_files release];
-	
-	_files = files;
+	return [_values objectForKey:NSStringFromSelector(_cmd)];
 }
 
 
 
 - (NSString *)files {
-	return _files;
-}
-
-
-
-- (void)setUserCannotSetNick:(BOOL)value {
-	_userCannotSetNick = value;
+	return [_values objectForKey:NSStringFromSelector(_cmd)];
 }
 
 
 
 - (BOOL)userCannotSetNick {
-	return _userCannotSetNick;
-}
-
-
-
-- (void)setUserGetInfo:(BOOL)value {
-	_userGetInfo = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)userGetInfo {
-	return _userGetInfo;
-}
-
-
-
-- (void)setUserKickUsers:(BOOL)value {
-	_userKickUsers = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)userKickUsers {
-	return _userKickUsers;
-}
-
-
-
-- (void)setUserBanUsers:(BOOL)value {
-	_userBanUsers = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)userBanUsers {
-	return _userBanUsers;
-}
-
-
-
-- (void)setUserCannotBeDisconnected:(BOOL)value {
-	_userCannotBeDisconnected = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)userCannotBeDisconnected {
-	return _userCannotBeDisconnected;
-}
-
-
-
-- (void)setUserGetUsers:(BOOL)value {
-	_userGetUsers = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)userGetUsers {
-	return _userGetUsers;
-}
-
-
-
-- (void)setChatSetTopic:(BOOL)value {
-	_chatSetTopic = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)chatSetTopic {
-	return _chatSetTopic;
-}
-
-
-
-- (void)setChatCreateChats:(BOOL)value {
-	_chatCreateChats = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)chatCreateChats {
-	return _chatCreateChats;
-}
-
-
-
-- (void)setMessageSendMessages:(BOOL)value {
-	_messageSendMessages = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)messageSendMessages {
-	return _messageSendMessages;
-}
-
-
-
-- (void)setMessageBroadcast:(BOOL)value {
-	_messageBroadcast = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)messageBroadcast {
-	return _messageBroadcast;
-}
-
-
-
-- (void)setBoardReadBoards:(BOOL)value {
-	_boardReadBoards = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)boardReadBoards {
-	return _boardReadBoards;
-}
-
-
-
-- (void)setBoardAddBoards:(BOOL)value {
-	_boardAddBoards = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)boardAddBoards {
-	return _boardAddBoards;
-}
-
-
-
-- (void)setBoardMoveBoards:(BOOL)value {
-	_boardMoveBoards = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)boardMoveBoards {
-	return _boardMoveBoards;
-}
-
-
-
-- (void)setBoardRenameBoards:(BOOL)value {
-	_boardRenameBoards = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)boardRenameBoards {
-	return _boardRenameBoards;
-}
-
-
-
-- (void)setBoardDeleteBoards:(BOOL)value {
-	_boardDeleteBoards = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)boardDeleteBoards {
-	return _boardDeleteBoards;
-}
-
-
-
-- (void)setBoardSetPermissions:(BOOL)value {
-	_boardSetPermissions = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)boardSetPermissions {
-	return _boardSetPermissions;
-}
-
-
-
-- (void)setBoardAddThreads:(BOOL)value {
-	_boardAddThreads = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)boardAddThreads {
-	return _boardAddThreads;
-}
-
-
-
-- (void)setBoardMoveThreads:(BOOL)value {
-	_boardMoveThreads = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)boardMoveThreads {
-	return _boardMoveThreads;
-}
-
-
-
-- (void)setBoardDeleteThreads:(BOOL)value {
-	_boardDeleteThreads = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)boardDeleteThreads {
-	return _boardDeleteThreads;
-}
-
-
-
-- (void)setBoardAddPosts:(BOOL)value {
-	_boardAddPosts = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)boardAddPosts {
-	return _boardAddPosts;
-}
-
-
-
-- (void)setBoardEditOwnPosts:(BOOL)value {
-	_boardEditOwnPosts = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)boardEditOwnPosts {
-	return _boardEditOwnPosts;
-}
-
-
-
-- (void)setBoardEditAllPosts:(BOOL)value {
-	_boardEditAllPosts = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)boardEditAllPosts {
-	return _boardEditAllPosts;
-}
-
-
-
-- (void)setBoardDeletePosts:(BOOL)value {
-	_boardDeletePosts = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)boardDeletePosts {
-	return _boardDeletePosts;
-}
-
-
-
-- (void)setFileListFiles:(BOOL)value {
-	_fileListFiles = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)fileListFiles {
-	return _fileListFiles;
-}
-
-
-
-- (void)setFileGetInfo:(BOOL)value {
-	_fileGetInfo = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)fileGetInfo {
-	return _fileGetInfo;
-}
-
-
-
-- (void)setFileCreateDirectories:(BOOL)value {
-	_fileCreateDirectories = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)fileCreateDirectories {
-	return _fileCreateDirectories;
-}
-
-
-
-- (void)setFileCreateLinks:(BOOL)value {
-	_fileCreateLinks = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)fileCreateLinks {
-	return _fileCreateLinks;
-}
-
-
-
-- (void)setFileMoveFiles:(BOOL)value {
-	_fileMoveFiles = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)fileMoveFiles {
-	return _fileMoveFiles;
-}
-
-
-
-- (void)setFileRenameFiles:(BOOL)value {
-	_fileRenameFiles = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)fileRenameFiles {
-	return _fileRenameFiles;
-}
-
-
-
-- (void)setFileSetType:(BOOL)value {
-	_fileSetType = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)fileSetType {
-	return _fileSetType;
-}
-
-
-
-- (void)setFileSetComment:(BOOL)value {
-	_fileSetComment = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)fileSetComment {
-	return _fileSetComment;
-}
-
-
-
-- (void)setFileSetPermissions:(BOOL)value {
-	_fileSetPermissions = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)fileSetPermissions {
-	return _fileSetPermissions;
-}
-
-
-
-- (void)setFileSetExecutable:(BOOL)value {
-	_fileSetExecutable = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)fileSetExecutable {
-	return _fileSetExecutable;
-}
-
-
-
-- (void)setFileDeleteFiles:(BOOL)value {
-	_fileDeleteFiles = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)fileDeleteFiles {
-	return _fileDeleteFiles;
-}
-
-
-
-- (void)setFileAccessAllDropboxes:(BOOL)value {
-	_fileAccessAllDropboxes = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)fileAccessAllDropboxes {
-	return _fileAccessAllDropboxes;
-}
-
-
-
-- (void)setFileRecursiveListDepthLimit:(NSUInteger)value {
-	_fileRecursiveListDepthLimit = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (NSUInteger)fileRecursiveListDepthLimit {
-	return _fileRecursiveListDepthLimit;
-}
-
-
-
-- (void)setTransferDownloadFiles:(BOOL)value {
-	_transferDownloadFiles = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] unsignedIntegerValue];
 }
 
 
 
 - (BOOL)transferDownloadFiles {
-	return _transferDownloadFiles;
-}
-
-
-
-- (void)setTransferUploadFiles:(BOOL)value {
-	_transferUploadFiles = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)transferUploadFiles {
-	return _transferUploadFiles;
-}
-
-
-
-- (void)setTransferUploadDirectories:(BOOL)value {
-	_transferUploadDirectories = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)transferUploadDirectories {
-	return _transferUploadDirectories;
-}
-
-
-
-- (void)setTransferUploadAnywhere:(BOOL)value {
-	_transferUploadAnywhere = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)transferUploadAnywhere {
-	return _transferUploadAnywhere;
-}
-
-
-
-- (void)setTransferDownloadLimit:(NSUInteger)value {
-	_transferDownloadLimit = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (NSUInteger)transferDownloadLimit {
-	return _transferDownloadLimit;
-}
-
-
-
-- (void)setTransferUploadLimit:(NSUInteger)value {
-	_transferUploadLimit = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] unsignedIntegerValue];
 }
 
 
 
 - (NSUInteger)transferUploadLimit {
-	return _transferUploadLimit;
-}
-
-
-
-- (void)setTransferDownloadSpeedLimit:(NSUInteger)value {
-	_transferDownloadSpeedLimit = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] unsignedIntegerValue];
 }
 
 
 
 - (NSUInteger)transferDownloadSpeedLimit {
-	return _transferDownloadSpeedLimit;
-}
-
-
-
-- (void)setTransferUploadSpeedLimit:(NSUInteger)value {
-	_transferUploadSpeedLimit = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] unsignedIntegerValue];
 }
 
 
 
 - (NSUInteger)transferUploadSpeedLimit {
-	return _transferUploadSpeedLimit;
-}
-
-
-
-- (void)setAccountChangePassword:(BOOL)value {
-	_accountChangePassword = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] unsignedIntegerValue];
 }
 
 
 
 - (BOOL)accountChangePassword {
-	return _accountChangePassword;
-}
-
-
-
-- (void)setAccountListAccounts:(BOOL)value {
-	_accountListAccounts = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)accountListAccounts {
-	return _accountListAccounts;
-}
-
-
-
-- (void)setAccountReadAccounts:(BOOL)value {
-	_accountReadAccounts = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)accountReadAccounts {
-	return _accountReadAccounts;
-}
-
-
-
-- (void)setAccountCreateAccounts:(BOOL)value {
-	_accountCreateAccounts = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)accountCreateAccounts {
-	return _accountCreateAccounts;
-}
-
-
-
-- (void)setAccountEditAccounts:(BOOL)value {
-	_accountEditAccounts = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)accountEditAccounts {
-	return _accountEditAccounts;
-}
-
-
-
-- (void)setAccountDeleteAccounts:(BOOL)value {
-	_accountDeleteAccounts = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)accountDeleteAccounts {
-	return _accountDeleteAccounts;
-}
-
-
-
-- (void)setAccountRaiseAccountPrivileges:(BOOL)value {
-	_accountRaiseAccountPrivileges = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)accountRaiseAccountPrivileges {
-	return _accountRaiseAccountPrivileges;
-}
-
-
-
-- (void)setLogViewLog:(BOOL)value {
-	_logViewLog = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)logViewLog {
-	return _logViewLog;
-}
-
-
-
-- (void)setSettingsGetSettings:(BOOL)value {
-	_settingsGetSettings = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)settingsGetSettings {
-	return _settingsGetSettings;
-}
-
-
-
-- (void)setSettingsSetSettings:(BOOL)value {
-	_settingsSetSettings = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)settingsSetSettings {
-	return _settingsSetSettings;
-}
-
-
-
-- (void)setTrackerListServers:(BOOL)value {
-	_trackerListServers = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)trackerListServers {
-	return _trackerListServers;
-}
-
-
-
-- (void)setBanlistGetBans:(BOOL)value {
-	_banlistGetBans = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)banlistGetBans {
-	return _banlistGetBans;
-}
-
-
-
-- (void)setBanlistAddBans:(BOOL)value {
-	_banlistAddBans = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)banlistAddBans {
-	return _banlistAddBans;
-}
-
-
-
-- (void)setBanlistDeleteBans:(BOOL)value {
-	_banlistDeleteBans = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)banlistDeleteBans {
-	return _banlistDeleteBans;
-}
-
-
-
-- (void)setTrackerRegisterServers:(BOOL)value {
-	_trackerRegisterServers = value;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
 }
 
 
 
 - (BOOL)trackerRegisterServers {
-	return _trackerRegisterServers;
+	return [[_values objectForKey:NSStringFromSelector(_cmd)] boolValue];
+}
+
+
+
+#pragma mark -
+
+- (void)setValue:(id)value forKey:(NSString *)key {
+	if(value)
+		[_values setObject:value forKey:key];
+	else
+		[_values removeObjectForKey:key];
+}
+
+
+
+- (id)valueForKey:(NSString *)key {
+	return [_values objectForKey:key];
 }
 
 
@@ -1017,51 +1074,7 @@
 
 
 
-@implementation WCUserAccount(Private)
-
-- (id)_initWithMessage:(WIP7Message *)message {
-	self = [super _initWithMessage:message];
-	
-	_loginDate	= [[message dateForName:@"wired.account.login_time"] retain];
-	_fullName	= [[message stringForName:@"wired.account.full_name"] retain];
-	_group		= [[message stringForName:@"wired.account.group"] retain];
-	_groups		= [[message listForName:@"wired.account.groups"] retain];
-	_password	= [[message stringForName:@"wired.account.password"] retain];
-	
-	return self;
-}
-
-
-
-#pragma mark -
-
-- (void)_writeToMessage:(WIP7Message *)message {
-	[message setString:_fullName forName:@"wired.account.full_name"];
-	[message setString:_group forName:@"wired.account.group"];
-	[message setList:_groups forName:@"wired.account.groups"];
-	[message setString:_password forName:@"wired.account.password"];
-	
-	[super _writeToMessage:message];
-}
-
-@end
-
-
 @implementation WCUserAccount
-
-- (void)dealloc {
-	[_loginDate release];
-	[_fullName release];
-	[_group release];
-	[_groups release];
-	[_password release];
-	
-	[super dealloc];
-}
-
-
-
-#pragma mark -
 
 - (WIP7Message *)createAccountMessage {
 	WIP7Message		*message;
@@ -1090,67 +1103,31 @@
 #pragma mark -
 
 - (NSDate *)loginDate {
-	return _loginDate;
-}
-
-
-
-- (void)setFullName:(NSString *)fullName {
-	[fullName retain];
-	[_fullName release];
-	
-	_fullName = fullName;
+	return [_values objectForKey:NSStringFromSelector(_cmd)];
 }
 
 
 
 - (NSString *)fullName {
-	return _fullName;
-}
-
-
-
-- (void)setGroup:(NSString *)group {
-	[group retain];
-	[_group release];
-	
-	_group = group;
+	return [_values objectForKey:NSStringFromSelector(_cmd)];
 }
 
 
 
 - (NSString *)group {
-	return _group;
-}
-
-
-
-- (void)setGroups:(NSArray *)groups {
-	[groups retain];
-	[_groups release];
-	
-	_groups = groups;
+	return [_values objectForKey:NSStringFromSelector(_cmd)];
 }
 
 
 
 - (NSArray *)groups {
-	return _groups;
-}
-
-
-
-- (void)setPassword:(NSString *)password {
-	[password retain];
-	[_password release];
-	
-	_password = password;
+	return [_values objectForKey:NSStringFromSelector(_cmd)];
 }
 
 
 
 - (NSString *)password {
-	return _password;
+	return [_values objectForKey:NSStringFromSelector(_cmd)];
 }
 
 @end

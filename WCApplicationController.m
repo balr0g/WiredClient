@@ -436,6 +436,13 @@ static WCApplicationController		*sharedController;
 				[self _connectWithBookmark:bookmark];
 		}
 	}
+	
+	wi_pool_t *pool = wi_pool_init(wi_pool_alloc());
+	NSNumber *number;
+//	number = [NSNumber numberWithWiredNumber:wi_number_with_bool(true)];
+//	NSLog(@"%@", number);
+//	wi_log_info(WI_STR("%@"), [number wiredNumber]);
+	NSLog(@"%s %s", [[NSNumber numberWithChar:-42] objCType], [[NSNumber numberWithUnsignedChar:42] objCType]);
 }
 
 
