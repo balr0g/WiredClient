@@ -310,44 +310,36 @@
 
 
 - (void)_validateAccount:(WCAccount *)account {
-	NSEnumerator	*enumerator;
-	NSControl		*control;
-	
-	[_typePopUpButton setEnabled:_creatingAccount];
-	[_nameTextField setEnabled:_creatingAccount];
-	
 	if(account) {
-		enumerator = [_controls objectEnumerator];
+		[_typePopUpButton setEnabled:_creatingAccount];
+		[_nameTextField setEnabled:_creatingAccount];
 		
-		while((control = [enumerator nextObject]))
-			[control setEnabled:YES];
-		
-		[_nameTextField setEnabled:NO];
-
-		if([account isKindOfClass:[WCUserAccount class]]) {
+		if([account isKindOfClass:[WCUserAccount class]] || (_creatingAccount && [_typePopUpButton selectedItem] == _userMenuItem)) {
 			[_fullNameTextField setEnabled:YES];
 			[_passwordTextField setEnabled:YES];
 			[_groupPopUpButton setEnabled:YES];
 			[_groupsTokenField setEnabled:YES];
-		} else {
+		}
+		else if([account isKindOfClass:[WCGroupAccount class]] || (_creatingAccount && [_typePopUpButton selectedItem] == _groupMenuItem)) {
 			[_fullNameTextField setEnabled:NO];
 			[_passwordTextField setEnabled:NO];
 			[_groupPopUpButton setEnabled:NO];
 			[_groupsTokenField setEnabled:NO];
 		}
 	} else {
-		enumerator = [_controls objectEnumerator];
-		
-		while((control = [enumerator nextObject]))
-			[control setEnabled:_creatingAccount];
+		[_nameTextField setEnabled:NO];
+		[_fullNameTextField setEnabled:NO];
+		[_passwordTextField setEnabled:NO];
+		[_groupPopUpButton setEnabled:NO];
+		[_groupsTokenField setEnabled:NO];
 	}
 }
 
 
 
 - (void)_readFromAccount:(WCAccount *)account {
-	NSEnumerator	*enumerator;
-	NSControl		*control;
+	NSEnumerator		*enumerator;
+	NSDictionary		*section;
 	
 	if(account) {
 		if([account isKindOfClass:[WCUserAccount class]]) {
@@ -366,65 +358,56 @@
 			
 			[_groupsTokenField setStringValue:[[(WCUserAccount *) account groups] componentsJoinedByString:@","]];
 	
-			if([[(WCUserAccount *) account loginDate] isAtBeginningOfAnyEpoch])
-				[_loginTimeTextField setStringValue:@""];
-			else
+			if([(WCUserAccount *) account loginDate] && ![[(WCUserAccount *) account loginDate] isAtBeginningOfAnyEpoch])
 				[_loginTimeTextField setStringValue:[_dateFormatter stringFromDate:[(WCUserAccount *) account loginDate]]];
-		} else {
+			else
+				[_loginTimeTextField setStringValue:@""];
+		}
+		else if([account isKindOfClass:[WCGroupAccount class]]) {
 			[_typePopUpButton selectItem:_groupMenuItem];
 			[_fullNameTextField setStringValue:@""];
 			[_passwordTextField setStringValue:@""];
 			[_groupPopUpButton selectItem:_noneMenuItem];
 			[_loginTimeTextField setStringValue:@""];
 		}
-			
+		
 		[_nameTextField setStringValue:[account name]];
 
-		if([[account creationDate] isAtBeginningOfAnyEpoch])
-			[_creationTimeTextField setStringValue:@""];
-		else
+		if([account creationDate] && ![[account creationDate] isAtBeginningOfAnyEpoch])
 			[_creationTimeTextField setStringValue:[_dateFormatter stringFromDate:[account creationDate]]];
-
-		if([[account modificationDate] isAtBeginningOfAnyEpoch])
-			[_modificationTimeTextField setStringValue:@""];
 		else
-			[_modificationTimeTextField setStringValue:[_dateFormatter stringFromDate:[account modificationDate]]];
+			[_creationTimeTextField setStringValue:@""];
 
-		[_editedByTextField setStringValue:[(WCUserAccount *) account editedBy]];
-		
+		if([account modificationDate] && ![[account modificationDate] isAtBeginningOfAnyEpoch])
+			[_modificationTimeTextField setStringValue:[_dateFormatter stringFromDate:[account modificationDate]]];
+		else
+			[_modificationTimeTextField setStringValue:@""];
+
+		if([account editedBy])
+			[_editedByTextField setStringValue:[account editedBy]];
+		else
+			[_editedByTextField setStringValue:@""];
 	} else {
-		enumerator = [_controls objectEnumerator];
-		
-		while((control = [enumerator nextObject])) {
-			if([control isKindOfClass:[NSButton class]])
-				[(NSButton *) control setState:NSOffState];
-			else
-				[control setStringValue:@""];
-		}
-		
 		[_typePopUpButton selectItem:_userMenuItem];
+		[_nameTextField setStringValue:@""];
+		[_fullNameTextField setStringValue:@""];
+		[_passwordTextField setStringValue:@""];
 		[_groupPopUpButton selectItem:_noneMenuItem];
-		
-		if(_creatingAccount) {
-			[_nameTextField setStringValue:NSLS(@"Untitled", @"Account name")];
-			
-/*			[_userGetInfoButton setState:NSOnState];
-			[_chatCreateChatsButton setState:NSOnState];
-			[_messageSendMessagesButton setState:NSOnState];
-			[_boardReadBoardsButton setState:NSOnState];
-			[_boardAddThreadsButton setState:NSOnState];
-			[_boardAddPostsButton setState:NSOnState];
-			[_boardEditOwnPostsButton setState:NSOnState];
-			[_fileListFilesButton setState:NSOnState];
-			[_fileGetInfoButton setState:NSOnState];
-			[_transferDownloadFilesButton setState:NSOnState];
-			[_transferUploadFilesButton setState:NSOnState];
-			[_transferUploadDirectoriesButton setState:NSOnState];
-			[_trackerListServersButton setState:NSOnState];*/
-		}
+		[_groupsTokenField setStringValue:@""];
+		[_creationTimeTextField setStringValue:@""];
+		[_modificationTimeTextField setStringValue:@""];
+		[_loginTimeTextField setStringValue:@""];
+		[_editedByTextField setStringValue:@""];
 	}
 	
+	[self _reloadSettings];
+	
 	[_settingsOutlineView reloadData];
+
+	enumerator = [_shownSettings objectEnumerator];
+	
+	while((section = [enumerator nextObject]))
+		[_settingsOutlineView expandItem:section];
 }
 
 
@@ -439,7 +422,7 @@
 		[account setValue:[_fullNameTextField stringValue] forKey:@"fullName"];
 
 		if([[_passwordTextField stringValue] isEqualToString:@""])
-			password = @"";
+			password = [@"" SHA1];
 		else if(![[(WCUserAccount *) account password] isEqualToString:[_passwordTextField stringValue]])
 			password = [[_passwordTextField stringValue] SHA1];
 		else
@@ -620,8 +603,6 @@
 	[_allSettings release];
 	[_shownSettings release];
 	
-	[_controls release];
-	
 	[_userImage release];
 	[_groupImage release];
 
@@ -641,10 +622,7 @@
 #pragma mark -
 
 - (void)windowDidLoad {
-	NSEnumerator		*enumerator;
-	NSToolbar			*toolbar;
-	NSControl			*control;
-	NSDictionary		*section;
+	NSToolbar		*toolbar;
 
 	toolbar = [[NSToolbar alloc] initWithIdentifier:@"Accounts"];
 	[toolbar setDelegate:self];
@@ -670,32 +648,6 @@
 	[_dateFormatter setDateStyle:NSDateFormatterMediumStyle];
 	[_dateFormatter setNaturalLanguageStyle:WIDateFormatterCapitalizedNaturalLanguageStyle];
 	
-	_controls = [[NSMutableArray alloc] initWithObjects:
-		_nameTextField,
-		_fullNameTextField,
-		_creationTimeTextField,
-		_modificationTimeTextField,
-		_loginTimeTextField,
-		_editedByTextField,
-		_passwordTextField,
-		_groupPopUpButton,
-		_groupsTokenField,
-		NULL];
-	
-	enumerator = [_controls objectEnumerator];
-	
-	while((control = [enumerator nextObject])) {
-		if([control isKindOfClass:[NSButton class]] && ![control target]) {
-			[control setTarget:self];
-			[control setAction:@selector(touch:)];
-		}
-	}
-	
-	enumerator = [_shownSettings objectEnumerator];
-	
-	while((section = [enumerator nextObject]))
-		[_settingsOutlineView expandItem:section];
-
 	[self _validateAccount:NULL];
 	[self _readFromAccount:NULL];
 	
@@ -859,9 +811,11 @@
 			[self validate];
 		}
 		else if([_account isKindOfClass:[WCUserAccount class]] && [[(WCUserAccount *) _account group] isEqualToString:[account name]]) {
+			[_underlyingAccount release];
 			_underlyingAccount = [account retain];
-	
-			[_settingsOutlineView reloadData];
+			
+			[self _validateAccount:_account];
+			[self _readFromAccount:_account];
 		}
 	}
 }
@@ -1090,18 +1044,22 @@
 - (IBAction)add:(id)sender {
 	[_account release];
 	_account = NULL;
+	
 	[_underlyingAccount release];
 	_underlyingAccount = NULL;
+
 	_editingAccount = NO;
-	
+
 	_account = [[WCAccount alloc] init];
+	[_account setValue:NSLS(@"Untitled", @"Account name") forKey:@"name"];
+
 	_creatingAccount = YES;
 	_accountTouched = YES;
 	
 	[_accountsTabView selectTabViewItemAtIndex:0];
 	
-	[self _validateAccount:NULL];
-	[self _readFromAccount:NULL];
+	[self _validateAccount:_account];
+	[self _readFromAccount:_account];
 	
 	[self validate];
 	
@@ -1181,8 +1139,12 @@
 
 
 - (IBAction)changePassword:(id)sender {
-	[_changePasswordTextField setStringValue:@""];
-	
+	[_newPasswordTextField setStringValue:@""];
+	[_verifyPasswordTextField setStringValue:@""];
+	[_passwordMismatchTextField setHidden:YES];
+
+	[_changePasswordPanel makeFirstResponder:_newPasswordTextField];
+
 	[NSApp beginSheet:_changePasswordPanel
 	   modalForWindow:[self window]
 		modalDelegate:self
@@ -1193,33 +1155,52 @@
 
 
 - (void)changePasswordSheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-	NSString		*password;
 	WIP7Message		*message;
 
 	[_changePasswordPanel close];
 
 	if(returnCode == NSAlertDefaultReturn) {
-		if([[_changePasswordTextField stringValue] length] > 0)
-			password = [[_changePasswordTextField stringValue] SHA1];
-		else
-			password = @"";
-		
 		message = [WIP7Message messageWithName:@"wired.account.change_password" spec:WCP7Spec];
-		[message setString:password forName:@"wired.account.password"];
+		[message setString:[[_newPasswordTextField stringValue] SHA1] forName:@"wired.account.password"];
 		[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredAccountChangePasswordReply:)];
 	}
 }
 
 
 
-- (IBAction)group:(id)sender {
-	if(_account) {
-		if([_groupPopUpButton selectedItem] != _noneMenuItem)
-			[_account setValue:[_groupPopUpButton titleOfSelectedItem] forKey:@"group"];
-		
-		[self _validateAccount:_account];
-	}
+- (IBAction)submitPasswordSheet:(id)sender {
+	NSString		*newPassword, *verifyPassword;
 	
+	newPassword		= [_newPasswordTextField stringValue];
+	verifyPassword	= [_verifyPasswordTextField stringValue];
+	
+	if([newPassword isEqualToString:verifyPassword]) {
+		[self submitSheet:sender];
+	} else {
+		NSBeep();
+		
+		[_passwordMismatchTextField setHidden:NO];
+	}
+}
+
+
+
+- (IBAction)type:(id)sender {
+	[self _validateAccount:_account];
+}
+
+
+
+- (IBAction)group:(id)sender {
+	if([_groupPopUpButton selectedItem] != _noneMenuItem) {
+		[self _readAccount:[WCGroupAccount accountWithName:[_groupPopUpButton titleOfSelectedItem]]];
+	} else {
+		[_underlyingAccount release];
+		_underlyingAccount = NULL;
+		
+		[_settingsOutlineView reloadData];
+	}
+
 	[self touch:self];
 }
 
@@ -1442,14 +1423,15 @@
 			if([_accountsTableView numberOfSelectedRows] == 1) {
 				[self _readAccount:[self _selectedAccount]];
 			} else {
-				[self _validateAccount:NULL];
-				[self _readFromAccount:NULL];
-				
 				[_account release];
 				_account = NULL;
 				[_underlyingAccount release];
 				_underlyingAccount = NULL;
 				_editingAccount = NO;
+				_creatingAccount = NO;
+
+				[self _validateAccount:NULL];
+				[self _readFromAccount:NULL];
 			}
 		}
 		
@@ -1462,6 +1444,9 @@
 #pragma mark -
 
 - (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item {
+	if(!_account)
+		return 0;
+	
 	if(!item)
 		return [_shownSettings count];
 	
@@ -1526,12 +1511,10 @@
 
 
 - (void)outlineView:(NSOutlineView *)outlineView willDisplayCell:(id)cell forTableColumn:(NSTableColumn *)tableColumn item:(id)item {
-	if(tableColumn == _settingTableColumn) {
-		if([_account valueForKey:[item objectForKey:WCAccountFieldKey]])
-			[cell setFont:[[cell font] fontByAddingTrait:NSBoldFontMask]];
-		else
-			[cell setFont:[[cell font] fontByAddingTrait:NSUnboldFontMask]];
-	}
+	if([_account valueForKey:[item objectForKey:WCAccountFieldKey]])
+		[cell setFont:[[cell font] fontByAddingTrait:NSBoldFontMask]];
+	else
+		[cell setFont:[[cell font] fontByAddingTrait:NSUnboldFontMask]];
 }
 
 

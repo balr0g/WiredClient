@@ -62,13 +62,13 @@
 	IBOutlet NSTableColumn				*_valueTableColumn;
 	
 	IBOutlet NSPanel					*_changePasswordPanel;
-	IBOutlet NSSecureTextField			*_changePasswordTextField;
+	IBOutlet NSSecureTextField			*_newPasswordTextField;
+	IBOutlet NSSecureTextField			*_verifyPasswordTextField;
+	IBOutlet NSTextField				*_passwordMismatchTextField;
 	
 	NSArray								*_allSettings;
 	NSMutableArray						*_shownSettings;
 	
-	NSMutableArray						*_controls;
-
 	NSMutableArray						*_allAccounts, *_shownAccounts;
 	NSImage								*_userImage, *_groupImage;
 	NSUInteger							_users, _groups;
@@ -101,6 +101,8 @@
 - (IBAction)delete:(id)sender;
 - (IBAction)reload:(id)sender;
 - (IBAction)changePassword:(id)sender;
+- (IBAction)submitPasswordSheet:(id)sender;
+- (IBAction)type:(id)sender;
 - (IBAction)group:(id)sender;
 - (IBAction)show:(id)sender;
 - (IBAction)clearSetting:(id)sender;
