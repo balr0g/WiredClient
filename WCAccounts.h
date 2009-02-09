@@ -35,13 +35,6 @@
 	
 	IBOutlet NSTabView					*_accountsTabView;
 
-	IBOutlet NSButton					*_selectAllBasicPrivilegesButton;
-	IBOutlet NSButton					*_selectAllFilesPrivilegesButton;
-	IBOutlet NSButton					*_selectAllBoardsPrivilegesButton;
-	IBOutlet NSButton					*_selectAllTrackerPrivilegesButton;
-	IBOutlet NSButton					*_selectAllUsersPrivilegesButton;
-	IBOutlet NSButton					*_selectAllAccountsPrivilegesButton;
-	IBOutlet NSButton					*_selectAllAdministrationPrivilegesButton;
 	IBOutlet NSProgressIndicator		*_progressIndicator;
 	IBOutlet NSButton					*_saveButton;
 
@@ -59,65 +52,6 @@
 	IBOutlet NSPopUpButton				*_groupPopUpButton;
 	IBOutlet NSMenuItem					*_noneMenuItem;
 	IBOutlet NSTokenField				*_groupsTokenField;
-	IBOutlet NSTextField				*_filesTextField;
-	IBOutlet NSButton					*_userCannotSetNickButton;
-	IBOutlet NSButton					*_userGetInfoButton;
-	IBOutlet NSButton					*_userKickUsersButton;
-	IBOutlet NSButton					*_userBanUsersButton;
-	IBOutlet NSButton					*_userCannotBeDisconnectedButton;
-	IBOutlet NSButton					*_userGetUsersButton;
-	IBOutlet NSButton					*_chatSetTopicButton;
-	IBOutlet NSButton					*_chatCreateChatsButton;
-	IBOutlet NSButton					*_messageSendMessagesButton;
-	IBOutlet NSButton					*_messageBroadcastButton;
-	IBOutlet NSButton					*_boardReadBoardsButton;
-	IBOutlet NSButton					*_boardAddBoardsButton;
-	IBOutlet NSButton					*_boardMoveBoardsButton;
-	IBOutlet NSButton					*_boardRenameBoardsButton;
-	IBOutlet NSButton					*_boardDeleteBoardsButton;
-	IBOutlet NSButton					*_boardSetPermissionsButton;
-	IBOutlet NSButton					*_boardAddThreadsButton;
-	IBOutlet NSButton					*_boardMoveThreadsButton;
-	IBOutlet NSButton					*_boardDeleteThreadsButton;
-	IBOutlet NSButton					*_boardAddPostsButton;
-	IBOutlet NSButton					*_boardEditOwnPostsButton;
-	IBOutlet NSButton					*_boardEditAllPostsButton;
-	IBOutlet NSButton					*_boardDeletePostsButton;
-	IBOutlet NSButton					*_fileListFilesButton;
-	IBOutlet NSButton					*_fileGetInfoButton;
-	IBOutlet NSButton					*_fileCreateDirectoriesButton;
-	IBOutlet NSButton					*_fileCreateLinksButton;
-	IBOutlet NSButton					*_fileMoveFilesButton;
-	IBOutlet NSButton					*_fileRenameFilesButton;
-	IBOutlet NSButton					*_fileSetTypeButton;
-	IBOutlet NSButton					*_fileSetCommentButton;
-	IBOutlet NSButton					*_fileSetPermissionsButton;
-	IBOutlet NSButton					*_fileDeleteFilesButton;
-	IBOutlet NSButton					*_fileAccessAllDropboxesButton;
-	IBOutlet NSTextField				*_fileRecursiveListDepthLimitTextField;
-	IBOutlet NSButton					*_transferDownloadFilesButton;
-	IBOutlet NSButton					*_transferUploadFilesButton;
-	IBOutlet NSButton					*_transferUploadDirectoriesButton;
-	IBOutlet NSButton					*_transferUploadAnywhereButton;
-	IBOutlet NSTextField				*_transferDownloadLimitTextField;
-	IBOutlet NSTextField				*_transferUploadLimitTextField;
-	IBOutlet NSTextField				*_transferDownloadSpeedLimitTextField;
-	IBOutlet NSTextField				*_transferUploadSpeedLimitTextField;
-	IBOutlet NSButton					*_accountChangePasswordButton;
-	IBOutlet NSButton					*_accountListAccountsButton;
-	IBOutlet NSButton					*_accountReadAccountsButton;
-	IBOutlet NSButton					*_accountCreateAccountsButton;
-	IBOutlet NSButton					*_accountEditAccountsButton;
-	IBOutlet NSButton					*_accountDeleteAccountsButton;
-	IBOutlet NSButton					*_accountRaiseAccountPrivilegesButton;
-	IBOutlet NSButton					*_logViewLogButton;
-	IBOutlet NSButton					*_settingsGetSettingsButton;
-	IBOutlet NSButton					*_settingsSetSettingsButton;
-	IBOutlet NSButton					*_banlistGetBansButton;
-	IBOutlet NSButton					*_banlistAddBansButton;
-	IBOutlet NSButton					*_banlistDeleteBansButton;
-	IBOutlet NSButton					*_trackerListServersButton;
-	IBOutlet NSButton					*_trackerRegisterServersButton;
 	
 	IBOutlet NSPopUpButton				*_showPopUpButton;
 	IBOutlet NSMenuItem					*_allSettingsMenuItem;
@@ -133,8 +67,7 @@
 	NSArray								*_allSettings;
 	NSMutableArray						*_shownSettings;
 	
-	NSArray								*_groupControls;
-	NSMutableArray						*_allControls;
+	NSMutableArray						*_controls;
 
 	NSMutableArray						*_allAccounts, *_shownAccounts;
 	NSImage								*_userImage, *_groupImage;
@@ -169,16 +102,9 @@
 - (IBAction)reload:(id)sender;
 - (IBAction)changePassword:(id)sender;
 - (IBAction)group:(id)sender;
-- (IBAction)save:(id)sender;
-- (IBAction)selectAllBasicPrivileges:(id)sender;
-- (IBAction)selectAllFilesPrivileges:(id)sender;
-- (IBAction)selectAllBoardsPrivileges:(id)sender;
-- (IBAction)selectAllTrackerPrivileges:(id)sender;
-- (IBAction)selectAllUsersPrivileges:(id)sender;
-- (IBAction)selectAllAccountsPrivileges:(id)sender;
-- (IBAction)selectAllAdministrationPrivileges:(id)sender;
 - (IBAction)show:(id)sender;
 - (IBAction)clearSetting:(id)sender;
+- (IBAction)save:(id)sender;
 
 @end
 

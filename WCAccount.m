@@ -178,8 +178,10 @@
 				NULL],
 			[NSDictionary dictionaryWithObjectsAndKeys:
 				@"files",												WCAccountFieldKey,
+				NSLS(@"Files Directory", @"Account field name"),		WCAccountFieldLocalizedName,
 				@"wired.account.files",									WCAccountFieldName,
 				[NSNumber numberWithInt:WCAccountFieldString],			WCAccountFieldType,
+				[NSNumber numberWithInt:WCAccountFieldFiles],			WCAccountFieldSection,
 				NULL],
 			[NSDictionary dictionaryWithObjectsAndKeys:
 				@"userCannotSetNick",									WCAccountFieldKey,

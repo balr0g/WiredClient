@@ -103,6 +103,7 @@
 				break;
 
 			case WCAccountFieldNumber:
+			case WCAccountFieldString:
 				textFieldCell = [[NSTextFieldCell alloc] initTextCell:@""];
 				[textFieldCell setControlSize:NSSmallControlSize];
 				[textFieldCell setEditable:YES];
@@ -316,7 +317,7 @@
 	[_nameTextField setEnabled:_creatingAccount];
 	
 	if(account) {
-		enumerator = [_allControls objectEnumerator];
+		enumerator = [_controls objectEnumerator];
 		
 		while((control = [enumerator nextObject]))
 			[control setEnabled:YES];
@@ -324,12 +325,10 @@
 		[_nameTextField setEnabled:NO];
 
 		if([account isKindOfClass:[WCUserAccount class]]) {
-			if([[(WCUserAccount *) account group] length] > 0) {
-				enumerator = [_groupControls objectEnumerator];
-				
-				while((control = [enumerator nextObject]))
-					[control setEnabled:NO];
-			}
+			[_fullNameTextField setEnabled:YES];
+			[_passwordTextField setEnabled:YES];
+			[_groupPopUpButton setEnabled:YES];
+			[_groupsTokenField setEnabled:YES];
 		} else {
 			[_fullNameTextField setEnabled:NO];
 			[_passwordTextField setEnabled:NO];
@@ -337,7 +336,7 @@
 			[_groupsTokenField setEnabled:NO];
 		}
 	} else {
-		enumerator = [_allControls objectEnumerator];
+		enumerator = [_controls objectEnumerator];
 		
 		while((control = [enumerator nextObject]))
 			[control setEnabled:_creatingAccount];
@@ -380,7 +379,6 @@
 		}
 			
 		[_nameTextField setStringValue:[account name]];
-		[_filesTextField setStringValue:[account files]];
 
 		if([[account creationDate] isAtBeginningOfAnyEpoch])
 			[_creationTimeTextField setStringValue:@""];
@@ -394,88 +392,8 @@
 
 		[_editedByTextField setStringValue:[(WCUserAccount *) account editedBy]];
 		
-		[_userCannotSetNickButton setState:[account userCannotSetNick]];
-		[_userGetInfoButton setState:[account userGetInfo]];
-		[_userKickUsersButton setState:[account userKickUsers]];
-		[_userBanUsersButton setState:[account userBanUsers]];
-		[_userCannotBeDisconnectedButton setState:[account userCannotBeDisconnected]];
-		[_userGetUsersButton setState:[account userGetUsers]];
-		[_chatSetTopicButton setState:[account chatSetTopic]];
-		[_chatCreateChatsButton setState:[account chatCreateChats]];
-		[_messageSendMessagesButton setState:[account messageSendMessages]];
-		[_messageBroadcastButton setState:[account messageBroadcast]];
-		[_boardReadBoardsButton setState:[account boardReadBoards]];
-		[_boardAddBoardsButton setState:[account boardAddBoards]];
-		[_boardMoveBoardsButton setState:[account boardMoveBoards]];
-		[_boardRenameBoardsButton setState:[account boardRenameBoards]];
-		[_boardDeleteBoardsButton setState:[account boardDeleteBoards]];
-		[_boardSetPermissionsButton setState:[account boardSetPermissions]];
-		[_boardAddThreadsButton setState:[account boardAddThreads]];
-		[_boardMoveThreadsButton setState:[account boardMoveThreads]];
-		[_boardDeleteThreadsButton setState:[account boardDeleteThreads]];
-		[_boardAddPostsButton setState:[account boardAddPosts]];
-		[_boardEditOwnPostsButton setState:[account boardEditOwnPosts]];
-		[_boardEditAllPostsButton setState:[account boardEditAllPosts]];
-		[_boardDeletePostsButton setState:[account boardDeletePosts]];
-		[_fileListFilesButton setState:[account fileListFiles]];
-		[_fileGetInfoButton setState:[account fileGetInfo]];
-		[_fileCreateDirectoriesButton setState:[account fileCreateDirectories]];
-		[_fileCreateLinksButton setState:[account fileCreateLinks]];
-		[_fileMoveFilesButton setState:[account fileMoveFiles]];
-		[_fileRenameFilesButton setState:[account fileRenameFiles]];
-		[_fileSetTypeButton setState:[account fileSetType]];
-		[_fileSetCommentButton setState:[account fileSetComment]];
-		[_fileSetPermissionsButton setState:[account fileSetPermissions]];
-		[_fileDeleteFilesButton setState:[account fileDeleteFiles]];
-		[_fileAccessAllDropboxesButton setState:[account fileAccessAllDropboxes]];
-
-		if([account fileRecursiveListDepthLimit] > 0)
-			[_fileRecursiveListDepthLimitTextField setIntValue:[account fileRecursiveListDepthLimit]];
-		else
-			[_fileRecursiveListDepthLimitTextField setStringValue:@""];
-		
-		[_transferDownloadFilesButton setState:[account transferDownloadFiles]];
-		[_transferUploadFilesButton setState:[account transferUploadFiles]];
-		[_transferUploadDirectoriesButton setState:[account transferUploadDirectories]];
-		[_transferUploadAnywhereButton setState:[account transferUploadAnywhere]];
-		
-		if([account transferDownloadLimit] > 0)
-			[_transferDownloadLimitTextField setIntValue:[account transferDownloadLimit]];
-		else
-			[_transferDownloadLimitTextField setStringValue:@""];
-		
-		if([account transferUploadLimit] > 0)
-			[_transferUploadLimitTextField setIntValue:[account transferUploadLimit]];
-		else
-			[_transferUploadLimitTextField setStringValue:@""];
-
-		if([account transferDownloadSpeedLimit] > 0)
-			[_transferDownloadSpeedLimitTextField setIntValue:(double) [account transferDownloadSpeedLimit] / 1024.0];
-		else
-			[_transferDownloadSpeedLimitTextField setStringValue:@""];
-		
-		if([account transferUploadSpeedLimit] > 0)
-			[_transferUploadSpeedLimitTextField setIntValue:(double) [account transferUploadSpeedLimit] / 1024.0];
-		else
-			[_transferUploadSpeedLimitTextField setStringValue:@""];
-
-		[_accountChangePasswordButton setState:[account accountChangePassword]];
-		[_accountListAccountsButton setState:[account accountListAccounts]];
-		[_accountReadAccountsButton setState:[account accountReadAccounts]];
-		[_accountCreateAccountsButton setState:[account accountCreateAccounts]];
-		[_accountEditAccountsButton setState:[account accountEditAccounts]];
-		[_accountDeleteAccountsButton setState:[account accountDeleteAccounts]];
-		[_accountRaiseAccountPrivilegesButton setState:[account accountRaiseAccountPrivileges]];
-		[_logViewLogButton setState:[account logViewLog]];
-		[_settingsGetSettingsButton setState:[account settingsGetSettings]];
-		[_settingsSetSettingsButton setState:[account settingsSetSettings]];
-		[_banlistGetBansButton setState:[account banlistGetBans]];
-		[_banlistAddBansButton setState:[account banlistAddBans]];
-		[_banlistDeleteBansButton setState:[account banlistDeleteBans]];
-		[_trackerListServersButton setState:[account trackerListServers]];
-		[_trackerRegisterServersButton setState:[account trackerRegisterServers]];
 	} else {
-		enumerator = [_allControls objectEnumerator];
+		enumerator = [_controls objectEnumerator];
 		
 		while((control = [enumerator nextObject])) {
 			if([control isKindOfClass:[NSButton class]])
@@ -490,7 +408,7 @@
 		if(_creatingAccount) {
 			[_nameTextField setStringValue:NSLS(@"Untitled", @"Account name")];
 			
-			[_userGetInfoButton setState:NSOnState];
+/*			[_userGetInfoButton setState:NSOnState];
 			[_chatCreateChatsButton setState:NSOnState];
 			[_messageSendMessagesButton setState:NSOnState];
 			[_boardReadBoardsButton setState:NSOnState];
@@ -502,7 +420,7 @@
 			[_transferDownloadFilesButton setState:NSOnState];
 			[_transferUploadFilesButton setState:NSOnState];
 			[_transferUploadDirectoriesButton setState:NSOnState];
-			[_trackerListServersButton setState:NSOnState];
+			[_trackerListServersButton setState:NSOnState];*/
 		}
 	}
 	
@@ -702,8 +620,7 @@
 	[_allSettings release];
 	[_shownSettings release];
 	
-	[_groupControls release];
-	[_allControls release];
+	[_controls release];
 	
 	[_userImage release];
 	[_groupImage release];
@@ -753,76 +670,7 @@
 	[_dateFormatter setDateStyle:NSDateFormatterMediumStyle];
 	[_dateFormatter setNaturalLanguageStyle:WIDateFormatterCapitalizedNaturalLanguageStyle];
 	
-	_groupControls = [[NSArray alloc] initWithObjects:
-		_selectAllBasicPrivilegesButton,
-		_selectAllFilesPrivilegesButton,
-		_selectAllBoardsPrivilegesButton,
-		_selectAllTrackerPrivilegesButton,
-		_selectAllUsersPrivilegesButton,
-		_selectAllAccountsPrivilegesButton,
-		_selectAllAdministrationPrivilegesButton,
-		_filesTextField,
-		_userCannotSetNickButton,
-		_userGetInfoButton,
-		_userKickUsersButton,
-		_userBanUsersButton,
-		_userCannotBeDisconnectedButton,
-		_userGetUsersButton,
-		_chatSetTopicButton,
-		_chatCreateChatsButton,
-		_messageSendMessagesButton,
-		_messageBroadcastButton,
-		_boardReadBoardsButton,
-		_boardAddBoardsButton,
-		_boardMoveBoardsButton,
-		_boardRenameBoardsButton,
-		_boardDeleteBoardsButton,
-		_boardSetPermissionsButton,
-		_boardAddThreadsButton,
-		_boardMoveThreadsButton,
-		_boardDeleteThreadsButton,
-		_boardAddPostsButton,
-		_boardEditOwnPostsButton,
-		_boardEditAllPostsButton,
-		_boardDeletePostsButton,
-		_fileListFilesButton,
-		_fileGetInfoButton,
-		_fileCreateDirectoriesButton,
-		_fileCreateLinksButton,
-		_fileMoveFilesButton,
-		_fileRenameFilesButton,
-		_fileSetTypeButton,
-		_fileSetCommentButton,
-		_fileSetPermissionsButton,
-		_fileDeleteFilesButton,
-		_fileAccessAllDropboxesButton,
-		_fileRecursiveListDepthLimitTextField,
-		_transferDownloadFilesButton,
-		_transferUploadFilesButton,
-		_transferUploadDirectoriesButton,
-		_transferUploadAnywhereButton,
-		_transferDownloadLimitTextField,
-		_transferUploadLimitTextField,
-		_transferDownloadSpeedLimitTextField,
-		_transferUploadSpeedLimitTextField,
-		_accountChangePasswordButton,
-		_accountListAccountsButton,
-		_accountReadAccountsButton,
-		_accountCreateAccountsButton,
-		_accountEditAccountsButton,
-		_accountDeleteAccountsButton,
-		_accountRaiseAccountPrivilegesButton,
-		_logViewLogButton,
-		_settingsGetSettingsButton,
-		_settingsSetSettingsButton,
-		_banlistGetBansButton,
-		_banlistAddBansButton,
-		_banlistDeleteBansButton,
-		_trackerListServersButton,
-		_trackerRegisterServersButton,
-		NULL];
-
-	_allControls = [[NSMutableArray alloc] initWithObjects:
+	_controls = [[NSMutableArray alloc] initWithObjects:
 		_nameTextField,
 		_fullNameTextField,
 		_creationTimeTextField,
@@ -833,9 +681,8 @@
 		_groupPopUpButton,
 		_groupsTokenField,
 		NULL];
-	[_allControls addObjectsFromArray:_groupControls];
 	
-	enumerator = [_allControls objectEnumerator];
+	enumerator = [_controls objectEnumerator];
 	
 	while((control = [enumerator nextObject])) {
 		if([control isKindOfClass:[NSButton class]] && ![control target]) {
@@ -1378,154 +1225,6 @@
 
 
 
-- (IBAction)save:(id)sender {
-	[self _saveAndClear:NO];
-}
-
-
-
-- (void)saveSheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-	NSNumber	*number = contextInfo;
-	NSInteger	row = [number integerValue];
-
-	if(row != -2 || returnCode != NSAlertSecondButtonReturn) {
-		if(returnCode == NSAlertFirstButtonReturn) {
-			[self _saveAndClear:YES];
-		} else {
-			[_account release];
-			_account = NULL;
-			[_underlyingAccount release];
-			_underlyingAccount = NULL;
-			_creatingAccount = NO;
-		}
-
-		_accountTouched = NO;
-
-		[[self window] setDocumentEdited:NO];
-
-		if(row >= 0) {
-			[_accountsTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
-		} else {
-			[self _validateAccount:NULL];
-			[self _readFromAccount:NULL];
-			
-			if(row == -2) {
-				[_accountsTableView deselectAll:self];
-
-				[self close];
-			}
-		}
-
-		[self validate];
-	}
-	
-	[number release];
-}
-
-
-
-- (IBAction)selectAllBasicPrivileges:(id)sender {
-	[_userCannotSetNickButton setState:NSOnState];
-	[_userGetInfoButton setState:NSOnState];
-	[_chatSetTopicButton setState:NSOnState];
-	[_chatCreateChatsButton setState:NSOnState];
-	[_messageSendMessagesButton setState:NSOnState];
-	[_messageBroadcastButton setState:NSOnState];
-	
-	[self touch:self];
-}
-
-
-
-- (IBAction)selectAllFilesPrivileges:(id)sender {
-	[_fileListFilesButton setState:NSOnState];
-	[_fileGetInfoButton setState:NSOnState];
-	[_fileCreateDirectoriesButton setState:NSOnState];
-	[_fileCreateLinksButton setState:NSOnState];
-	[_fileMoveFilesButton setState:NSOnState];
-	[_fileRenameFilesButton setState:NSOnState];
-	[_fileSetTypeButton setState:NSOnState];
-	[_fileSetCommentButton setState:NSOnState];
-	[_fileSetPermissionsButton setState:NSOnState];
-	[_fileDeleteFilesButton setState:NSOnState];
-	[_fileAccessAllDropboxesButton setState:NSOnState];
-	[_transferDownloadFilesButton setState:NSOnState];
-	[_transferUploadFilesButton setState:NSOnState];
-	[_transferUploadDirectoriesButton setState:NSOnState];
-	[_transferUploadAnywhereButton setState:NSOnState];
-	
-	[self touch:self];
-}
-
-
-
-- (IBAction)selectAllBoardsPrivileges:(id)sender {
-	[_boardReadBoardsButton setState:NSOnState];
-	[_boardAddBoardsButton setState:NSOnState];
-	[_boardMoveBoardsButton setState:NSOnState];
-	[_boardRenameBoardsButton setState:NSOnState];
-	[_boardDeleteBoardsButton setState:NSOnState];
-	[_boardSetPermissionsButton setState:NSOnState];
-	[_boardAddThreadsButton setState:NSOnState];
-	[_boardMoveThreadsButton setState:NSOnState];
-	[_boardDeleteThreadsButton setState:NSOnState];
-	[_boardAddPostsButton setState:NSOnState];
-	[_boardEditOwnPostsButton setState:NSOnState];
-	[_boardEditAllPostsButton setState:NSOnState];
-	[_boardDeletePostsButton setState:NSOnState];
-	
-	[self touch:self];
-}
-
-
-
-- (IBAction)selectAllTrackerPrivileges:(id)sender {
-	[_trackerListServersButton setState:NSOnState];
-	[_trackerRegisterServersButton setState:NSOnState];
-	
-	[self touch:self];
-}
-
-
-
-- (IBAction)selectAllUsersPrivileges:(id)sender {
-	[_userKickUsersButton setState:NSOnState];
-	[_userBanUsersButton setState:NSOnState];
-	[_userCannotBeDisconnectedButton setState:NSOnState];
-	
-	[self touch:self];
-}
-
-
-
-- (IBAction)selectAllAccountsPrivileges:(id)sender {
-	[_accountChangePasswordButton setState:NSOnState];
-	[_accountListAccountsButton setState:NSOnState];
-	[_accountReadAccountsButton setState:NSOnState];
-	[_accountCreateAccountsButton setState:NSOnState];
-	[_accountEditAccountsButton setState:NSOnState];
-	[_accountDeleteAccountsButton setState:NSOnState];
-	[_accountRaiseAccountPrivilegesButton setState:NSOnState];
-	
-	[self touch:self];
-}
-
-
-
-- (IBAction)selectAllAdministrationPrivileges:(id)sender {
-	[_userGetUsersButton setState:NSOnState];
-	[_logViewLogButton setState:NSOnState];
-	[_settingsGetSettingsButton setState:NSOnState];
-	[_settingsSetSettingsButton setState:NSOnState];
-	[_banlistGetBansButton setState:NSOnState];
-	[_banlistAddBansButton setState:NSOnState];
-	[_banlistDeleteBansButton setState:NSOnState];
-	
-	[self touch:self];
-}
-
-
-
 - (IBAction)show:(id)sender {
 	[self _reloadSettings];
 	NSEnumerator			*enumerator, *settingsEnumerator;
@@ -1581,9 +1280,11 @@
 		setting		= [_settingsOutlineView itemAtRow:index];
 		key			= [setting objectForKey:WCAccountFieldKey];
 		
-		[_account setValue:NULL forKey:key];
-		
-		changed = YES;
+		if(key) {
+			[_account setValue:NULL forKey:key];
+			
+			changed = YES;
+		}
 		
 		index = [indexes indexGreaterThanIndex:index];
 	}
@@ -1596,6 +1297,52 @@
 	
 		[_settingsOutlineView reloadData];
 	}
+}
+
+
+
+- (IBAction)save:(id)sender {
+	[self _saveAndClear:NO];
+}
+
+
+
+- (void)saveSheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+	NSNumber	*number = contextInfo;
+	NSInteger	row = [number integerValue];
+
+	if(row != -2 || returnCode != NSAlertSecondButtonReturn) {
+		if(returnCode == NSAlertFirstButtonReturn) {
+			[self _saveAndClear:YES];
+		} else {
+			[_account release];
+			_account = NULL;
+			[_underlyingAccount release];
+			_underlyingAccount = NULL;
+			_creatingAccount = NO;
+		}
+
+		_accountTouched = NO;
+
+		[[self window] setDocumentEdited:NO];
+
+		if(row >= 0) {
+			[_accountsTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
+		} else {
+			[self _validateAccount:NULL];
+			[self _readFromAccount:NULL];
+			
+			if(row == -2) {
+				[_accountsTableView deselectAll:self];
+
+				[self close];
+			}
+		}
+
+		[self validate];
+	}
+	
+	[number release];
 }
 
 
@@ -1744,8 +1491,12 @@
 		if(!value)
 			value = [_underlyingAccount valueForKey:[item objectForKey:WCAccountFieldKey]];
 		
-		if([[item objectForKey:WCAccountFieldType] intValue] == WCAccountFieldNumber && [value intValue] == 0)
+		if([[item objectForKey:WCAccountFieldType] intValue] == WCAccountFieldNumber && [value integerValue] == 0)
 			return NULL;
+		
+		if([[item objectForKey:WCAccountFieldKey] isEqualToString:@"transferDownloadSpeedLimit"] ||
+		   [[item objectForKey:WCAccountFieldKey] isEqualToString:@"transferUploadSpeedLimit"])
+			value = [NSNumber numberWithInteger:[value doubleValue] / 1024.0];
 		
 		return value;
 	}
@@ -1763,6 +1514,10 @@
 	if([[item objectForKey:WCAccountFieldType] intValue] == WCAccountFieldNumber)
 		value = [NSNumber numberWithInteger:[object integerValue]];
 	
+	if([[item objectForKey:WCAccountFieldKey] isEqualToString:@"transferDownloadSpeedLimit"] ||
+	   [[item objectForKey:WCAccountFieldKey] isEqualToString:@"transferUploadSpeedLimit"])
+		value = [NSNumber numberWithInteger:[value integerValue] * 1024.0];
+
 	[_account setValue:value forKey:[item objectForKey:WCAccountFieldKey]];
 	
 	[self touch:self];
