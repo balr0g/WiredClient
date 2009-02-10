@@ -152,6 +152,10 @@
 		A509AD1205F7FBFF00E6AE2D /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A509AD1105F7FBFF00E6AE2D /* Carbon.framework */; };
 		A509ADAC05F7FF8400E6AE2D /* WCAboutWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = A509ADAA05F7FF8400E6AE2D /* WCAboutWindow.m */; };
 		A515FD380D61ED4800922A2D /* WCInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = A515FD370D61ED4800922A2D /* WCInfoController.m */; };
+		A51B4FE50F4222AF00EAB0E1 /* WCFilterButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A51B4FE40F4222AF00EAB0E1 /* WCFilterButtonCell.m */; };
+		A51B50100F42282F00EAB0E1 /* FilterButtonRight.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A51B500D0F42282F00EAB0E1 /* FilterButtonRight.tiff */; };
+		A51B50110F42282F00EAB0E1 /* FilterButtonLeft.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A51B500E0F42282F00EAB0E1 /* FilterButtonLeft.tiff */; };
+		A51B50120F42282F00EAB0E1 /* FilterButtonMiddle.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A51B500F0F42282F00EAB0E1 /* FilterButtonMiddle.tiff */; };
 		A526D7D80D5F00B200F30E6F /* WCNotificationCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A526D7D70D5F00B200F30E6F /* WCNotificationCenter.m */; };
 		A52B301C05E6F0A300C651A4 /* WCServerInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A52B301A05E6F0A300C651A4 /* WCServerInfo.m */; };
 		A5326A8F0F37981C004180AA /* PostHeader.html in Resources */ = {isa = PBXBuildFile; fileRef = A5326A8C0F37981C004180AA /* PostHeader.html */; };
@@ -551,6 +555,11 @@
 		A509ADAA05F7FF8400E6AE2D /* WCAboutWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCAboutWindow.m; sourceTree = "<group>"; };
 		A515FD360D61ED4800922A2D /* WCInfoController.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCInfoController.h; sourceTree = "<group>"; };
 		A515FD370D61ED4800922A2D /* WCInfoController.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCInfoController.m; sourceTree = "<group>"; };
+		A51B4FE30F4222AF00EAB0E1 /* WCFilterButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCFilterButtonCell.h; sourceTree = "<group>"; };
+		A51B4FE40F4222AF00EAB0E1 /* WCFilterButtonCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCFilterButtonCell.m; sourceTree = "<group>"; };
+		A51B500D0F42282F00EAB0E1 /* FilterButtonRight.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = FilterButtonRight.tiff; sourceTree = "<group>"; };
+		A51B500E0F42282F00EAB0E1 /* FilterButtonLeft.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = FilterButtonLeft.tiff; sourceTree = "<group>"; };
+		A51B500F0F42282F00EAB0E1 /* FilterButtonMiddle.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = FilterButtonMiddle.tiff; sourceTree = "<group>"; };
 		A526D7D60D5F00B200F30E6F /* WCNotificationCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCNotificationCenter.h; sourceTree = "<group>"; };
 		A526D7D70D5F00B200F30E6F /* WCNotificationCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCNotificationCenter.m; sourceTree = "<group>"; };
 		A52B301905E6F0A300C651A4 /* WCServerInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCServerInfo.h; sourceTree = "<group>"; };
@@ -887,6 +896,8 @@
 		772F6CE90F1E1A8E00CB8001 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				A51B4FE40F4222AF00EAB0E1 /* WCFilterButtonCell.m */,
+				A51B4FE30F4222AF00EAB0E1 /* WCFilterButtonCell.h */,
 				A5AAD2DD0D879B250072FFA1 /* WCFilterView.m */,
 				A5AAD2DC0D879B250072FFA1 /* WCFilterView.h */,
 				A5F7F95D0F1D2588007BF4FD /* WCSourceBackgroundView.m */,
@@ -1342,6 +1353,9 @@
 				A54AF8FB0F13AEBA00AFD50E /* EventOff.tiff */,
 				A54AF8FA0F13AEBA00AFD50E /* EventOn.tiff */,
 				A54AF8F90F13AEBA00AFD50E /* Events.tiff */,
+				A51B500E0F42282F00EAB0E1 /* FilterButtonLeft.tiff */,
+				A51B500F0F42282F00EAB0E1 /* FilterButtonMiddle.tiff */,
+				A51B500D0F42282F00EAB0E1 /* FilterButtonRight.tiff */,
 				A54AF8F80F13AEBA00AFD50E /* FileInfo.tiff */,
 				A54AF8F70F13AEBA00AFD50E /* Forward.tiff */,
 				A54AF8F60F13AEBA00AFD50E /* General.tiff */,
@@ -1789,6 +1803,9 @@
 				A54AF9460F13AEBB00AFD50E /* EventOn.tiff in Resources */,
 				A54AF9450F13AEBB00AFD50E /* Events.tiff in Resources */,
 				A54AF9440F13AEBB00AFD50E /* FileInfo.tiff in Resources */,
+				A51B50110F42282F00EAB0E1 /* FilterButtonLeft.tiff in Resources */,
+				A51B50120F42282F00EAB0E1 /* FilterButtonMiddle.tiff in Resources */,
+				A51B50100F42282F00EAB0E1 /* FilterButtonRight.tiff in Resources */,
 				A54AF9430F13AEBB00AFD50E /* Forward.tiff in Resources */,
 				A54AF9420F13AEBB00AFD50E /* General.tiff in Resources */,
 				77256AD10F2DFF6800EA5816 /* GrayDrop.tiff in Resources */,
@@ -2028,6 +2045,7 @@
 				A5DC7FAB057AB0A600736BBF /* WCUser.m in Sources */,
 				A5DC7F84057AB05F00736BBF /* WCUserCell.m in Sources */,
 				A5DC7F09057AAF6C00736BBF /* WCUserInfo.m in Sources */,
+				A51B4FE50F4222AF00EAB0E1 /* WCFilterButtonCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

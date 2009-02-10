@@ -8,8 +8,8 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="452"/>
 			<integer value="338"/>
+			<integer value="452"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -502,9 +502,9 @@ QYQYekVIIGYqIF+sIAAIE/YEAH5BX9BYJA4K/4bCILEYdEYFE4pF4xGY1G45HY9H5BHAFBQHBQDD4FCY
 vKo1FpDL5hMY5AQAAA8BAAADAAAAAQAuAAABAQADAAAAAQAuAAABAgADAAAABAAAFhoBAwADAAAAAQAF
 AAABBgADAAAAAQACAAABEQAEAAAAAQAAAAgBEgADAAAAAQABAAABFQADAAAAAQAEAAABFgADAAAAAQLI
 AAABFwAEAAAAAQAAFVcBHAADAAAAAQABAAABPQADAAAAAQACAAABUgADAAAAAQABAAABUwADAAAABAAA
-FiKHcwAHAAAO/AAAFioAAAAAAAgACAAIAAgAAQABAAEAAQAADvxhcHBsAgAAAG1udHJSR0IgWFlaIAfY
-AAEAAwAWACwANmFjc3BBUFBMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD21gABAAAAANMtYXBwbEdc
-rF04Qla3wientq1tCbkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADnJYWVoAAAEsAAAAFGdY
+FiKHcwAHAAAO/AAAFioAAAAAAAgACAAIAAgAAQABAAEAAQAADvxhcHBsAgAAAG1udHJSR0IgWFlaIAfZ
+AAEAEgAOAAEADGFjc3BBUFBMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD21gABAAAAANMtYXBwbH4T
+UrhLro36MqCLFT9CtcwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADnJYWVoAAAEsAAAAFGdY
 WVoAAAFAAAAAFGJYWVoAAAFUAAAAFHd0cHQAAAFoAAAAFGNoYWQAAAF8AAAALHJUUkMAAAGoAAAADmdU
 UkMAAAG4AAAADmJUUkMAAAHIAAAADnZjZ3QAAAHYAAAGEm5kaW4AAAfsAAAGPmRlc2MAAA4sAAAAX2Rz
 Y20AAA6MAAAAJG1tb2QAAA6wAAAAKGNwcnQAAA7YAAAAJFhZWiAAAAAAAAB3mgAAQJkAAAMZWFlaIAAA
@@ -566,7 +566,7 @@ zVzPQdEp0xPVANbu2N7a0dzA3qXgfuJM5BLlz+eF6TPq2ux77hbvrvFI8uT0gfYh98H5Y/sH/K3+Vf//
 AABkZXNjAAAAAAAAAAVpTWFjAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAA
 AAgAAAAcAGkATQBhAGNtbW9kAAAAAAAABhAAAJxlAAAAAL/TkYAAAAAAAAAAAAAAAAAAAAAAdGV4dAAA
-AABDb3B5cmlnaHQgQXBwbGUsIEluYy4sIDIwMDgAA</bytes>
+AABDb3B5cmlnaHQgQXBwbGUsIEluYy4sIDIwMDkAA</bytes>
 																	</object>
 																	<string key="NSCacheWindowColorSpace">NSCalibratedRGBColorSpace</string>
 																	<int key="NSCacheWindowBPS">8</int>
@@ -957,8 +957,8 @@ BAtG8dp+GQdR5n4bqsH+ex9n6AB67EACYoEuyBVmgWygAfyAgAAADwEAAAMAAAABAA4AAAEBAAMAAAAB
 AA4AAAECAAMAAAAEAAADsAEDAAMAAAABAAUAAAEGAAMAAAABAAIAAAERAAQAAAABAAAACAESAAMAAAAB
 AAEAAAEVAAMAAAABAAQAAAEWAAMAAAABCSQAAAEXAAQAAAABAAAC7QEcAAMAAAABAAEAAAE9AAMAAAAB
 AAIAAAFSAAMAAAABAAEAAAFTAAMAAAAEAAADuIdzAAcAAA78AAADwAAAAAAACAAIAAgACAABAAEAAQAB
-AAAO/GFwcGwCAAAAbW50clJHQiBYWVogB9gAAQADABYALAA2YWNzcEFQUEwAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAPbWAAEAAAAA0y1hcHBsR1ysXThCVrfCJ6e2rW0JuQAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAO/GFwcGwCAAAAbW50clJHQiBYWVogB9kAAQASAA4AAQAMYWNzcEFQUEwAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAPbWAAEAAAAA0y1hcHBsfhNSuEuujfoyoIsVP0K1zAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAOclhZWgAAASwAAAAUZ1hZWgAAAUAAAAAUYlhZWgAAAVQAAAAUd3RwdAAAAWgAAAAU
 Y2hhZAAAAXwAAAAsclRSQwAAAagAAAAOZ1RSQwAAAbgAAAAOYlRSQwAAAcgAAAAOdmNndAAAAdgAAAYS
 bmRpbgAAB+wAAAY+ZGVzYwAADiwAAABfZHNjbQAADowAAAAkbW1vZAAADrAAAAAoY3BydAAADtgAAAAk
@@ -1020,7 +1020,7 @@ swe1H7c6uVa7db2Pv6DBqMOrxafHncmMy3bNXM9B0SnTE9UA1u7Y3trR3MDepeB+4kzkEuXP54XpM+ra
 7HvuFu+u8Ujy5PSB9iH3wflj+wf8rf5V//8AAGRlc2MAAAAAAAAABWlNYWMAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAG1sdWMAAAAAAAAAAQAAAAxlblVTAAAACAAAABwAaQBNAGEAY21tb2QAAAAAAAAGEAAAnGUAAAAA
-v9ORgAAAAAAAAAAAAAAAAAAAAAB0ZXh0AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOAA</bytes>
+v9ORgAAAAAAAAAAAAAAAAAAAAAB0ZXh0AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 																	</object>
 																	<string key="NSCacheWindowColorSpace">NSCalibratedRGBColorSpace</string>
 																	<int key="NSCacheWindowBPS">8</int>
@@ -4396,8 +4396,11 @@ v9ORgAAAAAAAAAAAAAAAAAAAAAB0ZXh0AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOAA</byt
 					<string>349.ImportedFromIB2</string>
 					<string>350.IBPluginDependency</string>
 					<string>351.IBPluginDependency</string>
+					<string>352.CustomClassName</string>
 					<string>352.IBPluginDependency</string>
+					<string>353.CustomClassName</string>
 					<string>353.IBPluginDependency</string>
+					<string>354.CustomClassName</string>
 					<string>354.IBPluginDependency</string>
 					<string>355.IBEditorWindowLastContentRect</string>
 					<string>355.IBPluginDependency</string>
@@ -4423,9 +4426,13 @@ v9ORgAAAAAAAAAAAAAAAAAAAAAB0ZXh0AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOAA</byt
 					<string>371.ImportedFromIB2</string>
 					<string>372.IBPluginDependency</string>
 					<string>372.ImportedFromIB2</string>
+					<string>373.CustomClassName</string>
 					<string>373.IBPluginDependency</string>
+					<string>374.CustomClassName</string>
 					<string>374.IBPluginDependency</string>
+					<string>375.CustomClassName</string>
 					<string>375.IBPluginDependency</string>
+					<string>376.CustomClassName</string>
 					<string>376.IBPluginDependency</string>
 					<string>377.IBPluginDependency</string>
 					<string>378.IBEditorWindowLastContentRect</string>
@@ -4589,8 +4596,11 @@ v9ORgAAAAAAAAAAAAAAAAAAAAAB0ZXh0AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOAA</byt
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>WCFilterButtonCell</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>WCFilterButtonCell</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>WCFilterButtonCell</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{{38, 10}, {852, 575}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -4616,9 +4626,13 @@ v9ORgAAAAAAAAAAAAAAAAAAAAAB0ZXh0AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOAA</byt
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
+					<string>WCFilterButtonCell</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>WCFilterButtonCell</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>WCFilterButtonCell</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>WCFilterButtonCell</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{{44, 43}, {712, 557}}</string>
@@ -4757,6 +4771,13 @@ v9ORgAAAAAAAAAAAAAAAAAAAAAB0ZXh0AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOAA</byt
 					<string key="className">NSObject</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">WCBoardsWindow.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">NSObject</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">WCChatWindow.h</string>
 					</object>
 				</object>
@@ -4817,10 +4838,6 @@ v9ORgAAAAAAAAAAAAAAAAAAAAAB0ZXh0AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOAA</byt
 				<object class="IBPartialClassDescription">
 					<string key="className">WCAdministrationController</string>
 					<string key="superclassName">WIObject</string>
-					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">submitSheet:</string>
-						<string key="NS.object.0">id</string>
-					</object>
 					<object class="NSMutableDictionary" key="outlets">
 						<string key="NS.key.0">_administration</string>
 						<string key="NS.object.0">WCAdministration</string>
@@ -4881,6 +4898,14 @@ v9ORgAAAAAAAAAAAAAAAAAAAAAB0ZXh0AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOAA</byt
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">WCConnectionController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">WCFilterButtonCell</string>
+					<string key="superclassName">NSButtonCell</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">WCFilterButtonCell.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
