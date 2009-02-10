@@ -887,6 +887,8 @@
 		772F6CE90F1E1A8E00CB8001 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				A5AAD2DD0D879B250072FFA1 /* WCFilterView.m */,
+				A5AAD2DC0D879B250072FFA1 /* WCFilterView.h */,
 				A5F7F95D0F1D2588007BF4FD /* WCSourceBackgroundView.m */,
 				A5F7F95C0F1D2588007BF4FD /* WCSourceBackgroundView.h */,
 				A5F7F9F80F1D52DB007BF4FD /* WCSourceImageView.m */,
@@ -1494,8 +1496,6 @@
 				A558A4EE0E8526F7004C724C /* WCBan.h */,
 				A5D409760D897770007851BD /* WCBanlistController.m */,
 				A5D409750D897770007851BD /* WCBanlistController.h */,
-				A5AAD2DD0D879B250072FFA1 /* WCFilterView.m */,
-				A5AAD2DC0D879B250072FFA1 /* WCFilterView.h */,
 				A5AAD14A0D86F1980072FFA1 /* WCLogController.m */,
 				A5AAD1490D86F1980072FFA1 /* WCLogController.h */,
 				A5F802970D8E378300A84685 /* WCMonitorCell.m */,
