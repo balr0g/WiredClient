@@ -29,9 +29,12 @@
 #import "WCConnectionController.h"
 
 @interface WCAccounts : WCConnectionController {
+	IBOutlet NSButton					*_allFilterButton;
+	IBOutlet NSButton					*_usersFilterButton;
+	IBOutlet NSButton					*_groupsFilterButton;
+	IBOutlet NSSearchField				*_filterSearchField;
+
 	IBOutlet WITableView				*_accountsTableView;
-	IBOutlet NSTableColumn				*_nameTableColumn;
-	IBOutlet NSTableColumn				*_typeTableColumn;
 	
 	IBOutlet NSTabView					*_accountsTabView;
 
@@ -69,9 +72,10 @@
 	NSArray								*_allSettings;
 	NSMutableArray						*_shownSettings;
 	
-	NSMutableArray						*_allAccounts, *_shownAccounts;
-	NSImage								*_userImage, *_groupImage;
-	NSUInteger							_users, _groups;
+	NSMutableArray						*_allAccounts;
+	NSMutableArray						*_shownAccounts;
+	NSImage								*_userImage;
+	NSImage								*_groupImage;
 	
 	WCAccount							*_account;
 	WCAccount							*_underlyingAccount;
@@ -82,6 +86,7 @@
 
 	BOOL								_received;
 
+	NSString							*_accountFilter;
 	WIDateFormatter						*_dateFormatter;
 }
 
@@ -102,6 +107,10 @@
 - (IBAction)reload:(id)sender;
 - (IBAction)changePassword:(id)sender;
 - (IBAction)submitPasswordSheet:(id)sender;
+- (IBAction)all:(id)sender;
+- (IBAction)users:(id)sender;
+- (IBAction)groups:(id)sender;
+- (IBAction)search:(id)sender;
 - (IBAction)type:(id)sender;
 - (IBAction)group:(id)sender;
 - (IBAction)show:(id)sender;

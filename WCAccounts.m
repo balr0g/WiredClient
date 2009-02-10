@@ -51,7 +51,6 @@
 - (WCAccount *)_accountAtIndex:(NSUInteger)index;
 - (WCAccount *)_selectedAccount;
 - (NSArray *)_selectedAccounts;
-- (void)_sortAccounts;
 - (void)_reloadAccounts;
 - (void)_reloadGroups;
 - (void)_reloadSettings;
@@ -327,6 +326,7 @@
 			[_groupsTokenField setEnabled:NO];
 		}
 	} else {
+		[_typePopUpButton setEnabled:NO];
 		[_nameTextField setEnabled:NO];
 		[_fullNameTextField setEnabled:NO];
 		[_passwordTextField setEnabled:NO];
@@ -496,19 +496,6 @@
 
 
 
-- (void)_sortAccounts {
-	NSTableColumn   *tableColumn;
-
-	tableColumn = [_accountsTableView highlightedTableColumn];
-	
-	if(tableColumn == _nameTableColumn)
-		[_shownAccounts sortUsingSelector:@selector(compareName:)];
-	else if(tableColumn == _typeTableColumn)
-		[_shownAccounts sortUsingSelector:@selector(compareType:)];
-}
-
-
-
 - (void)_reloadAccounts {
 	WIP7Message		*message;
 	
@@ -517,7 +504,6 @@
 	[_allAccounts removeAllObjects];
 	[_shownAccounts removeAllObjects];
 
-	_users = _groups = 0;
 	[_accountsTableView reloadData];
 
 	message = [WIP7Message messageWithName:@"wired.account.list_users" spec:WCP7Spec];
@@ -530,16 +516,25 @@
 
 
 - (void)_reloadGroups {
-	NSEnumerator	*enumerator;
-	WCAccount		*account;
+	NSEnumerator		*enumerator;
+	NSMutableArray		*groupAccounts;
+	WCAccount			*account;
 	
 	while([_groupPopUpButton numberOfItems] > 1)
 		[_groupPopUpButton removeItemAtIndex:1];
 	
-	if(_groups > 0) {
+	groupAccounts	= [NSMutableArray array];
+	enumerator		= [_allAccounts objectEnumerator];
+	
+	while((account = [enumerator nextObject])) {
+		if([account isKindOfClass:[WCGroupAccount class]])
+			[groupAccounts addObject:account];
+	}
+	
+	if([groupAccounts count] > 0) {
+		enumerator = [groupAccounts objectEnumerator];
+	
 		[[_groupPopUpButton menu] addItem:[NSMenuItem separatorItem]];
-		
-		enumerator = [_allAccounts objectEnumerator];
 		
 		while((account = [enumerator nextObject])) {
 			if([account isKindOfClass:[WCGroupAccount class]])
@@ -588,6 +583,47 @@
 		[_settingsOutlineView expandItem:section];
 }
 
+
+
+- (BOOL)_filterIncludesAccount:(WCAccount *)account {
+	BOOL		passed;
+	
+	if([_allFilterButton state] != NSOnState) {
+		passed = NO;
+		
+		if([_usersFilterButton state] == NSOnState && [account isKindOfClass:[WCUserAccount class]])
+			passed = YES;
+		else if([_groupsFilterButton state] == NSOnState && [account isKindOfClass:[WCGroupAccount class]])
+			passed = YES;
+	
+		if(!passed)
+			return NO;
+	}
+	
+	if(_accountFilter) {
+		if(![[account name] containsSubstring:_accountFilter])
+			return NO;
+	}
+	
+	return YES;
+}
+
+
+
+- (void)_reloadFilter {
+	NSEnumerator	*enumerator;
+	WCAccount		*account;
+	
+	[_shownAccounts removeAllObjects];
+	
+	enumerator = [_allAccounts objectEnumerator];
+	
+	while((account = [enumerator nextObject])) {
+		if([self _filterIncludesAccount:account])
+			[_shownAccounts addObject:account];
+	}
+}
+
 @end
 
 
@@ -613,6 +649,7 @@
 	[_underlyingAccount release];
 	
 	[_dateFormatter release];
+	[_accountFilter release];
 
 	[super dealloc];
 }
@@ -635,10 +672,7 @@
 
 	[_accountsTableView setPropertiesFromDictionary:
 		[[WCSettings objectForKey:WCWindowProperties] objectForKey:@"WCAccountsTableView"]];
-
-	[_accountsTableView setDoubleAction:@selector(edit:)];
 	[_accountsTableView setDeleteAction:@selector(delete:)];
-	[_accountsTableView setDefaultHighlightedTableColumnIdentifier:@"Name"];
 	[[self window] makeFirstResponder:_accountsTableView];
 	
 	[_settingsOutlineView setDeleteAction:@selector(clearSetting:)];
@@ -736,7 +770,6 @@
 	[_allAccounts removeAllObjects];
 	[_shownAccounts removeAllObjects];
 	
-	_users = _groups = 0;
 	_received = NO;
 	
 	[super linkConnectionLoggedIn:notification];
@@ -760,21 +793,16 @@
 - (void)wiredAccountListAccountsReply:(WIP7Message *)message {
 	if([[message name] isEqualToString:@"wired.account.user_list"]) {
 		[_allAccounts addObject:[WCUserAccount accountWithMessage:message]];
-		
-		_users++;
 	}
 	else if([[message name] isEqualToString:@"wired.account.user_list.done"]) {
 	}
 	else if([[message name] isEqualToString:@"wired.account.group_list"]) {
 		[_allAccounts addObject:[WCGroupAccount accountWithMessage:message]];
-		
-		_groups++;
 	}
 	else if([[message name] isEqualToString:@"wired.account.group_list.done"]) {
-		[_shownAccounts setArray:_allAccounts];
-		
 		[_progressIndicator stopAnimation:self];
-		[self _sortAccounts];
+		[_allAccounts sortUsingSelector:@selector(compareName:)];
+		[self _reloadFilter];
 		[self _reloadGroups];
 		[_accountsTableView reloadData];
 	}
@@ -1185,6 +1213,52 @@
 
 
 
+- (IBAction)all:(id)sender {
+	[_usersFilterButton setState:NSOffState];
+	[_groupsFilterButton setState:NSOffState];
+	
+	[self _reloadFilter];
+
+	[_accountsTableView reloadData];
+}
+
+
+
+- (IBAction)users:(id)sender {
+	[_allFilterButton setState:NSOffState];
+	
+	[self _reloadFilter];
+	
+	[_accountsTableView reloadData];
+}
+
+
+
+- (IBAction)groups:(id)sender {
+	[_allFilterButton setState:NSOffState];
+
+	[self _reloadFilter];
+	
+	[_accountsTableView reloadData];
+}
+
+
+
+- (IBAction)search:(id)sender {
+	[_accountFilter release];
+	
+	if([[_filterSearchField stringValue] length] > 0)
+		_accountFilter = [[_filterSearchField stringValue] retain];
+	else
+		_accountFilter = NULL;
+	
+	[self _reloadFilter];
+	
+	[_accountsTableView reloadData];
+}
+
+
+
 - (IBAction)type:(id)sender {
 	[self _validateAccount:_account];
 }
@@ -1367,43 +1441,21 @@
 
 	account = [self _accountAtIndex:row];
 
-	if(tableColumn == _nameTableColumn) {
-		return [account name];
-	}
-	else if(tableColumn == _typeTableColumn) {
-		if([account isKindOfClass:[WCUserAccount class]])
-			return NSLS(@"User", @"Account type");
-		else
-			return NSLS(@"Group", @"Account type");
-	}
-
-	return NULL;
+	return [account name];
 }
 
 
 
 - (void)tableView:(NSTableView *)tableView willDisplayCell:(id)cell forTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
-	if(tableColumn == _nameTableColumn) {
-		if([[self _accountAtIndex:row] isKindOfClass:[WCUserAccount class]])
-			[cell setImage:_userImage];
-		else
-			[cell setImage:_groupImage];
-	}
-	
-	[cell setBackgroundColor:[NSColor yellowColor]];
+	if([[self _accountAtIndex:row] isKindOfClass:[WCUserAccount class]])
+		[cell setImage:_userImage];
+	else
+		[cell setImage:_groupImage];
 }
 
 
 - (NSString *)tableView:(NSTableView *)tableView stringValueForRow:(NSInteger)row {
 	return [[self _accountAtIndex:row] name];
-}
-
-
-
-- (void)tableView:(NSTableView *)tableView didClickTableColumn:(NSTableColumn *)tableColumn {
-	[_accountsTableView setHighlightedTableColumn:tableColumn];
-	[self _sortAccounts];
-	[_accountsTableView reloadData];
 }
 
 
