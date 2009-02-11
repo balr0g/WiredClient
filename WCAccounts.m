@@ -532,13 +532,16 @@
 	}
 	
 	if([groupAccounts count] > 0) {
-		enumerator = [groupAccounts objectEnumerator];
-	
+		[[_groupFilterPopUpButton menu] addItem:[NSMenuItem separatorItem]];
 		[[_groupPopUpButton menu] addItem:[NSMenuItem separatorItem]];
 		
+		enumerator = [groupAccounts objectEnumerator];
+	
 		while((account = [enumerator nextObject])) {
-			if([account isKindOfClass:[WCGroupAccount class]])
+			if([account isKindOfClass:[WCGroupAccount class]]) {
+				[_groupFilterPopUpButton addItemWithTitle:[account name]];
 				[_groupPopUpButton addItemWithTitle:[account name]];
+			}
 		}
 	}
 }
@@ -586,7 +589,8 @@
 
 
 - (BOOL)_filterIncludesAccount:(WCAccount *)account {
-	BOOL		passed;
+	NSMenuItem		*item;
+	BOOL			passed;
 	
 	if([_allFilterButton state] != NSOnState) {
 		passed = NO;
@@ -600,8 +604,34 @@
 			return NO;
 	}
 	
+	item = [_groupFilterPopUpButton selectedItem];
+	
+	if(item != _anyGroupMenuItem) {
+		passed = NO;
+		
+		if([account isKindOfClass:[WCUserAccount class]]) {
+			if(item == _noGroupMenuItem)
+				passed = [[(WCUserAccount *) account group] isEqualToString:@""];
+			else
+				passed = [[(WCUserAccount *)account group] isEqualToString:[item title]];
+		}
+		
+		if(!passed)
+			return NO;
+	}
+	
 	if(_accountFilter) {
-		if(![[account name] containsSubstring:_accountFilter])
+		passed = NO;
+		
+		if([[account name] containsSubstring:_accountFilter])
+			passed = YES;
+		
+		if([account isKindOfClass:[WCUserAccount class]]) {
+			if([[(WCUserAccount *) account fullName] containsSubstring:_accountFilter])
+				passed = YES;
+		}
+
+		if(!passed)
 			return NO;
 	}
 	
@@ -1237,6 +1267,14 @@
 - (IBAction)groups:(id)sender {
 	[_allFilterButton setState:NSOffState];
 
+	[self _reloadFilter];
+	
+	[_accountsTableView reloadData];
+}
+
+
+
+- (IBAction)groupFilter:(id)sender {
 	[self _reloadFilter];
 	
 	[_accountsTableView reloadData];

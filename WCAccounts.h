@@ -32,6 +32,9 @@
 	IBOutlet NSButton					*_allFilterButton;
 	IBOutlet NSButton					*_usersFilterButton;
 	IBOutlet NSButton					*_groupsFilterButton;
+	IBOutlet NSPopUpButton				*_groupFilterPopUpButton;
+	IBOutlet NSMenuItem					*_anyGroupMenuItem;
+	IBOutlet NSMenuItem					*_noGroupMenuItem;
 	IBOutlet NSSearchField				*_filterSearchField;
 
 	IBOutlet WITableView				*_accountsTableView;
@@ -110,6 +113,7 @@
 - (IBAction)all:(id)sender;
 - (IBAction)users:(id)sender;
 - (IBAction)groups:(id)sender;
+- (IBAction)groupFilter:(id)sender;
 - (IBAction)search:(id)sender;
 - (IBAction)type:(id)sender;
 - (IBAction)group:(id)sender;
