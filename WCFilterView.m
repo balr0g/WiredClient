@@ -28,9 +28,9 @@
 
 #import "WCFilterView.h"
 
-static void WCFilterViewShader (void *, const float *, float *);
+static void WCFilterViewShader(void *, const float *, float *);
 
-static void WCFilterViewShader (void *info, const float *in, float *out) {
+static void WCFilterViewShader(void *info, const float *in, float *out) {
 	WCFilterView		*view = info;
 	CGFloat				red1, green1, blue1, alpha1;
 	CGFloat				red2, green2, blue2, alpha2;
@@ -57,8 +57,8 @@ static void WCFilterViewShader (void *info, const float *in, float *out) {
 
 	_gradientFunction = CGFunctionCreate(self, 1, domain, 4, range, &callbacks);
 	
-	_color1 = [[NSColor colorWithCalibratedRed:208.0/255.0 green:208.0/255.0 blue:208.0/255.0 alpha:1.0] retain];
-	_color2 = [[NSColor colorWithCalibratedRed:233.0/255.0 green:233.0/255.0 blue:233.0/255.0 alpha:1.0] retain];
+	_color1 = [[NSColor colorWithCalibratedRed:208.0 / 255.0 green:208.0 / 255.0 blue:208.0 / 255.0 alpha:1.0] retain];
+	_color2 = [[NSColor colorWithCalibratedRed:233.0 / 255.0 green:233.0 / 255.0 blue:233.0 / 255.0 alpha:1.0] retain];
 	
 	return self;
 }
