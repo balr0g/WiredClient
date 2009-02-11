@@ -169,7 +169,7 @@
 #pragma mark -
 
 - (void)serverConnectionPrivilegesDidChange:(NSNotification *)notification {
-	[self _requestUsers];
+	[self _reloadUsers];
 }
 
 
@@ -211,13 +211,13 @@
 #pragma mark -
 
 - (void)controllerWindowDidBecomeKey {
-	[self _requestUsers];
+	[self _reloadUsers];
 }
 
 
 
 - (void)controllerDidSelect {
-	[self _requestUsers];
+	[self _reloadUsers];
 
 	[[_administration window] makeFirstResponder:_usersTableView];
 }

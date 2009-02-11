@@ -28,7 +28,6 @@
 
 #define WCAccountFieldName					@"WCAccountFieldName"
 #define WCAccountFieldLocalizedName			@"WCAccountFieldLocalizedName"
-#define WCAccountFieldKey					@"WCAccountFieldKey"
 #define WCAccountFieldType					@"WCAccountFieldType"
 #define WCAccountFieldString					0
 #define WCAccountFieldDate						1
@@ -36,14 +35,15 @@
 #define WCAccountFieldBoolean					3
 #define WCAccountFieldList						4
 #define WCAccountFieldSection				@"WCAccountFieldSection"
-#define WCAccountFieldBasics					0
-#define WCAccountFieldFiles						1
-#define WCAccountFieldBoards					2
-#define WCAccountFieldTracker					3
-#define WCAccountFieldUsers						4
-#define WCAccountFieldAccounts					5
-#define WCAccountFieldAdministration			6
-#define WCAccountFieldLimits					7
+#define WCAccountFieldNone						0
+#define WCAccountFieldBasics					1
+#define WCAccountFieldFiles						2
+#define WCAccountFieldBoards					3
+#define WCAccountFieldTracker					4
+#define WCAccountFieldUsers						5
+#define WCAccountFieldAccounts					6
+#define WCAccountFieldAdministration			7
+#define WCAccountFieldLimits					8
 #define WCAccountFieldReadOnly				@"WCAccountFieldReadOnly"
 
 
@@ -60,6 +60,7 @@
 - (WIP7Message *)createAccountMessage;
 - (WIP7Message *)editAccountMessage;
 
+- (void)setName:(NSString *)name;
 - (NSString *)name;
 - (NSDate *)creationDate;
 - (NSDate *)modificationDate;
@@ -112,9 +113,12 @@
 - (BOOL)accountChangePassword;
 - (BOOL)accountListAccounts;
 - (BOOL)accountReadAccounts;
-- (BOOL)accountCreateAccounts;
-- (BOOL)accountEditAccounts;
-- (BOOL)accountDeleteAccounts;
+- (BOOL)accountCreateUsers;
+- (BOOL)accountEditUsers;
+- (BOOL)accountDeleteUsers;
+- (BOOL)accountCreateGroups;
+- (BOOL)accountEditGroups;
+- (BOOL)accountDeleteGroups;
 - (BOOL)accountRaiseAccountPrivileges;
 - (BOOL)logViewLog;
 - (BOOL)settingsGetSettings;
@@ -139,9 +143,13 @@
 @interface WCUserAccount : WCAccount
 
 - (NSDate *)loginDate;
+- (void)setFullName:(NSString *)fullName;
 - (NSString *)fullName;
+- (void)setGroup:(NSString *)group;
 - (NSString *)group;
+- (void)setGroups:(NSArray *)groups;
 - (NSArray *)groups;
+- (void)setPassword:(NSString *)password;
 - (NSString *)password;
 
 @end

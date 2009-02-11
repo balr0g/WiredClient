@@ -1629,7 +1629,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 	else if(selector == @selector(kick:))
 		return (([self chatID] != WCPublicChatID || [[[self connection] account] userKickUsers]) && connected);
 	else if(selector == @selector(editAccount:))
-		return ([[[self connection] account] accountEditAccounts] && connected);
+		return ([[[self connection] account] accountEditUsers] && connected);
 	
 	return YES;
 }

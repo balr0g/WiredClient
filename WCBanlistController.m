@@ -36,6 +36,7 @@
 
 - (void)_validate;
 
+- (void)_reloadBans;
 - (void)_getBans;
 
 - (WCBan *)_banAtIndex:(NSUInteger)index;
@@ -62,6 +63,13 @@
 
 
 #pragma mark -
+
+- (void)_reloadBans {
+	if([[_administration window] isVisible] && [_administration selectedController] == self)
+		[self _getBans];
+}
+
+
 
 - (void)_getBans {
 	WIP7Message		*message;
@@ -183,7 +191,7 @@
 
 
 - (void)serverConnectionPrivilegesDidChange:(NSNotification *)notification {
-	[self _getBans];
+	[self _reloadBans];
 	[self _validate];
 }
 
@@ -222,7 +230,7 @@
 #pragma mark -
 
 - (void)controllerWindowDidBecomeKey {
-	[self _getBans];
+	[self _reloadBans];
 }
 
 
@@ -236,7 +244,7 @@
 
 
 - (void)controllerDidSelect {
-	[self _getBans];
+	[self _reloadBans];
 }
 
 
@@ -343,7 +351,7 @@
 			[[_administration connection] sendMessage:message fromObserver:self selector:@selector(wiredBanlistDeleteBanReply:)];
 		}
 		
-		[self _getBans];
+		[self _reloadBans];
 	}
 }
 

@@ -38,6 +38,7 @@
 
 - (void)_validate;
 
+- (void)_reloadSettings;
 - (void)_getSettings;
 - (void)_setSettings;
 
@@ -74,6 +75,13 @@
 
 
 #pragma mark -
+
+- (void)_reloadSettings {
+	if([[_administration window] isVisible] && [_administration selectedController] == self)
+		[self _getSettings];
+}
+
+
 
 - (void)_getSettings {
 	WIP7Message		*message;
@@ -246,7 +254,7 @@
 
 
 - (void)serverConnectionPrivilegesDidChange:(NSNotification *)notification {
-	[self _getSettings];
+	[self _reloadSettings];
 	[self _validate];
 }
 
@@ -255,7 +263,7 @@
 #pragma mark -
 
 - (void)controllerWindowDidBecomeKey {
-	[self _getSettings];
+	[self _reloadSettings];
 }
 
 
@@ -264,7 +272,7 @@
 	[[_administration window] setShowsResizeIndicator:NO];
 	[[_administration window] makeFirstResponder:_nameTextField];
 	
-	[self _getSettings];
+	[self _reloadSettings];
 }
 
 
@@ -341,7 +349,7 @@
 	_touched = NO;
 
 	[self _validate];
-	[self _getSettings];
+	[self _reloadSettings];
 }
 
 
