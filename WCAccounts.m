@@ -544,6 +544,9 @@
 	while([_groupPopUpButton numberOfItems] > 1)
 		[_groupPopUpButton removeItemAtIndex:1];
 	
+	while([_groupFilterPopUpButton numberOfItems] > 2)
+		[_groupFilterPopUpButton removeItemAtIndex:2];
+
 	groupAccounts	= [NSMutableArray array];
 	enumerator		= [_allAccounts objectEnumerator];
 	
