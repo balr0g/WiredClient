@@ -821,6 +821,8 @@
 	[_allAccounts removeAllObjects];
 	[_shownAccounts removeAllObjects];
 	
+	[_accountsTableView reloadData];
+	
 	_received = NO;
 	
 	[super linkConnectionLoggedIn:notification];
