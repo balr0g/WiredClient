@@ -237,7 +237,7 @@
 		if([_socket connectWithTimeout:30.0 error:&error]) {
 			_p7Socket = [[WIP7Socket alloc] initWithSocket:_socket TLS:[WISocketTLS socketTLSForClient] spec:WCP7Spec];
 
-			if([_p7Socket connectWithOptions:0
+			if([_p7Socket connectWithOptions:WIP7EncryptionRSA_AES256_SHA1 | WIP7ChecksumSHA1 | WIP7CompressionDeflate
 							   serialization:WIP7Binary
 									username:[_url user]
 									password:[[_url password] SHA1]
