@@ -26,6 +26,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "NSAlert-WCAdditions.h"
 #import "WCAccount.h"
 #import "WCAccounts.h"
 #import "WCFile.h"
@@ -43,6 +44,7 @@
 
 - (void)_showFileInfo;
 - (void)_sendFileInfo;
+- (void)_sendFileInfoTimeout;
 
 @end
 
@@ -330,6 +332,7 @@
 	WCFileType			type;
 	NSUInteger			ownerPermissions, groupPermissions, everyonePermissions;
 	NSInteger			tag;
+	BOOL				sentMessage = NO;
 
 	parentPath = [[[_files objectAtIndex:0] path] stringByDeletingLastPathComponent];
 
@@ -339,49 +342,49 @@
 		while((file = [enumerator nextObject])) {
 			path = [file path];
 			
-			if([[[self connection] account] fileSetType]) {
-				if([file isFolder]) {
-					type = ([_kindPopUpButton tagOfSelectedItem] > 0)
-						? (WCFileType) [_kindPopUpButton tagOfSelectedItem]
-						: [file type];
+			if([file isFolder]) {
+				type = ([_kindPopUpButton tagOfSelectedItem] > 0)
+					? (WCFileType) [_kindPopUpButton tagOfSelectedItem]
+					: [file type];
+				
+				if(type != [file type]) {
+					message = [WIP7Message messageWithName:@"wired.file.set_type" spec:WCP7Spec];
+					[message setString:path forName:@"wired.file.path"];
+					[message setEnum:type forName:@"wired.file.type"];
+					[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredFileSetTypeReply:)];
 					
-					if(type != [file type]) {
-						message = [WIP7Message messageWithName:@"wired.file.set_type" spec:WCP7Spec];
-						[message setString:path forName:@"wired.file.path"];
-						[message setEnum:type forName:@"wired.file.type"];
-						[[self connection] sendMessage:message];
-					}
+					sentMessage = YES;
 				}
 			}
 			
-			if([[[self connection] account] fileSetPermissions]) {
-				if([file type] == WCFileDropBox) {
-					tag = [_ownerPopUpButton tagOfSelectedItem];
-					owner = (tag >= 0) ? [_ownerPopUpButton titleOfSelectedItem] : (tag == -1) ? [file owner] : @"";
-					tag = [_ownerPermissionsPopUpButton tagOfSelectedItem];
-					ownerPermissions = (tag >= 0) ? (NSUInteger) tag : [file ownerPermissions];
-					tag = [_groupPopUpButton tagOfSelectedItem];
-					group = (tag >= 0) ? [_groupPopUpButton titleOfSelectedItem] : (tag == -1) ? [file group] : @"";
-					tag = [_groupPermissionsPopUpButton tagOfSelectedItem];
-					groupPermissions = (tag >= 0) ? (NSUInteger) tag : [file groupPermissions];
-					tag = [_everyonePermissionsPopUpButton tagOfSelectedItem];
-					everyonePermissions = (tag >= 0) ? (NSUInteger) tag : [file everyonePermissions];
+			if([file type] == WCFileDropBox) {
+				tag = [_ownerPopUpButton tagOfSelectedItem];
+				owner = (tag >= 0) ? [_ownerPopUpButton titleOfSelectedItem] : (tag == -1) ? [file owner] : @"";
+				tag = [_ownerPermissionsPopUpButton tagOfSelectedItem];
+				ownerPermissions = (tag >= 0) ? (NSUInteger) tag : [file ownerPermissions];
+				tag = [_groupPopUpButton tagOfSelectedItem];
+				group = (tag >= 0) ? [_groupPopUpButton titleOfSelectedItem] : (tag == -1) ? [file group] : @"";
+				tag = [_groupPermissionsPopUpButton tagOfSelectedItem];
+				groupPermissions = (tag >= 0) ? (NSUInteger) tag : [file groupPermissions];
+				tag = [_everyonePermissionsPopUpButton tagOfSelectedItem];
+				everyonePermissions = (tag >= 0) ? (NSUInteger) tag : [file everyonePermissions];
+				
+				if(![owner isEqualToString:[file owner]] || ![group isEqualToString:[file group]] ||
+				   ownerPermissions != [file ownerPermissions] || groupPermissions != [file groupPermissions] ||
+				   everyonePermissions != [file everyonePermissions]) {
+					message = [WIP7Message messageWithName:@"wired.file.set_permissions" spec:WCP7Spec];
+					[message setString:path forName:@"wired.file.path"];
+					[message setString:owner forName:@"wired.file.owner"];
+					[message setBool:(ownerPermissions & WCFileRead) forName:@"wired.file.owner.read"];
+					[message setBool:(ownerPermissions & WCFileWrite) forName:@"wired.file.owner.write"];
+					[message setString:group forName:@"wired.file.group"];
+					[message setBool:(groupPermissions & WCFileRead) forName:@"wired.file.group.read"];
+					[message setBool:(groupPermissions & WCFileWrite) forName:@"wired.file.group.write"];
+					[message setBool:(everyonePermissions & WCFileRead) forName:@"wired.file.everyone.read"];
+					[message setBool:(everyonePermissions & WCFileWrite) forName:@"wired.file.everyone.write"];
+					[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredFileSetPermissionsReply:)];
 					
-					if(![owner isEqualToString:[file owner]] || ![group isEqualToString:[file group]] ||
-					   ownerPermissions != [file ownerPermissions] || groupPermissions != [file groupPermissions] ||
-					   everyonePermissions != [file everyonePermissions]) {
-						message = [WIP7Message messageWithName:@"wired.file.set_permissions" spec:WCP7Spec];
-						[message setString:path forName:@"wired.file.path"];
-						[message setString:owner forName:@"wired.file.owner"];
-						[message setBool:(ownerPermissions & WCFileRead) forName:@"wired.file.owner.read"];
-						[message setBool:(ownerPermissions & WCFileWrite) forName:@"wired.file.owner.write"];
-						[message setString:group forName:@"wired.file.group"];
-						[message setBool:(groupPermissions & WCFileRead) forName:@"wired.file.group.read"];
-						[message setBool:(groupPermissions & WCFileWrite) forName:@"wired.file.group.write"];
-						[message setBool:(everyonePermissions & WCFileRead) forName:@"wired.file.everyone.read"];
-						[message setBool:(everyonePermissions & WCFileWrite) forName:@"wired.file.everyone.write"];
-						[[self connection] sendMessage:message];
-					}
+					sentMessage = YES;
 				}
 			}
 		}
@@ -389,27 +392,39 @@
 		if([_info count] == 1) {
 			file = [_info objectAtIndex:0];
 			
-			if([[[self connection] account] fileSetComment]) {
-				if(![[file comment] isEqualToString:[_commentTextField stringValue]]) {
-					message = [WIP7Message messageWithName:@"wired.file.set_comment" spec:WCP7Spec];
-					[message setString:[file path] forName:@"wired.file.path"];
-					[message setString:[_commentTextField stringValue] forName:@"wired.file.comment"];
-					[[self connection] sendMessage:message];
-				}
+			if(![[file comment] isEqualToString:[_commentTextField stringValue]]) {
+				message = [WIP7Message messageWithName:@"wired.file.set_comment" spec:WCP7Spec];
+				[message setString:[file path] forName:@"wired.file.path"];
+				[message setString:[_commentTextField stringValue] forName:@"wired.file.comment"];
+				[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredFileSetCommentReply:)];
+					
+				sentMessage = YES;
 			}
 
-			if([[[self connection] account] fileRenameFiles]) {
-				if(![[file name] isEqualToString:[_fileTextField stringValue]]) {
-					path = [parentPath stringByAppendingPathComponent:[_fileTextField stringValue]];
+			if(![[file name] isEqualToString:[_fileTextField stringValue]]) {
+				path = [parentPath stringByAppendingPathComponent:[_fileTextField stringValue]];
 
-					message = [WIP7Message messageWithName:@"wired.file.move" spec:WCP7Spec];
-					[message setString:[file path] forName:@"wired.file.path"];
-					[message setString:path forName:@"wired.file.new_path"];
-					[[self connection] sendMessage:message];
-				}
+				message = [WIP7Message messageWithName:@"wired.file.move" spec:WCP7Spec];
+				[message setString:[file path] forName:@"wired.file.path"];
+				[message setString:path forName:@"wired.file.new_path"];
+				[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredFileMoveReply:)];
+					
+				sentMessage = YES;
 			}
 		}
 	}
+	
+	if(sentMessage) {
+		[self retain];
+		
+		[self performSelector:@selector(_sendFileInfoTimeout) afterDelay:3.0];
+	}
+}
+
+
+
+- (void)_sendFileInfoTimeout {
+	[self autorelease];
 }
 
 @end
@@ -518,6 +533,39 @@
 		if([_info count] == [_files count])
 			[self _showFileInfo];
 	}
+	else if([[message name] isEqualToString:@"wired.error"]) {
+		[[[WCError errorWithWiredMessage:message] alert] runNonModal];
+		
+		[self close];
+	}
+}
+
+
+
+- (void)wiredFileSetTypeReply:(WIP7Message *)message {
+	if([[message name] isEqualToString:@"wired.error"])
+		[[[WCError errorWithWiredMessage:message] alert] runNonModal];
+}
+
+
+
+- (void)wiredFileSetPermissionsReply:(WIP7Message *)message {
+	if([[message name] isEqualToString:@"wired.error"])
+		[[[WCError errorWithWiredMessage:message] alert] runNonModal];
+}
+
+
+
+- (void)wiredFileSetCommentReply:(WIP7Message *)message {
+	if([[message name] isEqualToString:@"wired.error"])
+		[[[WCError errorWithWiredMessage:message] alert] runNonModal];
+}
+
+
+
+- (void)wiredFileMoveReply:(WIP7Message *)message {
+	if([[message name] isEqualToString:@"wired.error"])
+		[[[WCError errorWithWiredMessage:message] alert] runNonModal];
 }
 
 

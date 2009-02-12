@@ -427,7 +427,7 @@
 	
 	message = [WIP7Message messageWithName:@"wired.file.subscribe_directory" spec:WCP7Spec];
 	[message setString:[[self _currentPath] path] forName:@"wired.file.path"];
-	[[self connection] sendMessage:message];
+	[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredFileSubscribeDirectoryReply:)];
 }
 
 
@@ -437,7 +437,7 @@
 	
 	message = [WIP7Message messageWithName:@"wired.file.unsubscribe_directory" spec:WCP7Spec];
 	[message setString:[[self _currentPath] path] forName:@"wired.file.path"];
-	[[self connection] sendMessage:message];
+	[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredFileUnssbscribeDirectoryReply:)];
 }
 
 
@@ -527,7 +527,7 @@
 				message = [WIP7Message messageWithName:@"wired.file.link" spec:WCP7Spec];
 				[message setString:[source path] forName:@"wired.file.path"];
 				[message setString:destinationPath forName:@"wired.file.new_path"];
-				[[self connection] sendMessage:message];
+				[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredFileLinkReply:)];
 				
 				result = YES;
 			} else {
@@ -537,7 +537,7 @@
 					message = [WIP7Message messageWithName:@"wired.file.move" spec:WCP7Spec];
 					[message setString:[source path] forName:@"wired.file.path"];
 					[message setString:destinationPath forName:@"wired.file.new_path"];
-					[[self connection] sendMessage:message];
+					[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredFileMoveReply:)];
 					
 					result = YES;
 				}
@@ -765,6 +765,11 @@
 		
 		[self _updateFiles];
 	}
+	else if([[message name] isEqualToString:@"wired.error"]) {
+		[_progressIndicator stopAnimation:self];
+		
+		[[[WCError errorWithWiredMessage:message] alert] beginSheetModalForWindow:[self window]];
+	}
 }
 
 
@@ -772,6 +777,44 @@
 - (void)wiredFileDirectoryChanged:(WIP7Message *)message {
 	if([[message stringForName:@"wired.file.path"] isEqualToString:[[self _currentPath] path]])
 		[self _reloadFiles];
+}
+
+
+
+- (void)wiredFileSubscribeDirectoryReply:(WIP7Message *)message {
+}
+
+
+
+- (void)wiredFileUnsubscribeDirectoryReply:(WIP7Message *)message {
+}
+
+
+
+- (void)wiredFileCreateDirectoryReply:(WIP7Message *)message {
+	if([[message name] isEqualToString:@"wired.error"])
+		[[[WCError errorWithWiredMessage:message] alert] beginSheetModalForWindow:[self window]];
+}
+
+
+
+- (void)wiredFileDeleteReply:(WIP7Message *)message {
+	if([[message name] isEqualToString:@"wired.error"])
+		[[[WCError errorWithWiredMessage:message] alert] beginSheetModalForWindow:[self window]];
+}
+
+
+
+- (void)wiredFileMoveReply:(WIP7Message *)message {
+	if([[message name] isEqualToString:@"wired.error"])
+		[[[WCError errorWithWiredMessage:message] alert] beginSheetModalForWindow:[self window]];
+}
+
+
+
+- (void)wiredFileLinkReply:(WIP7Message *)message {
+	if([[message name] isEqualToString:@"wired.error"])
+		[[[WCError errorWithWiredMessage:message] alert] beginSheetModalForWindow:[self window]];
 }
 
 
@@ -818,8 +861,9 @@
 
 			[_downloadButton setEnabled:([account transferDownloadFiles] && connected)];
 			[_deleteButton setEnabled:([account fileDeleteFiles] && connected)];
-			[_infoButton setEnabled:connected];
-			[_previewButton setEnabled:(connected && [account transferDownloadFiles] &&
+			[_infoButton setEnabled:([account fileGetInfo] && connected)];
+			[_previewButton setEnabled:([account transferDownloadFiles] &&
+										connected &&
 										![file isFolder] &&
 										[WCTransfers canPreviewFileWithExtension:[file extension]])];
 			break;
@@ -843,7 +887,7 @@
 			
 			[_previewButton setEnabled:preview];
 			[_deleteButton setEnabled:([account fileDeleteFiles] && connected)];
-			[_infoButton setEnabled:connected];
+			[_infoButton setEnabled:([account fileGetInfo] && connected)];
 			break;
 	}
 
@@ -1161,7 +1205,7 @@
 			[message setBool:(everyonePermissions & WCFileWrite) forName:@"wired.file.everyone.write"];
 		}
 		
-		[[self connection] sendMessage:message];
+		[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredFileCreateDirectoryReply:)];
 	}
 }
 
@@ -1236,7 +1280,7 @@
 		while((file = [enumerator nextObject])) {
 			message = [WIP7Message messageWithName:@"wired.file.delete" spec:WCP7Spec];
 			[message setString:[file path] forName:@"wired.file.path"];
-			[[self connection] sendMessage:message];
+			[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredFileDeleteReply:)];
 		}
 	}
 }
