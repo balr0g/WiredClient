@@ -57,7 +57,7 @@
 		default:	code = error;										break;
 	}
 	
-	return [self errorWithDomain:WCWiredProtocolErrorDomain code:code];
+	return [self errorWithDomain:WCWiredProtocolErrorDomain code:code argument:[message stringForName:@"wired.error.string"]];
 }
 
 
@@ -256,7 +256,8 @@
 	else if([[self domain] isEqualToString:WCWiredProtocolErrorDomain]) {
 		switch([self code]) {
 			case WCWiredProtocolInternalError:
-				return NSLS(@"The server failed to process a command. The server administrator can check the log for more information.", @"Wired protocol error description");
+				return [NSSWF:NSLS(@"The server failed to process a command. The server administrator can check the log for more information.\n\nThe message from the server was \u201c%@\u201d.", @"Wired protocol error description (internal error string)"),
+						argument];
 				break;
 		
 			case WCWiredProtocolInvalidMessage:
