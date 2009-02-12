@@ -85,7 +85,9 @@
 	NSMutableSet									*_receivedBoards;
 	NSMutableSet									*_readPosts;
 	
-	NSMutableString									*_headerTemplate, *_footerTemplate, *_postTemplate;
+	NSMutableString									*_headerTemplate;
+	NSMutableString									*_footerTemplate;
+	NSMutableString									*_postTemplate;
 }
 
 + (id)boards;
