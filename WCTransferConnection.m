@@ -86,9 +86,9 @@
 	if(![_socket connectWithTimeout:timeout error:error])
 		return NO;
 
-	_p7Socket = [[WIP7Socket alloc] initWithSocket:_socket TLS:[WISocketTLS socketTLSForClient] spec:WCP7Spec];
+	_p7Socket = [[WIP7Socket alloc] initWithSocket:_socket spec:WCP7Spec];
 	
-	if(![_p7Socket connectWithOptions:WIP7EncryptionRSA_AES128_SHA1 //WIP7TLS | WIP7CompressionDeflate | WIP7EncryptionRSA_AES256_SHA1 | WIP7ChecksumSHA1
+	if(![_p7Socket connectWithOptions:WIP7EncryptionRSA_AES256_SHA1 | WIP7ChecksumSHA1 | WIP7CompressionDeflate
 						serialization:WIP7Binary
 							 username:[[self URL] user]
 							 password:[[[self URL] password] SHA1]
