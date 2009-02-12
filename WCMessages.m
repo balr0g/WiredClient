@@ -27,6 +27,7 @@
  */
 
 #import "NSAlert-WCAdditions.h"
+#import "WCApplicationController.h"
 #import "WCChatController.h"
 #import "WCConversation.h"
 #import "WCMessage.h"
@@ -34,6 +35,7 @@
 #import "WCPreferences.h"
 #import "WCPublicChat.h"
 #import "WCServerConnection.h"
+#import "WCSourceSplitView.h"
 #import "WCStats.h"
 #import "WCUser.h"
 
@@ -44,19 +46,17 @@
 
 - (void)_showDialogForMessage:(WCMessage *)message;
 - (NSString *)_stringForMessageString:(NSString *)string;
-- (void)_applyMessageAttributesToAttributedString:(NSMutableAttributedString *)attributedString;
 
-- (WCMessage *)_messageAtIndex:(NSUInteger)index;
 - (WCConversation *)_selectedConversation;
-- (WCMessage *)_selectedMessage;
-- (void)_selectMessage:(WCMessage *)message;
 - (void)_readMessages;
 - (void)_saveMessages;
 - (void)_removeAllMessages;
 
 - (void)_reselectConversation:(WCConversation *)conversation message:(WCMessage *)message;
-- (void)_reloadMessage;
-- (SEL)_sortSelector;
+
+- (void)_reloadConversation;
+- (NSString *)_HTMLStringForMessage:(WCMessage *)message;
+- (NSString *)_HTMLStringForStatus:(NSString *)status;
 
 @end
 
@@ -80,7 +80,7 @@
 	[_messageFont release];
 	_messageFont = [WIFontFromString([theme objectForKey:WCThemesMessagesFont]) retain];
 	
-	[_messageTextView setFont:_messageFont];
+/*	[_messageTextView setFont:_messageFont];
 	[_messageTextView setTextColor:_messageColor];
 	[_messageTextView setBackgroundColor:WIColorFromString([theme objectForKey:WCThemesMessagesBackgroundColor])];
 
@@ -89,21 +89,19 @@
 			NSForegroundColorAttributeName,
 		[NSNumber numberWithInt:NSSingleUnderlineStyle],
 			NSUnderlineStyleAttributeName,
-		NULL]];
+		NULL]];*/
 	
-	[_replyTextView setFont:_messageFont];
+/*	[_replyTextView setFont:_messageFont];
 	[_replyTextView setTextColor:_messageColor];
 	[_replyTextView setInsertionPointColor:_messageColor];
-	[_replyTextView setBackgroundColor:WIColorFromString([theme objectForKey:WCThemesMessagesBackgroundColor])];
+	[_replyTextView setBackgroundColor:WIColorFromString([theme objectForKey:WCThemesMessagesBackgroundColor])];*/
 
 	[_broadcastTextView setFont:_messageFont];
 	[_broadcastTextView setTextColor:_messageColor];
 	[_broadcastTextView setInsertionPointColor:_messageColor];
 	[_broadcastTextView setBackgroundColor:WIColorFromString([theme objectForKey:WCThemesMessagesBackgroundColor])];
 	
-	[_messagesTableView setUsesAlternatingRowBackgroundColors:[theme boolForKey:WCThemesMessageListAlternateRows]];
-
-	if([theme boolForKey:WCThemesShowSmileys] != _showSmileys) {
+/*	if([theme boolForKey:WCThemesShowSmileys] != _showSmileys) {
 		_showSmileys = !_showSmileys;
 		
 		if(_showSmileys) {
@@ -113,7 +111,7 @@
 			
 			[self _applyMessageAttributesToAttributedString:[_messageTextView textStorage]];
 		}
-	}
+	}*/
 }
 
 
@@ -169,36 +167,7 @@
 
 
 
-- (void)_applyMessageAttributesToAttributedString:(NSMutableAttributedString *)attributedString {
-	NSRange		range;
-	
-	range = NSMakeRange(0, [attributedString length]);
-	
-	[attributedString addAttribute:NSForegroundColorAttributeName value:_messageColor range:range];
-	[attributedString addAttribute:NSFontAttributeName value:_messageFont range:range];
-}
-
-
-
 #pragma mark -
-
-- (WCMessage *)_messageAtIndex:(NSUInteger)index {
-	WCConversation		*conversation;
-	NSUInteger			i;
-	
-	conversation = [self _selectedConversation];
-	
-	if(!conversation)
-		return NULL;
-	
-	i = ([_messagesTableView sortOrder] == WISortDescending)
-		? [conversation numberOfMessages] - index - 1
-		: index;
-	
-	return [conversation messageAtIndex:i];
-}
-
-
 
 - (WCConversation *)_selectedConversation {
 	return _selectedConversation;
@@ -206,50 +175,12 @@
 
 
 
-- (WCMessage *)_selectedMessage {
-	NSInteger		row;
-	
-	row = [_messagesTableView selectedRow];
-	
-	if(row < 0)
-		return NULL;
-
-	return [self _messageAtIndex:row];
-}
-
-
-
-- (void)_selectMessage:(WCMessage *)message {
-	WCConversation		*conversation;
-	NSUInteger			i, index;
-	NSInteger			row;
-	
-	conversation = [message conversation];
-	row = [_conversationsOutlineView rowForItem:conversation];
-	
-	if(row < 0)
-		return;
-	
-	[_conversationsOutlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
-	
-	index = [[conversation messages] indexOfObject:message];
-	
-	if(index == NSNotFound)
-		return;
-	
-	i = ([_messagesTableView sortOrder] == WISortDescending)
-		? [conversation numberOfMessages] - index - 1
-		: index;
-	
-	[_messagesTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:i] byExtendingSelection:NO];
-	[_messagesTableView scrollRowToVisible:i];
-}
-
-
-
 - (void)_saveMessages {
-	[WCSettings setObject:[NSKeyedArchiver archivedDataWithRootObject:[_messageConversations conversations]] forKey:WCMessageConversations];
-	[WCSettings setObject:[NSKeyedArchiver archivedDataWithRootObject:[_broadcastConversations conversations]] forKey:WCBroadcastConversations];
+	[WCSettings setObject:[NSKeyedArchiver archivedDataWithRootObject:[_messageConversations conversations]]
+				   forKey:WCMessageConversations];
+	
+	[WCSettings setObject:[NSKeyedArchiver archivedDataWithRootObject:[_broadcastConversations conversations]]
+				   forKey:WCBroadcastConversations];
 }
 
 
@@ -277,7 +208,6 @@
 		[[NSNotificationCenter defaultCenter] postNotificationName:WCMessagesDidChangeUnreadCountNotification];
 
 		[_conversationsOutlineView setNeedsDisplay:YES];
-		[_messagesTableView setNeedsDisplay:YES];
 	}
 }
 
@@ -298,7 +228,7 @@
 #pragma mark -
 
 - (void)_reselectConversation:(WCConversation *)conversation message:(WCMessage *)message {
-	NSUInteger		i, index;
+//	NSUInteger		i, index;
 	NSInteger		row;
 	
 	row = [_conversationsOutlineView rowForItem:conversation];
@@ -306,7 +236,7 @@
 	if(row >= 0)
 		[_conversationsOutlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
 
-	row = [[[self _selectedConversation] messages] indexOfObject:message];
+/*	row = [[[self _selectedConversation] messages] indexOfObject:message];
 	
 	if(row >= 0) {
 		index = row;
@@ -315,55 +245,135 @@
 			: index;
 		
 		[_messagesTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:i] byExtendingSelection:NO];
-	}
+	}*/
 }
 
 
 
-- (void)_reloadMessage {
-	NSMutableAttributedString	*attributedString;
-	WCMessage					*message;
+#pragma mark -
+
+- (void)_reloadConversation {
+	NSEnumerator		*enumerator;
+	NSMutableString		*html;
+	NSCalendar			*calendar;
+	NSDateComponents	*components;
+	WCConversation		*conversation;
+	WCMessage			*message;
+	NSInteger			day;
+	BOOL				changedUnread = NO;
 	
-	message = [self _selectedMessage];
+	conversation = [self _selectedConversation];
 	
-	if(!message) {
-		[_messageTextView setString:@""];
-	} else {
-		if([message isUnread]) {
-			[message setUnread:NO];
-			[_conversationsOutlineView setNeedsDisplay:YES];
-			[_messagesTableView setNeedsDisplay:YES];
+	html = [NSMutableString stringWithString:_headerTemplate];
+	
+//	[html replaceOccurrencesOfString:@"<? fontname ?>" withString:[_threadFont fontName]];
+//	[html replaceOccurrencesOfString:@"<? fontsize ?>" withString:[NSSWF:@"%.0fpx", [_threadFont pointSize]]];
+//	[html replaceOccurrencesOfString:@"<? textcolor ?>" withString:[NSSWF:@"#%.6x", [_threadColor HTMLValue]]];
+//	[html replaceOccurrencesOfString:@"<? backgroundcolor ?>" withString:[NSSWF:@"#%.6x", [_backgroundColor HTMLValue]]];
+
+	if(conversation) {
+		calendar	= [NSCalendar currentCalendar];
+		day			= -1;
+		enumerator	= [[conversation messages] objectEnumerator];
+		
+		while((message = [enumerator nextObject])) {
+			components = [calendar components:NSDayCalendarUnit fromDate:[message date]];
 			
-			[[NSNotificationCenter defaultCenter] postNotificationName:WCMessagesDidChangeUnreadCountNotification];
+			if([components day] != day) {
+				[html appendString:[self _HTMLStringForStatus:[_messageStatusDateFormatter stringFromDate:[message date]]]];
+				
+				day = [components day];
+			}
+			
+			[html appendString:[self _HTMLStringForMessage:message]];
+			
+			if([message isUnread]) {
+				[message setUnread:NO];
+				
+				changedUnread = YES;
+			}
 		}
 		
-		attributedString = [NSMutableAttributedString attributedStringWithString:[message message]];
-		
-		[self _applyMessageAttributesToAttributedString:attributedString];
-		[WCChatController applyURLAttributesToAttributedString:attributedString];
-		
-		if(_showSmileys)
-			[WCChatController applySmileyAttributesToAttributedString:attributedString];
-		
-		[[_messageTextView textStorage] setAttributedString:attributedString];
-		
-		[_messageTextView scrollRangeToVisible:NSMakeRange(0, 0)];
+/*		if([thread isUnread]) {
+			[thread setUnread:NO];
+			
+			changedUnread = YES;
+		}*/
 	}
+	
+	[html appendString:_footerTemplate];
+	
+	[[_messageWebView mainFrame] loadHTMLString:html baseURL:[NSURL fileURLWithPath:[[self bundle] resourcePath]]];
+	
+/*	if(changedUnread) {
+		[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
+			
+		[WCSettings setObject:[_readPosts allObjects] forKey:WCReadBoardPosts];
+		
+		[_boardsOutlineView setNeedsDisplay:YES];
+		[_threadsTableView setNeedsDisplay:YES];
+	}*/
 }
 
 
 
-- (SEL)_sortSelector {
-	NSTableColumn	*tableColumn;
+- (NSString *)_HTMLStringForMessage:(WCMessage *)message {
+	NSEnumerator		*enumerator;
+	NSDictionary		*theme;
+	NSMutableString		*string, *text;
+	NSString			*smiley, *path, *icon;
+	WCAccount			*account;
 	
-	tableColumn = [_messagesTableView highlightedTableColumn];
+	theme		= [[message connection] theme];
+	account		= [[message connection] account];
+	text		= [[[message message] mutableCopy] autorelease];
 	
-	if(tableColumn == _userTableColumn)
-		return @selector(compareUser:);
-	else if(tableColumn == _timeTableColumn)
-		return @selector(compareDate:);
+	[text replaceOccurrencesOfString:@"&" withString:@"&#38;"];
+	[text replaceOccurrencesOfString:@"<" withString:@"&#60;"];
+	[text replaceOccurrencesOfString:@">" withString:@"&#62;"];
+	[text replaceOccurrencesOfString:@"\"" withString:@"&#34;"];
+	[text replaceOccurrencesOfString:@"\'" withString:@"&#39;"];
+	[text replaceOccurrencesOfString:@"\n" withString:@"<br />"];
 
-	return @selector(compareDate:);
+	[text replaceOccurrencesOfRegex:[WCChatController URLRegex] withString:@"<a href=\"$1\">$1</a>" options:RKLCaseless];
+	[text replaceOccurrencesOfRegex:[WCChatController mailtoURLRegex] withString:@"<a href:\"mailto:$1\">$1</a>" options:RKLCaseless];
+	
+	if([theme boolForKey:WCThemesShowSmileys]) {
+		enumerator = [[[WCApplicationController sharedController] allSmileys] objectEnumerator];
+		
+		while((smiley = [enumerator nextObject])) {
+			path = [[WCApplicationController sharedController] pathForSmiley:smiley];
+			
+			[text replaceOccurrencesOfString:smiley withString:[NSSWF:@"<img src=\"%@\" alt=\"%@\" />", path, smiley]];
+		}
+	}
+
+	string = [[_messageTemplate mutableCopy] autorelease];
+
+	[string replaceOccurrencesOfString:@"<? nick ?>" withString:[message nick]];
+	[string replaceOccurrencesOfString:@"<? time ?>" withString:[_messageTimeDateFormatter stringFromDate:[message date]]];
+	[string replaceOccurrencesOfString:@"<? body ?>" withString:text];
+	
+	icon = [[[[message user] icon] TIFFRepresentation] base64EncodedString];
+	
+	if(icon)
+		[string replaceOccurrencesOfString:@"<? icon ?>" withString:[NSSWF:@"data:image/tiff;base64,%@", icon]];
+	else
+		[string replaceOccurrencesOfString:@"<? icon ?>" withString:@"DefaultIcon.tiff"];
+	
+	return string;
+}
+
+
+
+- (NSString *)_HTMLStringForStatus:(NSString *)status {
+	NSMutableString		*string;
+	
+	string = [[_statusTemplate mutableCopy] autorelease];
+	
+	[string replaceOccurrencesOfString:@"<? status ?>" withString:status];
+	
+	return string;
 }
 
 @end
@@ -389,6 +399,19 @@
 
 	_conversationIcon	= [[NSImage imageNamed:@"Conversation"] retain];
 	
+	_headerTemplate		= [[NSMutableString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"MessageHeader" ofType:@"html"]
+															  encoding:NSUTF8StringEncoding
+																 error:NULL];
+	_footerTemplate		= [[NSMutableString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"MessageFooter" ofType:@"html"]
+															  encoding:NSUTF8StringEncoding
+																 error:NULL];
+	_messageTemplate	= [[NSMutableString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"Message" ofType:@"html"]
+															  encoding:NSUTF8StringEncoding
+																 error:NULL];
+	_statusTemplate		= [[NSMutableString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"MessageStatus" ofType:@"html"]
+															  encoding:NSUTF8StringEncoding
+																 error:NULL];
+
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(applicationWillTerminate:)
@@ -445,8 +468,11 @@
 	[_messageColor release];
 	[_conversationIcon release];
 	
-	[_tableDateFormatter release];
 	[_dialogDateFormatter release];
+	
+	[_headerTemplate release];
+	[_footerTemplate release];
+	[_messageTemplate release];
 
 	[super dealloc];
 }
@@ -473,13 +499,6 @@
 	[_conversationsSplitView setAutosaveName:@"Conversations"];
 	[_messagesSplitView setAutosaveName:@"Messages"];
 
-	[_messagesTableView setDefaultHighlightedTableColumnIdentifier:@"Time"];
-	[_messagesTableView setDefaultSortOrder:WISortAscending];
-	[_messagesTableView setAutosaveName:@"Messages"];
-    [_messagesTableView setAutosaveTableColumns:YES];
-	[_messagesTableView setAllowsUserCustomization:YES];
-	[_messagesTableView setDoubleAction:@selector(reply:)];
-	
 	[[_conversationTableColumn dataCell] setVerticalTextOffset:3.0];
 	[[_unreadTableColumn dataCell] setImageAlignment:NSImageAlignRight];
 	
@@ -510,13 +529,15 @@
 	[_conversationsOutlineView expandItem:_messageConversations];
 	[_conversationsOutlineView expandItem:_broadcastConversations];
 	
-	_tableDateFormatter = [[WIDateFormatter alloc] init];
-	[_tableDateFormatter setTimeStyle:NSDateFormatterShortStyle];
-	[_tableDateFormatter setDateStyle:NSDateFormatterMediumStyle];
-	[_tableDateFormatter setNaturalLanguageStyle:WIDateFormatterCapitalizedNaturalLanguageStyle];
-	
 	_dialogDateFormatter = [[WIDateFormatter alloc] init];
 	[_dialogDateFormatter setTimeStyle:NSDateFormatterShortStyle];
+	
+	_messageStatusDateFormatter = [[WIDateFormatter alloc] init];
+	[_messageStatusDateFormatter setTimeStyle:NSDateFormatterNoStyle];
+	[_messageStatusDateFormatter setDateStyle:NSDateFormatterLongStyle];
+	
+	_messageTimeDateFormatter = [[WIDateFormatter alloc] init];
+	[_messageTimeDateFormatter setTimeStyle:NSDateFormatterShortStyle];
 	
 	[self _themeDidChange];
 }
@@ -657,7 +678,7 @@
 - (void)wiredMessageMessage:(WIP7Message *)p7Message {
 	WCServerConnection		*connection;
 	WCUser					*user;
-	WCMessage				*message, *selectedMessage;
+	WCMessage				*message;
 	WCConversation			*conversation, *selectedConversation;
 	WIP7UInt32				uid;
 	
@@ -676,7 +697,7 @@
 		[_messageConversations addConversation:conversation];
 	}
 	
-	selectedMessage = [self _selectedMessage];
+//	selectedMessage = [self _selectedMessage];
 	selectedConversation = [self _selectedConversation];
 
 	message = [WCPrivateMessage messageWithMessage:[p7Message stringForName:@"wired.message.message"]
@@ -689,9 +710,9 @@
 	[self _saveMessages];
 	
 	[_conversationsOutlineView reloadData];
-	[_messagesTableView reloadData];
+//	[_messagesTableView reloadData];
 	
-	[self _reselectConversation:selectedConversation message:selectedMessage];
+	[self _reselectConversation:selectedConversation message:NULL];
 
 	if([[WCSettings eventWithTag:WCEventsMessageReceived] boolForKey:WCEventsShowDialog])
 		[self _showDialogForMessage:message];
@@ -709,7 +730,7 @@
 - (void)wiredMessageBroadcast:(WIP7Message *)p7Message {
 	WCServerConnection	*connection;
 	WCUser				*user;
-	WCMessage			*message, *selectedMessage;
+	WCMessage			*message;
 	WCConversation		*conversation, *selectedConversation;
 	WIP7UInt32			uid;
 	
@@ -728,7 +749,7 @@
 		[_broadcastConversations addConversation:conversation];
 	}
 
-	selectedMessage = [self _selectedMessage];
+//	selectedMessage = [self _selectedMessage];
 	selectedConversation = [self _selectedConversation];
 
 	message = [WCBroadcastMessage broadcastWithMessage:[p7Message stringForName:@"wired.message.broadcast"]
@@ -741,9 +762,9 @@
 	[self _saveMessages];
 
 	[_conversationsOutlineView reloadData];
-	[_messagesTableView reloadData];
+//	[_messagesTableView reloadData];
 	
-	[self _reselectConversation:selectedConversation message:selectedMessage];
+	[self _reselectConversation:selectedConversation message:NULL];
 
 	if([[WCSettings eventWithTag:WCEventsBroadcastReceived] boolForKey:WCEventsShowDialog])
 		[self _showDialogForMessage:message];
@@ -779,13 +800,13 @@
 		NSSize		size, topSize, bottomSize;
 		
 		size = [_messagesSplitView frame].size;
-		topSize = [_messageListView frame].size;
-		topSize.width = size.width;
+		bottomSize = [_messageBottomView frame].size;
 		bottomSize.width = size.width;
-		bottomSize.height = size.height - [_messagesSplitView dividerThickness] - topSize.height;
+		topSize.width = size.width;
+		topSize.height = size.height - [_messagesSplitView dividerThickness] - bottomSize.height;
 		
-		[_messageListView setFrameSize:topSize];
-		[_messageView setFrameSize:bottomSize];
+		[_messageTopView setFrameSize:topSize];
+		[_messageBottomView setFrameSize:bottomSize];
 	}
 	
 	[splitView adjustSubviews];
@@ -794,13 +815,23 @@
 
 
 - (CGFloat)splitView:(NSSplitView *)splitView constrainMaxCoordinate:(CGFloat)proposedMax ofSubviewAt:(NSInteger)offset {
-	return proposedMax - 140.0;
+	if(splitView == _conversationsSplitView)
+		return proposedMax - 140.0;
+	else if(splitView == _messagesSplitView)
+		return proposedMax - 40.0;
+	
+	return proposedMax;
 }
 
 
 
 - (CGFloat)splitView:(NSSplitView *)splitView constrainMinCoordinate:(CGFloat)proposedMin ofSubviewAt:(NSInteger)offset {
-	return proposedMin + 140.0;
+	if(splitView == _conversationsSplitView)
+		return proposedMin + 140.0;
+	else if(splitView == _messagesSplitView)
+		return proposedMin + 40.0;
+	
+	return proposedMin;
 }
 
 
@@ -814,12 +845,17 @@
 - (BOOL)textView:(NSTextView *)textView doCommandBySelector:(SEL)selector {
 	BOOL		value = NO;
 
-	if(selector == @selector(insertNewline:)) {
-		if([[NSApp currentEvent] character] == NSEnterCharacter) {
-			[self submitSheet:textView];
+	if(textView == _broadcastTextView) {
+		if(selector == @selector(insertNewline:)) {
+			if([[NSApp currentEvent] character] == NSEnterCharacter) {
+				[self submitSheet:textView];
 
-			value = YES;
+				value = YES;
+			}
 		}
+	}
+	else if(textView == _messageTextView2) {
+		NSLog(@"hai");
 	}
 
 	return value;
@@ -827,17 +863,43 @@
 
 
 
+- (void)webView:(WebView *)webView didFinishLoadForFrame:(WebFrame *)frame {
+	NSRect		rect;
+	
+	rect = [[[[[_messageWebView mainFrame] frameView] documentView] enclosingScrollView] documentVisibleRect];
+	rect.origin.y = rect.size.height;
+	[[[[_messageWebView mainFrame] frameView] documentView] scrollRectToVisible:rect];
+}
+
+
+
+- (void)webView:(WebView *)webView decidePolicyForNavigationAction:(NSDictionary *)action request:(NSURLRequest *)request frame:(WebFrame *)frame decisionListener:(id <WebPolicyDecisionListener>)listener {
+	if([[action objectForKey:WebActionNavigationTypeKey] unsignedIntegerValue] == WebNavigationTypeOther) {
+		[listener use];
+	} else {
+		[listener ignore];
+		
+		[[NSWorkspace sharedWorkspace] openURL:[action objectForKey:WebActionOriginalURLKey]];
+	}
+}
+
+
+
+- (NSArray *)webView:(WebView *)webView contextMenuItemsForElement:(NSDictionary *)element defaultMenuItems:(NSArray *)defaultMenuItems {
+	return NULL;
+}
+
+
+
 #pragma mark -
 
 - (BOOL)validateToolbarItem:(NSToolbarItem *)item {
-	WCMessage		*message;
-	SEL				selector;
+	SEL		selector;
 	
 	selector = [item action];
-	message = [self _selectedMessage];
 	
 	if(selector == @selector(reply:))
-		return (message != NULL && [message user] && [[message connection] isConnected]);
+		return NO;
 	else if(selector == @selector(revealInUserList:))
 		return ([[[[self _selectedConversation] messages] lastObject] user] != NULL);
 	else if(selector == @selector(clearMessages:))
@@ -850,8 +912,17 @@
 
 #pragma mark -
 
-- (void)showNextUnreadMessage {
-	WCMessage		*message;
+- (void)showNextUnreadConversation {
+//	WCConversation	*conversation;
+	NSRect			rect;
+	
+	rect = [[[[[_messageWebView mainFrame] frameView] documentView] enclosingScrollView] documentVisibleRect];
+	rect.origin.y += 0.9 * rect.size.height;
+	
+	if([[[[_messageWebView mainFrame] frameView] documentView] scrollRectToVisible:rect])
+		return;
+
+/*	WCMessage		*message;
 	NSRect			rect;
 	
 	rect = [[_messageTextView enclosingScrollView] documentVisibleRect];
@@ -871,13 +942,22 @@
 		[[self window] makeFirstResponder:_messagesTableView];
 		
 		[self _selectMessage:message];
-	}
+	}*/
 }
 
 
 
-- (void)showPreviousUnreadMessage {
-	WCMessage		*message;
+- (void)showPreviousUnreadConversation {
+//	WCConversation	*conversation;
+	NSRect			rect;
+	
+	rect = [[[[[_messageWebView mainFrame] frameView] documentView] enclosingScrollView] documentVisibleRect];
+	rect.origin.y -= 0.9 * rect.size.height;
+	
+	if([[[[_messageWebView mainFrame] frameView] documentView] scrollRectToVisible:rect])
+		return;
+	
+/*	WCMessage		*message;
 	NSRect			rect;
 	
 	rect = [[_messageTextView enclosingScrollView] documentVisibleRect];
@@ -898,13 +978,7 @@
 		[[self window] makeFirstResponder:_messagesTableView];
 	
 		[self _selectMessage:message];
-	}
-}
-
-
-
-- (void)showPrivateMessageReply {
-	[self reply:self];
+	}*/
 }
 
 
@@ -916,7 +990,7 @@
 
 
 - (void)showPrivateMessageToUser:(WCUser *)user message:(NSString *)message {
-	[_userTextField setStringValue:[user nick]];
+/*	[_userTextField setStringValue:[user nick]];
 	[_replyTextView setString:message];
 	
 	[self showWindow:self];
@@ -925,7 +999,7 @@
 	   modalForWindow:[self window]
 		modalDelegate:self
 	   didEndSelector:@selector(replySheetDidEnd:returnCode:contextInfo:)
-		  contextInfo:user];
+		  contextInfo:user];*/
 }
 
 
@@ -973,7 +1047,7 @@
 
 
 - (IBAction)reply:(id)sender {
-	WCMessage   *message;
+/*	WCMessage   *message;
 	WCError		*error;
 	
 	message = [self _selectedMessage];
@@ -993,12 +1067,12 @@
 			[[message connection] triggerEvent:WCEventsError info1:error]; 
 			[[error alert] beginSheetModalForWindow:[self window]]; 
 		}
-	}
+	}*/
 }
 
 
 
-- (void)replySheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+/*- (void)replySheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
 	WIP7Message		*p7Message;
 	WCUser			*user = contextInfo;
 	WCMessage		*message, *selectedMessage;
@@ -1039,7 +1113,7 @@
 	
 	[_replyPanel close];
 	[_replyTextView setString:@""];
-}
+}*/
 
 
 
@@ -1063,7 +1137,7 @@
 		error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientClientNotFound]; 
 		[[conversation connection] triggerEvent:WCEventsError info1:error]; 
 		[[error alert] beginSheetModalForWindow:[self window]]; 
-	} 
+	}
 }
 
 
@@ -1088,11 +1162,9 @@
 - (void)clearSheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
 	if(returnCode == NSAlertFirstButtonReturn) {
 		[self _readMessages];
-		
 		[self _removeAllMessages];
 		
 		[_conversationsOutlineView reloadData];
-		[_messagesTableView reloadData];
 		
 		[self _validate];
 	}
@@ -1175,68 +1247,7 @@
 		_selectedConversation = conversation;
 	}
 	
-	[[self _selectedConversation] sortMessagesUsingSelector:[self _sortSelector]];
-	
-	[_messagesTableView reloadData];
-	[_messagesTableView deselectAll:self];
-}
-
-
-
-#pragma mark -
-
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
-	return [[self _selectedConversation] numberOfMessages];
-}
-
-
-
-- (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)column row:(NSInteger)row {
-	WCMessage		*message;
-	
-	message = [self _messageAtIndex:row];
-	
-	if(column == _userTableColumn) {
-		if([message direction] == WCMessageTo)
-			return [NSSWF:NSLS(@"To: %@", @"Message to (nick)"), [message nick]];
-		else
-			return [NSSWF:NSLS(@"From: %@", @"Message from (nick)"), [message nick]];
-	}
-	else if(column == _timeTableColumn) {
-		return [_tableDateFormatter stringFromDate:[message date]];
-	}
-	
-	return NULL;
-}
-
-
-
-- (void)tableView:(NSTableView *)tableView willDisplayCell:(NSCell *)cell forTableColumn:(NSTableColumn *)column row:(NSInteger)row {
-	WCMessage		*message;
-	
-	message = [self _messageAtIndex:row];
-	
-	if([message isUnread])
-		[cell setFont:[[cell font] fontByAddingTrait:NSBoldFontMask]];
-	else
-		[cell setFont:[[cell font] fontByAddingTrait:NSUnboldFontMask]];
-}
-
-
-
-- (void)tableView:(NSTableView *)tableView didClickTableColumn:(NSTableColumn *)tableColumn {
-	[_messagesTableView setHighlightedTableColumn:tableColumn];
-	[[self _selectedConversation] sortMessagesUsingSelector:[self _sortSelector]];
-	[_messagesTableView reloadData];
-	
-	[self _reloadMessage];
-}
-
-
-
-- (void)tableViewSelectionDidChange:(NSNotification *)notification {
-	[self _reloadMessage];
-	[self _validate];
+	[self _reloadConversation];
 }
 
 @end

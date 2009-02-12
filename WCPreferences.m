@@ -121,8 +121,6 @@
 		[_themesUserListIconSizeMatrix selectCellWithTag:[theme integerForKey:WCThemesUserListIconSize]];
 		[_themesUserListAlternateRowsButton setState:[theme boolForKey:WCThemesUserListAlternateRows]];
 		
-		[_themesMessageListAlternateRowsButton setState:[theme boolForKey:WCThemesMessageListAlternateRows]];
-		
 		[_themesFileListAlternateRowsButton setState:[theme boolForKey:WCThemesFileListAlternateRows]];
 		
 		[_themesTransferListShowProgressBarButton setState:[theme boolForKey:WCThemesTransferListShowProgressBar]];
@@ -740,7 +738,6 @@
 		[NSNumber numberWithBool:NO],									WCThemesChatTimestampEveryLine,
 		[NSNumber numberWithInteger:WCThemesUserListIconSizeLarge],		WCThemesUserListIconSize,
 		[NSNumber numberWithBool:NO],									WCThemesUserListAlternateRows,
-		[NSNumber numberWithBool:NO],									WCThemesMessageListAlternateRows,
 		[NSNumber numberWithBool:NO],									WCThemesFileListAlternateRows,
 		[NSNumber numberWithBool:YES],									WCThemesTransferListShowProgressBar,
 		[NSNumber numberWithBool:NO],									WCThemesTransferListAlternateRows,
@@ -948,8 +945,6 @@
 	
 	[theme setInteger:[_themesUserListIconSizeMatrix selectedTag] forKey:WCThemesUserListIconSize];
 	[theme setBool:[_themesUserListAlternateRowsButton state] forKey:WCThemesUserListAlternateRows];
-	
-	[theme setBool:[_themesMessageListAlternateRowsButton state] forKey:WCThemesMessageListAlternateRows];
 	
 	[theme setBool:[_themesFileListAlternateRowsButton state] forKey:WCThemesFileListAlternateRows];
 	

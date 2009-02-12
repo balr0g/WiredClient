@@ -33,8 +33,7 @@
 
 @interface NSObject(WCMessagesWindowDelegate)
 
-- (void)showNextUnreadMessage;
-- (void)showPreviousUnreadMessage;
-- (void)showPrivateMessageReply;
+- (void)showNextUnreadConversation;
+- (void)showPreviousUnreadConversation;
 
 @end

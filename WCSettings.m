@@ -152,11 +152,6 @@
 						 forKey:WCThemesMessagesFont];
 		}
 		
-		if([self objectForKey:_WCMessagesListAlternateRows]) {
-			[newTheme setObject:[self objectForKey:_WCMessagesListAlternateRows]
-						 forKey:WCThemesMessageListAlternateRows];
-		}
-		
 		if([self objectForKey:_WCNewsTextColor]) {
 			[newTheme setObject:WIStringFromColor([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCNewsTextColor]])
 						 forKey:WCThemesBoardsTextColor];
@@ -413,7 +408,6 @@
 				[NSNumber numberWithBool:NO],									WCThemesChatTimestampEveryLine,
 				[NSNumber numberWithInteger:WCThemesUserListIconSizeLarge],		WCThemesUserListIconSize,
 				[NSNumber numberWithBool:NO],									WCThemesUserListAlternateRows,
-				[NSNumber numberWithBool:NO],									WCThemesMessageListAlternateRows,
 				[NSNumber numberWithBool:NO],									WCThemesFileListAlternateRows,
 				[NSNumber numberWithBool:YES],									WCThemesTransferListShowProgressBar,
 				[NSNumber numberWithBool:NO],									WCThemesTransferListAlternateRows,

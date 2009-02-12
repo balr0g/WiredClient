@@ -110,6 +110,8 @@
 + (NSString *)outputForShellCommand:(NSString *)command;
 + (void)applyURLAttributesToAttributedString:(NSMutableAttributedString *)attributedString;
 + (void)applySmileyAttributesToAttributedString:(NSMutableAttributedString *)attributedString;
++ (NSString *)URLRegex;
++ (NSString *)mailtoURLRegex;
 
 - (void)linkConnectionLoggedIn:(NSNotification *)notification;
 - (void)wiredChatJoinChatReply:(WIP7Message *)message;

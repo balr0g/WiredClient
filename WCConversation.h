@@ -61,7 +61,6 @@
 - (WCMessage *)messageAtIndex:(NSUInteger)index;
 - (WCMessage *)previousUnreadMessageStartingAtConversation:(WCConversation *)conversation message:(WCMessage *)message forwardsInMessages:(BOOL)forwardsInMessages;
 - (WCMessage *)nextUnreadMessageStartingAtConversation:(WCConversation *)conversation message:(WCMessage *)message forwardsInMessages:(BOOL)forwardsInMessages;
-- (void)sortMessagesUsingSelector:(SEL)selector;
 - (void)addMessage:(WCMessage *)message;
 - (void)removeMessage:(WCMessage *)message;
 - (void)removeAllMessages;

@@ -85,7 +85,6 @@
 	IBOutlet NSButton								*_themesChatTimestampEveryLineButton;
 	IBOutlet NSMatrix								*_themesUserListIconSizeMatrix;
 	IBOutlet NSButton								*_themesUserListAlternateRowsButton;
-	IBOutlet NSButton								*_themesMessageListAlternateRowsButton;
 	IBOutlet NSButton								*_themesFileListAlternateRowsButton;
 	IBOutlet NSButton								*_themesTransferListShowProgressBarButton;
 	IBOutlet NSButton								*_themesTransferListAlternateRowsButton;

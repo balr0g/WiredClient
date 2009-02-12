@@ -33,6 +33,7 @@
 #import "WCBoards.h"
 #import "WCBoardPost.h"
 #import "WCBoardThread.h"
+#import "WCChatController.h"
 #import "WCPreferences.h"
 #import "WCServerConnection.h"
 #import "WCSourceSplitView.h"
@@ -398,8 +399,8 @@
 	
 	string = [[text mutableCopy] autorelease];
 	
-	[string replaceOccurrencesOfRegex:@"(?<!(?:=|\\[|\\]))" @"(\\w+://(\\w|\\.|/|~|-|_|\\?|\\!|;|&|=|%|#|:|@|\\+|$|,|\\*|\\(|\\))+)" @"(?!(?:\\[|\\]))" withString:@"[url]$1[/url]" options:RKLCaseless];
-	[string replaceOccurrencesOfRegex:@"(?<!(?:=|\\[|\\]))" @"((\\w|\\.|_|-)+@(\\w|\\.|_|-)+)" @"(?!(?:\\[|\\]))" withString:@"[email]$1[/email]" options:RKLCaseless];
+	[string replaceOccurrencesOfRegex:[WCChatController URLRegex] withString:@"[url]$1[/url]" options:RKLCaseless];
+	[string replaceOccurrencesOfRegex:[WCChatController mailtoURLRegex] withString:@"[email]$1[/email]" options:RKLCaseless];
 	
 	return string;
 }

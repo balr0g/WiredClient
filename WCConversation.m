@@ -346,12 +346,6 @@
 
 
 
-- (void)sortMessagesUsingSelector:(SEL)selector {
-	[_messages sortUsingSelector:selector];
-}
-
-
-
 - (void)addMessage:(WCMessage *)message {
 	[message setConversation:self];
 	[_messages addObject:message];

@@ -29,29 +29,25 @@
 #define WCMessagesDidChangeUnreadCountNotification	@"WCMessagesDidChangeUnreadCountNotification"
 
 
+@class WCSourceSplitView;
 @class WCConversation, WCMessageConversation, WCBroadcastConversation, WCUser;
 
 @interface WCMessages : WIWindowController {
-	IBOutlet WISplitView							*_conversationsSplitView;
+	IBOutlet WCSourceSplitView						*_conversationsSplitView;
 	IBOutlet NSView									*_conversationsView;
 	IBOutlet NSView									*_messagesView;
 	IBOutlet WISplitView							*_messagesSplitView;
+	IBOutlet NSView									*_messageTopView;
+	IBOutlet NSView									*_messageBottomView;
 	IBOutlet NSView									*_messageListView;
 	IBOutlet NSView									*_messageView;
 
 	IBOutlet NSOutlineView							*_conversationsOutlineView;
 	IBOutlet NSTableColumn							*_conversationTableColumn;
 	IBOutlet NSTableColumn							*_unreadTableColumn;
-
-	IBOutlet WITableView							*_messagesTableView;
-	IBOutlet NSTableColumn							*_userTableColumn;
-	IBOutlet NSTableColumn							*_timeTableColumn;
-
-	IBOutlet NSTextView								*_messageTextView;
-
-	IBOutlet NSPanel								*_replyPanel;
-	IBOutlet NSTextField							*_userTextField;
-	IBOutlet NSTextView								*_replyTextView;
+	
+	IBOutlet WebView								*_messageWebView;
+	IBOutlet NSTextView								*_messageTextView2;
 
 	IBOutlet NSPanel								*_broadcastPanel;
 	IBOutlet NSTextView								*_broadcastTextView;
@@ -63,13 +59,16 @@
 	
 	NSFont											*_messageFont;
 	NSColor											*_messageColor;
-	BOOL											_showSmileys;
 	NSImage											*_conversationIcon;
 	
-	WCUser											*_messageUser;
-	
-	WIDateFormatter									*_tableDateFormatter;
 	WIDateFormatter									*_dialogDateFormatter;
+	WIDateFormatter									*_messageStatusDateFormatter;
+	WIDateFormatter									*_messageTimeDateFormatter;
+	
+	NSMutableString									*_headerTemplate;
+	NSMutableString									*_footerTemplate;
+	NSMutableString									*_messageTemplate;
+	NSMutableString									*_statusTemplate;
 }
 
 + (id)messages;

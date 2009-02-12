@@ -842,6 +842,18 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 
 
++ (NSString *)URLRegex {
+	return @"(?<!(?:=|\\[|\\]))" @"(\\w+://(\\w|\\.|/|~|-|_|\\?|\\!|;|&|=|%|#|:|@|\\+|$|,|\\*|\\(|\\))+)" @"(?!(?:\\[|\\]))";
+}
+
+
+
++ (NSString *)mailtoURLRegex {
+	return @"(?<!(?:=|\\[|\\]))" @"((\\w|\\.|_|-)+@(\\w|\\.|_|-)+)" @"(?!(?:\\[|\\]))";
+}
+
+
+
 #pragma mark -
 
 - (id)init {

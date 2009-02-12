@@ -61,7 +61,6 @@
 #define WCThemesUserListIconSizeLarge					1
 #define WCThemesUserListIconSizeSmall					0
 #define WCThemesUserListAlternateRows				@"WCThemesUserListAlternateRows"
-#define WCThemesMessageListAlternateRows			@"WCThemesMessageListAlternateRows"
 #define WCThemesFileListAlternateRows				@"WCThemesFileListAlternateRows"
 #define WCThemesTransferListShowProgressBar			@"WCThemesTransferListShowProgressBar"
 #define WCThemesTransferListAlternateRows			@"WCThemesTransferListAlternateRows"

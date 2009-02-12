@@ -156,12 +156,16 @@
 		A51B50100F42282F00EAB0E1 /* FilterButtonRight.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A51B500D0F42282F00EAB0E1 /* FilterButtonRight.tiff */; };
 		A51B50110F42282F00EAB0E1 /* FilterButtonLeft.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A51B500E0F42282F00EAB0E1 /* FilterButtonLeft.tiff */; };
 		A51B50120F42282F00EAB0E1 /* FilterButtonMiddle.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A51B500F0F42282F00EAB0E1 /* FilterButtonMiddle.tiff */; };
+		A51B5A5E0F44D63F00EAB0E1 /* MessageStatus.html in Resources */ = {isa = PBXBuildFile; fileRef = A51B5A5D0F44D63F00EAB0E1 /* MessageStatus.html */; };
 		A526D7D80D5F00B200F30E6F /* WCNotificationCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A526D7D70D5F00B200F30E6F /* WCNotificationCenter.m */; };
 		A52B301C05E6F0A300C651A4 /* WCServerInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A52B301A05E6F0A300C651A4 /* WCServerInfo.m */; };
 		A5326A8F0F37981C004180AA /* PostHeader.html in Resources */ = {isa = PBXBuildFile; fileRef = A5326A8C0F37981C004180AA /* PostHeader.html */; };
 		A5326A900F37981C004180AA /* PostFooter.html in Resources */ = {isa = PBXBuildFile; fileRef = A5326A8D0F37981C004180AA /* PostFooter.html */; };
 		A5326A910F37981C004180AA /* Post.html in Resources */ = {isa = PBXBuildFile; fileRef = A5326A8E0F37981C004180AA /* Post.html */; };
 		A5326A930F379826004180AA /* UnreadPost.png in Resources */ = {isa = PBXBuildFile; fileRef = A5326A920F379826004180AA /* UnreadPost.png */; };
+		A5326D830F379935004180AA /* MessageFooter.html in Resources */ = {isa = PBXBuildFile; fileRef = A5326D800F379935004180AA /* MessageFooter.html */; };
+		A5326D840F379935004180AA /* MessageHeader.html in Resources */ = {isa = PBXBuildFile; fileRef = A5326D810F379935004180AA /* MessageHeader.html */; };
+		A5326D850F379935004180AA /* Message.html in Resources */ = {isa = PBXBuildFile; fileRef = A5326D820F379935004180AA /* Message.html */; };
 		A541A7800F115A6800D1EE94 /* WCChatController.m in Sources */ = {isa = PBXBuildFile; fileRef = A541A77F0F115A6800D1EE94 /* WCChatController.m */; };
 		A541A7830F115AC500D1EE94 /* WCPrivateChatController.m in Sources */ = {isa = PBXBuildFile; fileRef = A541A7820F115AC500D1EE94 /* WCPrivateChatController.m */; };
 		A541A7860F115ACB00D1EE94 /* WCPublicChatController.m in Sources */ = {isa = PBXBuildFile; fileRef = A541A7850F115ACB00D1EE94 /* WCPublicChatController.m */; };
@@ -560,6 +564,7 @@
 		A51B500D0F42282F00EAB0E1 /* FilterButtonRight.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = FilterButtonRight.tiff; sourceTree = "<group>"; };
 		A51B500E0F42282F00EAB0E1 /* FilterButtonLeft.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = FilterButtonLeft.tiff; sourceTree = "<group>"; };
 		A51B500F0F42282F00EAB0E1 /* FilterButtonMiddle.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = FilterButtonMiddle.tiff; sourceTree = "<group>"; };
+		A51B5A5D0F44D63F00EAB0E1 /* MessageStatus.html */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.html; path = MessageStatus.html; sourceTree = "<group>"; };
 		A526D7D60D5F00B200F30E6F /* WCNotificationCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCNotificationCenter.h; sourceTree = "<group>"; };
 		A526D7D70D5F00B200F30E6F /* WCNotificationCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCNotificationCenter.m; sourceTree = "<group>"; };
 		A52B301905E6F0A300C651A4 /* WCServerInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCServerInfo.h; sourceTree = "<group>"; };
@@ -568,6 +573,9 @@
 		A5326A8D0F37981C004180AA /* PostFooter.html */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.html; path = PostFooter.html; sourceTree = "<group>"; };
 		A5326A8E0F37981C004180AA /* Post.html */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.html; path = Post.html; sourceTree = "<group>"; };
 		A5326A920F379826004180AA /* UnreadPost.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = UnreadPost.png; sourceTree = "<group>"; };
+		A5326D800F379935004180AA /* MessageFooter.html */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.html; path = MessageFooter.html; sourceTree = "<group>"; };
+		A5326D810F379935004180AA /* MessageHeader.html */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.html; path = MessageHeader.html; sourceTree = "<group>"; };
+		A5326D820F379935004180AA /* Message.html */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.html; path = Message.html; sourceTree = "<group>"; };
 		A541A77E0F115A6800D1EE94 /* WCChatController.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCChatController.h; sourceTree = "<group>"; };
 		A541A77F0F115A6800D1EE94 /* WCChatController.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCChatController.m; sourceTree = "<group>"; };
 		A541A7810F115AC500D1EE94 /* WCPrivateChatController.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCPrivateChatController.h; sourceTree = "<group>"; };
@@ -1125,6 +1133,10 @@
 			isa = PBXGroup;
 			children = (
 				77CFB9850E66D2C300F2D5F8 /* Messages.xib */,
+				A5326D820F379935004180AA /* Message.html */,
+				A5326D800F379935004180AA /* MessageFooter.html */,
+				A5326D810F379935004180AA /* MessageHeader.html */,
+				A51B5A5D0F44D63F00EAB0E1 /* MessageStatus.html */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1764,6 +1776,9 @@
 				77CFB95C0E66D1BB00F2D5F8 /* UserInfo.xib in Resources */,
 				779951580A122B8A00600320 /* Smileys.plist in Resources */,
 				A565B5000D5DA94000AF91BA /* wired.xml in Resources */,
+				A5326D840F379935004180AA /* MessageHeader.html in Resources */,
+				A5326D830F379935004180AA /* MessageFooter.html in Resources */,
+				A5326D850F379935004180AA /* Message.html in Resources */,
 				A5326A8F0F37981C004180AA /* PostHeader.html in Resources */,
 				A5326A900F37981C004180AA /* PostFooter.html in Resources */,
 				A5326A910F37981C004180AA /* Post.html in Resources */,
@@ -1882,6 +1897,7 @@
 				779951890A122BBB00600320 /* Smile.tiff in Resources */,
 				779951900A122BBB00600320 /* Wink.tiff in Resources */,
 				779951820A122BBB00600320 /* Yuck.tiff in Resources */,
+				A51B5A5E0F44D63F00EAB0E1 /* MessageStatus.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2305,6 +2321,7 @@
 		77A1AE780F14FF0300F7D24B /* Test/Universal */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = stabs;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -2343,6 +2360,7 @@
 		A5DB47B9098BBAB50073564C /* Test/Universal */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = stabs;
 				FRAMEWORK_SEARCH_PATHS = (
 					"\"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)\"",
 					"\"$(SRCROOT)\"",
@@ -2381,6 +2399,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PREPROCESSOR_DEFINITIONS = WCConfigurationTest;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				IBC_FLATTEN_NIBS = NO;
 				IBC_NOTICES = NO;
 				"MACOSX_DEPLOYMENT_TARGET[arch=i386]" = 10.4;
 				"MACOSX_DEPLOYMENT_TARGET[arch=ppc64]" = 10.5;
@@ -2464,6 +2483,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = WCConfigurationDebug;
+				IBC_FLATTEN_NIBS = NO;
 				IBC_NOTICES = NO;
 				"MACOSX_DEPLOYMENT_TARGET[arch=i386]" = 10.4;
 				"MACOSX_DEPLOYMENT_TARGET[arch=ppc64]" = 10.5;
