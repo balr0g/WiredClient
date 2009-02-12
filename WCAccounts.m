@@ -327,6 +327,9 @@
 - (void)_validateAccount:(WCAccount *)account {
 	BOOL		editable;
 	
+	[_userMenuItem setEnabled:[[[self connection] account] accountCreateUsers]];
+	[_groupMenuItem setEnabled:[[[self connection] account] accountCreateGroups]];
+	
 	if(account) {
 		editable = [self _isEditableAccount:account];
 		
@@ -896,7 +899,8 @@
 			
 			[self validate];
 		}
-		else if([_account isKindOfClass:[WCUserAccount class]] && [[(WCUserAccount *) _account group] isEqualToString:[account name]]) {
+		else if(([_account isKindOfClass:[WCUserAccount class]] && [[(WCUserAccount *) _account group] isEqualToString:[account name]]) ||
+				(_creatingAccount && [[_groupPopUpButton titleOfSelectedItem] isEqualToString:[account name]])) {
 			[_underlyingAccount release];
 			_underlyingAccount = [account retain];
 			
@@ -987,10 +991,10 @@
 		return (([account accountCreateUsers] || [account accountCreateGroups]) && connected);
 	}
 	else if(selector == @selector(delete:)) {
-		if(users > 0 && [account accountDeleteUsers])
+		if(users > 0 && ![account accountDeleteUsers])
 			return NO;
 
-		if(groups > 0 && [account accountDeleteGroups])
+		if(groups > 0 && ![account accountDeleteGroups])
 			return NO;
 		
 		return (users + groups > 0 && connected);
@@ -1162,12 +1166,17 @@
 	_editingAccount = NO;
 
 	_account = [[WCAccount alloc] init];
-	[_account setValue:NSLS(@"Untitled", @"Account name") forKey:@"name"];
+	[_account setName:NSLS(@"Untitled", @"Account name")];
 
 	_creatingAccount = YES;
 	_accountTouched = YES;
 	
 	[_accountsTabView selectTabViewItemAtIndex:0];
+	
+	if([[[self connection] account] accountCreateUsers])
+		[_typePopUpButton selectItem:_userMenuItem];
+	else
+		[_typePopUpButton selectItem:_groupMenuItem];
 	
 	[self _validateAccount:_account];
 	[self _readFromAccount:_account];
