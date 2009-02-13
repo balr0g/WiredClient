@@ -1652,11 +1652,14 @@
 @implementation WCAccountsTableColumn
 
 - (id)dataCellForRow:(NSInteger)row {
-	NSDictionary		*setting;
+	id		cell;
 	
-	setting = [(NSOutlineView *) [self tableView] itemAtRow:row];
+	cell = [[(NSOutlineView *) [self tableView] itemAtRow:row] objectForKey:WCAccountsFieldCell];
 	
-	return [setting objectForKey:WCAccountsFieldCell];
+	if(cell)
+		return cell;
+	
+	return [super dataCellForRow:row];
 }
 
 @end
