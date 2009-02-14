@@ -64,7 +64,6 @@
 	IBOutlet NSButton								*_deleteThemeButton;
 	IBOutlet NSButton								*_selectThemeButton;
 	
-	IBOutlet NSColorWell							*_themesURLsColorWell;
 	IBOutlet NSTextField							*_themesChatFontTextField;
 	IBOutlet NSButton								*_themesChatFontButton;
 	IBOutlet NSColorWell							*_themesChatTextColorWell;

@@ -33,7 +33,7 @@
 
 @interface NSObject(WCMessagesWindowDelegate)
 
-- (void)showNextUnreadConversation;
-- (void)showPreviousUnreadConversation;
+- (BOOL)showNextUnreadConversation;
+- (BOOL)showPreviousUnreadConversation;
 
 @end

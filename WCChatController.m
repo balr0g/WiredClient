@@ -1017,7 +1017,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 	}
 
 	[_chatOutputTextView setLinkTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
-		WIColorFromString([theme objectForKey:WCThemesURLsColor]),
+		WIColorFromString([theme objectForKey:WCThemesChatURLsColor]),
 			NSForegroundColorAttributeName,
 		[NSNumber numberWithInt:NSSingleUnderlineStyle],
 			NSUnderlineStyleAttributeName,
@@ -1296,6 +1296,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 	WCUser			*user;
 	WIP7UInt32		uid;
 	WIP7Bool		idle, admin;
+	BOOL			nickChanged = NO;
 	
 	[message getUInt32:&uid forName:@"wired.user.id"];
 	
@@ -1314,6 +1315,8 @@ typedef enum _WCChatFormat					WCChatFormat;
 			[self _printUserChange:user nick:nick];
 		
 		[[self connection] triggerEvent:WCEventsUserChangedNick info1:user info2:nick];
+		
+		nickChanged = YES;
 	}
 	
 	if(![status isEqualToString:[user status]]) {
@@ -1329,6 +1332,9 @@ typedef enum _WCChatFormat					WCChatFormat;
 	[user setAdmin:admin];
 	
 	[_userListTableView setNeedsDisplay:YES];
+	
+	if(nickChanged)
+		[[self connection] postNotificationName:WCChatUserNickDidChangeNotification object:user];
 }
 
 

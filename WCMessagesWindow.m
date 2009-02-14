@@ -36,11 +36,9 @@
 	if([event type] == NSKeyDown) {
 		if([event character] == ' ') {
 			if([event shiftKeyModifier])
-				[[self delegate] showPreviousUnreadConversation];
+				handled = [[self delegate] showPreviousUnreadConversation];
 			else
-				[[self delegate] showNextUnreadConversation];
-			
-			handled = YES;
+				handled = [[self delegate] showNextUnreadConversation];
 		}
 	}
 	

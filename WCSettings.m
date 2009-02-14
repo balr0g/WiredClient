@@ -94,7 +94,7 @@
 		
 		if([self objectForKey:_WCChatURLsColor]) {
 			[newTheme setObject:WIStringFromColor([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCChatURLsColor]])
-						 forKey:WCThemesURLsColor];
+						 forKey:WCThemesChatURLsColor];
 		}
 		
 		if([self objectForKey:_WCChatTextColor]) {
@@ -392,13 +392,13 @@
 			[NSDictionary dictionaryWithObjectsAndKeys:
 				NSLS(@"Basic", @"Theme"),										WCThemesName,
 				themesIdentifier,												WCThemesIdentifier,
-				WIStringFromColor([NSColor blueColor]),							WCThemesURLsColor,
 				WIStringFromFont([NSFont userFixedPitchFontOfSize:9.0]),		WCThemesChatFont,
 				WIStringFromColor([NSColor blackColor]),						WCThemesChatTextColor,
 				WIStringFromColor([NSColor whiteColor]),						WCThemesChatBackgroundColor,
 				WIStringFromColor([NSColor redColor]),							WCThemesChatEventsColor,
 				WIStringFromColor([NSColor redColor]),							WCThemesChatTimestampEveryLineColor,
-				WIStringFromFont([NSFont userFixedPitchFontOfSize:9.0]),		WCThemesMessagesFont,
+				WIStringFromColor([NSColor blueColor]),							WCThemesChatURLsColor,
+				WIStringFromFont([NSFont fontWithName:@"Helvetica" size:13.0]),	WCThemesMessagesFont,
 				WIStringFromColor([NSColor blackColor]),						WCThemesMessagesTextColor,
 				WIStringFromColor([NSColor whiteColor]),						WCThemesMessagesBackgroundColor,
 				WIStringFromFont([NSFont fontWithName:@"Helvetica" size:13.0]),	WCThemesBoardsFont,

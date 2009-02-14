@@ -98,13 +98,12 @@
 	if(row >= 0 && (NSUInteger) row < [[WCSettings objectForKey:WCThemes] count]) {
 		theme = [[WCSettings objectForKey:WCThemes] objectAtIndex:row];
 		
-		[_themesURLsColorWell setColor:WIColorFromString([theme objectForKey:WCThemesURLsColor])];
-
 		[_themesChatFontTextField setStringValue:[WIFontFromString([theme objectForKey:WCThemesChatFont]) displayNameWithSize]];
 		[_themesChatTextColorWell setColor:WIColorFromString([theme objectForKey:WCThemesChatTextColor])];
 		[_themesChatBackgroundColorWell setColor:WIColorFromString([theme objectForKey:WCThemesChatBackgroundColor])];
 		[_themesChatEventsColorWell setColor:WIColorFromString([theme objectForKey:WCThemesChatEventsColor])];
 		[_themesChatTimestampEveryLineColorWell setColor:WIColorFromString([theme objectForKey:WCThemesChatTimestampEveryLineColor])];
+		[_themesChatURLsColorWell setColor:WIColorFromString([theme objectForKey:WCThemesChatURLsColor])];
 
 		[_themesMessagesFontTextField setStringValue:[WIFontFromString([theme objectForKey:WCThemesMessagesFont]) displayNameWithSize]];
 		[_themesMessagesTextColorWell setColor:WIColorFromString([theme objectForKey:WCThemesMessagesTextColor])];
@@ -722,12 +721,12 @@
 	theme = [NSDictionary dictionaryWithObjectsAndKeys:
 		NSLS(@"Untitled", @"Untitled theme"),							WCThemesName,
 		[NSString UUIDString],											WCThemesIdentifier,
-		WIStringFromColor([NSColor blueColor]),							WCThemesURLsColor,
 		WIStringFromFont([NSFont userFixedPitchFontOfSize:9.0]),		WCThemesChatFont,
 		WIStringFromColor([NSColor blackColor]),						WCThemesChatTextColor,
 		WIStringFromColor([NSColor whiteColor]),						WCThemesChatBackgroundColor,
 		WIStringFromColor([NSColor redColor]),							WCThemesChatEventsColor,
 		WIStringFromColor([NSColor redColor]),							WCThemesChatTimestampEveryLineColor,
+		WIStringFromColor([NSColor blueColor]),							WCThemesChatURLsColor,
 		WIStringFromFont([NSFont userFixedPitchFontOfSize:9.0]),		WCThemesMessagesFont,
 		WIStringFromColor([NSColor blackColor]),						WCThemesMessagesTextColor,
 		WIStringFromColor([NSColor whiteColor]),						WCThemesMessagesBackgroundColor,
@@ -927,12 +926,11 @@
 	oldTheme		= [[[[WCSettings objectForKey:WCThemes] objectAtIndex:row] retain] autorelease];
 	theme			= [[oldTheme mutableCopy] autorelease];
 
-	[theme setObject:WIStringFromColor([_themesURLsColorWell color]) forKey:WCThemesURLsColor];
-	
 	[theme setObject:WIStringFromColor([_themesChatTextColorWell color]) forKey:WCThemesChatTextColor];
 	[theme setObject:WIStringFromColor([_themesChatBackgroundColorWell color]) forKey:WCThemesChatBackgroundColor];
 	[theme setObject:WIStringFromColor([_themesChatEventsColorWell color]) forKey:WCThemesChatEventsColor];
 	[theme setObject:WIStringFromColor([_themesChatTimestampEveryLineColorWell color]) forKey:WCThemesChatTimestampEveryLineColor];
+	[theme setObject:WIStringFromColor([_themesChatURLsColorWell color]) forKey:WCThemesChatURLsColor];
 	
 	[theme setObject:WIStringFromColor([_themesMessagesTextColorWell color]) forKey:WCThemesMessagesTextColor];
 	[theme setObject:WIStringFromColor([_themesMessagesBackgroundColorWell color]) forKey:WCThemesMessagesBackgroundColor];

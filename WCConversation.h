@@ -1,4 +1,4 @@
-/* $Id$ */
+/* $Id: WCMessage.h 6709 2009-01-22 16:08:51Z morris $ */
 
 /*
  *  Copyright (c) 2003-2007 Axel Andersson
@@ -34,7 +34,10 @@
 	NSString					*_name;
 	NSMutableArray				*_conversations;
 	NSMutableArray				*_messages;
+	NSString					*_nick;
+	NSString					*_login;
 	BOOL						_expandable;
+	BOOL						_unread;
 	
 	WCUser						*_user;
 }
@@ -44,11 +47,19 @@
 
 - (NSString *)name;
 - (BOOL)isExpandable;
+- (void)setUnread:(BOOL)unread;
+- (BOOL)isUnread;
+- (void)setUser:(WCUser *)user;
+- (WCUser *)user;
+- (NSString *)nick;
+- (NSString *)login;
 
 - (NSUInteger)numberOfConversations;
 - (NSArray *)conversations;
 - (WCConversation *)conversationAtIndex:(NSUInteger)index;
 - (WCConversation *)conversationForUser:(WCUser *)user connection:(WCServerConnection *)connection;
+- (WCConversation *)previousUnreadConversationStartingAtConversation:(WCConversation *)conversation;
+- (WCConversation *)nextUnreadConversationStartingAtConversation:(WCConversation *)conversation;
 - (void)addConversations:(NSArray *)conversations;
 - (void)addConversation:(WCConversation *)conversation;
 - (void)removeConversation:(WCConversation *)conversation;
@@ -59,8 +70,6 @@
 - (NSArray *)messages;
 - (NSArray *)unreadMessages;
 - (WCMessage *)messageAtIndex:(NSUInteger)index;
-- (WCMessage *)previousUnreadMessageStartingAtConversation:(WCConversation *)conversation message:(WCMessage *)message forwardsInMessages:(BOOL)forwardsInMessages;
-- (WCMessage *)nextUnreadMessageStartingAtConversation:(WCConversation *)conversation message:(WCMessage *)message forwardsInMessages:(BOOL)forwardsInMessages;
 - (void)addMessage:(WCMessage *)message;
 - (void)removeMessage:(WCMessage *)message;
 - (void)removeAllMessages;

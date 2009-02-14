@@ -1060,8 +1060,8 @@
 			isa = PBXGroup;
 			children = (
 				77CED3B70EC0691E00123164 /* Boards.xib */,
-				A5326A8C0F37981C004180AA /* PostHeader.html */,
 				A5326A8D0F37981C004180AA /* PostFooter.html */,
+				A5326A8C0F37981C004180AA /* PostHeader.html */,
 				A5326A8E0F37981C004180AA /* Post.html */,
 				A5326A920F379826004180AA /* UnreadPost.png */,
 			);

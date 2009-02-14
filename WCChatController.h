@@ -29,6 +29,7 @@
 #define WCChatUsersDidChangeNotification			@"WCChatUsersDidChangeNotification"
 #define WCChatUserAppearedNotification				@"WCChatUserAppearedNotification"
 #define WCChatUserDisappearedNotification			@"WCChatUserDisappearedNotification"
+#define WCChatUserNickDidChangeNotification			@"WCChatUserNickDidChangeNotification"
 #define WCChatSelfWasKickedNotification				@"WCChatSelfWasKickedNotification"
 #define WCChatSelfWasBannedNotification				@"WCChatSelfWasBannedNotification"
 #define WCChatRegularChatDidAppearNotification		@"WCChatRegularChatDidAppearNotification"

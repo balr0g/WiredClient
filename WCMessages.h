@@ -39,15 +39,13 @@
 	IBOutlet WISplitView							*_messagesSplitView;
 	IBOutlet NSView									*_messageTopView;
 	IBOutlet NSView									*_messageBottomView;
-	IBOutlet NSView									*_messageListView;
-	IBOutlet NSView									*_messageView;
 
 	IBOutlet NSOutlineView							*_conversationsOutlineView;
 	IBOutlet NSTableColumn							*_conversationTableColumn;
 	IBOutlet NSTableColumn							*_unreadTableColumn;
 	
 	IBOutlet WebView								*_messageWebView;
-	IBOutlet NSTextView								*_messageTextView2;
+	IBOutlet NSTextView								*_messageTextView;
 
 	IBOutlet NSPanel								*_broadcastPanel;
 	IBOutlet NSTextView								*_broadcastTextView;
@@ -59,6 +57,7 @@
 	
 	NSFont											*_messageFont;
 	NSColor											*_messageColor;
+	NSColor											*_backgroundColor;
 	NSImage											*_conversationIcon;
 	
 	WIDateFormatter									*_dialogDateFormatter;
@@ -74,12 +73,10 @@
 + (id)messages;
 
 - (void)showPrivateMessageToUser:(WCUser *)user;
-- (void)showPrivateMessageToUser:(WCUser *)user message:(NSString *)message;
 - (void)showBroadcastForConnection:(WCServerConnection *)connection;
 - (NSUInteger)numberOfUnreadMessages;
 - (NSUInteger)numberOfUnreadMessagesForConnection:(WCServerConnection *)connection;
 
-- (IBAction)reply:(id)sender;
 - (IBAction)revealInUserList:(id)sender;
 - (IBAction)clearMessages:(id)sender;
 
