@@ -28,6 +28,8 @@
 
 #import "WCConnectionController.h"
 
+@class WCErrorQueue;
+
 @interface WCAccounts : WCConnectionController {
 	IBOutlet NSButton					*_allFilterButton;
 	IBOutlet NSButton					*_usersFilterButton;
@@ -71,6 +73,8 @@
 	IBOutlet NSSecureTextField			*_newPasswordTextField;
 	IBOutlet NSSecureTextField			*_verifyPasswordTextField;
 	IBOutlet NSTextField				*_passwordMismatchTextField;
+	
+	WCErrorQueue						*_errorQueue;
 	
 	NSArray								*_allSettings;
 	NSMutableArray						*_shownSettings;

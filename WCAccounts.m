@@ -26,9 +26,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "NSAlert-WCAdditions.h"
 #import "WCAccount.h"
 #import "WCAccounts.h"
+#import "WCErrorQueue.h"
 #import "WCServerConnection.h"
 
 #define	WCAccountsFieldCell					@"WCAccountsFieldCell"
@@ -693,6 +693,8 @@
 
 
 - (void)dealloc {
+	[_errorQueue release];
+	
 	[_allSettings release];
 	[_shownSettings release];
 	
@@ -717,6 +719,8 @@
 
 - (void)windowDidLoad {
 	NSToolbar		*toolbar;
+
+	_errorQueue = [[WCErrorQueue alloc] initWithWindow:[self window]];
 
 	toolbar = [[NSToolbar alloc] initWithIdentifier:@"Accounts"];
 	[toolbar setDelegate:self];
@@ -868,7 +872,7 @@
 		[_accountsTableView reloadData];
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
-		[[[WCError errorWithWiredMessage:message] alert] beginSheetModalForWindow:[self window]];
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 	}
 }
 
@@ -882,7 +886,7 @@
 	else if([[message name] isEqualToString:@"wired.account.group"])
 		account = [WCGroupAccount accountWithMessage:message];
 	else if([[message name] isEqualToString:@"wired.error"])
-		[[[WCError errorWithWiredMessage:message] alert] beginSheetModalForWindow:[self window]];
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 
 	[_progressIndicator stopAnimation:self];
 
@@ -913,25 +917,22 @@
 
 
 - (void)wiredAccountChangeAccountReply:(WIP7Message *)message {
-	if([[message name] isEqualToString:@"wired.error"]) {
-		[[[WCError errorWithWiredMessage:message] alert] beginSheetModalForWindow:[self window]];
-	}
+	if([[message name] isEqualToString:@"wired.error"])
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 }
 
 
 
 - (void)wiredAccountDeleteAccountReply:(WIP7Message *)message {
-	if([[message name] isEqualToString:@"wired.error"]) {
-		[[[WCError errorWithWiredMessage:message] alert] beginSheetModalForWindow:[self window]];
-	}
+	if([[message name] isEqualToString:@"wired.error"])
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 }
 
 
 
 - (void)wiredAccountChangePasswordReply:(WIP7Message *)message {
-	if([[message name] isEqualToString:@"wired.error"]) {
-		[[[WCError errorWithWiredMessage:message] alert] beginSheetModalForWindow:[self window]];
-	}
+	if([[message name] isEqualToString:@"wired.error"])
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 }
 
 

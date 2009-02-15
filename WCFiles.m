@@ -29,6 +29,7 @@
 #import "WCAccount.h"
 #import "WCAccounts.h"
 #import "WCCache.h"
+#import "WCErrorQueue.h"
 #import "WCFile.h"
 #import "WCFileInfo.h"
 #import "WCFiles.h"
@@ -609,6 +610,8 @@
 
 
 - (void)dealloc {
+	[_errorQueue release];
+	
 	[_history release];
 	[_allFiles release];
 	[_browserFiles release];
@@ -628,6 +631,8 @@
 	NSArray		*types;
 	
 	[super windowDidLoad];
+
+	_errorQueue = [[WCErrorQueue alloc] initWithWindow:[self window]];
 
 	types = [NSArray arrayWithObjects:WCFilePboardType, NSFilenamesPboardType, NULL];
 
@@ -768,7 +773,7 @@
 	else if([[message name] isEqualToString:@"wired.error"]) {
 		[_progressIndicator stopAnimation:self];
 		
-		[[[WCError errorWithWiredMessage:message] alert] beginSheetModalForWindow:[self window]];
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 	}
 }
 
@@ -793,28 +798,28 @@
 
 - (void)wiredFileCreateDirectoryReply:(WIP7Message *)message {
 	if([[message name] isEqualToString:@"wired.error"])
-		[[[WCError errorWithWiredMessage:message] alert] beginSheetModalForWindow:[self window]];
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 }
 
 
 
 - (void)wiredFileDeleteReply:(WIP7Message *)message {
 	if([[message name] isEqualToString:@"wired.error"])
-		[[[WCError errorWithWiredMessage:message] alert] beginSheetModalForWindow:[self window]];
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 }
 
 
 
 - (void)wiredFileMoveReply:(WIP7Message *)message {
 	if([[message name] isEqualToString:@"wired.error"])
-		[[[WCError errorWithWiredMessage:message] alert] beginSheetModalForWindow:[self window]];
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 }
 
 
 
 - (void)wiredFileLinkReply:(WIP7Message *)message {
 	if([[message name] isEqualToString:@"wired.error"])
-		[[[WCError errorWithWiredMessage:message] alert] beginSheetModalForWindow:[self window]];
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 }
 
 
@@ -1228,13 +1233,10 @@
 	NSString		*title;
 	NSUInteger		count;
 
-	if(![[self connection] isConnected])
+	if(![_deleteButton isEnabled])
 		return;
 
 	count = [[self _selectedFiles] count];
-
-	if(count == 0)
-		return;
 
 	if(count == 1) {
 		title = [NSSWF:

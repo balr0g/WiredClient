@@ -139,6 +139,7 @@
 	
 	if([_connection error]) {
 		[self showWindow:self];
+		
 		[[[_connection error] alert] beginSheetModalForWindow:[self window]];
 	}
 	

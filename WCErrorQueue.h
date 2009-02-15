@@ -1,7 +1,7 @@
 /* $Id$ */
 
 /*
- *  Copyright (c) 2005-2007 Axel Andersson
+ *  Copyright (c) 2009 Axel Andersson
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -26,34 +26,28 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-@class WCErrorQueue, WCServerContainer, WCServerBonjour;
+@interface WCErrorQueue : WIObject {
+	IBOutlet NSPanel					*_errorPanel;
+	IBOutlet NSTextField				*_titleTextField;
+	IBOutlet NSTextField				*_descriptionTextField;
+	IBOutlet NSButton					*_dismissButton;
+	IBOutlet NSSegmentedControl			*_historyControl;
 
-@interface WCServers : WIWindowController {
-	IBOutlet WIOutlineView					*_serversOutlineView;
-	IBOutlet NSTableColumn					*_nameTableColumn;
-	IBOutlet NSTableColumn					*_usersTableColumn;
-	IBOutlet NSTableColumn					*_filesCountTableColumn;
-	IBOutlet NSTableColumn					*_filesSizeTableColumn;
-	IBOutlet NSTableColumn					*_descriptionTableColumn;
+	NSMutableArray						*_errors;
+	NSWindow							*_window;
 	
-	IBOutlet NSTextField					*_statusTextField;
-	IBOutlet NSProgressIndicator			*_progressIndicator;
+	NSRect								_titleFrame;
+	NSRect								_descriptionFrame;
+	NSRect								_panelFrame;
 	
-	WCErrorQueue							*_errorQueue;
-
-	NSNetServiceBrowser						*_browser;
-	NSString								*_itemFilter;
-	
-	WCServerContainer						*_servers;
-	WCServerBonjour							*_bonjour;
+	NSUInteger							_shownError;
+	BOOL								_showingPanel;
 }
 
-+ (id)servers;
+- (id)initWithWindow:(NSWindow *)window;
 
-- (IBAction)reload:(id)sender;
-- (IBAction)open:(id)sender;
-- (IBAction)addTracker:(id)sender;
-- (IBAction)deleteTracker:(id)sender;
-- (IBAction)search:(id)sender;
+- (void)showError:(NSError *)error;
+
+- (IBAction)history:(id)sender;
 
 @end

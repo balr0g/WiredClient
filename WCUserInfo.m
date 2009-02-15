@@ -26,8 +26,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "NSAlert-WCAdditions.h"
 #import "WCAccount.h"
+#import "WCErrorQueue.h"
 #import "WCServerConnection.h"
 #import "WCUser.h"
 #import "WCUserInfo.h"
@@ -183,6 +183,7 @@
 
 
 - (void)dealloc {
+	[_errorQueue release];
 	[_user release];
 	[_dateFormatter release];
 
@@ -194,6 +195,8 @@
 #pragma mark -
 
 - (void)windowDidLoad {
+	_errorQueue = [[WCErrorQueue alloc] initWithWindow:[self window]];
+	
 	[[self window] setTitle:[NSSWF:
 		NSLS(@"%@ Info", @"User info window title (nick)"), [_user nick]]];
 	
@@ -235,7 +238,7 @@
 		[self performSelector:@selector(_reloadUserInfo) withObject:NULL afterDelay:1.0];
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
-		[[[WCError errorWithWiredMessage:message] alert] beginSheetModalForWindow:[self window]];
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 	}
 }
 

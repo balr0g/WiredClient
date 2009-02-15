@@ -29,6 +29,7 @@
 #import "NSAlert-WCAdditions.h"
 #import "WCConnect.h"
 #import "WCConnection.h"
+#import "WCErrorQueue.h"
 #import "WCPreferences.h"
 #import "WCServerItem.h"
 #import "WCServers.h"
@@ -301,6 +302,7 @@
 - (void)dealloc {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
+	[_errorQueue release];
 	[_browser release];
 	[_itemFilter release];
 	[_servers release];
@@ -315,6 +317,8 @@
 
 - (void)windowDidLoad {
 	NSToolbar		*toolbar;
+	
+	_errorQueue = [[WCErrorQueue alloc] initWithWindow:[self window]];
 	
 	toolbar = [[NSToolbar alloc] initWithIdentifier:@"Servers"];
 	[toolbar setDelegate:self];
@@ -445,7 +449,7 @@
 
 - (void)linkConnectionDidClose:(NSNotification *)notification {
 	if([[notification object] error])
-		[[[[notification object] error] alert] beginSheetModalForWindow:[self window]];
+		[_errorQueue showError:[[notification object] error]];
 	
 	[[notification object] terminate];
 }
@@ -486,7 +490,7 @@
 	else if([[message name] isEqualToString:@"wired.error"]) {
 		[(id) [message contextInfo] terminate];
 
-		[[[WCError errorWithWiredMessage:message] alert] beginSheetModalForWindow:[self window]];
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 	}
 }
 
@@ -517,7 +521,7 @@
 	else if([[message name] isEqualToString:@"wired.error"]) {
 		[(id) [message contextInfo] terminate];
 
-		[[[WCError errorWithWiredMessage:message] alert] beginSheetModalForWindow:[self window]];
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 	}
 }
 

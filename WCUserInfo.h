@@ -28,7 +28,7 @@
 
 #import "WCInfoController.h"
 
-@class WCUser;
+@class WCErrorQueue, WCUser;
 
 @interface WCUserInfo : WCInfoController {
 	IBOutlet NSImageView			*_iconImageView;
@@ -54,6 +54,8 @@
 	IBOutlet NSTextField			*_loginTimeTitleTextField;
 	IBOutlet NSTextField			*_idleTimeTitleTextField;
 	IBOutlet NSTextField			*_idleTimeTextField;
+	
+	WCErrorQueue					*_errorQueue;
 
 	WCUser							*_user;
 	WIDateFormatter					*_dateFormatter;

@@ -32,7 +32,7 @@
 #define WCFileSelectPathKey			@"WCFileSelectPathKey"
 
 
-@class WCFile, WCFilesController;
+@class WCFile, WCFilesController, WCErrorQueue;
 
 @interface WCFiles : WCConnectionController {
 	IBOutlet WCFilesController		*_filesController;
@@ -63,6 +63,8 @@
 	IBOutlet NSButton				*_deleteButton;
 	
 	IBOutlet NSProgressIndicator	*_progressIndicator;
+	
+	WCErrorQueue					*_errorQueue;
 
 	NSUInteger						_type;
 	
