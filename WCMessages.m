@@ -240,7 +240,7 @@
 	WCConversation			*conversation;
 	WCMessage				*message;
 	NSInteger				day;
-	BOOL					changedUnread = NO;
+	BOOL					changedUnread = NO, isKeyWindow;
 	
 	conversation = [self _selectedConversation];
 	
@@ -252,10 +252,11 @@
 	[html replaceOccurrencesOfString:@"<? backgroundcolor ?>" withString:[NSSWF:@"#%.6x", [_backgroundColor HTMLValue]]];
 
 	if(conversation) {
-		calendar	= [NSCalendar currentCalendar];
-		day			= -1;
-		icons		= [NSMutableDictionary dictionary];
-		enumerator	= [[conversation messages] objectEnumerator];
+		isKeyWindow		= ([NSApp keyWindow] == [self window]);
+		calendar		= [NSCalendar currentCalendar];
+		day				= -1;
+		icons			= [NSMutableDictionary dictionary];
+		enumerator		= [[conversation messages] objectEnumerator];
 		
 		if([conversation numberOfMessages] == 0) {
 			[html appendString:[self _HTMLStringForStatus:[_messageStatusDateFormatter stringFromDate:[NSDate date]]]];
@@ -280,7 +281,7 @@
 				
 				[html appendString:[self _HTMLStringForMessage:message icon:icon]];
 				
-				if([message isUnread]) {
+				if([message isUnread] && isKeyWindow) {
 					[message setUnread:NO];
 					
 					changedUnread = YES;
@@ -288,7 +289,7 @@
 			}
 		}
 		
-		if([conversation isUnread]) {
+		if([conversation isUnread] && isKeyWindow) {
 			[conversation setUnread:NO];
 			
 			changedUnread = YES;
@@ -546,6 +547,43 @@
 
 
 
+- (void)windowDidBecomeKey:(NSWindow *)window {
+	NSEnumerator		*enumerator;
+	WCConversation		*conversation;
+	WCMessage			*message;
+	BOOL				changedUnread;
+	
+	conversation = [self _selectedConversation];
+	
+	if(conversation) {
+		enumerator = [[conversation messages] objectEnumerator];
+		
+		while((message = [enumerator nextObject])) {
+			if([message isUnread]) {
+				[message setUnread:NO];
+				
+				changedUnread = YES;
+			}
+		}
+		
+		if([conversation isUnread]) {
+			[conversation setUnread:NO];
+			
+			changedUnread = YES;
+		}
+		
+		if(changedUnread) {
+			[[NSNotificationCenter defaultCenter] postNotificationName:WCMessagesDidChangeUnreadCountNotification];
+			
+			[self _saveMessages];
+			
+			[_conversationsOutlineView setNeedsDisplay:YES];
+		}
+	}
+}
+
+
+
 - (NSToolbarItem *)toolbar:(NSToolbar *)toolbar itemForItemIdentifier:(NSString *)identifier willBeInsertedIntoToolbar:(BOOL)willBeInsertedIntoToolbar {
 	if([identifier isEqualToString:@"RevealInUserList"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
@@ -722,9 +760,6 @@
 										message:[p7Message stringForName:@"wired.message.message"]
 									 connection:connection];
 	
-	if(conversation == selectedConversation)
-		[message setUnread:NO];
-
 	[conversation addMessage:message];
 
 	[self _saveMessages];
@@ -775,9 +810,6 @@
 											message:[p7Message stringForName:@"wired.message.broadcast"]
 										 connection:connection];
 	
-	if(conversation == selectedConversation)
-		[message setUnread:NO];
-
 	[conversation addMessage:message];
 
 	[self _saveMessages];

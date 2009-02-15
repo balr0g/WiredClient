@@ -321,7 +321,7 @@
 	NSMutableString		*html;
 	WCBoardThread		*thread;
 	WCBoardPost			*post;
-	BOOL				changedUnread = NO;
+	BOOL				changedUnread = NO, isKeyWindow;
 	
 	html = [NSMutableString stringWithString:_headerTemplate];
 	
@@ -333,13 +333,14 @@
 	threads = [self _selectedThreads];
 	
 	if([threads count] == 1) {
-		thread		= [threads objectAtIndex:0];
-		enumerator	= [[thread posts] objectEnumerator];
+		isKeyWindow		= ([NSApp keyWindow] == [self window]);
+		thread			= [threads objectAtIndex:0];
+		enumerator		= [[thread posts] objectEnumerator];
 		
 		while((post = [enumerator nextObject])) {
 			[html appendString:[self _HTMLStringForPost:post]];
 			
-			if([post isUnread]) {
+			if([post isUnread] && isKeyWindow) {
 				[post setUnread:NO];
 				[_readPosts addObject:[post postID]];
 				
@@ -347,7 +348,7 @@
 			}
 		}
 		
-		if([thread isUnread]) {
+		if([thread isUnread] && isKeyWindow) {
 			[thread setUnread:NO];
 			
 			changedUnread = YES;
@@ -746,6 +747,43 @@
 	[self _validate];
 	
 	[super windowDidLoad];
+}
+
+
+
+- (void)windowDidBecomeKey:(NSWindow *)window {
+	NSEnumerator		*enumerator;
+	WCBoardThread		*thread;
+	WCBoardPost			*post;
+	BOOL				changedUnread;
+	
+	thread = [self _selectedThread];
+	
+	if(thread) {
+		enumerator = [[thread posts] objectEnumerator];
+		
+		while((post = [enumerator nextObject])) {
+			if([post isUnread]) {
+				[post setUnread:NO];
+				
+				changedUnread = YES;
+			}
+		}
+		
+		if([thread isUnread]) {
+			[thread setUnread:NO];
+			
+			changedUnread = YES;
+		}
+		
+		if(changedUnread) {
+			[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
+			
+			[self _savePosts];
+			
+			[_boardsOutlineView setNeedsDisplay:YES];
+		}
+	}
 }
 
 
