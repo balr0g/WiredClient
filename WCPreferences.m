@@ -40,6 +40,8 @@
 
 - (void)_validate;
 
+- (void)_bookmarkDidChange:(NSDictionary *)bookmark;
+
 - (void)_reloadThemes;
 - (void)_reloadTheme;
 - (NSImage *)_imageForTheme:(NSDictionary *)theme size:(NSSize)size;
@@ -61,6 +63,15 @@
 	[_deleteHighlightButton setEnabled:([_highlightsTableView selectedRow] >= 0)];
 	[_deleteIgnoreButton setEnabled:([_ignoresTableView selectedRow] >= 0)];
 	[_deleteTrackerBookmarkButton setEnabled:([_trackerBookmarksTableView selectedRow] >= 0)];
+}
+
+
+
+#pragma mark -
+
+- (void)_bookmarkDidChange:(NSDictionary *)bookmark {
+	[[NSNotificationCenter defaultCenter] postNotificationName:WCBookmarkDidChangeNotification object:bookmark];
+	[[NSNotificationCenter defaultCenter] postNotificationName:WCBookmarksDidChangeNotification];
 }
 
 
@@ -1186,9 +1197,9 @@
 	
 	if(![oldBookmark isEqualToDictionary:bookmark]) {
 		[WCSettings replaceObjectAtIndex:row withObject:bookmark inArrayForKey:WCBookmarks];
-
-		[[NSNotificationCenter defaultCenter] postNotificationName:WCBookmarkDidChangeNotification object:bookmark];
-		[[NSNotificationCenter defaultCenter] postNotificationName:WCBookmarksDidChangeNotification];
+		
+		[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_bookmarkDidChange:) object:oldBookmark];
+		[self performSelector:@selector(_bookmarkDidChange:) withObject:bookmark afterDelay:1.0];
 	}
 }
 
