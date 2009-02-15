@@ -54,9 +54,11 @@
 - (WCBoard *)_selectedBoard;
 - (WCBoardThread *)_selectedThread;
 - (NSArray *)_selectedThreads;
+- (void)_savePosts;
 
 - (void)_selectThread:(WCBoardThread *)thread;
 - (void)_reselectThread:(WCBoardThread *)thread;
+- (void)_markSelectedThreadsAsUnread:(BOOL)unread;
 - (SEL)_sortSelector;
 
 - (void)_reloadThread;
@@ -212,6 +214,12 @@
 
 
 
+- (void)_savePosts {
+	[WCSettings setObject:[_readPosts allObjects] forKey:WCReadBoardPosts];
+}
+
+
+
 #pragma mark -
 
 - (void)_selectThread:(WCBoardThread *)thread {
@@ -239,6 +247,48 @@
 	if(index != NSNotFound) {
 		[_threadsTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
 		[_threadsTableView scrollRowToVisible:index];
+	}
+}
+
+
+
+- (void)_markSelectedThreadsAsUnread:(BOOL)unread {
+	NSEnumerator		*enumerator, *postEnumerator;
+	WCBoardThread		*thread;
+	WCBoardPost			*post;
+	BOOL				changedUnread = NO;
+	
+	enumerator = [[self _selectedThreads] objectEnumerator];
+	
+	while((thread = [enumerator nextObject])) {
+		if([thread isUnread] != unread) {
+			[thread setUnread:unread];
+			
+			changedUnread = YES;
+		}
+		
+		postEnumerator = [[thread posts] objectEnumerator];
+		
+		while((post = [postEnumerator nextObject])) {
+			if([post isUnread] != unread) {
+				[post setUnread:unread];
+
+				if(unread)
+					[_readPosts removeObject:[post postID]];
+				else
+					[_readPosts addObject:[post postID]];
+				
+				changedUnread = YES;
+			}
+		}
+	}
+
+	if(changedUnread) {
+		[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
+	
+		[self _savePosts];
+		
+		[_boardsOutlineView setNeedsDisplay:YES];
 	}
 }
 
@@ -311,7 +361,7 @@
 	if(changedUnread) {
 		[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
 		
-		[WCSettings setObject:[_readPosts allObjects] forKey:WCReadBoardPosts];
+		[self _savePosts];
 		
 		[_boardsOutlineView setNeedsDisplay:YES];
 		[_threadsTableView setNeedsDisplay:YES];
@@ -1185,7 +1235,8 @@
 	[thread setUnread:YES];
 
 	[_readPosts removeObject:[post postID]];
-	[WCSettings setObject:[_readPosts allObjects] forKey:WCReadBoardPosts];
+
+	[self _savePosts];
 	
 	[_boardsOutlineView setNeedsDisplay:YES];
 	[_threadsTableView setNeedsDisplay:YES];
@@ -1223,8 +1274,9 @@
 		[board removeThread:thread];
 	} else {
 		[_readPosts removeObject:[post postID]];
-		[WCSettings setObject:[_readPosts allObjects] forKey:WCReadBoardPosts];
-		
+
+		[self _savePosts];
+
 		if(![thread numberOfUnreadPosts] == 0) {
 			[thread setUnread:NO];
 			
@@ -1986,57 +2038,13 @@
 
 
 - (IBAction)markAsRead:(id)sender {
-	NSEnumerator		*enumerator, *postEnumerator;
-	WCBoardThread		*thread;
-	WCBoardPost			*post;
-	
-	enumerator = [[self _selectedThreads] objectEnumerator];
-	
-	while((thread = [enumerator nextObject])) {
-		[thread setUnread:NO];
-		
-		postEnumerator = [[thread posts] objectEnumerator];
-		
-		while((post = [postEnumerator nextObject])) {
-			[post setUnread:NO];
-			
-			[_readPosts addObject:[post postID]];
-		}
-	}
-
-	[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
-		
-	[WCSettings setObject:[_readPosts allObjects] forKey:WCReadBoardPosts];
-	
-	[_boardsOutlineView setNeedsDisplay:YES];
+	[self _markSelectedThreadsAsUnread:NO];
 }
 
 
 
 - (IBAction)markAsUnread:(id)sender {
-	NSEnumerator		*enumerator, *postEnumerator;
-	WCBoardThread		*thread;
-	WCBoardPost			*post;
-	
-	enumerator = [[self _selectedThreads] objectEnumerator];
-	
-	while((thread = [enumerator nextObject])) {
-		[thread setUnread:YES];
-		
-		postEnumerator = [[thread posts] objectEnumerator];
-		
-		while((post = [postEnumerator nextObject])) {
-			[post setUnread:YES];
-
-			[_readPosts removeObject:[post postID]];
-		}
-	}
-
-	[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
-		
-	[WCSettings setObject:[_readPosts allObjects] forKey:WCReadBoardPosts];
-	
-	[_boardsOutlineView setNeedsDisplay:YES];
+	[self _markSelectedThreadsAsUnread:YES];
 }
 
 
