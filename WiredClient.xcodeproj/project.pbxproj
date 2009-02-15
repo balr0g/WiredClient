@@ -2024,12 +2024,14 @@
 				A5DC7EE5057AAF2900736BBF /* WCConsole.m in Sources */,
 				771E6D510755F506000F9195 /* WCConversation.m in Sources */,
 				A5DC7FBC057AB0D000736BBF /* WCError.m in Sources */,
+				A51474A90F487ECD00DBE395 /* WCErrorQueue.m in Sources */,
 				A5DC7FA4057AB0A600736BBF /* WCFile.m in Sources */,
 				A5DC7F0C057AAF6C00736BBF /* WCFileInfo.m in Sources */,
 				A5DC7F0E057AAF6C00736BBF /* WCFiles.m in Sources */,
 				777E657B0740F34700A8DE0B /* WCFilesBrowserCell.m in Sources */,
 				A5FD60630D77FEE8000A7941 /* WCFilesController.m in Sources */,
 				77E2888E0A2D9E9B00035403 /* WCFilesTableView.m in Sources */,
+				A51B4FE50F4222AF00EAB0E1 /* WCFilterButtonCell.m in Sources */,
 				A5AAD2DE0D879B250072FFA1 /* WCFilterView.m in Sources */,
 				A515FD380D61ED4800922A2D /* WCInfoController.m in Sources */,
 				A5A335EA071C484700A16E9A /* WCKeychain.m in Sources */,
@@ -2070,8 +2072,6 @@
 				A5DC7FAB057AB0A600736BBF /* WCUser.m in Sources */,
 				A5DC7F84057AB05F00736BBF /* WCUserCell.m in Sources */,
 				A5DC7F09057AAF6C00736BBF /* WCUserInfo.m in Sources */,
-				A51B4FE50F4222AF00EAB0E1 /* WCFilterButtonCell.m in Sources */,
-				A51474A90F487ECD00DBE395 /* WCErrorQueue.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
