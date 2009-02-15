@@ -104,5 +104,7 @@
 - (IBAction)location:(id)sender;
 - (IBAction)addThread:(id)sender;
 - (IBAction)deleteThread:(id)sender;
+- (IBAction)markAsRead:(id)sender;
+- (IBAction)markAsUnread:(id)sender;
 
 @end

@@ -53,6 +53,7 @@
 - (WCBoardThread *)_threadAtIndex:(NSUInteger)index;
 - (WCBoard *)_selectedBoard;
 - (WCBoardThread *)_selectedThread;
+- (NSArray *)_selectedThreads;
 
 - (void)_selectThread:(WCBoardThread *)thread;
 - (void)_reselectThread:(WCBoardThread *)thread;
@@ -191,6 +192,26 @@
 
 
 
+- (NSArray *)_selectedThreads {
+	NSMutableArray		*array;
+	NSIndexSet			*indexes;
+	NSUInteger			index;
+	
+	array	= [NSMutableArray array];
+	indexes	= [_threadsTableView selectedRowIndexes];
+	index	= [indexes firstIndex];
+	
+	while(index != NSNotFound) {
+		[array addObject:[self _threadAtIndex:index]];
+		
+		index = [indexes indexGreaterThanIndex:index];
+	}
+	
+	return array;
+}
+
+
+
 #pragma mark -
 
 - (void)_selectThread:(WCBoardThread *)thread {
@@ -246,12 +267,11 @@
 
 - (void)_reloadThread {
 	NSEnumerator		*enumerator;
+	NSArray				*threads;
 	NSMutableString		*html;
 	WCBoardThread		*thread;
 	WCBoardPost			*post;
 	BOOL				changedUnread = NO;
-	
-	thread = [self _selectedThread];
 	
 	html = [NSMutableString stringWithString:_headerTemplate];
 	
@@ -260,8 +280,11 @@
 	[html replaceOccurrencesOfString:@"<? textcolor ?>" withString:[NSSWF:@"#%.6x", [_threadColor HTMLValue]]];
 	[html replaceOccurrencesOfString:@"<? backgroundcolor ?>" withString:[NSSWF:@"#%.6x", [_backgroundColor HTMLValue]]];
 
-	if(thread) {
-		enumerator = [[thread posts] objectEnumerator];
+	threads = [self _selectedThreads];
+	
+	if([threads count] == 1) {
+		thread		= [threads objectAtIndex:0];
+		enumerator	= [[thread posts] objectEnumerator];
 		
 		while((post = [enumerator nextObject])) {
 			[html appendString:[self _HTMLStringForPost:post]];
@@ -287,7 +310,7 @@
 	
 	if(changedUnread) {
 		[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
-			
+		
 		[WCSettings setObject:[_readPosts allObjects] forKey:WCReadBoardPosts];
 		
 		[_boardsOutlineView setNeedsDisplay:YES];
@@ -1422,13 +1445,15 @@
 
 
 - (BOOL)validateMenuItem:(NSMenuItem *)item {
-	WCAccount	*account;
-	WCBoard		*board;
-	SEL			selector;
-	BOOL		connected;
+	WCAccount		*account;
+	WCBoard			*board;
+	WCBoardThread	*thread;
+	SEL				selector;
+	BOOL			connected;
 	
 	selector	= [item action];
 	board		= [self _selectedBoard];
+	thread		= [self _selectedThread];
 	account		= [[board connection] account];
 	connected	= [[board connection] isConnected];
 	
@@ -1436,6 +1461,8 @@
 		return (board != NULL && [board isModifiable] && connected && [account boardRenameBoards]);
 	else if(selector == @selector(changePermissions:))
 		return (board != NULL && [board isModifiable] && connected && [account boardSetPermissions]);
+	else if(selector == @selector(markAsRead:) || @selector(markAsUnread:))
+		return (board != NULL && thread != NULL);
 	
 	return YES;
 }
@@ -1954,6 +1981,62 @@
 	}
 	
 	[array release];
+}
+
+
+
+- (IBAction)markAsRead:(id)sender {
+	NSEnumerator		*enumerator, *postEnumerator;
+	WCBoardThread		*thread;
+	WCBoardPost			*post;
+	
+	enumerator = [[self _selectedThreads] objectEnumerator];
+	
+	while((thread = [enumerator nextObject])) {
+		[thread setUnread:NO];
+		
+		postEnumerator = [[thread posts] objectEnumerator];
+		
+		while((post = [postEnumerator nextObject])) {
+			[post setUnread:NO];
+			
+			[_readPosts addObject:[post postID]];
+		}
+	}
+
+	[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
+		
+	[WCSettings setObject:[_readPosts allObjects] forKey:WCReadBoardPosts];
+	
+	[_boardsOutlineView setNeedsDisplay:YES];
+}
+
+
+
+- (IBAction)markAsUnread:(id)sender {
+	NSEnumerator		*enumerator, *postEnumerator;
+	WCBoardThread		*thread;
+	WCBoardPost			*post;
+	
+	enumerator = [[self _selectedThreads] objectEnumerator];
+	
+	while((thread = [enumerator nextObject])) {
+		[thread setUnread:YES];
+		
+		postEnumerator = [[thread posts] objectEnumerator];
+		
+		while((post = [postEnumerator nextObject])) {
+			[post setUnread:YES];
+
+			[_readPosts removeObject:[post postID]];
+		}
+	}
+
+	[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
+		
+	[WCSettings setObject:[_readPosts allObjects] forKey:WCReadBoardPosts];
+	
+	[_boardsOutlineView setNeedsDisplay:YES];
 }
 
 

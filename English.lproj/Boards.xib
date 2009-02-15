@@ -8,8 +8,9 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="186"/>
+			<integer value="452"/>
 			<integer value="126"/>
+			<integer value="186"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -381,7 +382,7 @@
 												<reference key="NSControlView" ref="738751736"/>
 												<int key="NSButtonFlags">-2046803713</int>
 												<int key="NSButtonFlags2">6</int>
-												<object class="NSCustomResource" key="NSNormalImage" id="541911783">
+												<object class="NSCustomResource" key="NSNormalImage">
 													<string key="NSClassName">NSImage</string>
 													<string key="NSResourceName">SourceAction</string>
 												</object>
@@ -395,7 +396,10 @@
 													<string key="NSKeyEquiv"/>
 													<int key="NSMnemonicLoc">2147483647</int>
 													<int key="NSState">1</int>
-													<reference key="NSImage" ref="541911783"/>
+													<object class="NSCustomResource" key="NSImage">
+														<string key="NSClassName">NSImage</string>
+														<string key="NSResourceName">SourceAction</string>
+													</object>
 													<object class="NSCustomResource" key="NSOnImage" id="651194922">
 														<string key="NSClassName">NSImage</string>
 														<string key="NSResourceName">NSMenuCheckmark</string>
@@ -598,7 +602,7 @@
 																	<reference key="NSBackgroundColor" ref="76857678"/>
 																	<reference key="NSGridColor" ref="837037640"/>
 																	<double key="NSRowHeight">1.500000e+01</double>
-																	<int key="NSTvFlags">-767557632</int>
+																	<int key="NSTvFlags">-633339904</int>
 																	<int key="NSColumnAutoresizingStyle">5</int>
 																	<int key="NSDraggingSourceMaskForLocal">15</int>
 																	<int key="NSDraggingSourceMaskForNonLocal">0</int>
@@ -1938,6 +1942,28 @@
 					</object>
 				</object>
 			</object>
+			<object class="NSMenu" id="994187512">
+				<string key="NSTitle"/>
+				<object class="NSMutableArray" key="NSMenuItems">
+					<bool key="EncodedWithXMLCoder">YES</bool>
+					<object class="NSMenuItem" id="28712931">
+						<reference key="NSMenu" ref="994187512"/>
+						<string key="NSTitle">Mark As Read</string>
+						<string key="NSKeyEquiv"/>
+						<int key="NSMnemonicLoc">2147483647</int>
+						<reference key="NSOnImage" ref="651194922"/>
+						<reference key="NSMixedImage" ref="558935212"/>
+					</object>
+					<object class="NSMenuItem" id="729614708">
+						<reference key="NSMenu" ref="994187512"/>
+						<string key="NSTitle">Mark As Unread</string>
+						<string key="NSKeyEquiv"/>
+						<int key="NSMnemonicLoc">2147483647</int>
+						<reference key="NSOnImage" ref="651194922"/>
+						<reference key="NSMixedImage" ref="558935212"/>
+					</object>
+				</object>
+			</object>
 		</object>
 		<object class="IBObjectContainer" key="IBDocument.Objects">
 			<object class="NSMutableArray" key="connectionRecords">
@@ -2453,6 +2479,30 @@
 						<reference key="destination" ref="879030232"/>
 					</object>
 					<int key="connectionID">450</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">menu</string>
+						<reference key="source" ref="379273979"/>
+						<reference key="destination" ref="994187512"/>
+					</object>
+					<int key="connectionID">454</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">markAsRead:</string>
+						<reference key="source" ref="879030232"/>
+						<reference key="destination" ref="28712931"/>
+					</object>
+					<int key="connectionID">455</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">markAsUnread:</string>
+						<reference key="source" ref="879030232"/>
+						<reference key="destination" ref="729614708"/>
+					</object>
+					<int key="connectionID">456</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -3545,6 +3595,7 @@
 							<reference ref="775806560"/>
 						</object>
 						<reference key="parent" ref="0"/>
+						<string key="objectName">Board Context Menu</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">433</int>
@@ -3583,6 +3634,27 @@
 						<int key="objectID">447</int>
 						<reference key="object" ref="253978260"/>
 						<reference key="parent" ref="861871696"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">451</int>
+						<reference key="object" ref="994187512"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="729614708"/>
+							<reference ref="28712931"/>
+						</object>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Thread Context Menu</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">452</int>
+						<reference key="object" ref="729614708"/>
+						<reference key="parent" ref="994187512"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">453</int>
+						<reference key="object" ref="28712931"/>
+						<reference key="parent" ref="994187512"/>
 					</object>
 				</object>
 			</object>
@@ -3824,6 +3896,10 @@
 					<string>444.IBPluginDependency</string>
 					<string>445.IBPluginDependency</string>
 					<string>447.IBPluginDependency</string>
+					<string>451.IBEditorWindowLastContentRect</string>
+					<string>451.IBPluginDependency</string>
+					<string>452.IBPluginDependency</string>
+					<string>453.IBPluginDependency</string>
 				</object>
 				<object class="NSMutableArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -3831,8 +3907,8 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
-					<string>{{243, 359}, {751, 517}}</string>
-					<string>{{243, 359}, {751, 517}}</string>
+					<string>{{97, 239}, {751, 517}}</string>
+					<string>{{97, 239}, {751, 517}}</string>
 					<integer value="0"/>
 					<boolean value="YES" id="5"/>
 					<string>{300, 300}</string>
@@ -4061,6 +4137,10 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>{{177, 713}, {163, 43}}</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -4083,7 +4163,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">450</int>
+			<int key="maxID">456</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -4144,10 +4224,14 @@
 							<string>deleteBoard:</string>
 							<string>deleteThread:</string>
 							<string>location:</string>
+							<string>markAsRead:</string>
+							<string>markAsUnread:</string>
 							<string>renameBoard:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
