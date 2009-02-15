@@ -26,6 +26,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "WCApplicationController.h"
 #import "WCConsole.h"
 #import "WCServerConnection.h"
 
@@ -61,6 +62,11 @@
 	[[self connection] addObserver:self
 						  selector:@selector(linkConnectionSentMessage:)
 							  name:WCLinkConnectionSentMessageNotification];
+	
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
+		   selector:@selector(exceptionHandlerReceivedBacktrace:)
+			   name:WCExceptionHandlerReceivedBacktraceNotification];
 	
 	[self window];
 	
@@ -142,6 +148,12 @@
 
 - (void)linkConnectionSentMessage:(NSNotification *)notification {
 	[self _log:[[notification object] description] color:[NSColor blackColor]];
+}
+
+
+
+- (void)exceptionHandlerReceivedBacktrace:(NSNotification *)notification {
+	[self _log:[notification object] color:[NSColor redColor]];
 }
 
 @end

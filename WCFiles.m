@@ -1232,7 +1232,7 @@
 	NSAlert			*alert;
 	NSString		*title;
 	NSUInteger		count;
-
+	
 	if(![_deleteButton isEnabled])
 		return;
 

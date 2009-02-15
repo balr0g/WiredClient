@@ -313,6 +313,7 @@ static WCApplicationController		*sharedController;
 	
 #ifndef WCConfigurationRelease
 	[[WIExceptionHandler sharedExceptionHandler] enable];
+	[[WIExceptionHandler sharedExceptionHandler] setDelegate:self];
 #endif
 	
 	[[NSNotificationCenter defaultCenter]
@@ -732,6 +733,20 @@ static WCApplicationController		*sharedController;
 		
 		[[WCServers servers] showWindow:self];
 	}
+}
+
+
+
+- (void)exceptionHandler:(WIExceptionHandler *)exceptionHandler receivedExceptionWithBacktrace:(NSString *)backtrace {
+	NSAlert		*alert;
+	
+	[[NSNotificationCenter defaultCenter] postNotificationName:WCExceptionHandlerReceivedBacktraceNotification object:backtrace];
+	
+	alert = [[NSAlert alloc] init];
+	[alert setMessageText:NSLS(@"Internal Client Error", @"Internal error dialog title")];
+	[alert setInformativeText:NSLS(@"Wired Client has encountered an exception. More information has been logged to the console.", @"Internal error dialog description")];
+	[alert runModal];
+	[alert release];
 }
 
 
