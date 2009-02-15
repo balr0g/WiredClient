@@ -299,7 +299,7 @@
 - (NSString *)_HTMLStringForPost:(WCBoardPost *)post {
 	NSEnumerator		*enumerator;
 	NSDictionary		*theme;
-	NSMutableString		*string, *text;
+	NSMutableString		*string, *text, *regex;
 	NSString			*smiley, *path;
 	WCAccount			*account;
 	
@@ -312,7 +312,7 @@
 	[text replaceOccurrencesOfString:@">" withString:@"&#62;"];
 	[text replaceOccurrencesOfString:@"\"" withString:@"&#34;"];
 	[text replaceOccurrencesOfString:@"\'" withString:@"&#39;"];
-	[text replaceOccurrencesOfString:@"\n" withString:@"<br />"];
+	[text replaceOccurrencesOfString:@"\n" withString:@"\n<br />\n"];
 
 	[text replaceOccurrencesOfRegex:@"\\[code\\](.+?)\\[/code\\]" withString:@"<blockquote><pre>$1</pre></blockquote>" options:RKLCaseless];
 	
@@ -321,6 +321,28 @@
 	
 	while([text replaceOccurrencesOfRegex:@"<pre>(.*?)\\]+(.*?)</pre>" withString:@"<pre>$1&#93;$2</pre>" options:RKLCaseless] > 0)
 		;
+	
+	if([theme boolForKey:WCThemesShowSmileys]) {
+		enumerator = [[[WCApplicationController sharedController] allSmileys] objectEnumerator];
+		
+		while((smiley = [enumerator nextObject])) {
+			path	= [[WCApplicationController sharedController] pathForSmiley:smiley];
+			regex	= [[smiley mutableCopy] autorelease];
+			
+			[regex replaceOccurrencesOfString:@"." withString:@"\\."];
+			[regex replaceOccurrencesOfString:@"*" withString:@"\\*"];
+			[regex replaceOccurrencesOfString:@"+" withString:@"\\+"];
+			[regex replaceOccurrencesOfString:@"^" withString:@"\\^"];
+			[regex replaceOccurrencesOfString:@"$" withString:@"\\$"];
+			[regex replaceOccurrencesOfString:@"(" withString:@"\\("];
+			[regex replaceOccurrencesOfString:@")" withString:@"\\)"];
+			[regex replaceOccurrencesOfString:@"[" withString:@"\\["];
+			[regex replaceOccurrencesOfString:@"]" withString:@"\\]"];
+			
+			[text replaceOccurrencesOfRegex:[NSSWF:@"(^|\\s)%@(\\s|$)", regex]
+								 withString:[NSSWF:@"$1<img src=\"%@\" alt=\"%@\" />$2", path, smiley]];
+		}
+	}
 	
 	[text replaceOccurrencesOfRegex:@"\\[b\\](.+?)\\[/b\\]" withString:@"<b>$1</b>" options:RKLCaseless];
 	[text replaceOccurrencesOfRegex:@"\\[u\\](.+?)\\[/u\\]" withString:@"<u>$1</u>" options:RKLCaseless];
@@ -339,16 +361,6 @@
 
 	[text replaceOccurrencesOfRegex:@"\\[quote\\](.+?)\\[/quote\\]" withString:@"<blockquote>$1</blockquote>" options:RKLCaseless];
 	
-	if([theme boolForKey:WCThemesShowSmileys]) {
-		enumerator = [[[WCApplicationController sharedController] allSmileys] objectEnumerator];
-		
-		while((smiley = [enumerator nextObject])) {
-			path = [[WCApplicationController sharedController] pathForSmiley:smiley];
-			
-			[text replaceOccurrencesOfString:smiley withString:[NSSWF:@"<img src=\"%@\" alt=\"%@\" />", path, smiley]];
-		}
-	}
-
 	string = [[_postTemplate mutableCopy] autorelease];
 
 	[string replaceOccurrencesOfString:@"<? from ?>" withString:[NSSWF:NSLS(@"%@ (%@)", @"Post from (nick, login)"), [post nick], [post login]]];
