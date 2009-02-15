@@ -34,6 +34,7 @@
 #import "WCBoardPost.h"
 #import "WCBoardThread.h"
 #import "WCChatController.h"
+#import "WCErrorQueue.h"
 #import "WCPreferences.h"
 #import "WCServerConnection.h"
 #import "WCSourceSplitView.h"
@@ -611,6 +612,8 @@
 - (void)dealloc {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
+	[_errorQueue release];
+	
 	[_boards release];
 	[_selectedBoard release];
 	
@@ -632,6 +635,8 @@
 
 - (void)windowDidLoad {
 	NSToolbar		*toolbar;
+	
+	_errorQueue = [[WCErrorQueue alloc] initWithWindow:[self window]];
 	
 	toolbar = [[NSToolbar alloc] initWithIdentifier:@"Boards"];
 	[toolbar setDelegate:self];
@@ -832,7 +837,7 @@
 		[self _validate];
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
-		// handle error
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 	}
 }
 
@@ -877,7 +882,7 @@
 		[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
-		// handle error
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 	}
 }
 
@@ -1222,67 +1227,78 @@
 
 
 - (void)wiredBoardAddBoardReply:(WIP7Message *)message {
-	// handle error
+	if([[message name] isEqualToString:@"wired.error"])
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 }
 
 
 
 - (void)wiredBoardRenameBoardReply:(WIP7Message *)message {
-	// handle error
+	if([[message name] isEqualToString:@"wired.error"])
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 }
 
 
 
 - (void)wiredBoardMoveBoardReply:(WIP7Message *)message {
-	// handle error
+	if([[message name] isEqualToString:@"wired.error"])
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 }
 
 
 
 - (void)wiredBoardDeleteBoardReply:(WIP7Message *)message {
-	// handle error
+	if([[message name] isEqualToString:@"wired.error"])
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 }
 
 
 
 - (void)wiredBoardSetPermissionsReply:(WIP7Message *)message {
-	// handle error
+	if([[message name] isEqualToString:@"wired.error"])
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 }
 
 
 
 - (void)wiredBoardAddThreadReply:(WIP7Message *)message {
-	// handle error
+	if([[message name] isEqualToString:@"wired.error"])
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 }
 
 
 
 - (void)wiredBoardMoveThreadReply:(WIP7Message *)message {
-	// handle error
+	if([[message name] isEqualToString:@"wired.error"])
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 }
 
 
 
 - (void)wiredBoardDeleteThreadReply:(WIP7Message *)message {
-	// handle error
+	if([[message name] isEqualToString:@"wired.error"])
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 }
 
 
 
 - (void)wiredBoardAddPostReply:(WIP7Message *)message {
-	// handle error
+	if([[message name] isEqualToString:@"wired.error"])
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 }
 
 
 
 - (void)wiredBoardEditPostReply:(WIP7Message *)message {
-	// handle error
+	if([[message name] isEqualToString:@"wired.error"])
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 }
 
 
 
 - (void)wiredBoardDeletePostReply:(WIP7Message *)message {
-	// handle error
+	if([[message name] isEqualToString:@"wired.error"])
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 }
 
 
@@ -1396,9 +1412,9 @@
 	connected	= [[board connection] isConnected];
 	
 	if(selector == @selector(addThread:))
-		return (board != NULL);
+		return (board != NULL && [account boardAddThreads]);
 	else if(selector == @selector(deleteThread:))
-		return (board != NULL && thread != NULL);
+		return (board != NULL && thread != NULL && [account boardDeleteThreads]);
 	
 	return YES;
 }

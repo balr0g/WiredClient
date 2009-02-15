@@ -29,7 +29,7 @@
 #define WCBoardsDidChangeUnreadCountNotification	@"WCBoardsDidChangeUnreadCountNotification"
 
 
-@class WCSourceSplitView, WCBoard;
+@class WCErrorQueue, WCSourceSplitView, WCBoard;
 
 @interface WCBoards : WIWindowController {
 	IBOutlet WCSourceSplitView						*_boardsSplitView;
@@ -73,6 +73,8 @@
 	IBOutlet NSTextField							*_subjectTextField;
 	IBOutlet NSTextView								*_postTextView;
 	IBOutlet NSButton								*_postButton;
+	
+	WCErrorQueue									*_errorQueue;
 	
 	WCBoard											*_boards;
 	WCBoard											*_selectedBoard;
