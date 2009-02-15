@@ -266,7 +266,7 @@
 	for(i = 0; i < count; i++) {
 		conversation = [_conversations objectAtIndex:i];
 
-		if((WCUser *) [[[conversation messages] lastObject] user] == user && [conversation connection] == connection)
+		if([conversation user] == user && [conversation connection] == connection)
 			return conversation;
 	}
 	
@@ -394,13 +394,11 @@
 	if([message isUnread])
 		_unread = YES;
 	
-	if([message direction] == WCMessageFrom) {
-		if(!_nick)
-			_nick = [[message nick] retain];
+	if(!_nick)
+		_nick = [[message nick] retain];
 
-		if(!_login)
-			_login = [[message login] retain];
-	}
+	if(!_login)
+		_login = [[message login] retain];
 	
 	[_messages addObject:message];
 }

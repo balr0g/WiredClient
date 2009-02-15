@@ -225,13 +225,13 @@
 
 @implementation WCPrivateMessage
 
-+ (WCPrivateMessage *)messageWithMessage:(NSString *)message user:(WCUser *)user connection:(WCServerConnection *)connection {
++ (WCPrivateMessage *)messageFromUser:(WCUser *)user message:(NSString *)message connection:(WCServerConnection *)connection {
 	return [[[self alloc] _initWithDirection:WCMessageFrom message:message user:user unread:YES connection:connection] autorelease];
 }
 
 
 
-+ (WCPrivateMessage *)messageToUser:(WCUser *)user message:(NSString *)message connection:(WCServerConnection *)connection {
++ (WCPrivateMessage *)messageToSomeoneFromUser:(WCUser *)user message:(NSString *)message connection:(WCServerConnection *)connection {
 	return [[[self alloc] _initWithDirection:WCMessageTo message:message user:user unread:NO connection:connection] autorelease];
 }
 
@@ -241,7 +241,7 @@
 
 @implementation WCBroadcastMessage
 
-+ (WCBroadcastMessage *)broadcastWithMessage:(NSString *)message user:(WCUser *)user connection:(WCServerConnection *)connection {
++ (WCBroadcastMessage *)broadcastFromUser:(WCUser *)user message:(NSString *)message connection:(WCServerConnection *)connection {
 	return [[[self alloc] _initWithDirection:WCMessageFrom message:message user:user unread:YES connection:connection] autorelease];
 }
 

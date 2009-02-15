@@ -70,14 +70,14 @@ typedef enum _WCMessageDirection	WCMessageDirection;
 
 @interface WCPrivateMessage : WCMessage
 
-+ (WCPrivateMessage *)messageWithMessage:(NSString *)message user:(WCUser *)user connection:(WCServerConnection *)connection;
-+ (WCPrivateMessage *)messageToUser:(WCUser *)user message:(NSString *)message connection:(WCServerConnection *)connection;
++ (WCPrivateMessage *)messageFromUser:(WCUser *)user message:(NSString *)message connection:(WCServerConnection *)connection;
++ (WCPrivateMessage *)messageToSomeoneFromUser:(WCUser *)user message:(NSString *)message connection:(WCServerConnection *)connection;
 
 @end
 
 
 @interface WCBroadcastMessage : WCMessage
 
-+ (WCBroadcastMessage *)broadcastWithMessage:(NSString *)message user:(WCUser *)user connection:(WCServerConnection *)connection;
++ (WCBroadcastMessage *)broadcastFromUser:(WCUser *)user message:(NSString *)message connection:(WCServerConnection *)connection;
 
 @end

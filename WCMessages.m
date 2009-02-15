@@ -342,7 +342,12 @@
 	}
 
 	string = [[_messageTemplate mutableCopy] autorelease];
-
+	
+	if([message direction] == WCMessageTo)
+		[string replaceOccurrencesOfString:@"<? direction ?>" withString:@"to"];
+	else
+		[string replaceOccurrencesOfString:@"<? direction ?>" withString:@"from"];
+	
 	[string replaceOccurrencesOfString:@"<? nick ?>" withString:[message nick]];
 	[string replaceOccurrencesOfString:@"<? time ?>" withString:[_messageTimeDateFormatter stringFromDate:[message date]]];
 	[string replaceOccurrencesOfString:@"<? body ?>" withString:text];
@@ -713,9 +718,9 @@
 	
 	selectedConversation = [self _selectedConversation];
 
-	message = [WCPrivateMessage messageWithMessage:[p7Message stringForName:@"wired.message.message"]
-											  user:user
-										connection:connection];
+	message = [WCPrivateMessage messageFromUser:user
+										message:[p7Message stringForName:@"wired.message.message"]
+									 connection:connection];
 	
 	if(conversation == selectedConversation)
 		[message setUnread:NO];
@@ -766,9 +771,9 @@
 
 	selectedConversation = [self _selectedConversation];
 
-	message = [WCBroadcastMessage broadcastWithMessage:[p7Message stringForName:@"wired.message.broadcast"]
-												  user:user
-											connection:connection];
+	message = [WCBroadcastMessage broadcastFromUser:user
+											message:[p7Message stringForName:@"wired.message.broadcast"]
+										 connection:connection];
 	
 	if(conversation == selectedConversation)
 		[message setUnread:NO];
@@ -859,9 +864,11 @@
 
 
 - (BOOL)textView:(NSTextView *)textView doCommandBySelector:(SEL)selector {
-	WIP7Message			*p7Message;
-	WCConversation		*conversation;
-	WCMessage			*message;
+	WIP7Message				*p7Message;
+	WCServerConnection		*connection;
+	WCConversation			*conversation;
+	WCMessage				*message;
+	WCUser					*user;
 
 	if(textView == _broadcastTextView) {
 		if(selector == @selector(insertNewline:)) {
@@ -875,18 +882,19 @@
 	else if(textView == _messageTextView) {
 		if(selector == @selector(insertNewline:)) {
 			if([[_messageTextView string] length] > 0) {
-				conversation = [self _selectedConversation];
-
-				message = [WCPrivateMessage messageToUser:[conversation user]
-												  message:[[[_messageTextView string] copy] autorelease]
-											   connection:[conversation connection]];
+				conversation	= [self _selectedConversation];
+				connection		= [conversation connection];
+				user			= [[connection chatController] userWithUserID:[connection userID]];
+				message			= [WCPrivateMessage messageToSomeoneFromUser:user
+																	 message:[[[_messageTextView string] copy] autorelease]
+																  connection:connection];
 
 				[conversation addMessage:message];
 				
 				[self _saveMessages];
 
 				p7Message = [WIP7Message messageWithName:@"wired.message.send_message" spec:WCP7Spec];
-				[p7Message setUInt32:[[message user] userID] forName:@"wired.user.id"];
+				[p7Message setUInt32:[[conversation user] userID] forName:@"wired.user.id"];
 				[p7Message setString:[self _stringForMessageString:[message message]] forName:@"wired.message.message"];
 				[[message connection] sendMessage:p7Message];
 
