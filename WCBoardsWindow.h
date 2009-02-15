@@ -33,7 +33,7 @@
 
 @interface NSObject(WCBoardsWindowDelegate)
 
-- (void)showNextUnreadThread;
-- (void)showPreviousUnreadThread;
+- (BOOL)showNextUnreadThread;
+- (BOOL)showPreviousUnreadThread;
 
 @end

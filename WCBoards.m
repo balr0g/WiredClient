@@ -1434,15 +1434,18 @@
 
 #pragma mark -
 
-- (void)showNextUnreadThread {
+- (BOOL)showNextUnreadThread {
 	WCBoardThread	*thread;
 	NSRect			rect;
 	
+	if([[[self window] firstResponder] isKindOfClass:[NSTextView class]])
+		return NO;
+
 	rect = [[[[[_threadWebView mainFrame] frameView] documentView] enclosingScrollView] documentVisibleRect];
 	rect.origin.y += 0.9 * rect.size.height;
 	
 	if([[[[_threadWebView mainFrame] frameView] documentView] scrollRectToVisible:rect])
-		return;
+		return YES;
 	
 	thread = [_boards nextUnreadThreadStartingAtBoard:[self _selectedBoard]
 											   thread:[self _selectedThread]
@@ -1455,20 +1458,27 @@
 		[[self window] makeFirstResponder:_threadsTableView];
 		
 		[self _selectThread:thread];
+		
+		return YES;
 	}
+	
+	return NO;
 }
 
 
 
-- (void)showPreviousUnreadThread {
+- (BOOL)showPreviousUnreadThread {
 	WCBoardThread	*thread;
 	NSRect			rect;
 	
+	if([[[self window] firstResponder] isKindOfClass:[NSTextView class]])
+		return NO;
+
 	rect = [[[[[_threadWebView mainFrame] frameView] documentView] enclosingScrollView] documentVisibleRect];
 	rect.origin.y -= 0.9 * rect.size.height;
 	
 	if([[[[_threadWebView mainFrame] frameView] documentView] scrollRectToVisible:rect])
-		return;
+		return YES;
 	
 	thread = [_boards previousUnreadThreadStartingAtBoard:[self _selectedBoard]
 												   thread:[self _selectedThread]
@@ -1481,7 +1491,11 @@
 		[[self window] makeFirstResponder:_threadsTableView];
 		
 		[self _selectThread:thread];
+		
+		return YES;
 	}
+	
+	return NO;
 }
 
 
