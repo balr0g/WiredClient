@@ -132,10 +132,10 @@
 		
 		[[[self window] toolbar] setSelectedItemIdentifier:identifier];
 
-		[controller controllerDidSelect];
-
 		_shownView = view;
 		_shownController = controller;
+
+		[controller controllerDidSelect];
 	}
 }
 
