@@ -66,10 +66,12 @@
 	WIP7Message		*message;
 	
 	if([[[self connection] account] accountReadAccounts]) {
-		if(![_user account]) {
+		if(![_user account] && !_requestedAccount) {
 			message = [WIP7Message messageWithName:@"wired.account.read_user" spec:WCP7Spec];
 			[message setString:[_user login] forName:@"wired.account.name"];
 			[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredAccountReadAccountReply:)];
+			
+			_requestedAccount = YES;
 		}
 	}
 	
@@ -248,7 +250,7 @@
 	if([[message name] isEqualToString:@"wired.account.user"])
 		[_user setAccount:[WCUserAccount accountWithMessage:message]];
 	else if([[message name] isEqualToString:@"wired.error"])
-		[[[WCError errorWithWiredMessage:message] alert] beginSheetModalForWindow:[self window]];
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 }
 
 

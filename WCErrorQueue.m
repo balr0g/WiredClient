@@ -71,8 +71,6 @@
 	
 	[_descriptionTextField setFrame:frame];
 	
-	difference			+= 10.0;
-	
 	frame				= [_dismissButton frame];
 	frame.origin.y		-= difference;
 	

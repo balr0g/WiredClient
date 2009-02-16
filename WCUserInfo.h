@@ -60,6 +60,8 @@
 	WCUser							*_user;
 	WIDateFormatter					*_dateFormatter;
 	NSRect							_fieldFrame;
+	
+	BOOL							_requestedAccount;
 }
 
 + (id)userInfoWithConnection:(WCServerConnection *)connection user:(WCUser *)user;
