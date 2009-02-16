@@ -8,8 +8,9 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="2265"/>
+			<integer value="2184"/>
 			<integer value="2929"/>
+			<integer value="2265"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -36,7 +37,7 @@
 				<string key="NSClassName">FirstResponder</string>
 			</object>
 			<object class="NSCustomView" id="112193721">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">292</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -360,6 +361,7 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{522, 288}</string>
+				<reference key="NSSuperview"/>
 				<string key="NSClassName">NSView</string>
 			</object>
 			<object class="NSCustomView" id="998492791">
@@ -1465,7 +1467,10 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 								<int key="NSKeyEquivModMask">1048576</int>
 								<int key="NSMnemonicLoc">2147483647</int>
 								<int key="NSState">1</int>
-								<reference key="NSImage" ref="877453102"/>
+								<object class="NSCustomResource" key="NSImage" id="253631227">
+									<string key="NSClassName">NSImage</string>
+									<string key="NSResourceName">Action</string>
+								</object>
 								<object class="NSCustomResource" key="NSOnImage" id="110064247">
 									<string key="NSClassName">NSImage</string>
 									<string key="NSResourceName">NSMenuCheckmark</string>
@@ -2063,7 +2068,7 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 							<reference key="NSControlView" ref="497149438"/>
 							<int key="NSButtonFlags">-2031075073</int>
 							<int key="NSButtonFlags2">34</int>
-							<reference key="NSNormalImage" ref="877453102"/>
+							<reference key="NSNormalImage" ref="253631227"/>
 							<string key="NSAlternateContents"/>
 							<string key="NSKeyEquivalent"/>
 							<int key="NSPeriodicDelay">400</int>
@@ -2075,7 +2080,7 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 								<int key="NSKeyEquivModMask">1048576</int>
 								<int key="NSMnemonicLoc">2147483647</int>
 								<int key="NSState">1</int>
-								<reference key="NSImage" ref="877453102"/>
+								<reference key="NSImage" ref="253631227"/>
 								<reference key="NSOnImage" ref="110064247"/>
 								<reference key="NSMixedImage" ref="728786444"/>
 								<string key="NSAction">_popUpItemAction:</string>
@@ -3751,7 +3756,7 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 								<int key="NSKeyEquivModMask">1048576</int>
 								<int key="NSMnemonicLoc">2147483647</int>
 								<int key="NSState">1</int>
-								<reference key="NSImage" ref="877453102"/>
+								<reference key="NSImage" ref="253631227"/>
 								<reference key="NSOnImage" ref="110064247"/>
 								<reference key="NSMixedImage" ref="728786444"/>
 								<string key="NSAction">_popUpItemAction:</string>
@@ -5341,6 +5346,22 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 						<reference key="destination" ref="80961700"/>
 					</object>
 					<int key="connectionID">3280</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">delegate</string>
+						<reference key="source" ref="877308381"/>
+						<reference key="destination" ref="97218294"/>
+					</object>
+					<int key="connectionID">3281</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">delegate</string>
+						<reference key="source" ref="39306280"/>
+						<reference key="destination" ref="97218294"/>
+					</object>
+					<int key="connectionID">3282</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -8695,7 +8716,7 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 					<reference ref="5"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
-					<string>{{748, 603}, {522, 354}}</string>
+					<string>{{684, 603}, {522, 354}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<object class="NSMutableArray">
 						<bool key="EncodedWithXMLCoder">YES</bool>
@@ -8887,7 +8908,7 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">3280</int>
+			<int key="maxID">3282</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
