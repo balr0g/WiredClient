@@ -26,8 +26,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define WCWiredClientErrorDomain		@"WCWiredClientErrorDomain"
-#define WCWiredProtocolErrorDomain		@"WCWiredProtocolErrorDomain"
+#define WCWiredClientErrorDomain			@"WCWiredClientErrorDomain"
+#define WCWiredProtocolErrorDomain			@"WCWiredProtocolErrorDomain"
 
 
 enum _WCWiredClientErrors {
@@ -45,22 +45,24 @@ enum _WCWiredClientErrors {
 };
 
 enum _WCWiredProtocolErrors {
-	WCWiredProtocolInternalError,
-	WCWiredProtocolInvalidMessage,
-	WCWiredProtocolUnrecognizedMessage,
-	WCWiredProtocolMessageOutOfSequence,
-	WCWiredProtocolLoginFailed,
-	WCWiredProtocolPermissionDenied,
-	WCWiredProtocolChatNotFound,
-	WCWiredProtocolUserNotFound,
-	WCWiredProtocolUserCannotBeDisconnected,
-	WCWiredProtocolFileNotFound,
-	WCWiredProtocolFileExists,
-	WCWiredProtocolAccountNotFound,
-	WCWiredProtocolAccountExists,
-	WCWiredProtocolTrackerNotEnabled,
-	WCWiredProtocolBanNotFound,
-	WCWiredProtocolBanExists
+	WCWiredProtocolInternalError			= 0,
+	WCWiredProtocolInvalidMessage			= 1,
+	WCWiredProtocolUnrecognizedMessage		= 2,
+	WCWiredProtocolMessageOutOfSequence		= 3,
+	WCWiredProtocolLoginFailed				= 4,
+	WCWiredProtocolPermissionDenied			= 5,
+	WCWiredProtocolChatNotFound				= 6,
+	WCWiredProtocolUserNotFound				= 7,
+	WCWiredProtocolUserCannotBeDisconnected	= 8,
+	WCWiredProtocolFileNotFound				= 9,
+	WCWiredProtocolFileExists				= 10,
+	WCWiredProtocolAccountNotFound			= 11,
+	WCWiredProtocolAccountExists			= 12,
+	WCWiredProtocolTrackerNotEnabled		= 13,
+	WCWiredProtocolBanNotFound				= 14,
+	WCWiredProtocolBanExists				= 15,
+	WCWiredProtocolBoardNotFound			= 16,
+	WCWiredProtocolBoardExists				= 17
 };
 
 

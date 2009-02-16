@@ -180,6 +180,14 @@
 			case WCWiredProtocolBanExists:
 				return NSLS(@"Ban Exists", @"Wired protocol error title");
 				break;
+
+			case WCWiredProtocolBoardNotFound:
+				return NSLS(@"Board Not Found", @"Wired protocol error title");
+				break;
+			
+			case WCWiredProtocolBoardExists:
+				return NSLS(@"Board Exists", @"Wired protocol error title");
+				break;
 			
 			default:
 				return NSLS(@"Unknown Error", @"Wired protocol error title");
@@ -326,6 +334,14 @@
 			
 			case WCWiredProtocolBanExists:
 				return NSLS(@"The ban you tried to create already exists on the server", @"Wired protocol error description");
+				break;
+
+			case WCWiredProtocolBoardNotFound:
+				return NSLS(@"Could not find the board you referred to. Perhaps someone deleted it.", @"Wired protocol error description");
+				break;
+			
+			case WCWiredProtocolBoardExists:
+				return NSLS(@"The board you tried to create already exists on the server", @"Wired protocol error description");
 				break;
 			
 			default:
