@@ -448,18 +448,31 @@
 
 
 - (void)linkConnectionDidClose:(NSNotification *)notification {
-	if([[notification object] error])
-		[_errorQueue showError:[[notification object] error]];
+	WCTrackerConnection		*connection;
+
+	connection = [notification object];
 	
-	[[notification object] terminate];
+	if(![connection isKindOfClass:[WCTrackerConnection class]])
+		return;
+
+	if([connection error])
+		[_errorQueue showError:[connection error]];
+	
+	[connection terminate];
 }
 
 
 
 - (void)linkConnectionDidTerminate:(NSNotification *)notification {
-	WCServerTracker		*tracker;
+	WCTrackerConnection		*connection;
+	WCServerTracker			*tracker;
 	
-	tracker = [[notification object] tracker];
+	connection = [notification object];
+	
+	if(![connection isKindOfClass:[WCTrackerConnection class]])
+		return;
+	
+	tracker = [connection tracker];
 	
 	if([tracker state] != WCServerTrackerLoaded) {
 		[_serversOutlineView collapseItem:tracker];
@@ -468,6 +481,8 @@
 	}
 	
 	[_progressIndicator stopAnimation:self];
+	
+	[connection removeObserver:self];
 }
 
 
