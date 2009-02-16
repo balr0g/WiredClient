@@ -53,12 +53,9 @@
 	pool = [[NSAutoreleasePool alloc] init];
 
 	while(!_closing && !_terminating) {
-		if(!pool)
-			pool = [[NSAutoreleasePool alloc] init];
-		
 		if(++i % 100 == 0) {
 			[pool release];
-			pool = NULL;
+			pool = [[NSAutoreleasePool alloc] init];
 		}
 
 		do {
