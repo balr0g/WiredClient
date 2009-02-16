@@ -367,51 +367,53 @@
 	NSDictionary		*section;
 	
 	if(account) {
-		if([account isKindOfClass:[WCUserAccount class]]) {
-			[_typePopUpButton selectItem:_userMenuItem];
-			[_fullNameTextField setStringValue:[(WCUserAccount *) account fullName]];
-			
-			if([[(WCUserAccount *) account password] isEqualToString:[@"" SHA1]])
-				[_passwordTextField setStringValue:@""];
-			else
-				[_passwordTextField setStringValue:[(WCUserAccount *) account password]];
-			
-			if([[(WCUserAccount *) account group] length] > 0)
-				[_groupPopUpButton selectItemWithTitle:[(WCUserAccount *) account group]];
-			else
-				[_groupPopUpButton selectItem:_noneMenuItem];
-			
-			[_groupsTokenField setStringValue:[[(WCUserAccount *) account groups] componentsJoinedByString:@","]];
-	
-			if([(WCUserAccount *) account loginDate] && ![[(WCUserAccount *) account loginDate] isAtBeginningOfAnyEpoch])
-				[_loginTimeTextField setStringValue:[_dateFormatter stringFromDate:[(WCUserAccount *) account loginDate]]];
-			else
-				[_loginTimeTextField setStringValue:@""];
-		}
-		else if([account isKindOfClass:[WCGroupAccount class]]) {
-			[_typePopUpButton selectItem:_groupMenuItem];
-			[_fullNameTextField setStringValue:@""];
-			[_passwordTextField setStringValue:@""];
-			[_groupPopUpButton selectItem:_noneMenuItem];
-			[_loginTimeTextField setStringValue:@""];
-		}
+		if(!_creatingAccount) {
+			if([account isKindOfClass:[WCUserAccount class]]) {
+				[_typePopUpButton selectItem:_userMenuItem];
+				[_fullNameTextField setStringValue:[(WCUserAccount *) account fullName]];
+				
+				if([[(WCUserAccount *) account password] isEqualToString:[@"" SHA1]])
+					[_passwordTextField setStringValue:@""];
+				else
+					[_passwordTextField setStringValue:[(WCUserAccount *) account password]];
+				
+				if([[(WCUserAccount *) account group] length] > 0)
+					[_groupPopUpButton selectItemWithTitle:[(WCUserAccount *) account group]];
+				else
+					[_groupPopUpButton selectItem:_noneMenuItem];
+				
+				[_groupsTokenField setStringValue:[[(WCUserAccount *) account groups] componentsJoinedByString:@","]];
 		
-		[_nameTextField setStringValue:[account name]];
+				if([(WCUserAccount *) account loginDate] && ![[(WCUserAccount *) account loginDate] isAtBeginningOfAnyEpoch])
+					[_loginTimeTextField setStringValue:[_dateFormatter stringFromDate:[(WCUserAccount *) account loginDate]]];
+				else
+					[_loginTimeTextField setStringValue:@""];
+			}
+			else if([account isKindOfClass:[WCGroupAccount class]]) {
+				[_typePopUpButton selectItem:_groupMenuItem];
+				[_fullNameTextField setStringValue:@""];
+				[_passwordTextField setStringValue:@""];
+				[_groupPopUpButton selectItem:_noneMenuItem];
+				[_loginTimeTextField setStringValue:@""];
+			}
+			
+			[_nameTextField setStringValue:[account name]];
 
-		if([account creationDate] && ![[account creationDate] isAtBeginningOfAnyEpoch])
-			[_creationTimeTextField setStringValue:[_dateFormatter stringFromDate:[account creationDate]]];
-		else
-			[_creationTimeTextField setStringValue:@""];
+			if([account creationDate] && ![[account creationDate] isAtBeginningOfAnyEpoch])
+				[_creationTimeTextField setStringValue:[_dateFormatter stringFromDate:[account creationDate]]];
+			else
+				[_creationTimeTextField setStringValue:@""];
 
-		if([account modificationDate] && ![[account modificationDate] isAtBeginningOfAnyEpoch])
-			[_modificationTimeTextField setStringValue:[_dateFormatter stringFromDate:[account modificationDate]]];
-		else
-			[_modificationTimeTextField setStringValue:@""];
+			if([account modificationDate] && ![[account modificationDate] isAtBeginningOfAnyEpoch])
+				[_modificationTimeTextField setStringValue:[_dateFormatter stringFromDate:[account modificationDate]]];
+			else
+				[_modificationTimeTextField setStringValue:@""];
 
-		if([account editedBy])
-			[_editedByTextField setStringValue:[account editedBy]];
-		else
-			[_editedByTextField setStringValue:@""];
+			if([account editedBy])
+				[_editedByTextField setStringValue:[account editedBy]];
+			else
+				[_editedByTextField setStringValue:@""];
+		}
 	} else {
 		[_typePopUpButton selectItem:_userMenuItem];
 		[_nameTextField setStringValue:@""];
@@ -1179,6 +1181,8 @@
 	else
 		[_typePopUpButton selectItem:_groupMenuItem];
 	
+	[_nameTextField setStringValue:[_account name]];
+	
 	[self _validateAccount:_account];
 	[self _readFromAccount:_account];
 	
@@ -1597,8 +1601,8 @@
 		if([[item objectForKey:WCAccountFieldType] intValue] == WCAccountFieldNumber && [value integerValue] == 0)
 			return NULL;
 		
-		if([[item objectForKey:WCAccountFieldName] isEqualToString:@"transferDownloadSpeedLimit"] ||
-		   [[item objectForKey:WCAccountFieldName] isEqualToString:@"transferUploadSpeedLimit"])
+		if([[item objectForKey:WCAccountFieldName] isEqualToString:@"wired.account.transfer.download_speed_limit"] ||
+		   [[item objectForKey:WCAccountFieldName] isEqualToString:@"wired.account.transfer.upload_speed_limit"])
 			value = [NSNumber numberWithInteger:[value doubleValue] / 1024.0];
 		
 		return value;
@@ -1619,8 +1623,8 @@
 	if([[item objectForKey:WCAccountFieldType] intValue] == WCAccountFieldNumber)
 		value = [NSNumber numberWithInteger:[object integerValue]];
 	
-	if([name isEqualToString:@"transferDownloadSpeedLimit"] ||
-	   [name isEqualToString:@"transferUploadSpeedLimit"])
+	if([name isEqualToString:@"wired.account.transfer.download_speed_limit"] ||
+	   [name isEqualToString:@"wired.account.transfer.upload_speed_limit"])
 		value = [NSNumber numberWithInteger:[value integerValue] * 1024.0];
 
 	[_account setValue:value forKey:name];
