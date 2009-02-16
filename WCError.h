@@ -33,6 +33,7 @@
 enum _WCWiredClientErrors {
 	WCWiredClientServerDisconnected,
 	WCWiredClientNotConnected,
+	WCWiredClientBanned,
 	WCWiredClientOpenFailed,
 	WCWiredClientCreateFailed,
 	WCWiredClientFileExists,
@@ -40,7 +41,7 @@ enum _WCWiredClientErrors {
 	WCWiredClientTransferExists,
 	WCWiredClientTransferWithResourceFork,
 	WCWiredClientTransferFailed,
-	WCWiredClientClientNotFound
+	WCWiredClientClientNotFound,
 };
 
 enum _WCWiredProtocolErrors {

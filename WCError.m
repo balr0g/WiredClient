@@ -74,6 +74,10 @@
 			case WCWiredClientNotConnected:
 				return NSLS(@"Not Connected", @"WCWiredClientNotConnected title");
 				break;
+			
+			case WCWiredClientBanned:
+				return NSLS(@"Banned", @"WCWiredClientBanned title");
+				break;
 				
 			case WCWiredClientOpenFailed:
 				return NSLS(@"Open Failed", @"WCWiredClientOpenFailed title");
@@ -204,6 +208,10 @@
 					argument];
 				break;
 				
+			case WCWiredClientBanned:
+				return NSLS(@"You have been banned from this server.", @"WCWiredClientBanned description");
+				break;
+			
 			case WCWiredClientOpenFailed:
 				return [NSSWF:NSLS(@"Could not open the file \u201c%@\u201d.", @"WCWiredClientOpenFailed description (path)"),
 					argument];

@@ -28,7 +28,7 @@
 
 #import "WCConnectionController.h"
 
-@class WCMonitorController, WCLogController, WCSettingsController, WCBanlistController;
+@class WCMonitorController, WCLogController, WCSettingsController, WCBanlistController, WCErrorQueue;
 
 @interface WCAdministration : WCConnectionController {
 	IBOutlet NSView						*_monitorView;
@@ -41,6 +41,8 @@
 	IBOutlet WCSettingsController		*_settingsController;
 	IBOutlet WCBanlistController		*_banlistController;
 	
+	WCErrorQueue						*_errorQueue;
+	
 	NSMutableArray						*_identifiers;
 	NSMutableDictionary					*_views;
 	
@@ -51,6 +53,8 @@
 + (id)administrationWithConnection:(WCServerConnection *)connection;
 
 - (id)selectedController;
+
+- (void)showError:(WCError *)error;
 
 @end
 

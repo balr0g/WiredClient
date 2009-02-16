@@ -551,7 +551,7 @@
 	NSEnumerator		*enumerator;
 	WCConversation		*conversation;
 	WCMessage			*message;
-	BOOL				changedUnread;
+	BOOL				changedUnread = NO;
 	
 	conversation = [self _selectedConversation];
 	

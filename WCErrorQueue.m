@@ -41,6 +41,7 @@
 - (void)_validate {
 	[_historyControl setEnabled:(_shownError > 0) forSegment:0];
 	[_historyControl setEnabled:(_shownError < [_errors count] - 1) forSegment:1];
+	[_historyControl setHidden:([_errors count] == 1)];
 }
 
 
@@ -54,7 +55,7 @@
 	
 	previousFrame		= [_titleTextField frame];
 	frame.size.width	= previousFrame.size.width;
-	frame.size.height	= [[_titleTextField cell] cellSizeForBounds:NSMakeRect(0.0, 0.0, _titleFrame.size.width, 10000.0)].height;
+	frame.size.height	= [[_titleTextField cell] cellSizeForBounds:NSMakeRect(0.0, 0.0, previousFrame.size.width, 10000.0)].height;
 	frame.origin		= previousFrame.origin;
 	frame.origin.y		= previousFrame.origin.y + (previousFrame.size.height - frame.size.height);
 	difference			+= frame.size.height - previousFrame.size.height;
@@ -63,12 +64,14 @@
 
 	previousFrame		= [_descriptionTextField frame];
 	frame.size.width	= previousFrame.size.width;
-	frame.size.height	= [[_descriptionTextField cell] cellSizeForBounds:NSMakeRect(0.0, 0.0, _descriptionFrame.size.width, 10000.0)].height;
+	frame.size.height	= [[_descriptionTextField cell] cellSizeForBounds:NSMakeRect(0.0, 0.0, previousFrame.size.width, 10000.0)].height;
 	frame.origin		= previousFrame.origin;
 	frame.origin.y		= previousFrame.origin.y + (previousFrame.size.height - frame.size.height) - difference;
 	difference			+= frame.size.height - previousFrame.size.height;
 	
 	[_descriptionTextField setFrame:frame];
+	
+	difference			+= 10.0;
 	
 	frame				= [_dismissButton frame];
 	frame.origin.y		-= difference;
@@ -102,9 +105,6 @@
 	
 	_window				= [window retain];
 	_errors				= [[NSMutableArray alloc] init];
-	_titleFrame			= [_titleTextField frame];
-	_descriptionFrame	= [_descriptionTextField frame];
-	_panelFrame			= [_errorPanel frame];
 	
 	return self;
 }

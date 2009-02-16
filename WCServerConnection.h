@@ -41,6 +41,8 @@
 #define WCServerConnectionReceivedPingNotification				@"WCServerConnectionReceivedPingNotification"
 #define WCServerConnectionReceivedBannerNotification			@"WCServerConnectionReceivedBannerNotification"
 
+#define WCServerConnectionReceivedLoginErrorNotification		@"WCServerConnectionReceivedLoginErrorNotification"
+
 #define	WCServerConnectionEventConnectionKey					@"WCServerConnectionEventConnectionKey"
 #define WCServerConnectionEventInfo1Key							@"WCServerConnectionEventInfo1Key"
 #define WCServerConnectionEventInfo2Key							@"WCServerConnectionEventInfo2Key"

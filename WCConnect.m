@@ -28,6 +28,7 @@
 
 #import "NSAlert-WCAdditions.h"
 #import "WCConnect.h"
+#import "WCErrorQueue.h"
 #import "WCServerConnection.h"
 
 @interface WCConnect(Private)
@@ -69,6 +70,10 @@
 					selector:@selector(linkConnectionLoggedIn:)
 						name:WCLinkConnectionLoggedInNotification];
 	
+	[_connection addObserver:self
+					selector:@selector(serverConnectionReceivedLoginError:)
+						name:WCServerConnectionReceivedLoginErrorNotification];
+	
 	[self window];
 	
 	return self;
@@ -94,6 +99,8 @@
 
 
 - (void)dealloc {
+	[_errorQueue release];
+	
 	[_url release];
 
 	[_connection removeObserver:self];
@@ -107,9 +114,11 @@
 #pragma mark -
 
 - (void)windowDidLoad {
+	_errorQueue = [[WCErrorQueue alloc] initWithWindow:[self window]];
+
     [self setShouldCascadeWindows:YES];
     [self setWindowFrameAutosaveName:@"Connect"];
-
+	
 	if([_url hostpair])
 		[_addressTextField setStringValue:[_url hostpair]];
 	
@@ -165,6 +174,21 @@
 	_dismissingWindow = YES;
 	
 	[self close];
+}
+
+
+
+- (void)serverConnectionReceivedLoginError:(NSNotification *)notification {
+	WCServerConnection		*connection;
+	
+	connection = [notification object];
+	
+	[_errorQueue showError:[connection error]];
+	
+	[connection disconnect];
+	
+	[_progressIndicator stopAnimation:self];
+	[_connectButton setEnabled:YES];
 }
 
 

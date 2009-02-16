@@ -65,8 +65,6 @@
 		
 		message = [WIP7Message messageWithName:@"wired.user.get_users" spec:WCP7Spec];
 		[[_administration connection] sendMessage:message fromObserver:self selector:@selector(wiredUserGetUsersReply:)];
-		
-		[self performSelectorOnce:@selector(_reloadUsers) afterDelay:1.0];
 	}
 }
 
@@ -182,8 +180,11 @@
 		[self _reloadFilter];
 		
 		[_usersTableView reloadData];
+		
+		[self performSelectorOnce:@selector(_reloadUsers) afterDelay:1.0];
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
+		[_administration showError:[WCError errorWithWiredMessage:message]];
 	}
 }
 

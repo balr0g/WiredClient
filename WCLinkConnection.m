@@ -118,15 +118,8 @@
 
 
 - (void)wiredLoginReply:(WIP7Message *)message {
-	if([[message name] isEqualToString:@"wired.login"]) {
+	if([[message name] isEqualToString:@"wired.login"])
 		[self postNotificationName:WCLinkConnectionLoggedInNotification object:self];
-	}
-	if([[message name] isEqualToString:@"wired.banned"]) {
-//		handle banned
-	}
-	else if([[message name] isEqualToString:@"wired.error"]) {
-//		handle login error
-	}
 }
 
 

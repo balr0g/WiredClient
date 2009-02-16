@@ -755,7 +755,7 @@
 	NSEnumerator		*enumerator;
 	WCBoardThread		*thread;
 	WCBoardPost			*post;
-	BOOL				changedUnread;
+	BOOL				changedUnread = NO;
 	
 	thread = [self _selectedThread];
 	

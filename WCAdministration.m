@@ -27,6 +27,7 @@
  */
 
 #import "WCAdministration.h"
+#import "WCErrorQueue.h"
 #import "WCServerConnection.h"
 
 #define WIAdministrationView			@"WIAdministrationView"
@@ -157,6 +158,8 @@
 	[_settingsController setAdministration:NULL];
 	[_banlistController setAdministration:NULL];
 	
+	[_errorQueue release];
+	
 	[_identifiers release];
 	[_views release];
 
@@ -202,6 +205,8 @@
 	[window setDelegate:self];
 	[self setWindow:window];
 	[window release];
+	
+	_errorQueue = [[WCErrorQueue alloc] initWithWindow:[self window]];
 
 	toolbar = [[NSToolbar alloc] initWithIdentifier:@"Administration"];
 	[toolbar setDelegate:self];
@@ -328,6 +333,14 @@
 
 - (id)selectedController {
 	return _shownController;
+}
+
+
+
+#pragma mark -
+
+- (void)showError:(WCError *)error {
+	[_errorQueue showError:error];
 }
 
 

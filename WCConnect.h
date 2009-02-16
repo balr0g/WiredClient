@@ -26,7 +26,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-@class WCServerConnection;
+@class WCErrorQueue, WCServerConnection;
 
 @interface WCConnect : WIWindowController {
 	IBOutlet NSTextField					*_addressTextField;
@@ -36,6 +36,8 @@
 	IBOutlet NSProgressIndicator			*_progressIndicator;
 	
 	IBOutlet NSButton						*_connectButton;
+	
+	WCErrorQueue							*_errorQueue;
 	
 	WIURL									*_url;
 	WCServerConnection						*_connection;

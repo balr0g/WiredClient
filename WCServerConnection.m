@@ -318,6 +318,18 @@
 
 		[self postNotificationName:WCServerConnectionPrivilegesDidChangeNotification object:self];
 	}
+	else if([[message name] isEqualToString:@"wired.banned"]) {
+		[_error release];
+		_error = [[WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientBanned] retain];
+		
+		[self postNotificationName:WCServerConnectionReceivedLoginErrorNotification object:self];
+	}
+	else if([[message name] isEqualToString:@"wired.error"]) {
+		[_error release];
+		_error = [[WCError errorWithWiredMessage:message] retain];
+		
+		[self postNotificationName:WCServerConnectionReceivedLoginErrorNotification object:self];
+	}
 	
 	[super wiredLoginReply:message];
 }
