@@ -28,17 +28,20 @@
 
 #import "WCConnectionController.h"
 
-@class WCMonitorController, WCLogController, WCSettingsController, WCBanlistController, WCErrorQueue;
+@class WCMonitorController, WCLogController, WCSettingsController, WCAccountsController, WCBanlistController;
+@class WCErrorQueue;
 
 @interface WCAdministration : WCConnectionController {
 	IBOutlet NSView						*_monitorView;
 	IBOutlet NSView						*_logView;
 	IBOutlet NSView						*_settingsView;
+	IBOutlet NSView						*_accountsView;
 	IBOutlet NSView						*_banlistView;
 	
 	IBOutlet WCMonitorController		*_monitorController;
 	IBOutlet WCLogController			*_logController;
 	IBOutlet WCSettingsController		*_settingsController;
+	IBOutlet WCAccountsController		*_accountsController;
 	IBOutlet WCBanlistController		*_banlistController;
 	
 	WCErrorQueue						*_errorQueue;

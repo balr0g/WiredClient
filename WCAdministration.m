@@ -189,6 +189,11 @@
 						   image:[NSImage imageNamed:@"Settings"]
 					  controller:_settingsController];
 	
+/*	[self _addAdministrationView:_accountsView
+							name:NSLS(@"Accounts", @"Accounts toolbar item")
+						   image:[NSImage imageNamed:@"Accounts"]
+					  controller:_accountsController];*/
+	
 	[self _addAdministrationView:_banlistView
 							name:NSLS(@"Banlist", @"Banlist toolbar item")
 						   image:[NSImage imageNamed:@"Banlist"]
