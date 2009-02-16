@@ -69,7 +69,7 @@
 			break;
 		
 		[_lock lock];
-		message = [_p7Socket readMessageWithTimeout:1.0 error:&error];
+		message = [_p7Socket readMessageWithTimeout:10.0 error:&error];
 		[_lock unlock];
 		
 		if(!message) {
