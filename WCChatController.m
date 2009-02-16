@@ -1123,7 +1123,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 		
 		_receivedUserList = YES;
 		
-		[[self connection] postNotificationName:WCChatUsersDidChangeNotification object:[self connection]];
+		[_userListTableView reloadData];
 	}
 	else if([[message name] isEqualToString:@"wired.chat.topic"]) {
 		topic = [WCTopic topicWithMessage:message];
@@ -1151,11 +1151,12 @@ typedef enum _WCChatFormat					WCChatFormat;
 	[_shownUsers addObject:user];
 	[_users setObject:user forKey:[NSNumber numberWithUnsignedInt:[user userID]]];
 	
+	[_userListTableView reloadData];
+
 	if([[WCSettings eventWithTag:WCEventsUserJoined] boolForKey:WCEventsPostInChat])
 		[self _printUserJoin:user];
 	
 	[[self connection] postNotificationName:WCChatUserAppearedNotification object:user];
-	[[self connection] postNotificationName:WCChatUsersDidChangeNotification object:[self connection]];
 	
 	[[self connection] triggerEvent:WCEventsUserJoined info1:user];
 }
@@ -1187,7 +1188,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 	[_shownUsers removeObject:user];
 	[_users removeObjectForKey:[NSNumber numberWithUnsignedInt:[user userID]]];
 	
-	[[self connection] postNotificationName:WCChatUsersDidChangeNotification object:[self connection]];
+	[_userListTableView reloadData];
 }
 
 
@@ -1286,7 +1287,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 	[_shownUsers removeObject:victim];
 	[_users removeObjectForKey:[NSNumber numberWithInt:victimUserID]];
 	
-	[[self connection] postNotificationName:WCChatUsersDidChangeNotification object:[self connection]];
+	[_userListTableView reloadData];
 }
 
 
@@ -1386,7 +1387,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 	[_shownUsers removeObject:victim];
 	[_users removeObjectForKey:[NSNumber numberWithInt:victimUserID]];
 	
-	[[self connection] postNotificationName:WCChatUsersDidChangeNotification object:[self connection]];
+	[_userListTableView reloadData];
 }
 
 
@@ -1670,8 +1671,6 @@ typedef enum _WCChatFormat					WCChatFormat;
 					selector:@selector(serverConnectionThemeDidChange:)
 						name:WCServerConnectionThemeDidChangeNotification];
 
-	[_connection addObserver:self selector:@selector(chatUsersDidChange:) name:WCChatUsersDidChangeNotification];
-	
 	[_connection addObserver:self selector:@selector(wiredChatUserJoin:) messageName:@"wired.chat.user_join"];
 	[_connection addObserver:self selector:@selector(wiredChatUserLeave:) messageName:@"wired.chat.user_leave"];
 	[_connection addObserver:self selector:@selector(wiredChatTopic:) messageName:@"wired.chat.topic"];

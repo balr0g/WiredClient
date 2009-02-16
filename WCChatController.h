@@ -26,7 +26,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define WCChatUsersDidChangeNotification			@"WCChatUsersDidChangeNotification"
 #define WCChatUserAppearedNotification				@"WCChatUserAppearedNotification"
 #define WCChatUserDisappearedNotification			@"WCChatUserDisappearedNotification"
 #define WCChatUserNickDidChangeNotification			@"WCChatUserNickDidChangeNotification"
