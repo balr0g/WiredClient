@@ -133,6 +133,9 @@
 		[self _validate];
 		[self _updateForError:error];
 		
+		if(![_window isOnScreen])
+			[_window makeKeyAndOrderFront:self];
+	
 		[NSApp beginSheet:_errorPanel
 		   modalForWindow:_window
 			modalDelegate:self
