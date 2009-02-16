@@ -328,8 +328,9 @@
 	[text replaceOccurrencesOfString:@"\"" withString:@"&#34;"];
 	[text replaceOccurrencesOfString:@"\'" withString:@"&#39;"];
 	[text replaceOccurrencesOfString:@"\n" withString:@"<br />"];
-
+	
 	[text replaceOccurrencesOfRegex:[WCChatController URLRegex] withString:@"<a href=\"$1\">$1</a>" options:RKLCaseless];
+	[text replaceOccurrencesOfRegex:[WCChatController schemelessURLRegex] withString:@"<a href=\"http://$1\">$1</a>" options:RKLCaseless];
 	[text replaceOccurrencesOfRegex:[WCChatController mailtoURLRegex] withString:@"<a href:\"mailto:$1\">$1</a>" options:RKLCaseless];
 	
 	if([theme boolForKey:WCThemesShowSmileys]) {

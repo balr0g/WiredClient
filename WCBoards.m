@@ -487,6 +487,7 @@
 	string = [[text mutableCopy] autorelease];
 	
 	[string replaceOccurrencesOfRegex:[WCChatController URLRegex] withString:@"[url]$1[/url]" options:RKLCaseless];
+	[string replaceOccurrencesOfRegex:[WCChatController schemelessURLRegex] withString:@"[url]$1[/url]" options:RKLCaseless];
 	[string replaceOccurrencesOfRegex:[WCChatController mailtoURLRegex] withString:@"[email]$1[/email]" options:RKLCaseless];
 	
 	return string;

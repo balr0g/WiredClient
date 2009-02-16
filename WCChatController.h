@@ -111,6 +111,7 @@
 + (void)applyURLAttributesToAttributedString:(NSMutableAttributedString *)attributedString;
 + (void)applySmileyAttributesToAttributedString:(NSMutableAttributedString *)attributedString;
 + (NSString *)URLRegex;
++ (NSString *)schemelessURLRegex;
 + (NSString *)mailtoURLRegex;
 
 - (void)linkConnectionLoggedIn:(NSNotification *)notification;
