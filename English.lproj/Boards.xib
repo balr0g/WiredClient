@@ -9,8 +9,8 @@
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<integer value="452"/>
-			<integer value="126"/>
 			<integer value="186"/>
+			<integer value="236"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -74,7 +74,7 @@
 														<bool key="EncodedWithXMLCoder">YES</bool>
 														<object class="NSOutlineView" id="999494502">
 															<reference key="NSNextResponder" ref="781345088"/>
-															<int key="NSvFlags">4352</int>
+															<int key="NSvFlags">4370</int>
 															<string key="NSFrameSize">{235, 494}</string>
 															<reference key="NSSuperview" ref="781345088"/>
 															<bool key="NSEnabled">YES</bool>
@@ -179,16 +179,9 @@
 																	<reference key="NSTableView" ref="999494502"/>
 																</object>
 															</object>
-															<double key="NSIntercellSpacingWidth">3.000000e+00</double>
-															<object class="NSColor" key="NSBackgroundColor">
-																<int key="NSColorSpace">6</int>
-																<string key="NSCatalogName">System</string>
-																<string key="NSColorName">_sourceListBackgroundColor</string>
-																<object class="NSColor" key="NSColor">
-																	<int key="NSColorSpace">1</int>
-																	<bytes key="NSRGB">MC44MzkyMTU3IDAuODY2NjY2NjcgMC44OTgwMzkyMgA</bytes>
-																</object>
-															</object>
+															<double key="NSIntercellSpacingWidth">2.000000e+00</double>
+															<double key="NSIntercellSpacingHeight">3.000000e+00</double>
+															<reference key="NSBackgroundColor" ref="641791346"/>
 															<object class="NSColor" key="NSGridColor" id="837037640">
 																<int key="NSColorSpace">6</int>
 																<string key="NSCatalogName">System</string>
@@ -198,15 +191,13 @@
 																	<bytes key="NSWhite">MC41AA</bytes>
 																</object>
 															</object>
-															<double key="NSRowHeight">2.000000e+01</double>
+															<double key="NSRowHeight">1.700000e+01</double>
 															<int key="NSTvFlags">306184192</int>
 															<int key="NSColumnAutoresizingStyle">5</int>
 															<int key="NSDraggingSourceMaskForLocal">15</int>
 															<int key="NSDraggingSourceMaskForNonLocal">0</int>
 															<bool key="NSAllowsTypeSelect">YES</bool>
-															<int key="NSTableViewSelectionHighlightStyle">1</int>
 															<bool key="NSOutlineViewAutoresizesOutlineColumnKey">NO</bool>
-															<float key="NSOutlineViewIndentationPerLevelKey">1.400000e+01</float>
 														</object>
 													</object>
 													<string key="NSFrameSize">{235, 494}</string>
@@ -382,7 +373,7 @@
 												<reference key="NSControlView" ref="738751736"/>
 												<int key="NSButtonFlags">-2046803713</int>
 												<int key="NSButtonFlags2">6</int>
-												<object class="NSCustomResource" key="NSNormalImage">
+												<object class="NSCustomResource" key="NSNormalImage" id="462174503">
 													<string key="NSClassName">NSImage</string>
 													<string key="NSResourceName">SourceAction</string>
 												</object>
@@ -396,10 +387,7 @@
 													<string key="NSKeyEquiv"/>
 													<int key="NSMnemonicLoc">2147483647</int>
 													<int key="NSState">1</int>
-													<object class="NSCustomResource" key="NSImage">
-														<string key="NSClassName">NSImage</string>
-														<string key="NSResourceName">SourceAction</string>
-													</object>
+													<reference key="NSImage" ref="462174503"/>
 													<object class="NSCustomResource" key="NSOnImage" id="651194922">
 														<string key="NSClassName">NSImage</string>
 														<string key="NSResourceName">NSMenuCheckmark</string>

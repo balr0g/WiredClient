@@ -35,6 +35,7 @@
 	NSEvent			*nextEvent;
 	NSView			*view;
 	NSRect			frame;
+	NSPoint			point;
 	id				delegate;
 	CGFloat			minCoordinate, maxCoordinate;
 	BOOL			tooMuchLeft, tooMuchRight, previousTooMuchLeft, previousTooMuchRight;
@@ -63,8 +64,9 @@
 		switch([nextEvent type]) {
 			case NSLeftMouseDragged:
 				frame = [view frame];
+				point = [nextEvent locationInWindow];
 				
-				tooMuchLeft = (minCoordinate > 0.0 && frame.size.width + [nextEvent deltaX] < minCoordinate);
+				tooMuchLeft = (minCoordinate > 0.0 && point.x < minCoordinate);
 				
 				if(tooMuchLeft) {
 					if(!previousTooMuchLeft)
@@ -76,7 +78,7 @@
 				}
 				
 				if(previousTooMuchLeft) {
-					if([nextEvent locationInWindow].x >= [self frame].origin.x + ([self frame].size.width / 2.0)) {
+					if(point.x >= [self frame].origin.x + ([self frame].size.width / 2.0)) {
 						[NSCursor pop];
 						
 						previousTooMuchLeft = NO;
@@ -85,7 +87,7 @@
 					}
 				}
 				
-				tooMuchRight = (maxCoordinate > 0.0 && frame.size.width + [nextEvent deltaX] > maxCoordinate);
+				tooMuchRight = (maxCoordinate > 0.0 && point.x > maxCoordinate);
 				
 				if(tooMuchRight) {
 					if(!previousTooMuchRight)
@@ -97,7 +99,7 @@
 				}
 				
 				if(previousTooMuchRight) {
-					if([nextEvent locationInWindow].x < [self frame].origin.x + ([self frame].size.width / 2.0)) {
+					if(point.x < [self frame].origin.x + ([self frame].size.width / 2.0)) {
 						[NSCursor pop];
 						
 						previousTooMuchRight = NO;
@@ -106,8 +108,10 @@
 					}
 				}
 				
-				frame.size.width += [nextEvent deltaX];
+				frame.size.width = point.x;
+				
 				[view setFrame:frame];
+				[_splitView adjustSubviews];
 				break;
 		
 			case NSLeftMouseUp:

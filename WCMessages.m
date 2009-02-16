@@ -485,9 +485,11 @@
 #pragma mark -
 
 - (void)windowDidLoad {
-	NSToolbar	*toolbar;
-	NSData		*data;
-	NSArray		*array;
+	NSToolbar		*toolbar;
+	NSData			*data;
+	NSArray			*array;
+	NSInvocation	*invocation;
+	NSUInteger		style;
 	
 	toolbar = [[NSToolbar alloc] initWithIdentifier:@"Messages"];
 	[toolbar setDelegate:self];
@@ -501,6 +503,14 @@
 	
 	[_conversationsSplitView setAutosaveName:@"Conversations"];
 	[_messagesSplitView setAutosaveName:@"Messages"];
+
+	if([_conversationsOutlineView respondsToSelector:@selector(setSelectionHighlightStyle:)]) {
+		style = 1; // NSTableViewSelectionHighlightStyleSourceList
+	
+		invocation = [NSInvocation invocationWithTarget:_conversationsOutlineView action:@selector(setSelectionHighlightStyle:)];
+		[invocation setArgument:&style atIndex:2];
+		[invocation invoke];
+	}
 
 	[[_conversationTableColumn dataCell] setVerticalTextOffset:3.0];
 	[[_unreadTableColumn dataCell] setImageAlignment:NSImageAlignRight];

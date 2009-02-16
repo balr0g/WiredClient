@@ -710,6 +710,8 @@
 
 - (void)windowDidLoad {
 	NSToolbar		*toolbar;
+	NSInvocation	*invocation;
+	NSUInteger		style;
 	
 	_errorQueue = [[WCErrorQueue alloc] initWithWindow:[self window]];
 	
@@ -729,6 +731,14 @@
 
 	[[_boardTableColumn dataCell] setVerticalTextOffset:3.0];
 	[[_unreadBoardTableColumn dataCell] setImageAlignment:NSImageAlignRight];
+	
+	if([_boardsOutlineView respondsToSelector:@selector(setSelectionHighlightStyle:)]) {
+		style = 1; // NSTableViewSelectionHighlightStyleSourceList
+	
+		invocation = [NSInvocation invocationWithTarget:_boardsOutlineView action:@selector(setSelectionHighlightStyle:)];
+		[invocation setArgument:&style atIndex:2];
+		[invocation invoke];
+	}
 
 	[_threadsTableView setDefaultHighlightedTableColumnIdentifier:@"Time"];
 	[_threadsTableView setDefaultSortOrder:WISortAscending];
