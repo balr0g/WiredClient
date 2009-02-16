@@ -76,8 +76,8 @@
 
 - (void)invalidateForConnection:(WCServerConnection *)connection;
 - (void)revalidateForConnection:(WCServerConnection *)connection;
-- (void)invalidateForConnection:(WCServerConnection *)connection user:(WCUser *)user;
-- (void)revalidateForConnection:(WCServerConnection *)connection user:(WCUser *)user;
+- (void)invalidateForUser:(WCUser *)user;
+- (void)revalidateForUser:(WCUser *)user;
 
 @end
 

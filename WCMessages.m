@@ -703,7 +703,7 @@
 	
 	user = [notification object];
 	
-	[_conversations revalidateForConnection:[user connection] user:user];
+	[_conversations revalidateForUser:user];
 	
 	if([[self _selectedConversation] user] == user)
 		[self _reloadConversation];
@@ -718,7 +718,7 @@
 	
 	user = [notification object];
 	
-	[_conversations invalidateForConnection:[user connection] user:user];
+	[_conversations invalidateForUser:user];
 	
 	if([[self _selectedConversation] user] == user)
 		[self _reloadConversation];
@@ -1018,7 +1018,7 @@
 	WCConversation	*conversation;
 	NSRect			rect;
 	
-	if([[self window] firstResponder] == _messageTextView)
+	if([[self window] firstResponder] == _messageTextView && [_messageTextView isEditable])
 		return NO;
 	
 	rect = [[[[[_messageWebView mainFrame] frameView] documentView] enclosingScrollView] documentVisibleRect];
@@ -1047,7 +1047,7 @@
 	WCConversation	*conversation;
 	NSRect			rect;
 	
-	if([[self window] firstResponder] == _messageTextView)
+	if([[self window] firstResponder] == _messageTextView && [_messageTextView isEditable])
 		return NO;
 	
 	rect = [[[[[_messageWebView mainFrame] frameView] documentView] enclosingScrollView] documentVisibleRect];

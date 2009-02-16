@@ -481,7 +481,7 @@
 
 
 
-- (void)invalidateForConnection:(WCServerConnection *)connection user:(WCUser *)user {
+- (void)invalidateForUser:(WCUser *)user {
 	WCConversation	*conversation;
 	WCMessage		*message;
 	NSUInteger		i, count;
@@ -491,7 +491,7 @@
 	for(i = 0; i < count; i++) {
 		message = [_messages objectAtIndex:i];
 		
-		if([message connection] == connection && [message user] == user)
+		if([message user] == user)
 			[message setUser:NULL];
 	}
 	
@@ -500,18 +500,16 @@
 	for(i = 0; i < count; i++) {
 		conversation = [_conversations objectAtIndex:i];
 		
-		if([conversation connection] == connection && ![conversation user]) {
-			if([[user nick] isEqualToString:[conversation nick]] && [[user login] isEqualToString:[conversation login]])
-				[conversation setUser:user];
-		}
+		if([conversation user] == user)
+			[conversation setUser:NULL];
 		
-		[conversation invalidateForConnection:connection user:user];
+		[conversation invalidateForUser:user];
 	}
 }
 
 
 
-- (void)revalidateForConnection:(WCServerConnection *)connection user:(WCUser *)user {
+- (void)revalidateForUser:(WCUser *)user {
 	WCConversation	*conversation;
 	WCMessage		*message;
 	NSUInteger		i, count;
@@ -521,7 +519,7 @@
 	for(i = 0; i < count; i++) {
 		message = [_messages objectAtIndex:i];
 		
-		if([message connection] == connection && ![message user]) {
+		if(![message user]) {
 			if([[user nick] isEqualToString:[message nick]] && [[user login] isEqualToString:[message login]])
 				[message setUser:user];
 		}
@@ -532,12 +530,12 @@
 	for(i = 0; i < count; i++) {
 		conversation = [_conversations objectAtIndex:i];
 		
-		if([conversation connection] == connection && ![conversation user]) {
+		if(![conversation user]) {
 			if([[user nick] isEqualToString:[conversation nick]] && [[user login] isEqualToString:[conversation login]])
 				[conversation setUser:user];
 		}
 		
-		[conversation revalidateForConnection:connection user:user];
+		[conversation revalidateForUser:user];
 	}
 }
 
