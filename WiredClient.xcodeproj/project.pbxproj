@@ -129,7 +129,6 @@
 		77CED3B90EC0691E00123164 /* Boards.xib in Resources */ = {isa = PBXBuildFile; fileRef = 77CED3B70EC0691E00123164 /* Boards.xib */; };
 		77CFB9580E66D1B100F2D5F8 /* SaveChat.xib in Resources */ = {isa = PBXBuildFile; fileRef = 77CFB9560E66D1B100F2D5F8 /* SaveChat.xib */; };
 		77CFB95C0E66D1BB00F2D5F8 /* UserInfo.xib in Resources */ = {isa = PBXBuildFile; fileRef = 77CFB95A0E66D1BB00F2D5F8 /* UserInfo.xib */; };
-		77CFB96F0E66D1EC00F2D5F8 /* Preview.xib in Resources */ = {isa = PBXBuildFile; fileRef = 77CFB96D0E66D1EC00F2D5F8 /* Preview.xib */; };
 		77CFB9720E66D1F600F2D5F8 /* Search.xib in Resources */ = {isa = PBXBuildFile; fileRef = 77CFB9700E66D1F600F2D5F8 /* Search.xib */; };
 		77CFB9750E66D20200F2D5F8 /* Files.xib in Resources */ = {isa = PBXBuildFile; fileRef = 77CFB9730E66D20200F2D5F8 /* Files.xib */; };
 		77CFB9780E66D20900F2D5F8 /* FileInfo.xib in Resources */ = {isa = PBXBuildFile; fileRef = 77CFB9760E66D20900F2D5F8 /* FileInfo.xib */; };
@@ -279,7 +278,6 @@
 		A5AAD14B0D86F1980072FFA1 /* WCLogController.m in Sources */ = {isa = PBXBuildFile; fileRef = A5AAD14A0D86F1980072FFA1 /* WCLogController.m */; };
 		A5AAD14E0D86F1A10072FFA1 /* WCSettingsController.m in Sources */ = {isa = PBXBuildFile; fileRef = A5AAD14D0D86F1A10072FFA1 /* WCSettingsController.m */; };
 		A5AAD2DE0D879B250072FFA1 /* WCFilterView.m in Sources */ = {isa = PBXBuildFile; fileRef = A5AAD2DD0D879B250072FFA1 /* WCFilterView.m */; };
-		A5B74BC10F4A3021006E631E /* WCAccountsController.m in Sources */ = {isa = PBXBuildFile; fileRef = A5B74BC00F4A3021006E631E /* WCAccountsController.m */; };
 		A5BF5C140D795A18002E8332 /* WCAccounts.m in Sources */ = {isa = PBXBuildFile; fileRef = A5BF5C130D795A18002E8332 /* WCAccounts.m */; };
 		A5D409770D897771007851BD /* WCBanlistController.m in Sources */ = {isa = PBXBuildFile; fileRef = A5D409760D897770007851BD /* WCBanlistController.m */; };
 		A5D4F28006D75DA4002A33D0 /* ExceptionHandling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5D4F27F06D75DA4002A33D0 /* ExceptionHandling.framework */; };
@@ -539,7 +537,6 @@
 		77CED3B80EC0691E00123164 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Boards.xib; sourceTree = "<group>"; };
 		77CFB9570E66D1B100F2D5F8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/SaveChat.xib; sourceTree = "<group>"; };
 		77CFB95B0E66D1BB00F2D5F8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/UserInfo.xib; sourceTree = "<group>"; };
-		77CFB96E0E66D1EC00F2D5F8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Preview.xib; sourceTree = "<group>"; };
 		77CFB9710E66D1F600F2D5F8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Search.xib; sourceTree = "<group>"; };
 		77CFB9740E66D20200F2D5F8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Files.xib; sourceTree = "<group>"; };
 		77CFB9770E66D20900F2D5F8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/FileInfo.xib; sourceTree = "<group>"; };
@@ -717,8 +714,6 @@
 		A5AAD14D0D86F1A10072FFA1 /* WCSettingsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCSettingsController.m; sourceTree = "<group>"; };
 		A5AAD2DC0D879B250072FFA1 /* WCFilterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCFilterView.h; sourceTree = "<group>"; };
 		A5AAD2DD0D879B250072FFA1 /* WCFilterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCFilterView.m; sourceTree = "<group>"; };
-		A5B74BBF0F4A3021006E631E /* WCAccountsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCAccountsController.h; sourceTree = "<group>"; };
-		A5B74BC00F4A3021006E631E /* WCAccountsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCAccountsController.m; sourceTree = "<group>"; };
 		A5BF5C120D795A18002E8332 /* WCAccounts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCAccounts.h; sourceTree = "<group>"; };
 		A5BF5C130D795A18002E8332 /* WCAccounts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCAccounts.m; sourceTree = "<group>"; };
 		A5D409750D897770007851BD /* WCBanlistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCBanlistController.h; sourceTree = "<group>"; };
@@ -1176,7 +1171,6 @@
 			children = (
 				77CFB9760E66D20900F2D5F8 /* FileInfo.xib */,
 				77CFB9730E66D20200F2D5F8 /* Files.xib */,
-				77CFB96D0E66D1EC00F2D5F8 /* Preview.xib */,
 				77CFB9700E66D1F600F2D5F8 /* Search.xib */,
 			);
 			name = Resources;
@@ -1527,8 +1521,6 @@
 			isa = PBXGroup;
 			children = (
 				A5AAD12C0D86EAA00072FFA1 /* Resources */,
-				A5B74BC00F4A3021006E631E /* WCAccountsController.m */,
-				A5B74BBF0F4A3021006E631E /* WCAccountsController.h */,
 				A5AAD12A0D86EA9C0072FFA1 /* WCAdministration.m */,
 				A5AAD1290D86EA9C0072FFA1 /* WCAdministration.h */,
 				A558A4ED0E8526F7004C724C /* WCBan.m */,
@@ -1776,7 +1768,6 @@
 				778C6A410E66B37F00DBF2E3 /* MainMenu.xib in Resources */,
 				77CFB9870E66D2C300F2D5F8 /* Messages.xib in Resources */,
 				778C6A670E66B44900DBF2E3 /* Preferences.xib in Resources */,
-				77CFB96F0E66D1EC00F2D5F8 /* Preview.xib in Resources */,
 				778C6A770E66CFB800DBF2E3 /* PrivateChat.xib in Resources */,
 				A55C7C060F2E4F8A006E8568 /* PrivateChatInvitation.xib in Resources */,
 				A54AF80F0F138CE300AFD50E /* PublicChat.xib in Resources */,
@@ -2009,7 +2000,6 @@
 				A509ADAC05F7FF8400E6AE2D /* WCAboutWindow.m in Sources */,
 				A5DC7FA9057AB0A600736BBF /* WCAccount.m in Sources */,
 				A5BF5C140D795A18002E8332 /* WCAccounts.m in Sources */,
-				A5B74BC10F4A3021006E631E /* WCAccountsController.m in Sources */,
 				A5AAD12B0D86EA9C0072FFA1 /* WCAdministration.m in Sources */,
 				A5DC7FCE057AB0F200736BBF /* WCApplication.m in Sources */,
 				A5DC7EC8057AAEAD00736BBF /* WCApplicationController.m in Sources */,
@@ -2174,14 +2164,6 @@
 				77CFB95B0E66D1BB00F2D5F8 /* English */,
 			);
 			name = UserInfo.xib;
-			sourceTree = "<group>";
-		};
-		77CFB96D0E66D1EC00F2D5F8 /* Preview.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				77CFB96E0E66D1EC00F2D5F8 /* English */,
-			);
-			name = Preview.xib;
 			sourceTree = "<group>";
 		};
 		77CFB9700E66D1F600F2D5F8 /* Search.xib */ = {
