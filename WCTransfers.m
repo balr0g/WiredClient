@@ -29,6 +29,7 @@
 #import "NSAlert-WCAdditions.h"
 #import "WCCache.h"
 #import "WCConnect.h"
+#import "WCErrorQueue.h"
 #import "WCFile.h"
 #import "WCFileInfo.h"
 #import "WCFiles.h"
@@ -480,7 +481,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 			message = [WIP7Message messageWithName:@"wired.transfer.upload_directory" spec:WCP7Spec];
 			[message setString:[transfer remotePath] forName:@"wired.file.path"];
-			[[transfer connection] sendMessage:message];
+			[[transfer connection] sendMessage:message fromObserver:self selector:@selector(wiredTransferUploadDirectoryReply:)];
 		}
 
 		message = [WIP7Message messageWithName:@"wired.file.list_directory" spec:WCP7Spec];
@@ -530,7 +531,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		} else {
 			message = [WIP7Message messageWithName:@"wired.transfer.upload_directory" spec:WCP7Spec];
 			[message setString:[[directories objectAtIndex:i] path] forName:@"wired.file.path"];
-			[[transfer connection] sendMessage:message];
+			[[transfer connection] sendMessage:message fromObserver:self selector:@selector(wiredTransferUploadDirectoryReply:)];
 		}
 	}
 	
@@ -1257,6 +1258,8 @@ end:
 - (void)dealloc {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
+	[_errorQueue release];
+	
 	[_timer release];
 
 	[_folderImage release];
@@ -1275,6 +1278,8 @@ end:
 - (void)windowDidLoad {
 	NSToolbar		*toolbar;
 	NSData			*data;
+	
+	_errorQueue = [[WCErrorQueue alloc] initWithWindow:[self window]];
 	
 	toolbar = [[NSToolbar alloc] initWithIdentifier:@"Transfers"];
 	[toolbar setDelegate:self];
@@ -1592,6 +1597,16 @@ end:
 			[self _finishTransfer:transfer];
 		}
 	}
+	else if([[message name] isEqualToString:@"wired.error"]) {
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
+	}
+}
+
+
+
+- (void)wiredTransferUploadDirectoryReply:(WIP7Message *)message {
+	if([[message name] isEqualToString:@"wired.error"])
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 }
 
 
@@ -1744,7 +1759,7 @@ end:
 	
 	if([transfer state] == WCTransferRunning)
 		[transfer setState:WCTransferPausing];
-		
+	
 	[_transfersTableView setNeedsDisplay:YES];
 
 	[self _validate];

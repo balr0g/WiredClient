@@ -26,12 +26,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-@class WCFile, WCTransfer;
+@class WCErrorQueue, WCFile, WCTransfer;
 
 @interface WCTransfers : WIWindowController {
 	IBOutlet WITableView					*_transfersTableView;
 	IBOutlet NSTableColumn					*_iconTableColumn;
 	IBOutlet NSTableColumn					*_infoTableColumn;
+	
+	WCErrorQueue							*_errorQueue;
 
 	NSMutableArray							*_transfers;
 	NSUInteger								_running;
