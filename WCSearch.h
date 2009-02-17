@@ -39,7 +39,7 @@ enum WCSearchType {
 typedef enum WCSearchType				WCSearchType;
 
 
-@class WCFile, WCFilesController;
+@class WCErrorQueue, WCFile, WCFilesController;
 
 @interface WCSearch : WIWindowController {
 	IBOutlet WCFilesController			*_filesController;
@@ -50,6 +50,8 @@ typedef enum WCSearchType				WCSearchType;
 	IBOutlet NSPopUpButton				*_kindPopUpButton;
 	IBOutlet NSButton					*_searchButton;
 	IBOutlet NSProgressIndicator		*_progressIndicator;
+	
+	WCErrorQueue						*_errorQueue;
 
 	NSMutableArray						*_files;
 	NSMutableArray						*_receivedFiles;

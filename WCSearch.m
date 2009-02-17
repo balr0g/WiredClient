@@ -27,6 +27,7 @@
  */
 
 #import "WCAccount.h"
+#import "WCErrorQueue.h"
 #import "WCFile.h"
 #import "WCFileInfo.h"
 #import "WCFiles.h"
@@ -193,6 +194,8 @@
 - (void)dealloc {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
+	[_errorQueue release];
+	
 	[_files release];
 	[_receivedFiles release];
 	[_connections release];
@@ -205,6 +208,8 @@
 #pragma mark -
 
 - (void)windowDidLoad {
+	_errorQueue = [[WCErrorQueue alloc] initWithWindow:[self window]];
+	
 	[self setShouldCascadeWindows:NO];
 	[self setWindowFrameAutosaveName:@"Search"];
 
@@ -282,6 +287,9 @@
 			[_filesController updateStatus];
 			[_filesController showFiles];
 		}
+	}
+	else if([[message name] isEqualToString:@"wired.error"]) {
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 	}
 }
 
