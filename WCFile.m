@@ -522,7 +522,7 @@
 
 
 - (BOOL)isExecutable {
-	return _executable;
+	return (_executable && [[self extension] length] == 0);
 }
 
 
