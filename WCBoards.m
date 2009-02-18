@@ -2137,6 +2137,8 @@
 			[cell setFont:[[cell font] fontByAddingTrait:NSBoldFontMask]];
 		else
 			[cell setFont:[[cell font] fontByAddingTrait:NSUnboldFontMask]];
+		
+		[cell setImage:[NSImage imageNamed:@"Board"]];
 	}
 }
 
