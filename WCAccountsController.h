@@ -39,6 +39,9 @@
 
 	IBOutlet WITableView				*_accountsTableView;
 	
+	IBOutlet NSButton					*_addButton;
+	IBOutlet NSButton					*_deleteButton;
+	
 	IBOutlet NSTabView					*_accountsTabView;
 
 	IBOutlet NSProgressIndicator		*_progressIndicator;
@@ -75,10 +78,6 @@
 	NSImage								*_userImage;
 	NSImage								*_groupImage;
 	
-//	WCAccount							*_account;
-//	WCAccount							*_underlyingAccount;
-	
-//	WCAccount							*_createdAccount;
 	NSMutableArray						*_accounts;
 
 	BOOL								_requested;

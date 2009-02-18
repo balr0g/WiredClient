@@ -70,6 +70,9 @@
 
 	account = [[_administration connection] account];
 	
+	[_addButton setEnabled:([account accountCreateUsers] || [account accountCreateGroups])];
+	[_deleteButton setEnabled:([self _selectedAccount] != NULL && ([account accountDeleteUsers] || [account accountDeleteGroups]))];
+
 	if(_touched && [[_administration connection] isConnected]) {
 		if(_creating && ([account accountCreateUsers] || [account accountCreateGroups]))
 			save = YES;
@@ -167,19 +170,26 @@
 
 		[self _writeToAccount:account];
 		
-		[[_administration connection] sendMessage:[account createAccountMessage] fromObserver:self selector:@selector(wiredAccountChangeAccountReply:)];
+		[[_administration connection] sendMessage:[account createAccountMessage]
+									 fromObserver:self
+										 selector:@selector(wiredAccountChangeAccountReply:)];
 	} else {
 		if([_accounts count] == 1) {
 			account = [_accounts lastObject];
 			
 			[self _writeToAccount:account];
 			
-			[[_administration connection] sendMessage:[account editAccountMessage] fromObserver:self selector:@selector(wiredAccountChangeAccountReply:)];
+			[[_administration connection] sendMessage:[account editAccountMessage]
+										 fromObserver:self
+											 selector:@selector(wiredAccountChangeAccountReply:)];
 		} else {
 			enumerator = [_accounts objectEnumerator];
 		
-			while((account = [enumerator nextObject]))
-				[[_administration connection] sendMessage:[account editAccountMessage] fromObserver:self selector:@selector(wiredAccountChangeAccountReply:)];
+			while((account = [enumerator nextObject])) {
+				[[_administration connection] sendMessage:[account editAccountMessage]
+											 fromObserver:self
+												 selector:@selector(wiredAccountChangeAccountReply:)];
+			}
 		}
 	}
 	
@@ -193,6 +203,7 @@
 		[_accounts removeAllObjects];
 		
 		_creating = NO;
+		_requested = NO;
 		
 		[self _validateForAccounts];
 		[self _readFromAccounts];
@@ -560,12 +571,13 @@
 			settingsEnumerator	= [[section objectForKey:WCAccountsFieldSettings] objectEnumerator];
 			
 			while((setting = [settingsEnumerator nextObject])) {
-				if(![settings containsObject:setting]) {
-					accountsEnumerator = [_accounts objectEnumerator];
-					
-					while((account = [accountsEnumerator nextObject])) {
-						if([account valueForKey:[setting objectForKey:WCAccountFieldName]])
-							[settings addObject:setting];
+				accountsEnumerator = [_accounts objectEnumerator];
+				
+				while((account = [accountsEnumerator nextObject])) {
+					if([account valueForKey:[setting objectForKey:WCAccountFieldName]]) {
+						[settings addObject:setting];
+						
+						break;
 					}
 				}
 			}
@@ -811,8 +823,6 @@
 #pragma mark -
 
 - (void)windowDidLoad {
-	[_accountsTableView setPropertiesFromDictionary:
-		[[WCSettings objectForKey:WCWindowProperties] objectForKey:@"WCAccountsTableView"]];
 	[_accountsTableView setTarget:self];
 	[_accountsTableView setDeleteAction:@selector(delete:)];
 	
@@ -981,10 +991,14 @@
 
 
 
-- (void)controllerWindowWillClose {
-	[WCSettings setObject:[_accountsTableView propertiesDictionary]
-				   forKey:@"WCAccountsTableView"
-	   inDictionaryForKey:WCWindowProperties];
+- (NSSize)controllerWindowWillResizeToSize:(NSSize)proposedFrameSize {
+	if(proposedFrameSize.width < 678.0)
+		proposedFrameSize.width = 678.0;
+
+	if(proposedFrameSize.height < 520.0)
+		proposedFrameSize.height = 520.0;
+	
+	return proposedFrameSize;
 }
 
 
@@ -1150,19 +1164,17 @@
 
 
 - (IBAction)add:(id)sender {
-/*	[_account release];
-	_account = NULL;
+	WCAccount		*account;
 	
-	[_underlyingAccount release];
-	_underlyingAccount = NULL;
+	[_accounts removeAllObjects];
 
-	_editingAccount = NO;
+	account = [[[WCAccount alloc] init] autorelease];
+	[account setName:NSLS(@"Untitled", @"Account name")];
+	[_accounts addObject:account];
 
-	_account = [[WCAccount alloc] init];
-	[_account setName:NSLS(@"Untitled", @"Account name")];
-
-	_creatingAccount = YES;
-	_touched = YES;
+	_creating	= YES;
+	_editing	= NO;
+	_touched	= YES;
 	
 	[_accountsTabView selectTabViewItemAtIndex:0];
 	
@@ -1171,17 +1183,16 @@
 	else
 		[_typePopUpButton selectItem:_groupMenuItem];
 	
-	[_nameTextField setStringValue:[_account name]];
-	
-	[self _validateAccount:_account];
-	[self _readFromAccount:_account];
+	[_nameTextField setStringValue:[account name]];
 	
 	[self _validate];
+	[self _validateForAccounts];
+	[self _readFromAccounts];
 	
 	[[_administration window] setDocumentEdited:YES];
 	
 	[[_administration window] makeFirstResponder:_nameTextField];
-	[_nameTextField selectText:self];*/
+	[_nameTextField selectText:self];
 }
 
 
@@ -1240,6 +1251,8 @@
 			[message setString:[account name] forName:@"wired.account.name"];
 			[[_administration connection] sendMessage:message fromObserver:self selector:@selector(wiredAccountDeleteAccountReply:)];
 		}
+		
+		_requested = NO;
 
 		[self _reloadAccounts];
 	}

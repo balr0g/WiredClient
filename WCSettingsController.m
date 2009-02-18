@@ -184,6 +184,12 @@
 
 
 
+- (NSSize)controllerWindowWillResizeToSize:(NSSize)proposedFrameSize {
+	return [[_administration window] frame].size;
+}
+
+
+
 - (void)wiredSettingsGetSettingsReply:(WIP7Message *)message {
 	NSImage			*image;
 	WIP7UInt32		downloads, uploads, downloadSpeed, uploadSpeed;

@@ -258,10 +258,7 @@
 
 
 - (NSSize)windowWillResize:(NSWindow *)window toSize:(NSSize)proposedFrameSize {
-	if(_shownController == _settingsController)
-		return [window frame].size;
-	
-	return proposedFrameSize;
+	return [_shownController controllerWindowWillResizeToSize:proposedFrameSize];
 }
 
 
@@ -433,6 +430,12 @@
 
 - (BOOL)controllerWindowShouldClose {
 	return YES;
+}
+
+
+
+- (NSSize)controllerWindowWillResizeToSize:(NSSize)proposedFrameSize {
+	return proposedFrameSize;
 }
 
 

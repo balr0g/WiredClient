@@ -271,6 +271,8 @@
 		A57D217107C950BD002C306E /* WCLink.m in Sources */ = {isa = PBXBuildFile; fileRef = A57D216F07C950BD002C306E /* WCLink.m */; };
 		A58EBF0D0D658C650080AAAA /* WCConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = A58EBF0C0D658C650080AAAA /* WCConnection.m */; };
 		A58EBF240D658ED60080AAAA /* WCConnect.m in Sources */ = {isa = PBXBuildFile; fileRef = A58EBF230D658ED50080AAAA /* WCConnect.m */; };
+		A5923E860F4CA2C000366A5D /* SourceReloadPressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5923E840F4CA2C000366A5D /* SourceReloadPressed.tiff */; };
+		A5923E870F4CA2C000366A5D /* SourceReload.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5923E850F4CA2C000366A5D /* SourceReload.tiff */; };
 		A5A335EA071C484700A16E9A /* WCKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = A5A335E8071C484700A16E9A /* WCKeychain.m */; };
 		A5A338FE0720483C00A16E9A /* WCConnectionController.m in Sources */ = {isa = PBXBuildFile; fileRef = A5A338FC0720483C00A16E9A /* WCConnectionController.m */; };
 		A5A3400707216D8900A16E9A /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5A3400607216D8900A16E9A /* Security.framework */; };
@@ -702,6 +704,8 @@
 		A58EBF0C0D658C650080AAAA /* WCConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCConnection.m; sourceTree = "<group>"; };
 		A58EBF220D658ED50080AAAA /* WCConnect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCConnect.h; sourceTree = "<group>"; };
 		A58EBF230D658ED50080AAAA /* WCConnect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCConnect.m; sourceTree = "<group>"; };
+		A5923E840F4CA2C000366A5D /* SourceReloadPressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = SourceReloadPressed.tiff; sourceTree = "<group>"; };
+		A5923E850F4CA2C000366A5D /* SourceReload.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = SourceReload.tiff; sourceTree = "<group>"; };
 		A5A335E8071C484700A16E9A /* WCKeychain.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCKeychain.m; sourceTree = "<group>"; };
 		A5A335E9071C484700A16E9A /* WCKeychain.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCKeychain.h; sourceTree = "<group>"; };
 		A5A338FC0720483C00A16E9A /* WCConnectionController.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCConnectionController.m; sourceTree = "<group>"; };
@@ -1423,6 +1427,8 @@
 				A5F7F9F40F1D528F007BF4FD /* SourceBar.tiff */,
 				A5F7F9C20F1D50FD007BF4FD /* SourceDelete.tiff */,
 				A5F7F9C30F1D50FD007BF4FD /* SourceDeletePressed.tiff */,
+				A5923E850F4CA2C000366A5D /* SourceReload.tiff */,
+				A5923E840F4CA2C000366A5D /* SourceReloadPressed.tiff */,
 				A54AF92D0F13AEBB00AFD50E /* Start.tiff */,
 				A54AF92C0F13AEBB00AFD50E /* Stop.tiff */,
 				A54AF92B0F13AEBB00AFD50E /* Themes.tiff */,
@@ -1908,6 +1914,8 @@
 				779951820A122BBB00600320 /* Yuck.tiff in Resources */,
 				A51B5A5E0F44D63F00EAB0E1 /* MessageStatus.html in Resources */,
 				A51474C00F487FC900DBE395 /* Error.xib in Resources */,
+				A5923E860F4CA2C000366A5D /* SourceReloadPressed.tiff in Resources */,
+				A5923E870F4CA2C000366A5D /* SourceReload.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
