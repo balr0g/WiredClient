@@ -215,6 +215,7 @@
 
 	[[_filesController filesTableView] setAutosaveName:@"Search"];
     [[_filesController filesTableView] setAutosaveTableColumns:YES];
+	[[_filesController filesTableView] setTarget:self];
 	[[_filesController filesTableView] setDoubleAction:@selector(open:)];
 	[[_filesController filesTableView] setDefaultTableColumnIdentifiers:
 		[NSArray arrayWithObjects:@"Name", @"Server", @"Size", NULL]];

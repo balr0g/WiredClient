@@ -72,8 +72,10 @@
 - (void)serverConnectionPrivilegesDidChange:(NSNotification *)notification;
 
 - (void)controllerWindowDidBecomeKey;
+- (BOOL)controllerWindowShouldClose;
 - (void)controllerWindowWillClose;
 - (void)controllerDidSelect;
+- (BOOL)controllerShouldUnselect;
 - (void)controllerDidUnselect;
 
 - (void)setAdministration:(WCAdministration *)administration;

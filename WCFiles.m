@@ -652,6 +652,7 @@
 	[_filesBrowser loadColumnZero];
 
 	[[_filesController filesTableView] registerForDraggedTypes:types];
+	[[_filesController filesTableView] setTarget:self];
 	[[_filesController filesTableView] setDoubleAction:@selector(open:)];
 	[[_filesController filesTableView] setDeleteAction:@selector(deleteFiles:)];
 	[[_filesController filesTableView] setBackAction:@selector(back:)];

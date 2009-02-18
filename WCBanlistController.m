@@ -174,6 +174,7 @@
 #pragma mark -
 
 - (void)windowDidLoad {
+	[_banlistTableView setTarget:self];
 	[_banlistTableView setDeleteAction:@selector(deleteBan:)];
 	[_banlistTableView setDefaultHighlightedTableColumnIdentifier:@"IP"];
 
@@ -216,13 +217,15 @@
 
 
 - (void)wiredBanlistDeleteBanReply:(WIP7Message *)message {
-	NSLog(@"wiredBanlistDeleteBanReply = %@", message);
+	if([[message name] isEqualToString:@"wired.error"])
+		[_administration showError:[WCError errorWithWiredMessage:message]];
 }
 
 
 
 - (void)wiredBanlistAddBanReply:(WIP7Message *)message {
-	NSLog(@"wiredBanlistAddBanReply = %@", message);
+	if([[message name] isEqualToString:@"wired.error"])
+		[_administration showError:[WCError errorWithWiredMessage:message]];
 }
 
 

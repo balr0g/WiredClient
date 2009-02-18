@@ -745,7 +745,6 @@
 	[_threadsTableView setAllowsUserCustomization:YES];
 	[_threadsTableView setAutosaveName:@"Threads"];
     [_threadsTableView setAutosaveTableColumns:YES];
-	[_threadsTableView setDoubleAction:@selector(reply:)];
 	
 	[[_unreadThreadTableColumn headerCell] setImage:[NSImage imageNamed:@"UnreadHeader"]];
 	

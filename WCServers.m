@@ -331,6 +331,7 @@
 	[self setWindowFrameAutosaveName:@"Servers"];
 
 	[_serversOutlineView setDefaultHighlightedTableColumnIdentifier:@"Name"];
+	[_serversOutlineView setTarget:self];
 	[_serversOutlineView setDoubleAction:@selector(open:)];
 	[_serversOutlineView setAutoresizesOutlineColumn:NO];
 	[_serversOutlineView setAllowsUserCustomization:YES];

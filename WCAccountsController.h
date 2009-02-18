@@ -82,7 +82,7 @@
 	BOOL								_creatingAccount;
 	BOOL								_accountTouched;
 
-	BOOL								_received;
+	BOOL								_requested;
 
 	NSString							*_accountFilter;
 	WIDateFormatter						*_dateFormatter;
@@ -101,8 +101,8 @@
 - (IBAction)add:(id)sender;
 - (IBAction)delete:(id)sender;
 - (IBAction)reload:(id)sender;
-- (IBAction)changePassword:(id)sender;
-- (IBAction)submitPasswordSheet:(id)sender;
+//- (IBAction)changePassword:(id)sender;
+//- (IBAction)submitPasswordSheet:(id)sender;
 - (IBAction)all:(id)sender;
 - (IBAction)users:(id)sender;
 - (IBAction)groups:(id)sender;
@@ -117,6 +117,6 @@
 @end
 
 
-@interface WCAccountsTableColumn : NSTableColumn
+/*@interface WCAccountsTableColumn : NSTableColumn
 
-@end
+@end*/

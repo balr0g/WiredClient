@@ -735,9 +735,11 @@
 
 	[_accountsTableView setPropertiesFromDictionary:
 		[[WCSettings objectForKey:WCWindowProperties] objectForKey:@"WCAccountsTableView"]];
+	[_accountsTableView setTarget:self];
 	[_accountsTableView setDeleteAction:@selector(delete:)];
 	[[self window] makeFirstResponder:_accountsTableView];
 	
+	[_settingsOutlineView setTarget:self];
 	[_settingsOutlineView setDeleteAction:@selector(clearSetting:)];
 	
 	_dateFormatter = [[WIDateFormatter alloc] init];
@@ -1630,6 +1632,8 @@
 	[_account setValue:value forKey:name];
 	
 	[self touch:self];
+	
+	[_settingsOutlineView setNeedsDisplay:YES];
 }
 
 

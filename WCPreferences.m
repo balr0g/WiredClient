@@ -563,6 +563,7 @@
 	
 	[_chatTabView selectFirstTabViewItem:self];
 	
+	[_highlightsTableView setTarget:self];
 	[_highlightsTableView setDoubleAction:@selector(changeHighlightColor:)];
 	
 	[_themesTableView registerForDraggedTypes:[NSArray arrayWithObject:WCThemePboardType]];

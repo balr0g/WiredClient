@@ -30,10 +30,10 @@
 #import "WCErrorQueue.h"
 #import "WCServerConnection.h"
 
-#define WIAdministrationView			@"WIAdministrationView"
-#define WIAdministrationName			@"WIAdministrationName"
-#define WIAdministrationImage			@"WIAdministrationImage"
-#define WIAdministrationController		@"WIAdministrationController"
+#define WCAdministrationViewKey				@"WCAdministrationViewKey"
+#define WCAdministrationNameKey				@"WCAdministrationNameKey"
+#define WCAdministrationImageKey			@"WCAdministrationImageKey"
+#define WCAdministrationControllerKey		@"WCAdministrationControllerKey"
 
 
 @interface WCAdministration(Private)
@@ -74,10 +74,10 @@
 	[view setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable | NSViewMaxXMargin | NSViewMaxYMargin];
 	
 	dictionary = [NSMutableDictionary dictionary];
-	[dictionary setObject:view forKey:WIAdministrationView];
-	[dictionary setObject:name forKey:WIAdministrationName];
-	[dictionary setObject:image forKey:WIAdministrationImage];
-	[dictionary setObject:controller forKey:WIAdministrationController];
+	[dictionary setObject:view forKey:WCAdministrationViewKey];
+	[dictionary setObject:name forKey:WCAdministrationNameKey];
+	[dictionary setObject:image forKey:WCAdministrationImageKey];
+	[dictionary setObject:controller forKey:WCAdministrationControllerKey];
 	
 	identifier = [NSString UUIDString];
 	
@@ -96,8 +96,8 @@
 	NSRect				frame;
 	
 	dictionary	= [_views objectForKey:identifier];
-	view		= [dictionary objectForKey:WIAdministrationView];
-	controller	= [dictionary objectForKey:WIAdministrationController];
+	view		= [dictionary objectForKey:WCAdministrationViewKey];
+	controller	= [dictionary objectForKey:WCAdministrationControllerKey];
 	
 	if(view != _shownView) {
 		[_shownController controllerDidUnselect];
@@ -129,7 +129,7 @@
 			[view setHidden:NO];
 		}
 
-		[[self window] setTitle:[dictionary objectForKey:WIAdministrationName]];
+		[[self window] setTitle:[dictionary objectForKey:WCAdministrationNameKey]];
 		
 		[[[self window] toolbar] setSelectedItemIdentifier:identifier];
 
@@ -171,8 +171,10 @@
 #pragma mark -
 
 - (void)windowDidLoad {
-	NSWindow	*window;
+	NSEnumerator	*enumerator;
+	NSWindow		*window;
 	NSToolbar		*toolbar;
+	NSDictionary	*dictionary;
 	
 	[self _addAdministrationView:_monitorView
 							name:NSLS(@"Monitor", @"Monitor toolbar item")
@@ -225,10 +227,10 @@
 	[self setShouldCascadeWindows:NO];
 	[self setWindowFrameAutosaveName:@"Administration"];
 
-	[_monitorController windowDidLoad];
-	[_logController windowDidLoad];
-	[_settingsController windowDidLoad];
-	[_banlistController windowDidLoad];
+	enumerator = [_views objectEnumerator];
+	
+	while((dictionary = [enumerator nextObject]))
+		[[dictionary objectForKey:WCAdministrationControllerKey] windowDidLoad];
 	
 	[self _selectAdministrationViewWithIdentifier:[_identifiers objectAtIndex:0] animate:NO];
 
@@ -239,6 +241,12 @@
 
 - (void)windowDidBecomeKey:(NSNotification *)notification {
 	[_shownController controllerWindowDidBecomeKey];
+}
+
+
+
+- (BOOL)windowShouldClose:(id)window {
+	return [_shownController controllerWindowShouldClose];
 }
 
 
@@ -264,8 +272,8 @@
 	dictionary = [_views objectForKey:identifier];
 	
 	return [NSToolbarItem toolbarItemWithIdentifier:identifier
-											   name:[dictionary objectForKey:WIAdministrationName]
-											content:[dictionary objectForKey:WIAdministrationImage]
+											   name:[dictionary objectForKey:WCAdministrationNameKey]
+											content:[dictionary objectForKey:WCAdministrationImageKey]
 											 target:self
 											 action:@selector(toolbarItem:)];
 }
@@ -290,12 +298,14 @@
 
 
 
-
 - (void)linkConnectionLoggedIn:(NSNotification *)notification {
-	[_monitorController linkConnectionLoggedIn:notification];
-	[_logController linkConnectionLoggedIn:notification];
-	[_settingsController linkConnectionLoggedIn:notification];
-	[_banlistController linkConnectionLoggedIn:notification];
+	NSEnumerator		*enumerator;
+	NSDictionary		*dictionary;
+	
+	enumerator = [_views objectEnumerator];
+	
+	while((dictionary = [enumerator nextObject]))
+		[[dictionary objectForKey:WCAdministrationControllerKey] linkConnectionLoggedIn:notification];
 	
 	[super linkConnectionLoggedIn:notification];
 }
@@ -303,22 +313,28 @@
 
 
 - (void)linkConnectionDidClose:(NSNotification *)notification {
-	[_monitorController linkConnectionDidClose:notification];
-	[_logController linkConnectionDidClose:notification];
-	[_settingsController linkConnectionDidClose:notification];
-	[_banlistController linkConnectionDidClose:notification];
+	NSEnumerator		*enumerator;
+	NSDictionary		*dictionary;
 	
+	enumerator = [_views objectEnumerator];
+	
+	while((dictionary = [enumerator nextObject]))
+		[[dictionary objectForKey:WCAdministrationControllerKey] linkConnectionDidClose:notification];
+
 	[super linkConnectionDidClose:notification];
 }
 
 
 
 - (void)serverConnectionPrivilegesDidChange:(NSNotification *)notification {
-	[_monitorController serverConnectionPrivilegesDidChange:notification];
-	[_logController serverConnectionPrivilegesDidChange:notification];
-	[_settingsController serverConnectionPrivilegesDidChange:notification];
-	[_banlistController serverConnectionPrivilegesDidChange:notification];
+	NSEnumerator		*enumerator;
+	NSDictionary		*dictionary;
 	
+	enumerator = [_views objectEnumerator];
+	
+	while((dictionary = [enumerator nextObject]))
+		[[dictionary objectForKey:WCAdministrationControllerKey] serverConnectionPrivilegesDidChange:notification];
+
 	[super serverConnectionPrivilegesDidChange:notification];
 }
 
@@ -353,7 +369,22 @@
 #pragma mark -
 
 - (void)toolbarItem:(id)sender {
-	[self _selectAdministrationViewWithIdentifier:[sender itemIdentifier] animate:YES];
+	NSEnumerator		*enumerator;
+	NSString			*identifier;
+	
+	if([_shownController controllerShouldUnselect]) {
+		[self _selectAdministrationViewWithIdentifier:[sender itemIdentifier] animate:YES];
+	} else {
+		enumerator = [_views keyEnumerator];
+		
+		while((identifier = [enumerator nextObject])) {
+			if([[_views objectForKey:identifier] objectForKey:WCAdministrationControllerKey] == _shownController) {
+				[[[self window] toolbar] setSelectedItemIdentifier:identifier];
+				
+				break;
+			}
+		}
+	}
 }
 
 
@@ -400,7 +431,19 @@
 
 
 
+- (BOOL)controllerWindowShouldClose {
+	return YES;
+}
+
+
+
 - (void)controllerDidSelect {
+}
+
+
+
+- (BOOL)controllerShouldUnselect {
+	return YES;
 }
 
 
