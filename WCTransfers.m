@@ -772,7 +772,6 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	NSUInteger					i, speedBytes, statsBytes;
 	NSInteger					readBytes;
 	WIP7UInt64					dataLength;
-	WCTransferState				state;
 	double						percent, speed, maxSpeed;
 	int							fd, writtenBytes;
 	
@@ -840,8 +839,6 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	}
 	
 	[fileHandle seekToFileOffset:[file transferred]];
-	
-	state = [transfer state];
 	
 	if(![transfer isTerminating]) {
 		[transfer setState:WCTransferRunning];
@@ -970,7 +967,6 @@ end:
 	NSTimeInterval				time, speedTime, statsTime;
 	NSUInteger					i, sendBytes, speedBytes, statsBytes;
 	WIP7UInt64					dataLength, offset;
-	WCTransferState				state;
 	double						percent, speed, maxSpeed;
 	ssize_t						readBytes;
 	int							fd;
@@ -1049,8 +1045,6 @@ end:
 
 	[fileHandle seekToFileOffset:[file transferred]];
 
-	state = [transfer state];
-	
 	if(![transfer isTerminating]) {
 		[transfer setState:WCTransferRunning];
 		
@@ -1409,10 +1403,8 @@ end:
 
 - (void)applicationWillTerminate:(NSNotification *)notification {
 	NSEnumerator		*enumerator;
-	NSMutableArray		*transfers;
 	WCTransfer			*transfer;
 
-	transfers = [NSMutableArray array];
 	enumerator = [_transfers objectEnumerator];
 
 	while((transfer = [enumerator nextObject])) {

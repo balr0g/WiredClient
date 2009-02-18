@@ -122,6 +122,8 @@
 	[[rightImage mirroredImage] compositeToPoint:rightRect.origin operation:NSCompositeSourceOver];
 	[view unlockFocus];
 
+	[view release];
+
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(applicationDidChangeActive:)

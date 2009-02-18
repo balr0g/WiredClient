@@ -10,6 +10,14 @@
 
 @implementation PSMRolloverButton
 
+// Axel Andersson: added -dealloc
+- (void)dealloc {
+	[_rolloverImage release];
+	[_usualImage release];
+	
+	[super dealloc];
+}
+
 // the regular image
 - (void)setUsualImage:(NSImage *)newImage
 {

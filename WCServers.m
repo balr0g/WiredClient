@@ -381,7 +381,7 @@
 												 action:@selector(deleteTracker:)];
 	}
 	else if([identifier isEqualToString:@"Search"]) {
-		searchField = [[NSSearchField alloc] initWithFrame:NSMakeRect(0.0, 0.0, 200.0, 22.0)];
+		searchField = [[[NSSearchField alloc] initWithFrame:NSMakeRect(0.0, 0.0, 200.0, 22.0)] autorelease];
 		
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
 												   name:NSLS(@"Search", @"Search tracker toolbar item")

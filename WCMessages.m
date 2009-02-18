@@ -316,10 +316,8 @@
 	NSDictionary		*theme;
 	NSMutableString		*string, *text;
 	NSString			*smiley, *path;
-	WCAccount			*account;
 	
 	theme		= [[message connection] theme];
-	account		= [[message connection] account];
 	text		= [[[message message] mutableCopy] autorelease];
 	
 	[text replaceOccurrencesOfString:@"&" withString:@"&#38;"];

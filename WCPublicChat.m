@@ -554,11 +554,9 @@ typedef enum _WCChatActivity				WCChatActivity;
 
 
 - (BOOL)validateToolbarItem:(NSToolbarItem *)item {
-	WCPublicChatController	*chatController;
 	WCServerConnection		*connection;
 	SEL						selector;
 	
-	chatController	= [self selectedChatController];
 	connection		= [[self selectedChatController] connection];
 	selector		= [item action];
 	

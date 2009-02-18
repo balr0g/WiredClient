@@ -31,12 +31,10 @@
 
 @implementation WCFilesBrowserCell
 
-- (id)init {
-	self = [super init];
+- (void)dealloc {
+	[_icon release];
 	
-//	[self setFont:[NSUnarchiver unarchiveObjectWithData:[WCSettings objectForKey:WCFilesFont]]];
-	
-	return self;
+	[super dealloc];
 }
 
 

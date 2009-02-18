@@ -907,6 +907,16 @@
 
 @implementation WCUserAccount
 
+- (void)dealloc {
+	[_groupAccount release];
+	
+	[super dealloc];
+}
+
+
+
+#pragma mark -
+
 - (WIP7Message *)createAccountMessage {
 	WIP7Message		*message;
 	

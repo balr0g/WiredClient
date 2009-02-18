@@ -449,14 +449,12 @@
 	NSPasteboard		*pasteboard;
 	NSArray				*types;
 	NSEvent				*event;
-	WCFile				*destination;
 	NSDragOperation		operation;
 	
-	pasteboard	= [info draggingPasteboard];
-	types		= [pasteboard types];
-	operation	= NSDragOperationNone;
-	destination	= file ? file : path;
-	event		= [NSApp currentEvent];
+	pasteboard		= [info draggingPasteboard];
+	types			= [pasteboard types];
+	operation		= NSDragOperationNone;
+	event			= [NSApp currentEvent];
 	
 	if([types containsObject:NSFilenamesPboardType]) {
 		if(![[[self connection] account] transferUploadFiles])

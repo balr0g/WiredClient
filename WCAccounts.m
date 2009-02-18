@@ -945,13 +945,11 @@
 
 - (void)validate {
 	WCAccount	*account;
-	BOOL		save, editing, connected;
+	BOOL		save, connected;
 
 	account		= [[self connection] account];
 	connected	= [[self connection] isConnected];
-	editing		= (_creatingAccount || _editingAccount);
-	
-	save = NO;
+	save		= NO;
 	
 	if(_accountTouched && connected) {
 		if(_creatingAccount && ([account accountCreateUsers] || [account accountCreateGroups]))

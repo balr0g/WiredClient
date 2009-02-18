@@ -2171,7 +2171,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 	NSTimeInterval		interval;
 	
 	user = [self userAtIndex:row];
-	toolTip = [[user nick] mutableCopy];
+	toolTip = [[[user nick] mutableCopy] autorelease];
 	
 	if([[user status] length] > 0)
 		[toolTip appendFormat:@"\n%@", [user status]];

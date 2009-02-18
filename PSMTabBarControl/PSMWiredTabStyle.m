@@ -331,7 +331,6 @@
     NSRect cellFrame = [cell frame];	
     NSColor * lineColor = nil;
     NSBezierPath* bezier = [NSBezierPath bezierPath];
-    lineColor = [NSColor darkGrayColor];
 
 	if([[controlView window] isMainWindow])
 		lineColor = [NSColor colorWithCalibratedRed:64.0 / 255.0 green:64.0 / 255.0 blue:64.0 / 255.0 alpha:1.0];
@@ -510,9 +509,9 @@
         attrStr = [[[NSMutableAttributedString alloc] initWithString:contents] autorelease];
         NSRange range = NSMakeRange(0, [contents length]);
         [attrStr addAttribute:NSFontAttributeName value:[NSFont systemFontOfSize:11.0] range:range];
-        NSMutableParagraphStyle *centeredParagraphStyle = nil;
+        static NSMutableParagraphStyle *centeredParagraphStyle = nil;
         if (!centeredParagraphStyle) {
-            centeredParagraphStyle = [[[NSParagraphStyle defaultParagraphStyle] mutableCopy] retain];
+            centeredParagraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
             [centeredParagraphStyle setAlignment:NSCenterTextAlignment];
         }
         [attrStr addAttribute:NSParagraphStyleAttributeName value:centeredParagraphStyle range:range];

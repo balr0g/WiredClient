@@ -77,14 +77,15 @@
 - (void)_validate {
 	WCServerConnection		*connection;
 	WCBoard					*board;
-	WCBoardThread			*thread;
 	
 	board			= [self _selectedBoard];
-	thread			= [self _selectedThread];
 	connection		= [board connection];
 	
 	[_addBoardButton setEnabled:([_locationPopUpButton numberOfItems] > 0)];
-	[_deleteBoardButton setEnabled:(board != NULL && [board isModifiable] && [connection isConnected] && [[connection account] boardDeleteBoards])];
+	[_deleteBoardButton setEnabled:(board != NULL &&
+									[board isModifiable] &&
+									[connection isConnected] &&
+									[[connection account] boardDeleteBoards])];
 	
 	[[[self window] toolbar] validateVisibleItems];
 }
@@ -1534,9 +1535,9 @@
 	connected	= [[board connection] isConnected];
 	
 	if(selector == @selector(addThread:))
-		return (board != NULL && [account boardAddThreads]);
+		return (board != NULL && connected && [account boardAddThreads]);
 	else if(selector == @selector(deleteThread:))
-		return (board != NULL && thread != NULL && [account boardDeleteThreads]);
+		return (board != NULL && connected && thread != NULL && [account boardDeleteThreads]);
 	
 	return YES;
 }
@@ -2191,7 +2192,7 @@
 
 - (void)outlineView:(NSOutlineView *)outlineView setObjectValue:(id)object forTableColumn:(NSTableColumn *)tableColumn byItem:(id)item {
 	NSString		*oldPath, *newPath;
-	WCBoard			*board = item;
+	WCBoard			*board;
 	WIP7Message		*message;
 	
 	board		= item;
@@ -2247,7 +2248,6 @@
 		array		= [pasteboard propertyListForType:WCThreadPboardType];
 		oldPath		= [array objectAtIndex:0];
 		oldBoard	= [[_boards boardForConnection:[newBoard connection]] boardForPath:oldPath];
-		rootPath	= [[newBoard path] isEqualToString:@"/"] ? @"" : [newBoard path];
 		newPath		= [newBoard path];
 		
 		if(!oldBoard || [oldPath isEqualToString:newPath] || index >= 0)

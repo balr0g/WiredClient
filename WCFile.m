@@ -157,6 +157,8 @@
 					folderImage16 = image;
 				else if(width == 12.0)
 					folderImage12 = image;
+				else
+					[image autorelease];
 			}
 			break;
 		
@@ -180,6 +182,8 @@
 					uploadsImage16 = image;
 				else if(width == 12.0)
 					uploadsImage12 = image;
+				else
+					[image autorelease];
 			}
 			break;
 
@@ -203,6 +207,8 @@
 					dropBoxImage16 = image;
 				else if(width == 12.0)
 					dropBoxImage12 = image;
+				else
+					[image autorelease];
 			}
 			break;
 
