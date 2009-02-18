@@ -881,7 +881,7 @@
 	if([[message name] isEqualToString:@"wired.account.user"] || [[message name] isEqualToString:@"wired.account.group"]) {
 		if([[message name] isEqualToString:@"wired.account.user"])
 			account = [WCUserAccount accountWithMessage:message];
-		else if([[message name] isEqualToString:@"wired.account.group"])
+		else
 			account = [WCGroupAccount accountWithMessage:message];
 		
 		if(_requestedAccounts == 1 && [_accounts count] == 1) {
