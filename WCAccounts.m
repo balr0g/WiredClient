@@ -1650,6 +1650,12 @@
 
 
 
+- (NSString *)outlineView:(NSOutlineView *)outlineView toolTipForCell:(NSCell *)cell rect:(NSRectPointer)rect tableColumn:(NSTableColumn *)tableColumn item:(id)item mouseLocation:(NSPoint)mouseLocation {
+	return [item objectForKey:WCAccountFieldToolTip];
+}
+
+
+
 - (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item {
 	return ([[item objectForKey:WCAccountsFieldSettings] count] > 0);
 }

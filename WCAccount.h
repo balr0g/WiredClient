@@ -45,6 +45,7 @@
 #define WCAccountFieldAdministration			7
 #define WCAccountFieldLimits					8
 #define WCAccountFieldReadOnly				@"WCAccountFieldReadOnly"
+#define WCAccountFieldToolTip				@"WCAccountFieldToolTip"
 
 
 @interface WCAccount : WIObject {
