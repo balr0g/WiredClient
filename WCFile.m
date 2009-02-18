@@ -120,6 +120,8 @@
 	static NSImage		*folderImage32, *folderImage16, *folderImage12;
 	static NSImage		*uploadsImage32, *uploadsImage16, *uploadsImage12;
 	static NSImage		*dropBoxImage32, *dropBoxImage16, *dropBoxImage12;
+	NSEnumerator		*enumerator;
+	NSImageRep			*representation, *folderRepresentation;
 	NSImage				*image = NULL, *badgeImage;
 	
 	if(!folderImage)
@@ -137,8 +139,18 @@
 			if(!image) {
 				image = [[NSImage alloc] initWithSize:NSMakeSize(width, width)];
 				[folderImage setSize:[image size]];
-				[image addRepresentation:[[folderImage representations] objectAtIndex:(width == 32.0) ? 2 : 3]];
-
+				
+				folderRepresentation	= NULL;
+				enumerator				= [[folderImage representations] objectEnumerator];
+				
+				while((representation = [enumerator nextObject])) {
+					if([representation size].width >= width)
+						folderRepresentation = representation;
+				}
+				
+				if(folderRepresentation)
+					[image addRepresentation:folderRepresentation];
+				
 				if(width == 32.0)
 					folderImage32 = image;
 				else if(width == 16.0)

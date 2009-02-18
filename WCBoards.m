@@ -951,8 +951,7 @@
 	}
 	else if([[message name] isEqualToString:@"wired.board.board_list.done"]) {
 		[_boardsOutlineView reloadData];
-
-		[_boardsOutlineView expandItem:NULL expandChildren:YES];
+		[_boardsOutlineView expandItem:[_boards boardForConnection:[message contextInfo]] expandChildren:YES];
 	
 		[self _reloadLocationsAndSelectBoard:NULL];
 		[self _validate];
