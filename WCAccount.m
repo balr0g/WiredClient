@@ -933,6 +933,23 @@
 
 #pragma mark -
 
+- (void)setGroupAccount:(WCGroupAccount *)account {
+	[account retain];
+	[_groupAccount release];
+	
+	_groupAccount = account;
+}
+
+
+
+- (WCGroupAccount *)groupAccount {
+	return _groupAccount;
+}
+
+
+
+#pragma mark -
+
 - (NSDate *)loginDate {
 	return [self valueForKey:@"wired.account.login_time"];
 }

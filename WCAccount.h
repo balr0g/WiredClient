@@ -141,7 +141,14 @@
 @end
 
 
-@interface WCUserAccount : WCAccount
+@class WCGroupAccount;
+
+@interface WCUserAccount : WCAccount {
+	WCGroupAccount					*_groupAccount;
+}
+
+- (void)setGroupAccount:(WCGroupAccount *)account;
+- (WCGroupAccount *)groupAccount;
 
 - (NSDate *)loginDate;
 - (void)setFullName:(NSString *)fullName;

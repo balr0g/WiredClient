@@ -75,14 +75,18 @@
 	NSImage								*_userImage;
 	NSImage								*_groupImage;
 	
-	WCAccount							*_account;
-	WCAccount							*_underlyingAccount;
+//	WCAccount							*_account;
+//	WCAccount							*_underlyingAccount;
 	
-	BOOL								_editingAccount;
-	BOOL								_creatingAccount;
-	BOOL								_accountTouched;
+//	WCAccount							*_createdAccount;
+	NSMutableArray						*_accounts;
 
 	BOOL								_requested;
+	BOOL								_creating;
+	BOOL								_editing;
+	BOOL								_touched;
+	
+	NSUInteger							_requestedAccounts;
 
 	NSString							*_accountFilter;
 	WIDateFormatter						*_dateFormatter;

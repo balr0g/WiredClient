@@ -45,11 +45,12 @@
 
 - (BOOL)_verifyUnsavedAndSelectRow:(NSInteger)row;
 - (void)_saveAndClear:(BOOL)clear;
-- (BOOL)_canEditAccountOfClass:(Class)class;
+- (BOOL)_canEditAccounts;
 
 - (void)_readAccount:(WCAccount *)account;
-- (void)_validateAccount:(WCAccount *)account;
-- (void)_readFromAccount:(WCAccount *)account;
+- (void)_readAccounts:(NSArray *)accounts;
+- (void)_readFromAccounts;
+- (void)_validateForAccounts;
 - (void)_writeToAccount:(WCAccount *)account;
 
 - (WCAccount *)_accountAtIndex:(NSUInteger)index;
@@ -65,18 +66,14 @@
 
 - (void)_validate {
 	WCAccount	*account;
-	BOOL		save, editing, connected;
+	BOOL		save = NO;
 
-	account		= [[_administration connection] account];
-	connected	= [[_administration connection] isConnected];
-	editing		= (_creatingAccount || _editingAccount);
+	account = [[_administration connection] account];
 	
-	save = NO;
-	
-	if(_accountTouched && connected) {
-		if(_creatingAccount && ([account accountCreateUsers] || [account accountCreateGroups]))
+	if(_touched && [[_administration connection] isConnected]) {
+		if(_creating && ([account accountCreateUsers] || [account accountCreateGroups]))
 			save = YES;
-		else if(_editingAccount && ([account accountEditUsers] || [account accountEditGroups]))
+		else if(_editing && ([account accountEditUsers] || [account accountEditGroups]))
 			save = YES;
 	}
 
@@ -131,7 +128,7 @@
 	NSAlert		*alert;
 	NSString	*name;
 	
-	if(_accountTouched) {
+	if(_touched) {
 		name = [_nameTextField stringValue];
 		
 		if([name length] > 0) {
@@ -157,79 +154,94 @@
 
 
 - (void)_saveAndClear:(BOOL)clear {
-	WIP7Message		*message;
-	WCAccount		*account;
+	NSEnumerator		*enumerator;
+	WCAccount			*account;
 	
-	if([[_nameTextField stringValue] length] == 0)
-		return;
-	
-	if(_editingAccount) {
-		[self _writeToAccount:_account];
-
-		message = [_account editAccountMessage];
-	} else {
+	if(_creating) {
 		if([_typePopUpButton selectedItem] == _userMenuItem)
 			account = [WCUserAccount account];
 		else
 			account = [WCGroupAccount account];
 		
-		[account setValues:[_account values]];
+		[account setValues:[[_accounts lastObject] values]];
 
 		[self _writeToAccount:account];
 		
-		message = [account createAccountMessage];
+		[[_administration connection] sendMessage:[account createAccountMessage] fromObserver:self selector:@selector(wiredAccountChangeAccountReply:)];
+	} else {
+		if([_accounts count] == 1) {
+			account = [_accounts lastObject];
+			
+			[self _writeToAccount:account];
+			
+			[[_administration connection] sendMessage:[account editAccountMessage] fromObserver:self selector:@selector(wiredAccountChangeAccountReply:)];
+		} else {
+			enumerator = [_accounts objectEnumerator];
+		
+			while((account = [enumerator nextObject]))
+				[[_administration connection] sendMessage:[account editAccountMessage] fromObserver:self selector:@selector(wiredAccountChangeAccountReply:)];
+		}
 	}
 	
-	[[_administration connection] sendMessage:message fromObserver:self selector:@selector(wiredAccountChangeAccountReply:)];
-	
-	if(clear && _editingAccount) {
-		[_account release];
-		_account = NULL;
-		[_underlyingAccount release];
-		_underlyingAccount = NULL;
+	if(clear && _editing) {
+		[_accounts removeAllObjects];
 		
-		_editingAccount = NO;
+		_editing = NO;
 	}
 	
-	if(_creatingAccount) {
-		[_account release];
-		_account = NULL;
+	if(_creating) {
+		[_accounts removeAllObjects];
 		
-		_creatingAccount = NO;
-
-		[self _validateAccount:NULL];
-		[self _readFromAccount:NULL];
+		_creating = NO;
+		
+		[self _validateForAccounts];
+		[self _readFromAccounts];
 		[self _reloadAccounts];
 	}
 	
 	[[_administration window] setDocumentEdited:NO];
 
-	_accountTouched = NO;
+	_touched = NO;
 	
 	[self _validate];
 }
 
 
 
-- (BOOL)_canEditAccountOfClass:(Class)class {
-	WCAccount	*account;
-	BOOL		user, group;
+- (BOOL)_canEditAccounts {
+	NSEnumerator	*enumerator;
+	WCAccount		*account;
+	BOOL			user, group, editable;
 	
-	user = group = NO;
+	user		= NO;
+	group		= NO;
+	enumerator	= [_accounts objectEnumerator];
 	
-	if(class == [WCUserAccount class] || (_creatingAccount && [_typePopUpButton selectedItem] == _userMenuItem))
-		user = YES;
-	else if(class == [WCGroupAccount class] || (_creatingAccount && [_typePopUpButton selectedItem] == _groupMenuItem))
-		group = YES;
+	while((account = [enumerator nextObject])) {
+		if([account isKindOfClass:[WCUserAccount class]] || (_creating && [_typePopUpButton selectedItem] == _userMenuItem))
+			user = YES;
+		else if([account isKindOfClass:[WCGroupAccount class]] || (_creating && [_typePopUpButton selectedItem] == _groupMenuItem))
+			group = YES;
+	}
 	
-	account = [[_administration connection] account];
+	editable	= YES;
+	account		= [[_administration connection] account];
 	
-	if(user)
-		return _creatingAccount ? [account accountCreateUsers] : [account accountEditUsers];
-	else if(group)
-		return _creatingAccount ? [account accountCreateGroups] : [account accountEditGroups];
+	if(user) {
+		if(_creating && ![account accountCreateUsers])
+			editable = NO;
+		else if(_editing && ![account accountEditUsers])
+			editable = NO;
+	}
 	
-	return NO;
+	if(group) {
+		if(_creating && ![account accountCreateGroups])
+			editable = NO;
+		else if(_editing && ![account accountEditGroups])
+			editable = NO;
+	}
+	
+	return editable;
 }
 
 
@@ -252,50 +264,31 @@
 
 
 
-- (void)_validateAccount:(WCAccount *)account {
-	BOOL		editable;
+- (void)_readAccounts:(NSArray *)accounts {
+	NSEnumerator	*enumerator;
+	WCAccount		*account;
 	
-	[_userMenuItem setEnabled:[[[_administration connection] account] accountCreateUsers]];
-	[_groupMenuItem setEnabled:[[[_administration connection] account] accountCreateGroups]];
+	[_accounts removeAllObjects];
 	
-	if(account) {
-		editable = [self _canEditAccountOfClass:[account class]];
-		
-		[_typePopUpButton setEnabled:(_creatingAccount && editable)];
-		[_nameTextField setEnabled:(_creatingAccount && editable)];
-		
-		if([account isKindOfClass:[WCUserAccount class]] || (_creatingAccount && [_typePopUpButton selectedItem] == _userMenuItem)) {
-			[_fullNameTextField setEnabled:editable];
-			[_passwordTextField setEnabled:editable];
-			[_groupPopUpButton setEnabled:editable];
-			[_groupsTokenField setEnabled:editable];
-		}
-		else if([account isKindOfClass:[WCGroupAccount class]] || (_creatingAccount && [_typePopUpButton selectedItem] == _groupMenuItem)) {
-			[_fullNameTextField setEnabled:NO];
-			[_passwordTextField setEnabled:NO];
-			[_groupPopUpButton setEnabled:NO];
-			[_groupsTokenField setEnabled:NO];
-		}
-	} else {
-		[_typePopUpButton setEnabled:NO];
-		[_nameTextField setEnabled:NO];
-		[_fullNameTextField setEnabled:NO];
-		[_passwordTextField setEnabled:NO];
-		[_groupPopUpButton setEnabled:NO];
-		[_groupsTokenField setEnabled:NO];
-	}
+	_requestedAccounts = [accounts count];
 	
-	[_settingsOutlineView setNeedsDisplay:YES];
+	enumerator = [accounts objectEnumerator];
+	
+	while((account = [enumerator nextObject]))
+		[self _readAccount:account];
 }
 
 
 
-- (void)_readFromAccount:(WCAccount *)account {
+- (void)_readFromAccounts {
 	NSEnumerator		*enumerator;
 	NSDictionary		*section;
+	WCAccount			*account;
 	
-	if(account) {
-		if(!_creatingAccount) {
+	if([_accounts count] == 1) {
+		account = [_accounts lastObject];
+
+		if(_editing) {
 			if([account isKindOfClass:[WCUserAccount class]]) {
 				[_typePopUpButton selectItem:_userMenuItem];
 				[_fullNameTextField setStringValue:[(WCUserAccount *) account fullName]];
@@ -342,7 +335,20 @@
 			else
 				[_editedByTextField setStringValue:@""];
 		}
-	} else {
+	}
+	else if([_accounts count] == 0) {
+		[_typePopUpButton selectItem:_userMenuItem];
+		[_nameTextField setStringValue:@""];
+		[_fullNameTextField setStringValue:@""];
+		[_passwordTextField setStringValue:@""];
+		[_groupPopUpButton selectItem:_noneMenuItem];
+		[_groupsTokenField setStringValue:@""];
+		[_creationTimeTextField setStringValue:@""];
+		[_modificationTimeTextField setStringValue:@""];
+		[_loginTimeTextField setStringValue:@""];
+		[_editedByTextField setStringValue:@""];
+	}
+	else {
 		[_typePopUpButton selectItem:_userMenuItem];
 		[_nameTextField setStringValue:@""];
 		[_fullNameTextField setStringValue:@""];
@@ -363,6 +369,55 @@
 	
 	while((section = [enumerator nextObject]))
 		[_settingsOutlineView expandItem:section];
+}
+
+
+
+- (void)_validateForAccounts {
+	WCAccount	*account;
+	BOOL		editable;
+	
+	[_userMenuItem setEnabled:[[[_administration connection] account] accountCreateUsers]];
+	[_groupMenuItem setEnabled:[[[_administration connection] account] accountCreateGroups]];
+	
+	if([_accounts count] == 1) {
+		account		= [_accounts lastObject];
+		editable	= [self _canEditAccounts];
+		
+		[_typePopUpButton setEnabled:(_creating && editable)];
+		[_nameTextField setEnabled:(_creating && editable)];
+		
+		if([account isKindOfClass:[WCUserAccount class]] || (_creating && [_typePopUpButton selectedItem] == _userMenuItem)) {
+			[_fullNameTextField setEnabled:editable];
+			[_passwordTextField setEnabled:editable];
+			[_groupPopUpButton setEnabled:editable];
+			[_groupsTokenField setEnabled:editable];
+		}
+		else if([account isKindOfClass:[WCGroupAccount class]] || (_creating && [_typePopUpButton selectedItem] == _groupMenuItem)) {
+			[_fullNameTextField setEnabled:NO];
+			[_passwordTextField setEnabled:NO];
+			[_groupPopUpButton setEnabled:NO];
+			[_groupsTokenField setEnabled:NO];
+		}
+	}
+	else if([_accounts count] == 0) {
+		[_typePopUpButton setEnabled:NO];
+		[_nameTextField setEnabled:NO];
+		[_fullNameTextField setEnabled:NO];
+		[_passwordTextField setEnabled:NO];
+		[_groupPopUpButton setEnabled:NO];
+		[_groupsTokenField setEnabled:NO];
+	}
+	else {
+		[_typePopUpButton setEnabled:NO];
+		[_nameTextField setEnabled:NO];
+		[_fullNameTextField setEnabled:NO];
+		[_passwordTextField setEnabled:NO];
+		[_groupPopUpButton setEnabled:NO];
+		[_groupsTokenField setEnabled:NO];
+	}
+	
+	[_settingsOutlineView setNeedsDisplay:YES];
 }
 
 
@@ -487,10 +542,11 @@
 
 
 - (void)_reloadSettings {
-	NSEnumerator			*enumerator, *settingsEnumerator;
+	NSEnumerator			*enumerator, *settingsEnumerator, *accountsEnumerator;
 	NSMutableDictionary		*newSection;
 	NSMutableArray			*settings;
 	NSDictionary			*section, *setting;
+	WCAccount				*account;
 	
 	if([_showPopUpButton selectedItem] == _allSettingsMenuItem) {
 		[_shownSettings setArray:_allSettings];
@@ -504,8 +560,14 @@
 			settingsEnumerator	= [[section objectForKey:WCAccountsFieldSettings] objectEnumerator];
 			
 			while((setting = [settingsEnumerator nextObject])) {
-				if([_account valueForKey:[setting objectForKey:WCAccountFieldName]])
-					[settings addObject:setting];
+				if(![settings containsObject:setting]) {
+					accountsEnumerator = [_accounts objectEnumerator];
+					
+					while((account = [accountsEnumerator nextObject])) {
+						if([account valueForKey:[setting objectForKey:WCAccountFieldName]])
+							[settings addObject:setting];
+					}
+				}
 			}
 			
 			if([settings count] > 0) {
@@ -612,6 +674,7 @@
 	_shownAccounts			= [[NSMutableArray alloc] init];
 	_userImage				= [[NSImage imageNamed:@"User"] retain];
 	_groupImage				= [[NSImage imageNamed:@"Group"] retain];
+	_accounts				= [[NSMutableArray alloc] init];
 
 	basicsSettings			= [NSMutableArray array];
 	filesSettings			= [NSMutableArray array];
@@ -631,6 +694,7 @@
 				buttonCell = [[NSButtonCell alloc] initTextCell:@""];
 				[buttonCell setButtonType:NSSwitchButton];
 				[buttonCell setControlSize:NSSmallControlSize];
+				[buttonCell setAllowsMixedState:YES];
 				[setting setObject:buttonCell forKey:WCAccountsFieldCell];
 				[buttonCell release];
 				break;
@@ -734,8 +798,7 @@
 	[_allAccounts release];
 	[_shownAccounts release];
 	
-	[_account release];
-	[_underlyingAccount release];
+	[_accounts release];
 	
 	[_dateFormatter release];
 	[_accountFilter release];
@@ -761,8 +824,8 @@
 	[_dateFormatter setDateStyle:NSDateFormatterMediumStyle];
 	[_dateFormatter setNaturalLanguageStyle:WIDateFormatterCapitalizedNaturalLanguageStyle];
 	
-	[self _validateAccount:NULL];
-	[self _readFromAccount:NULL];
+	[self _validateForAccounts];
+	[self _readFromAccounts];
 }
 
 
@@ -783,7 +846,7 @@
 - (void)serverConnectionPrivilegesDidChange:(NSNotification *)notification {
 	[self _reloadAccounts];
 	[self _validate];
-	[self _validateAccount:_account];
+	[self _validateForAccounts];
 }
 
 
@@ -812,39 +875,48 @@
 
 
 - (void)wiredAccountReadAccountReply:(WIP7Message *)message {
-	WCAccount		*account = NULL;
+	WCUserAccount	*userAccount;
+	WCAccount		*account;
 	
-	if([[message name] isEqualToString:@"wired.account.user"])
-		account = [WCUserAccount accountWithMessage:message];
-	else if([[message name] isEqualToString:@"wired.account.group"])
-		account = [WCGroupAccount accountWithMessage:message];
-	else if([[message name] isEqualToString:@"wired.error"])
+	if([[message name] isEqualToString:@"wired.account.user"] || [[message name] isEqualToString:@"wired.account.group"]) {
+		if([[message name] isEqualToString:@"wired.account.user"])
+			account = [WCUserAccount accountWithMessage:message];
+		else if([[message name] isEqualToString:@"wired.account.group"])
+			account = [WCGroupAccount accountWithMessage:message];
+		
+		if(_requestedAccounts == 1 && [_accounts count] == 1) {
+			userAccount = [_accounts lastObject];
+			
+			if([userAccount isKindOfClass:[WCUserAccount class]] && [account isKindOfClass:[WCGroupAccount class]] &&
+			   [[userAccount group] isEqualToString:[account name]]) {
+				[userAccount setGroupAccount:(WCGroupAccount *) account];
+			}
+			
+			[_progressIndicator stopAnimation:self];
+			
+			[self _validateForAccounts];
+			[self _readFromAccounts];
+		} else {
+			[_accounts addObject:account];
+			
+			if([_accounts count] == _requestedAccounts) {
+				if([_accounts count] == 1) {
+					if([account isKindOfClass:[WCUserAccount class]] && [[(WCUserAccount *) account group] length] > 0)
+						[self _readAccount:[WCGroupAccount accountWithName:[(WCUserAccount *) account group]]]; 
+				}
+				
+				[_progressIndicator stopAnimation:self];
+			
+				_editing = YES;
+
+				[self _validateForAccounts];
+				[self _readFromAccounts];
+			}
+		}
+		
+	}
+	else if([[message name] isEqualToString:@"wired.error"]) {
 		[_administration showError:[WCError errorWithWiredMessage:message]];
-
-	[_progressIndicator stopAnimation:self];
-
-	if(account) {
-		if([[account name] isEqualToString:[[self _selectedAccount] name]]) {
-			[_account release];
-			_account = [account retain];
-			
-			_editingAccount = YES;
-			
-			if([_account isKindOfClass:[WCUserAccount class]] && [[(WCUserAccount *) _account group] length] > 0)
-				[self _readAccount:[WCGroupAccount accountWithName:[(WCUserAccount *) _account group]]]; 
-			
-			[self _validate];
-			[self _validateAccount:_account];
-			[self _readFromAccount:_account];
-		}
-		else if(([_account isKindOfClass:[WCUserAccount class]] && [[(WCUserAccount *) _account group] isEqualToString:[account name]]) ||
-				(_creatingAccount && [[_groupPopUpButton titleOfSelectedItem] isEqualToString:[account name]])) {
-			[_underlyingAccount release];
-			_underlyingAccount = [account retain];
-			
-			[self _validateAccount:_account];
-			[self _readFromAccount:_account];
-		}
 	}
 }
 
@@ -1068,7 +1140,7 @@
 #pragma mark -
 
 - (IBAction)touch:(id)sender {
-	_accountTouched = YES;
+	_touched = YES;
 
 	[[_administration window] setDocumentEdited:YES];
 	
@@ -1078,7 +1150,7 @@
 
 
 - (IBAction)add:(id)sender {
-	[_account release];
+/*	[_account release];
 	_account = NULL;
 	
 	[_underlyingAccount release];
@@ -1090,7 +1162,7 @@
 	[_account setName:NSLS(@"Untitled", @"Account name")];
 
 	_creatingAccount = YES;
-	_accountTouched = YES;
+	_touched = YES;
 	
 	[_accountsTabView selectTabViewItemAtIndex:0];
 	
@@ -1109,7 +1181,7 @@
 	[[_administration window] setDocumentEdited:YES];
 	
 	[[_administration window] makeFirstResponder:_nameTextField];
-	[_nameTextField selectText:self];
+	[_nameTextField selectText:self];*/
 }
 
 
@@ -1285,17 +1357,22 @@
 
 
 - (IBAction)type:(id)sender {
-	[self _validateAccount:_account];
+	[self _validateForAccounts];
 }
 
 
 
 - (IBAction)group:(id)sender {
+	WCUserAccount		*account;
+	
+	account = [_accounts lastObject];
+	
 	if([_groupPopUpButton selectedItem] != _noneMenuItem) {
-		[self _readAccount:[WCGroupAccount accountWithName:[_groupPopUpButton titleOfSelectedItem]]];
+		[account setGroup:[_groupPopUpButton titleOfSelectedItem]];
+		
+		[self _readAccount:[WCGroupAccount accountWithName:[account group]]];
 	} else {
-		[_underlyingAccount release];
-		_underlyingAccount = NULL;
+		[account setGroup:@""];
 		
 		[_settingsOutlineView reloadData];
 	}
@@ -1312,11 +1389,13 @@
 
 
 - (IBAction)clearSetting:(id)sender {
-	NSDictionary	*setting;
-	NSString		*name;
-	NSIndexSet		*indexes;
-	NSUInteger		index;
-	BOOL			changed = NO;
+	NSEnumerator		*enumerator;
+	NSDictionary		*setting;
+	NSString			*name;
+	NSIndexSet			*indexes;
+	WCAccount			*account;
+	NSUInteger			index;
+	BOOL				changed = NO;
 	
 	indexes		= [_settingsOutlineView selectedRowIndexes];
 	index		= [indexes firstIndex];
@@ -1326,7 +1405,10 @@
 		name		= [setting objectForKey:WCAccountFieldName];
 		
 		if(name) {
-			[_account setValue:NULL forKey:name];
+			enumerator = [_accounts objectEnumerator];
+			
+			while((account = [enumerator nextObject]))
+				[account setValue:NULL forKey:name];
 			
 			changed = YES;
 		}
@@ -1360,22 +1442,20 @@
 		if(returnCode == NSAlertFirstButtonReturn) {
 			[self _saveAndClear:YES];
 		} else {
-			[_account release];
-			_account = NULL;
-			[_underlyingAccount release];
-			_underlyingAccount = NULL;
-			_creatingAccount = NO;
+			[_accounts removeAllObjects];
+			
+			_creating = _editing = NO;
 		}
 
-		_accountTouched = NO;
+		_touched = NO;
 
 		[[_administration window] setDocumentEdited:NO];
 
 		if(row >= 0) {
 			[_accountsTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
 		} else {
-			[self _validateAccount:NULL];
-			[self _readFromAccount:NULL];
+			[self _validateForAccounts];
+			[self _readFromAccounts];
 			
 			if(row == -2) {
 				[_accountsTableView deselectAll:self];
@@ -1436,18 +1516,15 @@
 - (void)tableViewSelectionDidChange:(NSNotification *)notification {
 	if([self _verifyUnsavedAndSelectRow:-1]) {
 		if([[[_administration connection] account] accountReadAccounts]) {
-			if([_accountsTableView numberOfSelectedRows] == 1) {
-				[self _readAccount:[self _selectedAccount]];
+			if([_accountsTableView numberOfSelectedRows] > 0) {
+				[self _readAccounts:[self _selectedAccounts]];
 			} else {
-				[_account release];
-				_account = NULL;
-				[_underlyingAccount release];
-				_underlyingAccount = NULL;
-				_editingAccount = NO;
-				_creatingAccount = NO;
+				[_accounts removeAllObjects];
+				
+				_editing = _creating = NO;
 
-				[self _validateAccount:NULL];
-				[self _readFromAccount:NULL];
+				[self _validateForAccounts];
+				[self _readFromAccounts];
 			}
 		}
 		
@@ -1460,7 +1537,7 @@
 #pragma mark -
 
 - (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item {
-	if(!_account)
+	if([_accounts count] == 0)
 		return 0;
 	
 	if(!item)
@@ -1481,24 +1558,68 @@
 
 
 - (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item {
-	id			value;
+	NSEnumerator		*enumerator;
+	NSMutableSet		*values;
+	NSString			*name;
+	WCAccount			*account;
+	id					value;
+	NSInteger			type;
 	
 	if(tableColumn == _settingTableColumn) {
 		return [item objectForKey:WCAccountFieldLocalizedName];
 	}
 	else if(tableColumn == _valueTableColumn) {
-		value = [_account valueForKey:[item objectForKey:WCAccountFieldName]];
+		type = [[item objectForKey:WCAccountFieldType] integerValue];
+		name = [item objectForKey:WCAccountFieldName];
 		
-		if(!value)
-			value = [_underlyingAccount valueForKey:[item objectForKey:WCAccountFieldName]];
-		
-		if([[item objectForKey:WCAccountFieldType] intValue] == WCAccountFieldNumber && [value integerValue] == 0)
+		if(!name)
 			return NULL;
 		
-		if([[item objectForKey:WCAccountFieldName] isEqualToString:@"wired.account.transfer.download_speed_limit"] ||
-		   [[item objectForKey:WCAccountFieldName] isEqualToString:@"wired.account.transfer.upload_speed_limit"])
-			value = [NSNumber numberWithInteger:[value doubleValue] / 1024.0];
+		if([_accounts count] == 1) {
+			account		= [_accounts lastObject];
+			value		= [account valueForKey:name];
+			
+			if(!value && [account isKindOfClass:[WCUserAccount class]])
+				value = [[(WCUserAccount *) account groupAccount] valueForKey:name];
+		} else {
+			values		= [NSMutableSet set];
+			enumerator	= [_accounts objectEnumerator];
+			
+			while((account = [enumerator nextObject])) {
+				value = [account valueForKey:name];
+				
+				if(value)
+					[values addObject:value];
+				else
+					[values addObject:[NSNull null]];
+			}
+			
+			if([values count] == 1) {
+				value = [values anyObject];
+				
+				if([value isKindOfClass:[NSNull class]])
+					value = @"";
+			}
+			else if([values count] == 0) {
+				value = NULL;
+			}
+			else {
+				if(type == WCAccountFieldBoolean)
+					value = [NSNumber numberWithInteger:NSMixedState];
+				else
+					value = NSLS(@"<Multiple values>", @"Account field value");
+			}
+		}
+
+		if([name isEqualToString:@"wired.account.transfer.download_speed_limit"] ||
+		   [name isEqualToString:@"wired.account.transfer.upload_speed_limit"]) {
+			if([value isKindOfClass:[NSNumber class]])
+				value = [NSNumber numberWithInteger:[value doubleValue] / 1024.0];
+		}
 		
+		if(type == WCAccountFieldNumber && [value isKindOfClass:[NSNumber class]] && [value integerValue] == 0)
+			value = NULL;
+
 		return value;
 	}
 
@@ -1508,20 +1629,29 @@
 
 
 - (void)outlineView:(NSOutlineView *)outlineView setObjectValue:(id)object forTableColumn:(NSTableColumn *)tableColumn byItem:(id)item {
-	NSString	*name;
-	id			value;
+	NSEnumerator	*enumerator;
+	NSString		*name;
+	WCAccount		*account;
+	NSInteger		type;
+	id				value;
 	
+	type	= [[item objectForKey:WCAccountFieldType] integerValue];
 	name	= [item objectForKey:WCAccountFieldName];
 	value	= object;
 	
-	if([[item objectForKey:WCAccountFieldType] intValue] == WCAccountFieldNumber)
-		value = [NSNumber numberWithInteger:[object integerValue]];
-	
+	if(type == WCAccountFieldNumber)
+		value = [NSNumber numberWithInteger:[value integerValue]];
+	else if(type == WCAccountFieldBoolean)
+		value = [NSNumber numberWithBool:([value integerValue] == -1) ? YES : [value boolValue]];
+
 	if([name isEqualToString:@"wired.account.transfer.download_speed_limit"] ||
 	   [name isEqualToString:@"wired.account.transfer.upload_speed_limit"])
 		value = [NSNumber numberWithInteger:[value integerValue] * 1024.0];
 
-	[_account setValue:value forKey:name];
+	enumerator = [_accounts objectEnumerator];
+	
+	while((account = [enumerator nextObject]))
+		[account setValue:value forKey:name];
 	
 	[self touch:self];
 	
@@ -1531,13 +1661,36 @@
 
 
 - (void)outlineView:(NSOutlineView *)outlineView willDisplayCell:(id)cell forTableColumn:(NSTableColumn *)tableColumn item:(id)item {
-	if([_account valueForKey:[item objectForKey:WCAccountFieldName]])
+	NSEnumerator	*enumerator;
+	NSString		*name;
+	WCAccount		*account;
+	BOOL			set = NO;
+	
+	name		= [item objectForKey:WCAccountFieldName];
+	enumerator	= [_accounts objectEnumerator];
+	
+	while((account = [enumerator nextObject])) {
+		if([account valueForKey:name]) {
+			set = YES;
+			
+			break;
+		}
+	}
+	
+	if(set)
 		[cell setFont:[[cell font] fontByAddingTrait:NSBoldFontMask]];
 	else
 		[cell setFont:[[cell font] fontByAddingTrait:NSUnboldFontMask]];
 	
+	if([cell respondsToSelector:@selector(setTextColor:)]) {
+		if([[cell objectValue] isEqual:NSLS(@"<Multiple values>", @"Account field value")])
+			[cell setTextColor:[NSColor grayColor]];
+		else
+			[cell setTextColor:[NSColor blackColor]];
+	}
+	
 	if(tableColumn == _valueTableColumn)
-		[cell setEnabled:[self _canEditAccountOfClass:[_account class]]];
+		[cell setEnabled:[self _canEditAccounts]];
 }
 
 
