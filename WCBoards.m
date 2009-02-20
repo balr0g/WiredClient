@@ -750,6 +750,8 @@
 	[_threadsTableView setAllowsUserCustomization:YES];
 	[_threadsTableView setAutosaveName:@"Threads"];
     [_threadsTableView setAutosaveTableColumns:YES];
+	[_threadsTableView setTarget:self];
+	[_threadsTableView setDeleteAction:@selector(deleteThread:)];
 	
 	[[_unreadThreadTableColumn headerCell] setImage:[NSImage imageNamed:@"UnreadHeader"]];
 	
