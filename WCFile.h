@@ -110,6 +110,7 @@ typedef enum _WCFilePermissions		WCFilePermissions;
 
 - (NSComparisonResult)compareName:(WCFile *)file;
 - (NSComparisonResult)compareKind:(WCFile *)file;
+- (NSComparisonResult)compareCreationDate:(WCFile *)file;
 - (NSComparisonResult)compareModificationDate:(WCFile *)file;
 - (NSComparisonResult)compareSize:(WCFile *)file;
 
