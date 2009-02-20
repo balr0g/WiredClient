@@ -843,19 +843,49 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 
 + (NSString *)URLRegex {
-	return @"(?<!(?:=|\\[|\\]|<|\"?>))" @"(\\w+://(\\w|\\.|/|~|-|_|\\?|\\!|;|&|=|%|#|:|@|\\+|$|,|\\*|\\(|\\))+)" @"(?!(?:\\[|\\]|<|\"?>))";
+	return @"\\w+://(?:\\w|\\.|/|~|-|_|\\?|\\!|;|&|=|%|#|:|@|\\+|$|,|\\*|\\(|\\))+?";
 }
 
 
 
 + (NSString *)schemelessURLRegex {
-	return @"(?<!(?:=|\\[|\\]|<|\"?>))" @"(www\\.(\\w|\\.|/|~|-|_|\\?|\\!|;|&|=|%|#|:|@|\\+|$|,|\\*|\\(|\\))+)" @"(?!(?:\\[|\\]|<|\"?>))";
+	return @"www\\.(?:\\w|\\.|/|~|-|_|\\?|\\!|;|&|=|%|#|:|@|\\+|$|,|\\*|\\(|\\))+?";
 }
 
 
 
 + (NSString *)mailtoURLRegex {
-	return @"(?<!(?:=|\\[|\\]|<|\"?>))" @"((\\w|\\.|_|-)+@(\\w|\\.|_|-)+)" @"(?!(?:\\[|\\]|<|\"?>))";
+	return @"(?:\\w|\\.|_|-)+@(?:\\w|\\.|_|-)+?";
+}
+
+
+
++ (NSDictionary *)smileyRegexs {
+	NSEnumerator			*enumerator;
+	NSMutableDictionary		*regexs;
+	NSMutableString			*regex;
+	NSString				*smiley;
+	
+	regexs		= [NSMutableDictionary dictionary];
+	enumerator	= [[[WCApplicationController sharedController] allSmileys] objectEnumerator];
+	
+	while((smiley = [enumerator nextObject])) {
+		regex	= [[smiley mutableCopy] autorelease];
+		
+		[regex replaceOccurrencesOfString:@"." withString:@"\\."];
+		[regex replaceOccurrencesOfString:@"*" withString:@"\\*"];
+		[regex replaceOccurrencesOfString:@"+" withString:@"\\+"];
+		[regex replaceOccurrencesOfString:@"^" withString:@"\\^"];
+		[regex replaceOccurrencesOfString:@"$" withString:@"\\$"];
+		[regex replaceOccurrencesOfString:@"(" withString:@"\\("];
+		[regex replaceOccurrencesOfString:@")" withString:@"\\)"];
+		[regex replaceOccurrencesOfString:@"[" withString:@"\\["];
+		[regex replaceOccurrencesOfString:@"]" withString:@"\\]"];
+		
+		[regexs setObject:regex forKey:smiley];
+	}
+	
+	return regexs;
 }
 
 

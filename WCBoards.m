@@ -374,7 +374,7 @@
 
 - (NSString *)_HTMLStringForPost:(WCBoardPost *)post {
 	NSEnumerator		*enumerator;
-	NSDictionary		*theme;
+	NSDictionary		*theme, *regexs;
 	NSMutableString		*string, *text, *regex;
 	NSString			*smiley, *path;
 	WCAccount			*account;
@@ -399,21 +399,12 @@
 		;
 	
 	if([theme boolForKey:WCThemesShowSmileys]) {
-		enumerator = [[[WCApplicationController sharedController] allSmileys] objectEnumerator];
+		regexs		= [WCChatController smileyRegexs];
+		enumerator	= [regexs keyEnumerator];
 		
 		while((smiley = [enumerator nextObject])) {
+			regex	= [regexs objectForKey:smiley];
 			path	= [[WCApplicationController sharedController] pathForSmiley:smiley];
-			regex	= [[smiley mutableCopy] autorelease];
-			
-			[regex replaceOccurrencesOfString:@"." withString:@"\\."];
-			[regex replaceOccurrencesOfString:@"*" withString:@"\\*"];
-			[regex replaceOccurrencesOfString:@"+" withString:@"\\+"];
-			[regex replaceOccurrencesOfString:@"^" withString:@"\\^"];
-			[regex replaceOccurrencesOfString:@"$" withString:@"\\$"];
-			[regex replaceOccurrencesOfString:@"(" withString:@"\\("];
-			[regex replaceOccurrencesOfString:@")" withString:@"\\)"];
-			[regex replaceOccurrencesOfString:@"[" withString:@"\\["];
-			[regex replaceOccurrencesOfString:@"]" withString:@"\\]"];
 			
 			[text replaceOccurrencesOfRegex:[NSSWF:@"(^|\\s)%@(\\s|$)", regex]
 								 withString:[NSSWF:@"$1<img src=\"%@\" alt=\"%@\" />$2", path, smiley]];
@@ -484,12 +475,24 @@
 
 - (NSString *)_textForPostText:(NSString *)text {
 	NSMutableString		*string;
+	NSString			*regex;
 	
 	string = [[text mutableCopy] autorelease];
 	
-	[string replaceOccurrencesOfRegex:[WCChatController URLRegex] withString:@"[url]$1[/url]" options:RKLCaseless];
-	[string replaceOccurrencesOfRegex:[WCChatController schemelessURLRegex] withString:@"[url]$1[/url]" options:RKLCaseless];
-	[string replaceOccurrencesOfRegex:[WCChatController mailtoURLRegex] withString:@"[email]$1[/email]" options:RKLCaseless];
+	regex = [NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController URLRegex]];
+
+	while([string replaceOccurrencesOfRegex:regex withString:@"$1[url]$2[/url]$3$4" options:RKLCaseless] > 0)
+		;
+	
+	regex = [NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController schemelessURLRegex]];
+	
+	while([string replaceOccurrencesOfRegex:regex withString:@"$1[url]http://$2[/url]$3$4" options:RKLCaseless] > 0)
+		;
+	
+	regex = [NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController mailtoURLRegex]];
+	
+	while([string replaceOccurrencesOfRegex:regex withString:@"$1[email]$2[/email]$3$4" options:RKLCaseless] > 0)
+		;
 	
 	return string;
 }

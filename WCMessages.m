@@ -313,9 +313,9 @@
 
 - (NSString *)_HTMLStringForMessage:(WCMessage *)message icon:(NSString *)icon {
 	NSEnumerator		*enumerator;
-	NSDictionary		*theme;
+	NSDictionary		*theme, *regexs;
 	NSMutableString		*string, *text;
-	NSString			*smiley, *path;
+	NSString			*smiley, *path, *regex;
 	
 	theme		= [[message connection] theme];
 	text		= [[[message message] mutableCopy] autorelease];
@@ -327,17 +327,31 @@
 	[text replaceOccurrencesOfString:@"\'" withString:@"&#39;"];
 	[text replaceOccurrencesOfString:@"\n" withString:@"<br />"];
 	
-	[text replaceOccurrencesOfRegex:[WCChatController URLRegex] withString:@"<a href=\"$1\">$1</a>" options:RKLCaseless];
-	[text replaceOccurrencesOfRegex:[WCChatController schemelessURLRegex] withString:@"<a href=\"http://$1\">$1</a>" options:RKLCaseless];
-	[text replaceOccurrencesOfRegex:[WCChatController mailtoURLRegex] withString:@"<a href:\"mailto:$1\">$1</a>" options:RKLCaseless];
+	regex = [NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController URLRegex]];
 	
+	while([text replaceOccurrencesOfRegex:regex withString:@"$1<a href=\"$2\">$2</a>$3$4" options:RKLCaseless] > 0)
+		;
+	
+	regex = [NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController schemelessURLRegex]];
+	
+	while([text replaceOccurrencesOfRegex:regex withString:@"$1<a href=\"http://$2\">$2</a>$3$4" options:RKLCaseless] > 0)
+		;
+	
+	regex = [NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController mailtoURLRegex]];
+	
+	while([text replaceOccurrencesOfRegex:regex withString:@"$1<a href=\"mailto:$2\">$2</a>$3$4" options:RKLCaseless] > 0)
+		;
+
 	if([theme boolForKey:WCThemesShowSmileys]) {
-		enumerator = [[[WCApplicationController sharedController] allSmileys] objectEnumerator];
+		regexs		= [WCChatController smileyRegexs];
+		enumerator	= [regexs keyEnumerator];
 		
 		while((smiley = [enumerator nextObject])) {
-			path = [[WCApplicationController sharedController] pathForSmiley:smiley];
-			
-			[text replaceOccurrencesOfString:smiley withString:[NSSWF:@"<img src=\"%@\" alt=\"%@\" />", path, smiley]];
+			regex	= [regexs objectForKey:smiley];
+			path	= [[WCApplicationController sharedController] pathForSmiley:smiley];
+		
+			[text replaceOccurrencesOfRegex:[NSSWF:@"(^|\\s)%@(\\s|$)", regex]
+								 withString:[NSSWF:@"$1<img src=\"%@\" alt=\"%@\" />$2", path, smiley]];
 		}
 	}
 

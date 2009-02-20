@@ -113,6 +113,7 @@
 + (NSString *)URLRegex;
 + (NSString *)schemelessURLRegex;
 + (NSString *)mailtoURLRegex;
++ (NSDictionary *)smileyRegexs;
 
 - (void)linkConnectionLoggedIn:(NSNotification *)notification;
 - (void)wiredChatJoinChatReply:(WIP7Message *)message;
