@@ -248,6 +248,7 @@ typedef enum _WCChatActivity				WCChatActivity;
 	toolbar = [[NSToolbar alloc] initWithIdentifier:@"PublicChat"];
 	[toolbar setDelegate:self];
 	[toolbar setAllowsUserCustomization:YES];
+	[toolbar setAutosavesConfiguration:YES];
 	[toolbar setShowsBaselineSeparator:NO];
 	[[self window] setToolbar:toolbar];
 	[toolbar release];

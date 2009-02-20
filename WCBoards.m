@@ -719,6 +719,7 @@
 	toolbar = [[NSToolbar alloc] initWithIdentifier:@"Boards"];
 	[toolbar setDelegate:self];
 	[toolbar setAllowsUserCustomization:YES];
+	[toolbar setAutosavesConfiguration:YES];
 	[[self window] setToolbar:toolbar];
 	[toolbar release];
 	
