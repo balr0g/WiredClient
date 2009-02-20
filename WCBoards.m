@@ -2046,41 +2046,78 @@
 
 
 - (IBAction)deleteThread:(id)sender {
-	NSAlert				*alert;
-	WCBoard				*board;
-	WCBoardThread		*thread;
+	NSAlert			*alert;
+	NSArray			*threads;
+	NSString		*title, *description;
+	WCBoard			*board;
+	NSUInteger		count;
 	
 	board	= [self _selectedBoard];
-	thread	= [self _selectedThread];
+	threads	= [self _selectedThreads];
 	
-	if(!thread)
+	if(!threads)
 		return;
+
+	count = [threads count];
+
+	if(count == 1) {
+		title = [NSSWF:
+			NSLS(@"Are you sure you want to delete the thread \u201c%@\u201d?", @"Delete thread dialog title (filename)"),
+			[[[threads objectAtIndex:0] postAtIndex:0] subject]];
+		description = NSLS(@"All posts in the thread will be deleted as well. This cannot be undone.", @"Delete thread dialog description");
+	} else {
+		title = [NSSWF:
+			NSLS(@"Are you sure you want to delete %lu threads?", @"Delete thread dialog title (count)"),
+			count];
+		description = NSLS(@"All posts in the threads will be deleted as well. This cannot be undone.", @"Delete thread dialog description");
+	}
 	
 	alert = [[[NSAlert alloc] init] autorelease];
-	[alert setMessageText:[NSSWF:NSLS(@"Are you sure you want to delete the thread \u201c%@\u201d?", @"Delete thread dialog title"), [[thread postAtIndex:0] subject]]];
-	[alert setInformativeText:NSLS(@"All posts in the thread will be deleted as well. This cannot be undone.", @"Delete thread dialog description")];
+	[alert setMessageText:title];
+	[alert setInformativeText:description];
 	[alert addButtonWithTitle:NSLS(@"Delete", @"Delete thread button title")];
 	[alert addButtonWithTitle:NSLS(@"Cancel", @"Delete thread button title")];
 	[alert beginSheetModalForWindow:[self window]
 					  modalDelegate:self
 					 didEndSelector:@selector(deleteThreadAlertDidEnd:returnCode:contextInfo:)
-						contextInfo:[[NSArray alloc] initWithObjects:board, thread, NULL]];
+						contextInfo:[[NSArray alloc] initWithObjects:board, threads, NULL]];
 }
 
 
 
 - (void)deleteThreadAlertDidEnd:(NSAlert *)alert returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+	NSEnumerator	*enumerator;
 	NSArray			*array = contextInfo;
+	NSArray			*threads = [array objectAtIndex:1];
 	WIP7Message		*message;
 	WCBoard			*board = [array objectAtIndex:0];
-	WCBoardThread	*thread = [array objectAtIndex:1];
+	WCBoardThread	*thread;
+	BOOL			changedUnread = NO;
 	
 	if(returnCode == NSAlertFirstButtonReturn) {
 		if([[board connection] isConnected]) {
-			message = [WIP7Message messageWithName:@"wired.board.delete_thread" spec:WCP7Spec];
-			[message setString:[board path] forName:@"wired.board.board"];
-			[message setUUID:[thread threadID] forName:@"wired.board.thread"];
-			[[board connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardDeleteThreadReply:)];
+			enumerator = [threads objectEnumerator];
+			
+			while((thread = [enumerator nextObject])) {
+				if([thread isUnread]) {
+					[thread setUnread:NO];
+					
+					changedUnread = YES;
+				}
+				
+				message = [WIP7Message messageWithName:@"wired.board.delete_thread" spec:WCP7Spec];
+				[message setString:[board path] forName:@"wired.board.board"];
+				[message setUUID:[thread threadID] forName:@"wired.board.thread"];
+				[[board connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardDeleteThreadReply:)];
+			}
+			
+			if(changedUnread) {
+				[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
+			
+				[self _savePosts];
+				
+				[_boardsOutlineView setNeedsDisplay:YES];
+			}
 		}
 	}
 	
