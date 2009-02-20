@@ -40,9 +40,11 @@
 	IBOutlet NSView									*_messageTopView;
 	IBOutlet NSView									*_messageBottomView;
 
-	IBOutlet NSOutlineView							*_conversationsOutlineView;
+	IBOutlet WIOutlineView							*_conversationsOutlineView;
 	IBOutlet NSTableColumn							*_conversationTableColumn;
 	IBOutlet NSTableColumn							*_unreadTableColumn;
+	
+	IBOutlet NSButton								*_deleteConversationButton;
 	
 	IBOutlet WebView								*_messageWebView;
 	IBOutlet NSTextView								*_messageTextView;
@@ -79,5 +81,6 @@
 
 - (IBAction)revealInUserList:(id)sender;
 - (IBAction)clearMessages:(id)sender;
+- (IBAction)deleteConversation:(id)sender;
 
 @end

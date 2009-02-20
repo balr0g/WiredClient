@@ -519,7 +519,7 @@
 	for(i = 0; i < count; i++) {
 		message = [_messages objectAtIndex:i];
 		
-		if(![message user]) {
+		if(![message user] && [message connection] == [user connection]) {
 			if([[user nick] isEqualToString:[message nick]] && [[user login] isEqualToString:[message login]])
 				[message setUser:user];
 		}
@@ -530,7 +530,7 @@
 	for(i = 0; i < count; i++) {
 		conversation = [_conversations objectAtIndex:i];
 		
-		if(![conversation user]) {
+		if(![conversation user] && [conversation connection] == [user connection]) {
 			if([[user nick] isEqualToString:[conversation nick]] && [[user login] isEqualToString:[conversation login]])
 				[conversation setUser:user];
 		}

@@ -733,6 +733,8 @@
 	[_threadsSplitView setAutosaveName:@"Threads"];
 	
 	[_boardsOutlineView registerForDraggedTypes:[NSArray arrayWithObjects:WCBoardPboardType, WCThreadPboardType, NULL]];
+	[_boardsOutlineView setTarget:self];
+	[_boardsOutlineView setDeleteAction:@selector(deleteBoard:)];
 
 	[[_boardTableColumn dataCell] setVerticalTextOffset:3.0];
 	[[_unreadBoardTableColumn dataCell] setImageAlignment:NSImageAlignRight];

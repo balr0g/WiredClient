@@ -251,7 +251,7 @@
 	[html replaceOccurrencesOfString:@"<? textcolor ?>" withString:[NSSWF:@"#%.6x", [_messageColor HTMLValue]]];
 	[html replaceOccurrencesOfString:@"<? backgroundcolor ?>" withString:[NSSWF:@"#%.6x", [_backgroundColor HTMLValue]]];
 
-	if(conversation) {
+	if(conversation && ![conversation isExpandable]) {
 		isKeyWindow		= ([NSApp keyWindow] == [self window]);
 		calendar		= [NSCalendar currentCalendar];
 		day				= -1;
@@ -526,6 +526,9 @@
 
 	[[_conversationTableColumn dataCell] setVerticalTextOffset:3.0];
 	[[_unreadTableColumn dataCell] setImageAlignment:NSImageAlignRight];
+	
+	[_conversationsOutlineView setTarget:self];
+	[_conversationsOutlineView setDeleteAction:@selector(deleteConversation:)];
 	
 	_conversations			= [[WCConversation rootConversation] retain];
 	_messageConversations	= [[WCMessageConversation rootConversation] retain];
@@ -1206,6 +1209,50 @@
 		[self _validate];
 		[self _reloadConversation];
 	}
+}
+
+
+
+- (IBAction)deleteConversation:(id)sender {
+	NSAlert				*alert;
+	WCConversation		*conversation;
+	
+	conversation = [self _selectedConversation];
+	
+	if(!conversation || [conversation isExpandable])
+		return;
+	
+	alert = [[[NSAlert alloc] init] autorelease];
+	[alert setMessageText:[NSSWF:NSLS(@"Are you sure you want to delete the conversation with \u201c%@\u201d?", @"Delete conversation dialog title"), [conversation nick]]];
+	[alert setInformativeText:NSLS(@"This cannot be undone.", @"Delete conversation dialog description")];
+	[alert addButtonWithTitle:NSLS(@"Delete", @"Delete board button title")];
+	[alert addButtonWithTitle:NSLS(@"Cancel", @"Delete board button title")];
+	[alert beginSheetModalForWindow:[self window]
+					  modalDelegate:self
+					 didEndSelector:@selector(deleteConversationAlertDidEnd:returnCode:contextInfo:)
+						contextInfo:[conversation retain]];
+}
+
+
+
+- (void)deleteConversationAlertDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+	WCConversation		*conversation = contextInfo;
+	
+	if(returnCode == NSAlertFirstButtonReturn) {
+/*		[self _readMessages];
+		[self _removeAllMessages];
+		[self _saveMessages];
+		
+		[_conversationsOutlineView reloadData];
+		
+		[_selectedConversation release];
+		_selectedConversation = NULL;
+		
+		[self _validate];
+		[self _reloadConversation];*/
+	}
+	
+	[conversation release];
 }
 
 
