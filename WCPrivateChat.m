@@ -146,6 +146,14 @@
 
 #pragma mark -
 
+- (IBAction)insertSmiley:(id)sender {
+	[_chatController insertSmiley:sender];
+}
+
+
+
+#pragma mark -
+
 - (NSTextView *)insertionTextView {
 	return [_chatController insertionTextView];
 }

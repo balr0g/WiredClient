@@ -39,4 +39,10 @@
 + (id)privateChatWithConnection:(WCServerConnection *)connection inviteUser:(WCUser *)user;
 + (id)privateChatWithConnection:(WCServerConnection *)connection chatID:(NSUInteger)cid inviteUser:(WCUser *)user;
 
+- (IBAction)getInfo:(id)sender;
+- (IBAction)saveChat:(id)sender;
+- (IBAction)setTopic:(id)sender;
+
+- (IBAction)insertSmiley:(id)sender;
+
 @end

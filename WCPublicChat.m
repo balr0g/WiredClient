@@ -685,6 +685,14 @@ typedef enum _WCChatActivity				WCChatActivity;
 
 #pragma mark -
 
+- (IBAction)insertSmiley:(id)sender {
+	[[self selectedChatController] insertSmiley:sender];
+}
+
+
+
+#pragma mark -
+
 - (IBAction)addBookmark:(id)sender {
 	NSDictionary		*bookmark;
 	NSString			*login, *password;
