@@ -284,7 +284,7 @@
 		A5BF5C140D795A18002E8332 /* WCAccounts.m in Sources */ = {isa = PBXBuildFile; fileRef = A5BF5C130D795A18002E8332 /* WCAccounts.m */; };
 		A5CD59130F4CAEB400CF374C /* Boards.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5CD59120F4CAEB400CF374C /* Boards.tiff */; };
 		A5CD594A0F4CAF4600CF374C /* Board.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5CD59490F4CAF4600CF374C /* Board.tiff */; };
-		A5CD594D0F4CAFDB00CF374C /* AddThread.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5CD594C0F4CAFDB00CF374C /* AddThread.tiff */; };
+		A5CD594D0F4CAFDB00CF374C /* NewThread.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5CD594C0F4CAFDB00CF374C /* NewThread.tiff */; };
 		A5CD59510F4CB01B00CF374C /* DeleteThread.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5CD59500F4CB01B00CF374C /* DeleteThread.tiff */; };
 		A5D409770D897771007851BD /* WCBanlistController.m in Sources */ = {isa = PBXBuildFile; fileRef = A5D409760D897770007851BD /* WCBanlistController.m */; };
 		A5D4F28006D75DA4002A33D0 /* ExceptionHandling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5D4F27F06D75DA4002A33D0 /* ExceptionHandling.framework */; };
@@ -729,7 +729,7 @@
 		A5BF5C130D795A18002E8332 /* WCAccounts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCAccounts.m; sourceTree = "<group>"; };
 		A5CD59120F4CAEB400CF374C /* Boards.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Boards.tiff; sourceTree = "<group>"; };
 		A5CD59490F4CAF4600CF374C /* Board.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Board.tiff; sourceTree = "<group>"; };
-		A5CD594C0F4CAFDB00CF374C /* AddThread.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = AddThread.tiff; sourceTree = "<group>"; };
+		A5CD594C0F4CAFDB00CF374C /* NewThread.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = NewThread.tiff; sourceTree = "<group>"; };
 		A5CD59500F4CB01B00CF374C /* DeleteThread.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = DeleteThread.tiff; sourceTree = "<group>"; };
 		A5D409750D897770007851BD /* WCBanlistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCBanlistController.h; sourceTree = "<group>"; };
 		A5D409760D897770007851BD /* WCBanlistController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCBanlistController.m; sourceTree = "<group>"; };
@@ -1361,7 +1361,6 @@
 				A54AF98B0F13AED000AFD50E /* UploadsBadge.icns */,
 				A54AF90C0F13AEBB00AFD50E /* Accounts.tiff */,
 				A54AF9370F13AEBB00AFD50E /* Action.tiff */,
-				A5CD594C0F4CAFDB00CF374C /* AddThread.tiff */,
 				A54AF9360F13AEBB00AFD50E /* AddTracker.tiff */,
 				A54AF8F00F13AEBA00AFD50E /* Back.tiff */,
 				A54AF8EF0F13AEBA00AFD50E /* Ban.tiff */,
@@ -1414,6 +1413,7 @@
 				A54AF91C0F13AEBB00AFD50E /* NewAccount.tiff */,
 				A54AF91B0F13AEBB00AFD50E /* NewFolder.tiff */,
 				A54AF91A0F13AEBB00AFD50E /* News.tiff */,
+				A5CD594C0F4CAFDB00CF374C /* NewThread.tiff */,
 				A54AF9190F13AEBB00AFD50E /* Pause.tiff */,
 				A54AF9180F13AEBB00AFD50E /* Plus.tiff */,
 				A54AF9170F13AEBB00AFD50E /* PostNews.tiff */,
@@ -1930,7 +1930,7 @@
 				A5923E870F4CA2C000366A5D /* SourceReload.tiff in Resources */,
 				A5CD59130F4CAEB400CF374C /* Boards.tiff in Resources */,
 				A5CD594A0F4CAF4600CF374C /* Board.tiff in Resources */,
-				A5CD594D0F4CAFDB00CF374C /* AddThread.tiff in Resources */,
+				A5CD594D0F4CAFDB00CF374C /* NewThread.tiff in Resources */,
 				A5CD59510F4CB01B00CF374C /* DeleteThread.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

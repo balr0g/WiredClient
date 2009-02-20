@@ -806,8 +806,8 @@
 - (NSToolbarItem *)toolbar:(NSToolbar *)toolbar itemForItemIdentifier:(NSString *)identifier willBeInsertedIntoToolbar:(BOOL)willBeInsertedIntoToolbar {
 	if([identifier isEqualToString:@"AddThread"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
-												   name:NSLS(@"Add Thread", @"Add thread toolbar item")
-												content:[NSImage imageNamed:@"AddThread"]
+												   name:NSLS(@"New Thread", @"New thread toolbar item")
+												content:[NSImage imageNamed:@"NewThread"]
 												 target:self
 												 action:@selector(addThread:)];
 	}
