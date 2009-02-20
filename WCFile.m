@@ -689,6 +689,19 @@
 
 
 
+- (NSComparisonResult)compareCreationDate:(WCFile *)file {
+	NSComparisonResult		result;
+
+	result = [[self creationDate] compare:[file creationDate]];
+
+	if(result == NSOrderedSame)
+		result = [self compareName:file];
+
+	return result;
+}
+
+
+
 - (NSComparisonResult)compareModificationDate:(WCFile *)file {
 	NSComparisonResult		result;
 
