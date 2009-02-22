@@ -39,7 +39,7 @@
 	[_startupDate release];
 	[_banner release];
 	
-	[_account release];
+	[_userAccount release];
 
 	[super dealloc];
 }
@@ -150,17 +150,17 @@
 
 #pragma mark -
 
-- (void)setAccount:(WCAccount *)account {
+- (void)setAccount:(WCUserAccount *)account {
 	[account retain];
-	[_account release];
+	[_userAccount release];
 
-	_account = account;
+	_userAccount = account;
 }
 
 
 
-- (WCAccount *)account {
-	return _account;
+- (WCUserAccount *)account {
+	return _userAccount;
 }
 
 @end

@@ -1565,11 +1565,11 @@
 #pragma mark -
 
 - (BOOL)validateToolbarItem:(NSToolbarItem *)item {
-	WCAccount		*account;
-	WCBoard			*board;
-	WCBoardThread	*thread;
-	SEL				selector;
-	BOOL			connected;
+	WCUserAccount		*account;
+	WCBoard				*board;
+	WCBoardThread		*thread;
+	SEL					selector;
+	BOOL				connected;
 	
 	selector	= [item action];
 	board		= [self _selectedBoard];
@@ -1578,9 +1578,9 @@
 	connected	= [[board connection] isConnected];
 	
 	if(selector == @selector(addThread:))
-		return (board != NULL && connected && [account boardAddThreads]);
+		return (board != NULL && [board isWritableByAccount:account] && connected && [account boardAddThreads]);
 	else if(selector == @selector(deleteThread:))
-		return (board != NULL && connected && thread != NULL && [account boardDeleteThreads]);
+		return (board != NULL && connected && [board isWritableByAccount:account] && thread != NULL && [account boardDeleteThreads]);
 	else if(selector == @selector(markAsRead:))
 		return (board != NULL);
 	else if(selector == @selector(markAllAsRead:))

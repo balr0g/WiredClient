@@ -26,7 +26,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-@class WCAccount;
+@class WCUserAccount;
 
 @interface WCServer : WIObject {
 	NSString				*_name;
@@ -41,7 +41,7 @@
 	NSUInteger				_downloadSpeed;
 	NSUInteger				_uploadSpeed;
 	
-	WCAccount				*_account;
+	WCUserAccount			*_userAccount;
 }
 
 - (void)setWithMessage:(WIP7Message *)message;
@@ -58,7 +58,7 @@
 - (NSUInteger)downloadSpeed;
 - (NSUInteger)uploadSpeed;
 
-- (void)setAccount:(WCAccount *)account;
-- (WCAccount *)account;
+- (void)setAccount:(WCUserAccount *)account;
+- (WCUserAccount *)account;
 
 @end

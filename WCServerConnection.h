@@ -48,7 +48,7 @@
 #define WCServerConnectionEventInfo2Key							@"WCServerConnectionEventInfo2Key"
 
 
-@class WCServer, WCCache, WCAccount;
+@class WCServer, WCCache, WCUserAccount;
 @class WCLink, WCNotificationCenter;
 @class WCAdministration, WCPublicChatController, WCConsole, WCServerInfo;
 
@@ -93,7 +93,7 @@
 - (BOOL)isAutoReconnecting;
 - (NSUInteger)userID;
 - (NSString *)name;
-- (WCAccount *)account;
+- (WCUserAccount *)account;
 - (WCServer *)server;
 - (WCCache *)cache;
 

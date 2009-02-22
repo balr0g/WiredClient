@@ -494,7 +494,7 @@
 
 
 
-- (WCAccount *)account {
+- (WCUserAccount *)account {
 	return [_server account];
 }
 

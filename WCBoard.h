@@ -39,7 +39,7 @@ enum _WCBoardPermissions {
 typedef enum _WCBoardPermissions		WCBoardPermissions;
 
 
-@class WCBoardThread;
+@class WCBoardThread, WCUserAccount;
 
 @interface WCBoard : WCServerConnectionObject {
 	NSString							*_name;
@@ -70,6 +70,7 @@ typedef enum _WCBoardPermissions		WCBoardPermissions;
 - (NSUInteger)permissions;
 - (BOOL)isExpandable;
 - (BOOL)isModifiable;
+- (BOOL)isWritableByAccount:(WCUserAccount *)account;
 
 - (NSUInteger)numberOfBoards;
 - (NSArray *)boards;

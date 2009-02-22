@@ -26,6 +26,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "WCAccount.h"
 #import "WCBoard.h"
 #import "WCBoardThread.h"
 
@@ -270,6 +271,25 @@
 
 - (BOOL)isModifiable {
 	return ![_path isEqualToString:@"/"];
+}
+
+
+
+- (BOOL)isWritableByAccount:(WCUserAccount *)account {
+	if(_permissions & WCBoardEveryoneWrite)
+		return YES;
+	
+	if(_permissions & WCBoardGroupWrite) {
+		if([[account group] isEqualToString:_group] || [[account groups] containsObject:_group])
+			return YES;
+	}
+	
+	if(_permissions & WCBoardOwnerWrite) {
+		if([[account name] isEqualToString:_owner])
+			return YES;
+	}
+	
+	return NO;
 }
 
 
