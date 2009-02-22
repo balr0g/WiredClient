@@ -65,6 +65,7 @@
 	IBOutlet NSPopUpButton				*_showPopUpButton;
 	IBOutlet NSMenuItem					*_allSettingsMenuItem;
 	IBOutlet NSMenuItem					*_settingsDefinedAtThisLevelMenuItem;
+	IBOutlet NSButton					*_selectAllButton;
 	
 	IBOutlet WIOutlineView				*_settingsOutlineView;
 	IBOutlet NSTableColumn				*_settingTableColumn;
@@ -114,6 +115,7 @@
 - (IBAction)type:(id)sender;
 - (IBAction)group:(id)sender;
 - (IBAction)show:(id)sender;
+- (IBAction)selectAll:(id)sender;
 - (IBAction)clearSetting:(id)sender;
 - (IBAction)save:(id)sender;
 

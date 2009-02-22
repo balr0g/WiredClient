@@ -402,6 +402,8 @@
 			[_groupPopUpButton setEnabled:NO];
 			[_groupsTokenField setEnabled:NO];
 		}
+
+		[_selectAllButton setEnabled:YES];
 	}
 	else if([_accounts count] == 0) {
 		[_typePopUpButton setEnabled:NO];
@@ -410,6 +412,7 @@
 		[_passwordTextField setEnabled:NO];
 		[_groupPopUpButton setEnabled:NO];
 		[_groupsTokenField setEnabled:NO];
+		[_selectAllButton setEnabled:NO];
 	}
 	else {
 		[_typePopUpButton setEnabled:NO];
@@ -418,6 +421,7 @@
 		[_passwordTextField setEnabled:NO];
 		[_groupPopUpButton setEnabled:NO];
 		[_groupsTokenField setEnabled:NO];
+		[_selectAllButton setEnabled:YES];
 	}
 	
 	[_settingsOutlineView setNeedsDisplay:YES];
@@ -1389,6 +1393,33 @@
 
 - (IBAction)show:(id)sender {
 	[self _reloadSettings];
+}
+
+
+
+- (IBAction)selectAll:(id)sender {
+	NSEnumerator		*enumerator, *settingsEnumerator, *accountsEnumerator;
+	NSDictionary		*section, *setting;
+	WCAccount			*account;
+	
+	enumerator = [_shownSettings objectEnumerator];
+	
+	while((section = [enumerator nextObject])) {
+		settingsEnumerator = [[section objectForKey:WCAccountsFieldSettings] objectEnumerator];
+		
+		while((setting = [settingsEnumerator nextObject])) {
+			if([[setting objectForKey:WCAccountFieldType] integerValue] == WCAccountFieldBoolean) {
+				accountsEnumerator = [_accounts objectEnumerator];
+				
+				while((account = [accountsEnumerator nextObject]))
+					[account setValue:[NSNumber numberWithBool:YES] forKey:[setting objectForKey:WCAccountFieldName]];
+			}
+		}
+	}
+	
+	[_settingsOutlineView reloadData];
+	
+	[self touch:self];
 }
 
 
