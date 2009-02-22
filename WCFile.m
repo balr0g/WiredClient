@@ -76,28 +76,28 @@
 	if(!_owner)
 		_owner = @"";
 	
-	if([message getBool:&value forName:@"wired.file.owner.read"] && value)
-		_ownerPermissions |= WCFileRead;
-
-	if([message getBool:&value forName:@"wired.file.owner.write"] && value)
-		_ownerPermissions |= WCFileWrite;
-	
 	_group = [[message stringForName:@"wired.file.group"] retain];
 	
 	if(!_group)
 		_group = @"";
 	
+	if([message getBool:&value forName:@"wired.file.owner.read"] && value)
+		_permissions |= WCFileOwnerRead;
+	
+	if([message getBool:&value forName:@"wired.file.owner.write"] && value)
+		_permissions |= WCFileOwnerWrite;
+	
 	if([message getBool:&value forName:@"wired.file.group.read"] && value)
-		_groupPermissions |= WCFileRead;
-
+		_permissions |= WCFileGroupRead;
+	
 	if([message getBool:&value forName:@"wired.file.group.write"] && value)
-		_groupPermissions |= WCFileWrite;
+		_permissions |= WCFileGroupWrite;
 	
 	if([message getBool:&value forName:@"wired.file.everyone.read"] && value)
-		_everyonePermissions |= WCFileRead;
-
+		_permissions |= WCFileEveryoneRead;
+	
 	if([message getBool:&value forName:@"wired.file.everyone.write"] && value)
-		_everyonePermissions |= WCFileWrite;
+		_permissions |= WCFileEveryoneWrite;
 	
 	return self;
 }
@@ -364,10 +364,8 @@
 	_link					= [coder decodeBoolForKey:@"WCFileLink"];
 	_executable				= [coder decodeBoolForKey:@"WCFileExecutable"];
 	_owner					= [[coder decodeObjectForKey:@"WCFileOwner"] retain];
-	_ownerPermissions		= [coder decodeIntForKey:@"WCFileOwnerPermission"];
 	_group					= [[coder decodeObjectForKey:@"WCFileGroup"] retain];
-	_groupPermissions		= [coder decodeIntForKey:@"WCFileGroupPermissions"];
-	_everyonePermissions	= [coder decodeIntForKey:@"WCFileEveryonePermissions"];
+	_permissions			= [coder decodeIntForKey:@"WCFilePermissions"];
 	
 	_localPath				= [[coder decodeObjectForKey:@"WCFileLocalPath"] retain];
 	_transferred			= [coder decodeInt64ForKey:@"WCFileTransferred"];
@@ -390,10 +388,8 @@
 	[coder encodeBool:_link forKey:@"WCFileLink"];
 	[coder encodeBool:_executable forKey:@"WCFileExecutable"];
 	[coder encodeObject:_owner forKey:@"WCFileOwner"];
-	[coder encodeInt:_ownerPermissions forKey:@"WCFileOwnerPermissions"];
 	[coder encodeObject:_group forKey:@"WCFileGroup"];
-	[coder encodeInt:_groupPermissions forKey:@"WCFileGroupPermissions"];
-	[coder encodeInt:_everyonePermissions forKey:@"WCFileEveryonePermissions"];
+	[coder encodeInt:_permissions forKey:@"WCFilePermissions"];
 
 	[coder encodeObject:_localPath forKey:@"WCFileLocalPath"];
 	[coder encodeInt:_transferred forKey:@"WCFileTransferred"];
@@ -551,26 +547,14 @@
 
 
 
-- (NSUInteger)ownerPermissions {
-	return _ownerPermissions;
-}
-
-
-
 - (NSString *)group {
 	return _group;
 }
 
 
 
-- (NSUInteger)groupPermissions {
-	return _groupPermissions;
-}
-
-
-
-- (NSUInteger)everyonePermissions {
-	return _everyonePermissions;
+- (NSUInteger)permissions {
+	return _permissions;
 }
 
 

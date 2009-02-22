@@ -165,9 +165,9 @@
 			else
 				[_ownerPopUpButton selectItemAtIndex:0];
 
-			[_everyonePermissionsPopUpButton selectItemWithTag:[file everyonePermissions]];
-			[_groupPermissionsPopUpButton selectItemWithTag:[file groupPermissions]];
-			[_ownerPermissionsPopUpButton selectItemWithTag:[file ownerPermissions]];
+			[_ownerPermissionsPopUpButton selectItemWithTag:[file permissions] & (WCFileOwnerWrite | WCFileOwnerRead)];
+			[_groupPermissionsPopUpButton selectItemWithTag:[file permissions] & (WCFileGroupWrite | WCFileGroupRead)];
+			[_everyonePermissionsPopUpButton selectItemWithTag:[file permissions] & (WCFileEveryoneWrite | WCFileEveryoneRead)];
 		} else {
 			[self removeView:&_everyoneTitleTextField];
 			[self removeView:&_everyonePermissionsPopUpButton];
@@ -361,27 +361,26 @@
 				tag = [_ownerPopUpButton tagOfSelectedItem];
 				owner = (tag >= 0) ? [_ownerPopUpButton titleOfSelectedItem] : (tag == -1) ? [file owner] : @"";
 				tag = [_ownerPermissionsPopUpButton tagOfSelectedItem];
-				ownerPermissions = (tag >= 0) ? (NSUInteger) tag : [file ownerPermissions];
+				ownerPermissions = (tag >= 0) ? (NSUInteger) tag : [file permissions];
 				tag = [_groupPopUpButton tagOfSelectedItem];
 				group = (tag >= 0) ? [_groupPopUpButton titleOfSelectedItem] : (tag == -1) ? [file group] : @"";
 				tag = [_groupPermissionsPopUpButton tagOfSelectedItem];
-				groupPermissions = (tag >= 0) ? (NSUInteger) tag : [file groupPermissions];
+				groupPermissions = (tag >= 0) ? (NSUInteger) tag : [file permissions];
 				tag = [_everyonePermissionsPopUpButton tagOfSelectedItem];
-				everyonePermissions = (tag >= 0) ? (NSUInteger) tag : [file everyonePermissions];
+				everyonePermissions = (tag >= 0) ? (NSUInteger) tag : [file permissions];
 				
 				if(![owner isEqualToString:[file owner]] || ![group isEqualToString:[file group]] ||
-				   ownerPermissions != [file ownerPermissions] || groupPermissions != [file groupPermissions] ||
-				   everyonePermissions != [file everyonePermissions]) {
+				   (ownerPermissions | groupPermissions | everyonePermissions) != [file permissions]) {
 					message = [WIP7Message messageWithName:@"wired.file.set_permissions" spec:WCP7Spec];
 					[message setString:path forName:@"wired.file.path"];
 					[message setString:owner forName:@"wired.file.owner"];
-					[message setBool:(ownerPermissions & WCFileRead) forName:@"wired.file.owner.read"];
-					[message setBool:(ownerPermissions & WCFileWrite) forName:@"wired.file.owner.write"];
+					[message setBool:(ownerPermissions & WCFileOwnerRead) forName:@"wired.file.owner.read"];
+					[message setBool:(ownerPermissions & WCFileOwnerWrite) forName:@"wired.file.owner.write"];
 					[message setString:group forName:@"wired.file.group"];
-					[message setBool:(groupPermissions & WCFileRead) forName:@"wired.file.group.read"];
-					[message setBool:(groupPermissions & WCFileWrite) forName:@"wired.file.group.write"];
-					[message setBool:(everyonePermissions & WCFileRead) forName:@"wired.file.everyone.read"];
-					[message setBool:(everyonePermissions & WCFileWrite) forName:@"wired.file.everyone.write"];
+					[message setBool:(groupPermissions & WCFileGroupRead) forName:@"wired.file.group.read"];
+					[message setBool:(groupPermissions & WCFileGroupWrite) forName:@"wired.file.group.write"];
+					[message setBool:(everyonePermissions & WCFileEveryoneRead) forName:@"wired.file.everyone.read"];
+					[message setBool:(everyonePermissions & WCFileEveryoneWrite) forName:@"wired.file.everyone.write"];
 					[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredFileSetPermissionsReply:)];
 					
 					sentMessage = YES;

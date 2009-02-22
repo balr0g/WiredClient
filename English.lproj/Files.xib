@@ -1101,7 +1101,7 @@
 											<reference key="NSOnImage" ref="234462464"/>
 											<reference key="NSMixedImage" ref="39404141"/>
 											<string key="NSAction">_popUpItemAction:</string>
-											<int key="NSTag">6</int>
+											<int key="NSTag">384</int>
 											<reference key="NSTarget" ref="614469290"/>
 										</object>
 										<object class="NSMenuItem" id="637363556">
@@ -1113,7 +1113,7 @@
 											<reference key="NSOnImage" ref="234462464"/>
 											<reference key="NSMixedImage" ref="39404141"/>
 											<string key="NSAction">_popUpItemAction:</string>
-											<int key="NSTag">4</int>
+											<int key="NSTag">256</int>
 											<reference key="NSTarget" ref="614469290"/>
 										</object>
 										<object class="NSMenuItem" id="44176820">
@@ -1125,7 +1125,7 @@
 											<reference key="NSOnImage" ref="234462464"/>
 											<reference key="NSMixedImage" ref="39404141"/>
 											<string key="NSAction">_popUpItemAction:</string>
-											<int key="NSTag">2</int>
+											<int key="NSTag">128</int>
 											<reference key="NSTarget" ref="614469290"/>
 										</object>
 									</object>
@@ -1187,7 +1187,7 @@
 											<reference key="NSOnImage" ref="234462464"/>
 											<reference key="NSMixedImage" ref="39404141"/>
 											<string key="NSAction">_popUpItemAction:</string>
-											<int key="NSTag">6</int>
+											<int key="NSTag">48</int>
 											<reference key="NSTarget" ref="329526908"/>
 										</object>
 										<object class="NSMenuItem" id="382561513">
@@ -1199,7 +1199,7 @@
 											<reference key="NSOnImage" ref="234462464"/>
 											<reference key="NSMixedImage" ref="39404141"/>
 											<string key="NSAction">_popUpItemAction:</string>
-											<int key="NSTag">4</int>
+											<int key="NSTag">32</int>
 											<reference key="NSTarget" ref="329526908"/>
 										</object>
 										<object class="NSMenuItem" id="823115308">
@@ -1211,7 +1211,7 @@
 											<reference key="NSOnImage" ref="234462464"/>
 											<reference key="NSMixedImage" ref="39404141"/>
 											<string key="NSAction">_popUpItemAction:</string>
-											<int key="NSTag">2</int>
+											<int key="NSTag">16</int>
 											<reference key="NSTarget" ref="329526908"/>
 										</object>
 									</object>

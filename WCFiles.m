@@ -1147,7 +1147,7 @@
 		[_ownerPopUpButton selectItemWithTitle:[[[self connection] URL] user]];
 	}
 	
-	[_ownerPermissionsPopUpButton selectItemWithTag:WCFileRead | WCFileWrite];
+	[_ownerPermissionsPopUpButton selectItemWithTag:WCFileOwnerRead | WCFileOwnerWrite];
 	
 	[_groupPopUpButton removeAllItems];
 	[_groupPopUpButton addItem:[NSMenuItem itemWithTitle:NSLS(@"None", @"Create folder group popup title") tag:1]];
@@ -1162,7 +1162,7 @@
 	[_groupPopUpButton selectItemAtIndex:0];
 	[_groupPermissionsPopUpButton selectItemWithTag:0];
 
-	[_everyonePermissionsPopUpButton selectItemWithTag:WCFileWrite];
+	[_everyonePermissionsPopUpButton selectItemWithTag:WCFileEveryoneWrite];
 	
 	[NSApp beginSheet:_createFolderPanel
 	   modalForWindow:[self window]
@@ -1200,13 +1200,13 @@
 			everyonePermissions		= [_everyonePermissionsPopUpButton tagOfSelectedItem];
 			
 			[message setString:owner forName:@"wired.file.owner"];
-			[message setBool:(ownerPermissions & WCFileRead) forName:@"wired.file.owner.read"];
-			[message setBool:(ownerPermissions & WCFileWrite) forName:@"wired.file.owner.write"];
+			[message setBool:(ownerPermissions & WCFileOwnerRead) forName:@"wired.file.owner.read"];
+			[message setBool:(ownerPermissions & WCFileOwnerWrite) forName:@"wired.file.owner.write"];
 			[message setString:group forName:@"wired.file.group"];
-			[message setBool:(groupPermissions & WCFileRead) forName:@"wired.file.group.read"];
-			[message setBool:(groupPermissions & WCFileWrite) forName:@"wired.file.group.write"];
-			[message setBool:(everyonePermissions & WCFileRead) forName:@"wired.file.everyone.read"];
-			[message setBool:(everyonePermissions & WCFileWrite) forName:@"wired.file.everyone.write"];
+			[message setBool:(groupPermissions & WCFileGroupRead) forName:@"wired.file.group.read"];
+			[message setBool:(groupPermissions & WCFileGroupWrite) forName:@"wired.file.group.write"];
+			[message setBool:(everyonePermissions & WCFileEveryoneRead) forName:@"wired.file.everyone.read"];
+			[message setBool:(everyonePermissions & WCFileEveryoneWrite) forName:@"wired.file.everyone.write"];
 		}
 		
 		[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredFileCreateDirectoryReply:)];

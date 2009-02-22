@@ -37,8 +37,12 @@ enum _WCFileType {
 typedef enum _WCFileType			WCFileType;
 
 enum _WCFilePermissions {
-	WCFileWrite						= 2,
-	WCFileRead						= 4
+	WCFileOwnerWrite				= (2 << 6),
+	WCFileOwnerRead					= (4 << 6),
+	WCFileGroupWrite				= (2 << 3),
+	WCFileGroupRead					= (4 << 3),
+	WCFileEveryoneWrite				= (2 << 0),
+	WCFileEveryoneRead				= (4 << 0)
 };
 typedef enum _WCFilePermissions		WCFilePermissions;
 
@@ -54,10 +58,8 @@ typedef enum _WCFilePermissions		WCFilePermissions;
 	BOOL							_link;
 	BOOL							_executable;
 	NSString						*_owner;
-	NSUInteger						_ownerPermissions;
 	NSString						*_group;
-	NSUInteger						_groupPermissions;
-	NSUInteger						_everyonePermissions;
+	NSUInteger						_permissions;
 
 	NSString						*_name;
 	NSString						*_extension;
@@ -93,10 +95,8 @@ typedef enum _WCFilePermissions		WCFilePermissions;
 - (BOOL)isLink;
 - (BOOL)isExecutable;
 - (NSString *)owner;
-- (NSUInteger)ownerPermissions;
 - (NSString *)group;
-- (NSUInteger)groupPermissions;
-- (NSUInteger)everyonePermissions;
+- (NSUInteger)permissions;
 - (NSImage *)iconWithWidth:(CGFloat)width;
 
 - (void)setSize:(WIFileOffset)size;

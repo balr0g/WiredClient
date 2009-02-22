@@ -1995,16 +1995,14 @@
 	else
 		[_setOwnerPopUpButton selectItemAtIndex:0];
 
-	[_setOwnerPermissionsPopUpButton selectItemWithTag:([board permissions]) & (WCBoardOwnerWrite | WCBoardOwnerRead)];
-
 	if([[board group] length] > 0 && [_setGroupPopUpButton indexOfItemWithTitle:[board group]] != -1)
 		[_setGroupPopUpButton selectItemWithTitle:[board group]];
 	else
 		[_setGroupPopUpButton selectItemAtIndex:0];
 
-	[_setGroupPermissionsPopUpButton selectItemWithTag:([board permissions]) & (WCBoardGroupWrite | WCBoardGroupRead)];
-
-	[_setEveryonePermissionsPopUpButton selectItemWithTag:([board permissions]) & (WCBoardEveryoneWrite | WCBoardEveryoneRead)];
+	[_setOwnerPermissionsPopUpButton selectItemWithTag:[board permissions] & (WCBoardOwnerWrite | WCBoardOwnerRead)];
+	[_setGroupPermissionsPopUpButton selectItemWithTag:[board permissions] & (WCBoardGroupWrite | WCBoardGroupRead)];
+	[_setEveryonePermissionsPopUpButton selectItemWithTag:[board permissions] & (WCBoardEveryoneWrite | WCBoardEveryoneRead)];
 
 	[NSApp beginSheet:_setPermissionsPanel
 	   modalForWindow:[self window]
