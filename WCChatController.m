@@ -860,31 +860,34 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 
 + (NSDictionary *)smileyRegexs {
-	NSEnumerator			*enumerator;
-	NSMutableDictionary		*regexs;
-	NSMutableString			*regex;
-	NSString				*smiley;
+	static NSMutableDictionary	*smileyRegexs;
+	NSEnumerator				*enumerator;
+	NSMutableString				*regex;
+	NSString					*smiley;
 	
-	regexs		= [NSMutableDictionary dictionary];
-	enumerator	= [[[WCApplicationController sharedController] allSmileys] objectEnumerator];
-	
-	while((smiley = [enumerator nextObject])) {
-		regex	= [[smiley mutableCopy] autorelease];
+	if(!smileyRegexs) {
+		smileyRegexs	= [[NSMutableDictionary alloc] init];
+		enumerator		= [[[WCApplicationController sharedController] allSmileys] objectEnumerator];
 		
-		[regex replaceOccurrencesOfString:@"." withString:@"\\."];
-		[regex replaceOccurrencesOfString:@"*" withString:@"\\*"];
-		[regex replaceOccurrencesOfString:@"+" withString:@"\\+"];
-		[regex replaceOccurrencesOfString:@"^" withString:@"\\^"];
-		[regex replaceOccurrencesOfString:@"$" withString:@"\\$"];
-		[regex replaceOccurrencesOfString:@"(" withString:@"\\("];
-		[regex replaceOccurrencesOfString:@")" withString:@"\\)"];
-		[regex replaceOccurrencesOfString:@"[" withString:@"\\["];
-		[regex replaceOccurrencesOfString:@"]" withString:@"\\]"];
-		
-		[regexs setObject:regex forKey:smiley];
+		while((smiley = [enumerator nextObject])) {
+			regex	= [[smiley mutableCopy] autorelease];
+			
+			[regex replaceOccurrencesOfString:@"." withString:@"\\."];
+			[regex replaceOccurrencesOfString:@"*" withString:@"\\*"];
+			[regex replaceOccurrencesOfString:@"+" withString:@"\\+"];
+			[regex replaceOccurrencesOfString:@"^" withString:@"\\^"];
+			[regex replaceOccurrencesOfString:@"$" withString:@"\\$"];
+			[regex replaceOccurrencesOfString:@"(" withString:@"\\("];
+			[regex replaceOccurrencesOfString:@")" withString:@"\\)"];
+			[regex replaceOccurrencesOfString:@"[" withString:@"\\["];
+			[regex replaceOccurrencesOfString:@"]" withString:@"\\]"];
+			[regex replaceOccurrencesOfString:@"-" withString:@"\\-"];
+			
+			[smileyRegexs setObject:regex forKey:smiley];
+		}
 	}
 	
-	return regexs;
+	return smileyRegexs;
 }
 
 
@@ -2119,25 +2122,6 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 - (IBAction)fileFormat:(id)sender {
 	[self _updateSaveChatForPanel:(NSSavePanel *) [sender window]];
-}
-
-
-
-#pragma mark -
-
-- (IBAction)insertSmiley:(id)sender {
-	NSFileWrapper		*wrapper;
-	NSTextAttachment	*attachment;
-	NSAttributedString	*attributedString;
-	
-	wrapper				= [[NSFileWrapper alloc] initWithPath:[sender representedObject]];
-	attachment			= [[WITextAttachment alloc] initWithFileWrapper:wrapper string:[sender toolTip]];
-	attributedString	= [NSAttributedString attributedStringWithAttachment:attachment];
-	
-	[_chatInputTextView insertText:attributedString];
-	
-	[attachment release];
-	[wrapper release];
 }
 
 

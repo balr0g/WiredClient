@@ -43,6 +43,4 @@
 - (IBAction)saveChat:(id)sender;
 - (IBAction)setTopic:(id)sender;
 
-- (IBAction)insertSmiley:(id)sender;
-
 @end

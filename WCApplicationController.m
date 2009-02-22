@@ -118,7 +118,7 @@ static NSInteger _WCCompareSmileyLength(id object1, id object2, void *context) {
 		if(path)
 			[_smileys setObject:path forKey:[smiley lowercaseString]];
 		else
-			NSLog(@"*** -[%@ %@]: could not find image \u201c%@\u201d", [self class], NSStringFromSelector(_cmd), file);
+			NSLog(@"*** %@: Could not find image \"%@\"", [self class], file);
 	}
 	
 	array = [NSMutableArray arrayWithObjects:
@@ -159,7 +159,8 @@ static NSInteger _WCCompareSmileyLength(id object1, id object2, void *context) {
 		NSLS(@"Money-mouth", @"Smiley"),			@"Moneymouth.tiff",
 		NULL];
 
-	[array addObjectsFromArray:[[[[NSSet setWithArray:[list allKeys]] setByMinusingSet:[NSSet setWithArray:array]] allObjects] sortedArrayUsingSelector:@selector(compare:)]];
+	[array addObjectsFromArray:[[[[NSSet setWithArray:[list allKeys]] setByMinusingSet:[NSSet setWithArray:array]] allObjects] 
+		sortedArrayUsingSelector:@selector(compare:)]];
 	
 	enumerator = [array objectEnumerator];
 	
@@ -472,7 +473,6 @@ static WCApplicationController		*sharedController;
 
 
 
-
 - (void)menuNeedsUpdate:(NSMenu *)menu {
 	if(menu == _windowMenu) {
 		if([NSApp keyWindow] == [[WCPublicChat publicChat] window] && [[WCPublicChat publicChat] selectedChatController] != NULL) {
@@ -482,6 +482,10 @@ static WCApplicationController		*sharedController;
 			[_closeWindowMenuItem setAction:@selector(performClose:)];
 			[_closeWindowMenuItem setTitle:NSLS(@"Close Window", @"Close window menu item")];
 		}
+	}
+	else if(menu == _insertSmileyMenu) {
+		if(!_sortedSmileys)
+			[self _loadSmileys];
 	}
 }
 
@@ -821,8 +825,12 @@ static WCApplicationController		*sharedController;
 	   selector == @selector(accounts:) || selector == @selector(administration:) ||
 	   selector == @selector(broadcast:) || selector == @selector(addBookmark:) ||
 	   selector == @selector(console:) || selector == @selector(nextConnection:) ||
-	   selector == @selector(previousConnection:))
+	   selector == @selector(previousConnection:)) {
 		return [[WCPublicChat publicChat] validateMenuItem:item];
+	}
+	else if(selector == @selector(insertSmiley:)) {
+		return ([[[NSApp keyWindow] firstResponder] respondsToSelector:@selector(insertText:)]);
+	}
 
 	return YES;
 }
@@ -952,6 +960,25 @@ static WCApplicationController		*sharedController;
 
 - (IBAction)broadcast:(id)sender {
 	[[WCPublicChat publicChat] broadcast:sender];
+}
+
+
+
+#pragma mark -
+
+- (IBAction)insertSmiley:(id)sender {
+	NSFileWrapper		*wrapper;
+	NSTextAttachment	*attachment;
+	NSAttributedString	*attributedString;
+	
+	wrapper				= [[NSFileWrapper alloc] initWithPath:[sender representedObject]];
+	attachment			= [[WITextAttachment alloc] initWithFileWrapper:wrapper string:[sender toolTip]];
+	attributedString	= [NSAttributedString attributedStringWithAttachment:attachment];
+	
+	[[[NSApp keyWindow] firstResponder] tryToPerform:@selector(insertText:) with:attributedString];
+	
+	[attachment release];
+	[wrapper release];
 }
 
 

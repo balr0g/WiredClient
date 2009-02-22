@@ -152,6 +152,4 @@
 
 - (IBAction)fileFormat:(id)sender;
 
-- (IBAction)insertSmiley:(id)sender;
-
 @end

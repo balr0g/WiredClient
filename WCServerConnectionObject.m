@@ -134,4 +134,17 @@
 	return _bookmark;
 }
 
+
+
+- (NSDictionary *)theme {
+	NSDictionary		*theme;
+	
+	theme = [_connection theme];
+	
+	if(!theme)
+		theme = [WCSettings themeWithIdentifier:[WCSettings objectForKey:WCTheme]];
+	
+	return theme;
+}
+
 @end

@@ -237,6 +237,7 @@
 	NSCalendar				*calendar;
 	NSDateComponents		*components;
 	NSString				*icon;
+	NSDictionary			*theme;
 	WCConversation			*conversation;
 	WCMessage				*message;
 	NSInteger				day;
@@ -256,6 +257,7 @@
 		calendar		= [NSCalendar currentCalendar];
 		day				= -1;
 		icons			= [NSMutableDictionary dictionary];
+		theme			= [conversation theme];
 		enumerator		= [[conversation messages] objectEnumerator];
 		
 		if([conversation numberOfMessages] == 0) {
@@ -317,7 +319,7 @@
 	NSMutableString		*string, *text;
 	NSString			*smiley, *path, *regex;
 	
-	theme		= [[message connection] theme];
+	theme		= [message theme];
 	text		= [[[message message] mutableCopy] autorelease];
 	
 	[text replaceOccurrencesOfString:@"&" withString:@"&#38;"];
@@ -351,7 +353,8 @@
 			path	= [[WCApplicationController sharedController] pathForSmiley:smiley];
 		
 			[text replaceOccurrencesOfRegex:[NSSWF:@"(^|\\s)%@(\\s|$)", regex]
-								 withString:[NSSWF:@"$1<img src=\"%@\" alt=\"%@\" />$2", path, smiley]];
+								 withString:[NSSWF:@"$1<img src=\"%@\" alt=\"%@\" />$2", path, smiley]
+									options:RKLCaseless];
 		}
 	}
 
@@ -922,6 +925,7 @@
 
 
 - (BOOL)textView:(NSTextView *)textView doCommandBySelector:(SEL)selector {
+	NSString				*string;
 	WIP7Message				*p7Message;
 	WCServerConnection		*connection;
 	WCConversation			*conversation;
@@ -940,11 +944,12 @@
 	else if(textView == _messageTextView) {
 		if(selector == @selector(insertNewline:)) {
 			if([[_messageTextView string] length] > 0) {
+				string			= [WCChatController stringByDecomposingSmileyAttributesInAttributedString:[_messageTextView textStorage]];
 				conversation	= [self _selectedConversation];
 				connection		= [conversation connection];
 				user			= [[connection chatController] userWithUserID:[connection userID]];
 				message			= [WCPrivateMessage messageToSomeoneFromUser:user
-																	 message:[[[_messageTextView string] copy] autorelease]
+																	 message:string
 																  connection:connection];
 
 				[conversation addMessage:message];

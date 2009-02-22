@@ -52,8 +52,6 @@
 - (IBAction)setTopic:(id)sender;
 - (IBAction)broadcast:(id)sender;
 
-- (IBAction)insertSmiley:(id)sender;
-
 - (IBAction)addBookmark:(id)sender;
 
 - (IBAction)console:(id)sender;

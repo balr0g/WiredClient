@@ -379,7 +379,7 @@
 	NSString			*smiley, *path;
 	WCAccount			*account;
 	
-	theme		= [[post connection] theme];
+	theme		= [post theme];
 	account		= [[post connection] account];
 	text		= [[[post text] mutableCopy] autorelease];
 	
@@ -407,7 +407,8 @@
 			path	= [[WCApplicationController sharedController] pathForSmiley:smiley];
 			
 			[text replaceOccurrencesOfRegex:[NSSWF:@"(^|\\s)%@(\\s|$)", regex]
-								 withString:[NSSWF:@"$1<img src=\"%@\" alt=\"%@\" />$2", path, smiley]];
+								 withString:[NSSWF:@"$1<img src=\"%@\" alt=\"%@\" />$2", path, smiley]
+									options:RKLCaseless];
 		}
 	}
 	
@@ -1712,16 +1713,19 @@
 
 - (void)replyPanelDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
 	NSArray			*array = contextInfo;
+	NSString		*string;
 	WIP7Message		*message;
 	WCBoard			*board = [array objectAtIndex:0];
 	WCBoardThread	*thread = [array objectAtIndex:1];
 	
 	if(returnCode == NSOKButton) {
+		string = [WCChatController stringByDecomposingSmileyAttributesInAttributedString:[_postTextView textStorage]];
+
 		message = [WIP7Message messageWithName:@"wired.board.add_post" spec:WCP7Spec];
 		[message setString:[board path] forName:@"wired.board.board"];
 		[message setUUID:[thread threadID] forName:@"wired.board.thread"];
 		[message setString:[_subjectTextField stringValue] forName:@"wired.board.subject"];
-		[message setString:[_postTextView string] forName:@"wired.board.text"];
+		[message setString:[self _textForPostText:string] forName:@"wired.board.text"];
 		[[board connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardAddPostReply:)];
 	}
 	
@@ -1760,18 +1764,21 @@
 
 - (void)editPanelDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
 	NSArray			*array = contextInfo;
+	NSString		*string;
 	WIP7Message		*message;
 	WCBoard			*board = [array objectAtIndex:0];
 	WCBoardThread	*thread = [array objectAtIndex:1];
 	WCBoardPost		*post = [array objectAtIndex:2];
 	
 	if(returnCode == NSOKButton) {
+		string = [WCChatController stringByDecomposingSmileyAttributesInAttributedString:[_postTextView textStorage]];
+		
 		message = [WIP7Message messageWithName:@"wired.board.edit_post" spec:WCP7Spec];
 		[message setString:[board path] forName:@"wired.board.board"];
 		[message setUUID:[thread threadID] forName:@"wired.board.thread"];
 		[message setUUID:[post postID] forName:@"wired.board.post"];
 		[message setString:[_subjectTextField stringValue] forName:@"wired.board.subject"];
-		[message setString:[self _textForPostText:[_postTextView string]] forName:@"wired.board.text"];
+		[message setString:[self _textForPostText:string] forName:@"wired.board.text"];
 		[[board connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardEditPostReply:)];
 	}
 	
@@ -2032,14 +2039,17 @@
 
 
 - (void)addThreadPanelDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+	NSString		*string;
 	WIP7Message		*message;
 	WCBoard			*board = contextInfo;
 	
 	if(returnCode == NSOKButton) {
+		string = [WCChatController stringByDecomposingSmileyAttributesInAttributedString:[_postTextView textStorage]];
+
 		message = [WIP7Message messageWithName:@"wired.board.add_thread" spec:WCP7Spec];
 		[message setString:[board path] forName:@"wired.board.board"];
 		[message setString:[_subjectTextField stringValue] forName:@"wired.board.subject"];
-		[message setString:[self _textForPostText:[_postTextView string]] forName:@"wired.board.text"];
+		[message setString:[self _textForPostText:string] forName:@"wired.board.text"];
 		[[board connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardAddThreadReply:)];
 	}
 

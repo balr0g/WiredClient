@@ -44,5 +44,6 @@
 - (NSString *)connectionName;
 - (WIURL *)URL;
 - (NSDictionary *)bookmark;
+- (NSDictionary *)theme;
 
 @end

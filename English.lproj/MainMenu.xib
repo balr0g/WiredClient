@@ -8,7 +8,7 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="460"/>
+			<integer value="813"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1529,6 +1529,14 @@
 					</object>
 					<int key="connectionID">861</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">delegate</string>
+						<reference key="source" ref="164503943"/>
+						<reference key="destination" ref="569324035"/>
+					</object>
+					<int key="connectionID">866</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -1866,203 +1874,6 @@
 						<reference key="parent" ref="492717369"/>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">169</int>
-						<reference key="object" ref="1055161663"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="393458867"/>
-							<reference ref="872671202"/>
-							<reference ref="312480511"/>
-							<reference ref="1025531236"/>
-							<reference ref="152440837"/>
-							<reference ref="62067396"/>
-							<reference ref="1042973623"/>
-							<reference ref="335433706"/>
-							<reference ref="166695378"/>
-							<reference ref="1009275179"/>
-							<reference ref="817617853"/>
-							<reference ref="731218549"/>
-							<reference ref="219880587"/>
-							<reference ref="675942512"/>
-						</object>
-						<reference key="parent" ref="209932781"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">156</int>
-						<reference key="object" ref="393458867"/>
-						<reference key="parent" ref="1055161663"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">157</int>
-						<reference key="object" ref="872671202"/>
-						<reference key="parent" ref="1055161663"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">158</int>
-						<reference key="object" ref="312480511"/>
-						<reference key="parent" ref="1055161663"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">160</int>
-						<reference key="object" ref="1025531236"/>
-						<reference key="parent" ref="1055161663"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">164</int>
-						<reference key="object" ref="152440837"/>
-						<reference key="parent" ref="1055161663"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">171</int>
-						<reference key="object" ref="62067396"/>
-						<reference key="parent" ref="1055161663"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">172</int>
-						<reference key="object" ref="1042973623"/>
-						<reference key="parent" ref="1055161663"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">173</int>
-						<reference key="object" ref="335433706"/>
-						<reference key="parent" ref="1055161663"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">174</int>
-						<reference key="object" ref="166695378"/>
-						<reference key="parent" ref="1055161663"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">184</int>
-						<reference key="object" ref="1009275179"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="1024464240"/>
-						</object>
-						<reference key="parent" ref="1055161663"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">185</int>
-						<reference key="object" ref="1024464240"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="1036891295"/>
-							<reference ref="175827484"/>
-							<reference ref="291646746"/>
-						</object>
-						<reference key="parent" ref="1009275179"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">187</int>
-						<reference key="object" ref="1036891295"/>
-						<reference key="parent" ref="1024464240"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">189</int>
-						<reference key="object" ref="175827484"/>
-						<reference key="parent" ref="1024464240"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">191</int>
-						<reference key="object" ref="291646746"/>
-						<reference key="parent" ref="1024464240"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">501</int>
-						<reference key="object" ref="817617853"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="802711433"/>
-						</object>
-						<reference key="parent" ref="1055161663"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">497</int>
-						<reference key="object" ref="802711433"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="399925967"/>
-							<reference ref="412002922"/>
-							<reference ref="922927914"/>
-							<reference ref="713393442"/>
-							<reference ref="281989901"/>
-						</object>
-						<reference key="parent" ref="817617853"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">495</int>
-						<reference key="object" ref="399925967"/>
-						<reference key="parent" ref="802711433"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">496</int>
-						<reference key="object" ref="412002922"/>
-						<reference key="parent" ref="802711433"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">498</int>
-						<reference key="object" ref="922927914"/>
-						<reference key="parent" ref="802711433"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">499</int>
-						<reference key="object" ref="713393442"/>
-						<reference key="parent" ref="802711433"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">500</int>
-						<reference key="object" ref="281989901"/>
-						<reference key="parent" ref="802711433"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">502</int>
-						<reference key="object" ref="731218549"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="196530635"/>
-						</object>
-						<reference key="parent" ref="1055161663"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">503</int>
-						<reference key="object" ref="196530635"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="747271511"/>
-							<reference ref="1008676978"/>
-						</object>
-						<reference key="parent" ref="731218549"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">504</int>
-						<reference key="object" ref="747271511"/>
-						<reference key="parent" ref="196530635"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">505</int>
-						<reference key="object" ref="1008676978"/>
-						<reference key="parent" ref="196530635"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">811</int>
-						<reference key="object" ref="219880587"/>
-						<reference key="parent" ref="1055161663"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">812</int>
-						<reference key="object" ref="675942512"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="164503943"/>
-						</object>
-						<reference key="parent" ref="1055161663"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">813</int>
-						<reference key="object" ref="164503943"/>
-						<reference key="parent" ref="675942512"/>
-					</object>
-					<object class="IBObjectRecord">
 						<int key="objectID">346</int>
 						<reference key="object" ref="775812840"/>
 						<object class="NSMutableArray" key="children">
@@ -2251,6 +2062,206 @@
 						<reference key="object" ref="672589693"/>
 						<reference key="parent" ref="498709328"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">169</int>
+						<reference key="object" ref="1055161663"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="675942512"/>
+							<reference ref="219880587"/>
+							<reference ref="731218549"/>
+							<reference ref="817617853"/>
+							<reference ref="1009275179"/>
+							<reference ref="166695378"/>
+							<reference ref="335433706"/>
+							<reference ref="1042973623"/>
+							<reference ref="62067396"/>
+							<reference ref="152440837"/>
+							<reference ref="1025531236"/>
+							<reference ref="312480511"/>
+							<reference ref="872671202"/>
+							<reference ref="393458867"/>
+						</object>
+						<reference key="parent" ref="209932781"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">812</int>
+						<reference key="object" ref="675942512"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="164503943"/>
+						</object>
+						<reference key="parent" ref="1055161663"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">813</int>
+						<reference key="object" ref="164503943"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+						</object>
+						<reference key="parent" ref="675942512"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">811</int>
+						<reference key="object" ref="219880587"/>
+						<reference key="parent" ref="1055161663"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">502</int>
+						<reference key="object" ref="731218549"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="196530635"/>
+						</object>
+						<reference key="parent" ref="1055161663"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">503</int>
+						<reference key="object" ref="196530635"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="1008676978"/>
+							<reference ref="747271511"/>
+						</object>
+						<reference key="parent" ref="731218549"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">505</int>
+						<reference key="object" ref="1008676978"/>
+						<reference key="parent" ref="196530635"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">504</int>
+						<reference key="object" ref="747271511"/>
+						<reference key="parent" ref="196530635"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">501</int>
+						<reference key="object" ref="817617853"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="802711433"/>
+						</object>
+						<reference key="parent" ref="1055161663"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">497</int>
+						<reference key="object" ref="802711433"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="281989901"/>
+							<reference ref="713393442"/>
+							<reference ref="922927914"/>
+							<reference ref="412002922"/>
+							<reference ref="399925967"/>
+						</object>
+						<reference key="parent" ref="817617853"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">500</int>
+						<reference key="object" ref="281989901"/>
+						<reference key="parent" ref="802711433"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">499</int>
+						<reference key="object" ref="713393442"/>
+						<reference key="parent" ref="802711433"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">498</int>
+						<reference key="object" ref="922927914"/>
+						<reference key="parent" ref="802711433"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">496</int>
+						<reference key="object" ref="412002922"/>
+						<reference key="parent" ref="802711433"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">495</int>
+						<reference key="object" ref="399925967"/>
+						<reference key="parent" ref="802711433"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">184</int>
+						<reference key="object" ref="1009275179"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="1024464240"/>
+						</object>
+						<reference key="parent" ref="1055161663"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">185</int>
+						<reference key="object" ref="1024464240"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="291646746"/>
+							<reference ref="175827484"/>
+							<reference ref="1036891295"/>
+						</object>
+						<reference key="parent" ref="1009275179"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">191</int>
+						<reference key="object" ref="291646746"/>
+						<reference key="parent" ref="1024464240"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">189</int>
+						<reference key="object" ref="175827484"/>
+						<reference key="parent" ref="1024464240"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">187</int>
+						<reference key="object" ref="1036891295"/>
+						<reference key="parent" ref="1024464240"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">174</int>
+						<reference key="object" ref="166695378"/>
+						<reference key="parent" ref="1055161663"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">173</int>
+						<reference key="object" ref="335433706"/>
+						<reference key="parent" ref="1055161663"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">172</int>
+						<reference key="object" ref="1042973623"/>
+						<reference key="parent" ref="1055161663"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">171</int>
+						<reference key="object" ref="62067396"/>
+						<reference key="parent" ref="1055161663"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">164</int>
+						<reference key="object" ref="152440837"/>
+						<reference key="parent" ref="1055161663"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">160</int>
+						<reference key="object" ref="1025531236"/>
+						<reference key="parent" ref="1055161663"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">158</int>
+						<reference key="object" ref="312480511"/>
+						<reference key="parent" ref="1055161663"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">157</int>
+						<reference key="object" ref="872671202"/>
+						<reference key="parent" ref="1055161663"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">156</int>
+						<reference key="object" ref="393458867"/>
+						<reference key="parent" ref="1055161663"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -2294,6 +2305,7 @@
 					<string>163.ImportedFromIB2</string>
 					<string>164.IBPluginDependency</string>
 					<string>164.ImportedFromIB2</string>
+					<string>169.IBEditorWindowLastContentRect</string>
 					<string>169.IBPluginDependency</string>
 					<string>169.ImportedFromIB2</string>
 					<string>171.IBPluginDependency</string>
@@ -2383,6 +2395,7 @@
 					<string>501.ImportedFromIB2</string>
 					<string>502.IBPluginDependency</string>
 					<string>502.ImportedFromIB2</string>
+					<string>503.IBEditorWindowLastContentRect</string>
 					<string>503.IBPluginDependency</string>
 					<string>503.ImportedFromIB2</string>
 					<string>504.IBPluginDependency</string>
@@ -2453,6 +2466,7 @@
 					<string>811.ImportedFromIB2</string>
 					<string>812.IBPluginDependency</string>
 					<string>812.ImportedFromIB2</string>
+					<string>813.IBEditorWindowLastContentRect</string>
 					<string>813.IBPluginDependency</string>
 					<string>813.ImportedFromIB2</string>
 					<string>818.IBPluginDependency</string>
@@ -2514,6 +2528,7 @@
 					<reference ref="5"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
+					<string>{{484, 568}, {179, 253}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2546,7 +2561,7 @@
 					<string>{{270, 821}, {646, 20}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
-					<string>{{780, 320}, {216, 73}}</string>
+					<string>{{528, 748}, {216, 73}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2603,6 +2618,7 @@
 					<reference ref="5"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
+					<string>{{663, 578}, {167, 43}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2673,6 +2689,7 @@
 					<reference ref="5"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
+					<string>{{663, 585}, {64, 6}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2716,7 +2733,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">861</int>
+			<int key="maxID">866</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2804,19 +2821,145 @@
 						<object class="NSMutableArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>add:</string>
+							<string>all:</string>
 							<string>changePassword:</string>
+							<string>clearSetting:</string>
 							<string>delete:</string>
 							<string>group:</string>
+							<string>groupFilter:</string>
+							<string>groups:</string>
 							<string>reload:</string>
 							<string>save:</string>
-							<string>selectAllAccountsPrivileges:</string>
-							<string>selectAllAdministrationPrivileges:</string>
-							<string>selectAllBasicPrivileges:</string>
-							<string>selectAllBoardsPrivileges:</string>
-							<string>selectAllFilesPrivileges:</string>
-							<string>selectAllTrackerPrivileges:</string>
-							<string>selectAllUsersPrivileges:</string>
+							<string>search:</string>
+							<string>show:</string>
+							<string>submitPasswordSheet:</string>
 							<string>touch:</string>
+							<string>type:</string>
+							<string>users:</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSMutableArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>_accountsTabView</string>
+							<string>_accountsTableView</string>
+							<string>_allFilterButton</string>
+							<string>_allSettingsMenuItem</string>
+							<string>_anyGroupMenuItem</string>
+							<string>_changePasswordPanel</string>
+							<string>_creationTimeTextField</string>
+							<string>_editedByTextField</string>
+							<string>_filterSearchField</string>
+							<string>_fullNameTextField</string>
+							<string>_groupFilterPopUpButton</string>
+							<string>_groupMenuItem</string>
+							<string>_groupPopUpButton</string>
+							<string>_groupsFilterButton</string>
+							<string>_groupsTokenField</string>
+							<string>_loginTimeTextField</string>
+							<string>_modificationTimeTextField</string>
+							<string>_nameTextField</string>
+							<string>_newPasswordTextField</string>
+							<string>_noGroupMenuItem</string>
+							<string>_noneMenuItem</string>
+							<string>_passwordMismatchTextField</string>
+							<string>_passwordTextField</string>
+							<string>_progressIndicator</string>
+							<string>_saveButton</string>
+							<string>_settingTableColumn</string>
+							<string>_settingsDefinedAtThisLevelMenuItem</string>
+							<string>_settingsOutlineView</string>
+							<string>_showPopUpButton</string>
+							<string>_typePopUpButton</string>
+							<string>_userMenuItem</string>
+							<string>_usersFilterButton</string>
+							<string>_valueTableColumn</string>
+							<string>_verifyPasswordTextField</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSTabView</string>
+							<string>WITableView</string>
+							<string>NSButton</string>
+							<string>NSMenuItem</string>
+							<string>NSMenuItem</string>
+							<string>NSPanel</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSSearchField</string>
+							<string>NSTextField</string>
+							<string>NSPopUpButton</string>
+							<string>NSMenuItem</string>
+							<string>NSPopUpButton</string>
+							<string>NSButton</string>
+							<string>NSTokenField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSSecureTextField</string>
+							<string>NSMenuItem</string>
+							<string>NSMenuItem</string>
+							<string>NSTextField</string>
+							<string>NSSecureTextField</string>
+							<string>NSProgressIndicator</string>
+							<string>NSButton</string>
+							<string>NSTableColumn</string>
+							<string>NSMenuItem</string>
+							<string>WIOutlineView</string>
+							<string>NSPopUpButton</string>
+							<string>NSPopUpButton</string>
+							<string>NSMenuItem</string>
+							<string>NSButton</string>
+							<string>NSTableColumn</string>
+							<string>NSSecureTextField</string>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">WCAccounts.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">WCAccountsController</string>
+					<string key="superclassName">WCAdministrationController</string>
+					<object class="NSMutableDictionary" key="actions">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSMutableArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>add:</string>
+							<string>all:</string>
+							<string>clearSetting:</string>
+							<string>delete:</string>
+							<string>group:</string>
+							<string>groupFilter:</string>
+							<string>groups:</string>
+							<string>reload:</string>
+							<string>save:</string>
+							<string>search:</string>
+							<string>show:</string>
+							<string>touch:</string>
+							<string>type:</string>
+							<string>users:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -2840,188 +2983,78 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSMutableArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>_accountChangePasswordButton</string>
-							<string>_accountCreateAccountsButton</string>
-							<string>_accountDeleteAccountsButton</string>
-							<string>_accountEditAccountsButton</string>
-							<string>_accountListAccountsButton</string>
-							<string>_accountRaiseAccountPrivilegesButton</string>
-							<string>_accountReadAccountsButton</string>
 							<string>_accountsTabView</string>
 							<string>_accountsTableView</string>
-							<string>_banlistAddBansButton</string>
-							<string>_banlistDeleteBansButton</string>
-							<string>_banlistGetBansButton</string>
-							<string>_boardAddBoardsButton</string>
-							<string>_boardAddPostsButton</string>
-							<string>_boardAddThreadsButton</string>
-							<string>_boardDeleteBoardsButton</string>
-							<string>_boardDeletePostsButton</string>
-							<string>_boardDeleteThreadsButton</string>
-							<string>_boardEditAllPostsButton</string>
-							<string>_boardEditOwnPostsButton</string>
-							<string>_boardMoveBoardsButton</string>
-							<string>_boardMoveThreadsButton</string>
-							<string>_boardReadBoardsButton</string>
-							<string>_boardRenameBoardsButton</string>
-							<string>_boardSetPermissionsButton</string>
-							<string>_changePasswordPanel</string>
-							<string>_changePasswordTextField</string>
-							<string>_chatCreateChatsButton</string>
-							<string>_chatSetTopicButton</string>
+							<string>_addButton</string>
+							<string>_allFilterButton</string>
+							<string>_allSettingsMenuItem</string>
+							<string>_anyGroupMenuItem</string>
 							<string>_creationTimeTextField</string>
+							<string>_deleteButton</string>
 							<string>_editedByTextField</string>
-							<string>_fileAccessAllDropboxesButton</string>
-							<string>_fileCreateDirectoriesButton</string>
-							<string>_fileCreateLinksButton</string>
-							<string>_fileDeleteFilesButton</string>
-							<string>_fileGetInfoButton</string>
-							<string>_fileListFilesButton</string>
-							<string>_fileMoveFilesButton</string>
-							<string>_fileRecursiveListDepthLimitTextField</string>
-							<string>_fileRenameFilesButton</string>
-							<string>_fileSetCommentButton</string>
-							<string>_fileSetPermissionsButton</string>
-							<string>_fileSetTypeButton</string>
-							<string>_filesTextField</string>
+							<string>_filterSearchField</string>
 							<string>_fullNameTextField</string>
+							<string>_groupFilterPopUpButton</string>
 							<string>_groupMenuItem</string>
 							<string>_groupPopUpButton</string>
+							<string>_groupsFilterButton</string>
 							<string>_groupsTokenField</string>
-							<string>_logViewLogButton</string>
 							<string>_loginTimeTextField</string>
-							<string>_messageBroadcastButton</string>
-							<string>_messageSendMessagesButton</string>
 							<string>_modificationTimeTextField</string>
-							<string>_nameTableColumn</string>
 							<string>_nameTextField</string>
+							<string>_noGroupMenuItem</string>
 							<string>_noneMenuItem</string>
 							<string>_passwordTextField</string>
 							<string>_progressIndicator</string>
 							<string>_saveButton</string>
-							<string>_selectAllAccountsPrivilegesButton</string>
-							<string>_selectAllAdministrationPrivilegesButton</string>
-							<string>_selectAllBasicPrivilegesButton</string>
-							<string>_selectAllBoardsPrivilegesButton</string>
-							<string>_selectAllFilesPrivilegesButton</string>
-							<string>_selectAllTrackerPrivilegesButton</string>
-							<string>_selectAllUsersPrivilegesButton</string>
-							<string>_settingsGetSettingsButton</string>
-							<string>_settingsSetSettingsButton</string>
-							<string>_trackerListServersButton</string>
-							<string>_trackerRegisterServersButton</string>
-							<string>_transferDownloadFilesButton</string>
-							<string>_transferDownloadLimitTextField</string>
-							<string>_transferDownloadSpeedLimitTextField</string>
-							<string>_transferUploadAnywhereButton</string>
-							<string>_transferUploadDirectoriesButton</string>
-							<string>_transferUploadFilesButton</string>
-							<string>_transferUploadLimitTextField</string>
-							<string>_transferUploadSpeedLimitTextField</string>
+							<string>_settingTableColumn</string>
+							<string>_settingsDefinedAtThisLevelMenuItem</string>
+							<string>_settingsOutlineView</string>
+							<string>_showPopUpButton</string>
 							<string>_typePopUpButton</string>
-							<string>_typeTableColumn</string>
-							<string>_userBanUsersButton</string>
-							<string>_userCannotBeDisconnectedButton</string>
-							<string>_userCannotSetNickButton</string>
-							<string>_userGetInfoButton</string>
-							<string>_userGetUsersButton</string>
-							<string>_userKickUsersButton</string>
 							<string>_userMenuItem</string>
+							<string>_usersFilterButton</string>
+							<string>_valueTableColumn</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
 							<string>NSTabView</string>
 							<string>WITableView</string>
 							<string>NSButton</string>
 							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSPanel</string>
-							<string>NSSecureTextField</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSTextField</string>
+							<string>NSMenuItem</string>
+							<string>NSMenuItem</string>
 							<string>NSTextField</string>
 							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
 							<string>NSTextField</string>
+							<string>NSSearchField</string>
+							<string>NSTextField</string>
+							<string>NSPopUpButton</string>
+							<string>NSMenuItem</string>
+							<string>NSPopUpButton</string>
 							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
+							<string>NSTokenField</string>
+							<string>NSTextField</string>
 							<string>NSTextField</string>
 							<string>NSTextField</string>
 							<string>NSMenuItem</string>
-							<string>NSPopUpButton</string>
-							<string>NSTokenField</string>
-							<string>NSButton</string>
-							<string>NSTextField</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSTextField</string>
-							<string>NSTableColumn</string>
-							<string>NSTextField</string>
 							<string>NSMenuItem</string>
 							<string>NSSecureTextField</string>
 							<string>NSProgressIndicator</string>
 							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSTextField</string>
-							<string>NSTextField</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSTextField</string>
-							<string>NSTextField</string>
-							<string>NSPopUpButton</string>
 							<string>NSTableColumn</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
 							<string>NSMenuItem</string>
+							<string>WIOutlineView</string>
+							<string>NSPopUpButton</string>
+							<string>NSPopUpButton</string>
+							<string>NSMenuItem</string>
+							<string>NSButton</string>
+							<string>NSTableColumn</string>
 						</object>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">WCAccounts.h</string>
+						<string key="minorKey">WCAccountsController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -3031,6 +3064,8 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSMutableArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>_accountsController</string>
+							<string>_accountsView</string>
 							<string>_banlistController</string>
 							<string>_banlistView</string>
 							<string>_logController</string>
@@ -3042,6 +3077,8 @@
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>WCAccountsController</string>
+							<string>NSView</string>
 							<string>WCBanlistController</string>
 							<string>NSView</string>
 							<string>WCLogController</string>
@@ -3289,7 +3326,7 @@
 							<string>NSScrollView</string>
 							<string>NSTextView</string>
 							<string>NSScrollView</string>
-							<string>WITextView</string>
+							<string>WCChatTextView</string>
 							<string>WISplitView</string>
 							<string>NSView</string>
 							<string>NSMenuItem</string>
@@ -3318,6 +3355,14 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">WCChatController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">WCChatTextView</string>
+					<string key="superclassName">NSTextView</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">WCChatTextView.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -3650,14 +3695,11 @@
 							<string>_bookmarksView</string>
 							<string>_chatHistoryScrollbackButton</string>
 							<string>_chatHistoryScrollbackModifierPopUpButton</string>
-							<string>_chatShowSmileysButton</string>
 							<string>_chatTabCompleteNicksButton</string>
 							<string>_chatTabCompleteNicksTextField</string>
 							<string>_chatTabView</string>
 							<string>_chatTimestampChatButton</string>
 							<string>_chatTimestampChatIntervalTextField</string>
-							<string>_chatTimestampEveryLineButton</string>
-							<string>_chatTimestampEveryLineColorWell</string>
 							<string>_chatView</string>
 							<string>_checkForUpdateButton</string>
 							<string>_confirmDisconnectButton</string>
@@ -3695,23 +3737,25 @@
 							<string>_showConnectAtStartupButton</string>
 							<string>_showServersAtStartupButton</string>
 							<string>_statusTextField</string>
+							<string>_themesBoardsBackgroundColorWell</string>
+							<string>_themesBoardsFontButton</string>
+							<string>_themesBoardsFontTextField</string>
+							<string>_themesBoardsTextColorWell</string>
 							<string>_themesChatBackgroundColorWell</string>
 							<string>_themesChatEventsColorWell</string>
 							<string>_themesChatFontButton</string>
 							<string>_themesChatFontTextField</string>
 							<string>_themesChatTextColorWell</string>
+							<string>_themesChatTimestampEveryLineButton</string>
+							<string>_themesChatTimestampEveryLineColorWell</string>
 							<string>_themesChatURLsColorWell</string>
 							<string>_themesFileListAlternateRowsButton</string>
-							<string>_themesMessageListAlternateRowsButton</string>
 							<string>_themesMessagesBackgroundColorWell</string>
 							<string>_themesMessagesFontButton</string>
 							<string>_themesMessagesFontTextField</string>
 							<string>_themesMessagesTextColorWell</string>
 							<string>_themesNameTableColumn</string>
-							<string>_themesNewsBackgroundColorWell</string>
-							<string>_themesNewsFontButton</string>
-							<string>_themesNewsFontTextField</string>
-							<string>_themesNewsTextColorWell</string>
+							<string>_themesShowSmileysButton</string>
 							<string>_themesTableView</string>
 							<string>_themesTrackerListAlternateRowsButton</string>
 							<string>_themesTransferListAlternateRowsButton</string>
@@ -3748,13 +3792,10 @@
 							<string>NSButton</string>
 							<string>NSPopUpButton</string>
 							<string>NSButton</string>
-							<string>NSButton</string>
 							<string>NSTextField</string>
 							<string>NSTabView</string>
 							<string>NSButton</string>
 							<string>NSTextField</string>
-							<string>NSButton</string>
-							<string>NSColorWell</string>
 							<string>NSView</string>
 							<string>NSButton</string>
 							<string>NSButton</string>
@@ -3793,22 +3834,24 @@
 							<string>NSButton</string>
 							<string>NSTextField</string>
 							<string>NSColorWell</string>
-							<string>NSColorWell</string>
 							<string>NSButton</string>
 							<string>NSTextField</string>
 							<string>NSColorWell</string>
 							<string>NSColorWell</string>
+							<string>NSColorWell</string>
 							<string>NSButton</string>
+							<string>NSTextField</string>
+							<string>NSColorWell</string>
+							<string>NSButton</string>
+							<string>NSColorWell</string>
+							<string>NSColorWell</string>
 							<string>NSButton</string>
 							<string>NSColorWell</string>
 							<string>NSButton</string>
 							<string>NSTextField</string>
 							<string>NSColorWell</string>
 							<string>NSTableColumn</string>
-							<string>NSColorWell</string>
 							<string>NSButton</string>
-							<string>NSTextField</string>
-							<string>NSColorWell</string>
 							<string>NSTableView</string>
 							<string>NSButton</string>
 							<string>NSButton</string>
@@ -3830,6 +3873,47 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
+					<string key="className">WCPrivateChat</string>
+					<string key="superclassName">WCConnectionController</string>
+					<object class="NSMutableDictionary" key="actions">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSMutableArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>getInfo:</string>
+							<string>insertSmiley:</string>
+							<string>saveChat:</string>
+							<string>setTopic:</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<string key="NS.key.0">_chatController</string>
+						<string key="NS.object.0">WCPrivateChatController</string>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">WCPrivateChat.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">WCPrivateChatController</string>
+					<string key="superclassName">WCChatController</string>
+					<object class="NSMutableDictionary" key="outlets">
+						<string key="NS.key.0">_privateChat</string>
+						<string key="NS.object.0">WCPrivateChat</string>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">WCPrivateChatController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">WCPublicChat</string>
 					<string key="superclassName">WIWindowController</string>
 					<object class="NSMutableDictionary" key="actions">
@@ -3844,7 +3928,7 @@
 							<string>disconnect:</string>
 							<string>files:</string>
 							<string>getInfo:</string>
-							<string>news:</string>
+							<string>insertSmiley:</string>
 							<string>nextConnection:</string>
 							<string>previousConnection:</string>
 							<string>reconnect:</string>
