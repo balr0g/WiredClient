@@ -63,7 +63,7 @@
 - (SEL)_sortSelector;
 
 - (void)_reloadThread;
-- (NSString *)_HTMLStringForPost:(WCBoardPost *)post;
+- (NSString *)_HTMLStringForPost:(WCBoardPost *)post writable:(BOOL)writable;
 - (NSString *)_textForPostText:(NSString *)text;
 
 - (void)_reloadLocationsAndSelectBoard:(WCBoard *)board;
@@ -337,7 +337,7 @@
 	NSMutableString		*html;
 	WCBoardThread		*thread;
 	WCBoardPost			*post;
-	BOOL				changedUnread = NO, isKeyWindow;
+	BOOL				changedUnread = NO, writable, isKeyWindow;
 	
 	html = [NSMutableString stringWithString:_headerTemplate];
 	
@@ -352,9 +352,10 @@
 		isKeyWindow		= ([NSApp keyWindow] == [self window]);
 		thread			= [threads objectAtIndex:0];
 		enumerator		= [[thread posts] objectEnumerator];
+		writable		= [[thread board] isWritableByAccount:[[thread connection] account]];
 		
 		while((post = [enumerator nextObject])) {
-			[html appendString:[self _HTMLStringForPost:post]];
+			[html appendString:[self _HTMLStringForPost:post writable:writable]];
 			
 			if([post isUnread] && isKeyWindow) {
 				[post setUnread:NO];
@@ -387,7 +388,7 @@
 
 
 
-- (NSString *)_HTMLStringForPost:(WCBoardPost *)post {
+- (NSString *)_HTMLStringForPost:(WCBoardPost *)post writable:(BOOL)writable {
 	NSEnumerator		*enumerator;
 	NSDictionary		*theme, *regexs;
 	NSMutableString		*string, *text, *regex;
@@ -465,7 +466,7 @@
 	[string replaceOccurrencesOfString:@"<? body ?>" withString:text];
 	[string replaceOccurrencesOfString:@"<? postid ?>" withString:[post postID]];
 	
-	if([account boardAddPosts])
+	if([account boardAddPosts] && writable)
 		[string replaceOccurrencesOfString:@"<? replydisabled ?>" withString:@""];
 	else
 		[string replaceOccurrencesOfString:@"<? replydisabled ?>" withString:@"disabled=\"disabled\""];
