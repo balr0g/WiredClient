@@ -27,7 +27,7 @@
  */
 
 #import "WCAccount.h"
-#import "WCAccounts.h"
+#import "WCAccountsController.h"
 #import "WCCache.h"
 #import "WCErrorQueue.h"
 #import "WCFile.h"
@@ -1139,7 +1139,7 @@
 	[_ownerPopUpButton removeAllItems];
 	[_ownerPopUpButton addItem:[NSMenuItem itemWithTitle:NSLS(@"None", @"Create folder owner popup title") tag:1]];
 	
-	array = [[[self connection] accounts] userNames];
+	array = [[[[self connection] administration] accountsController] userNames];
 	
 	if([array count] > 0) {
 		[_ownerPopUpButton addItem:[NSMenuItem separatorItem]];
@@ -1152,7 +1152,7 @@
 	[_groupPopUpButton removeAllItems];
 	[_groupPopUpButton addItem:[NSMenuItem itemWithTitle:NSLS(@"None", @"Create folder group popup title") tag:1]];
 	
-	array = [[[self connection] accounts] groupNames];
+	array = [[[[self connection] administration] accountsController] groupNames];
 	
 	if([array count] > 0) {
 		[_groupPopUpButton addItem:[NSMenuItem separatorItem]];

@@ -28,7 +28,7 @@
 
 #import "NSAlert-WCAdditions.h"
 #import "WCAccount.h"
-#import "WCAccounts.h"
+#import "WCAccountsController.h"
 #import "WCFile.h"
 #import "WCFileInfo.h"
 #import "WCFiles.h"
@@ -482,8 +482,8 @@
 	[_dateFormatter setDateStyle:NSDateFormatterMediumStyle];
 	[_dateFormatter setNaturalLanguageStyle:WIDateFormatterCapitalizedNaturalLanguageStyle];
 	
-	[_ownerPopUpButton addItemsWithTitles:[[[self connection] accounts] userNames]];
-	[_groupPopUpButton addItemsWithTitles:[[[self connection] accounts] groupNames]];
+	[_ownerPopUpButton addItemsWithTitles:[[[[self connection] administration] accountsController] userNames]];
+	[_groupPopUpButton addItemsWithTitles:[[[[self connection] administration] accountsController] groupNames]];
 
 	[self setDefaultFrame:[_kindTextField frame]];
 	

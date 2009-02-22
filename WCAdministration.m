@@ -42,6 +42,7 @@
 
 - (void)_addAdministrationView:(NSView *)view name:(NSString *)name image:(NSImage *)image controller:(id)controller;
 - (void)_selectAdministrationViewWithIdentifier:(NSString *)identifier animate:(BOOL)animate;
+- (NSString *)_identifierForController:(id)controller;
 
 @end
 
@@ -138,6 +139,22 @@
 
 		[controller controllerDidSelect];
 	}
+}
+
+
+
+- (NSString *)_identifierForController:(id)controller {
+	NSEnumerator	*enumerator;
+	NSString		*identifier;
+	
+	enumerator = [_views keyEnumerator];
+	
+	while((identifier = [enumerator nextObject])) {
+		if([[_views objectForKey:identifier] objectForKey:WCAdministrationControllerKey] == controller)
+			return identifier;
+	}
+	
+	return NULL;
 }
 
 @end
@@ -349,8 +366,32 @@
 
 #pragma mark -
 
+- (void)selectController:(id)controller {
+	NSString		*identifier;
+	
+	if([_shownController controllerShouldUnselect]) {
+		identifier = [self _identifierForController:controller];
+		
+		[self _selectAdministrationViewWithIdentifier:identifier animate:YES];
+	} else {
+		identifier = [self _identifierForController:_shownController];
+
+		[[[self window] toolbar] setSelectedItemIdentifier:identifier];
+	}
+}
+
+
+
 - (id)selectedController {
 	return _shownController;
+}
+
+
+
+#pragma mark -
+
+- (WCAccountsController *)accountsController {
+	return _accountsController;
 }
 
 
@@ -366,21 +407,14 @@
 #pragma mark -
 
 - (void)toolbarItem:(id)sender {
-	NSEnumerator		*enumerator;
-	NSString			*identifier;
+	NSString		*identifier;
 	
 	if([_shownController controllerShouldUnselect]) {
 		[self _selectAdministrationViewWithIdentifier:[sender itemIdentifier] animate:YES];
 	} else {
-		enumerator = [_views keyEnumerator];
-		
-		while((identifier = [enumerator nextObject])) {
-			if([[_views objectForKey:identifier] objectForKey:WCAdministrationControllerKey] == _shownController) {
-				[[[self window] toolbar] setSelectedItemIdentifier:identifier];
-				
-				break;
-			}
-		}
+		identifier = [self _identifierForController:_shownController];
+
+		[[[self window] toolbar] setSelectedItemIdentifier:identifier];
 	}
 }
 

@@ -55,7 +55,10 @@
 
 + (id)administrationWithConnection:(WCServerConnection *)connection;
 
+- (void)selectController:(id)controller;
 - (id)selectedController;
+
+- (WCAccountsController *)accountsController;
 
 - (void)showError:(WCError *)error;
 

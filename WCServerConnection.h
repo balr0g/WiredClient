@@ -50,7 +50,7 @@
 
 @class WCServer, WCCache, WCAccount;
 @class WCLink, WCNotificationCenter;
-@class WCAccounts, WCAdministration, WCPublicChatController, WCConsole, WCServerInfo;
+@class WCAdministration, WCPublicChatController, WCConsole, WCServerInfo;
 
 @interface WCServerConnection : WCLinkConnection {
 	NSString													*_identifier;
@@ -61,7 +61,6 @@
 	WCServer													*_server;
 	WCCache														*_cache;
 	
-	WCAccounts													*_accounts;
 	WCAdministration											*_administration;
 	WCPublicChatController										*_chatController;
 	WCConsole													*_console;
@@ -98,7 +97,6 @@
 - (WCServer *)server;
 - (WCCache *)cache;
 
-- (WCAccounts *)accounts;
 - (WCAdministration *)administration;
 - (WCPublicChatController *)chatController;
 - (WCConsole *)console;

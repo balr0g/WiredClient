@@ -38,7 +38,6 @@
 
 - (void)_validate;
 
-- (void)_reloadAccounts;
 - (void)_requestAccounts;
 
 - (NSDictionary *)_settingForRow:(NSInteger)row;
@@ -86,13 +85,6 @@
 
 
 #pragma mark -
-
-- (void)_reloadAccounts {
-	if([[_administration window] isVisible] && [_administration selectedController] == self)
-		[self _requestAccounts];
-}
-
-
 
 - (void)_requestAccounts {
 	WIP7Message		*message;
@@ -207,7 +199,7 @@
 		
 		[self _validateForAccounts];
 		[self _readFromAccounts];
-		[self _reloadAccounts];
+		[self _requestAccounts];
 	}
 	
 	[[_administration window] setDocumentEdited:NO];
@@ -854,7 +846,7 @@
 
 
 - (void)serverConnectionPrivilegesDidChange:(NSNotification *)notification {
-	[self _reloadAccounts];
+	[self _requestAccounts];
 	[self _validate];
 	[self _validateForAccounts];
 }
@@ -980,7 +972,7 @@
 #pragma mark -
 
 - (void)controllerWindowDidBecomeKey {
-	[self _reloadAccounts];
+	[self _requestAccounts];
 }
 
 
@@ -1004,7 +996,7 @@
 
 
 - (void)controllerDidSelect {
-	[self _reloadAccounts];
+	[self _requestAccounts];
 
 	[[_administration window] makeFirstResponder:_accountsTableView];
 }
@@ -1145,8 +1137,8 @@
 		}
 	}
 	
-	// XXX show admin window, select me
-//	[self showWindow:self];
+	[_administration selectController:self];
+	[_administration showWindow:self];
 }
 
 
@@ -1254,7 +1246,7 @@
 		
 		_requested = NO;
 
-		[self _reloadAccounts];
+		[self _requestAccounts];
 	}
 }
 
@@ -1263,7 +1255,7 @@
 - (IBAction)reload:(id)sender {
 	_requested = NO;
 	
-	[self _reloadAccounts];
+	[self _requestAccounts];
 }
 
 
@@ -1722,7 +1714,7 @@
 
 
 
-/*@implementation WCAccountsTableColumn
+@implementation WCAccountsTableColumn
 
 - (id)dataCellForRow:(NSInteger)row {
 	id		cell;
@@ -1735,4 +1727,4 @@
 	return [super dataCellForRow:row];
 }
 
-@end*/
+@end

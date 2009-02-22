@@ -28,7 +28,6 @@
 
 #import "NSAlert-WCAdditions.h"
 #import "WCAccount.h"
-#import "WCAccounts.h"
 #import "WCAdministration.h"
 #import "WCApplicationController.h"
 #import "WCBoards.h"
@@ -364,7 +363,6 @@
 		_console		= [WCConsole consoleWithConnection:self];
 #endif
 		
-		_accounts		= [WCAccounts accountsWithConnection:self];
 		_administration	= [WCAdministration administrationWithConnection:self];
 		_serverInfo		= [WCServerInfo serverInfoWithConnection:self];
 
@@ -515,12 +513,6 @@
 
 
 #pragma mark -
-
-- (WCAccounts *)accounts {
-	return _accounts;
-}
-
-
 
 - (WCAdministration *)administration {
 	return _administration;

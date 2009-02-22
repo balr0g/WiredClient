@@ -27,7 +27,7 @@
  */
 
 #import "WCAccount.h"
-#import "WCAccounts.h"
+#import "WCAccountsController.h"
 #import "WCApplicationController.h"
 #import "WCBoard.h"
 #import "WCBoards.h"
@@ -549,7 +549,7 @@
 	[_addOwnerPopUpButton removeAllItems];
 	[_addOwnerPopUpButton addItem:[NSMenuItem itemWithTitle:NSLS(@"None", @"Create board owner popup title") tag:1]];
 	
-	array = [[[board connection] accounts] userNames];
+	array = [[[[board connection] administration] accountsController] userNames];
 	
 	if([array count] > 0) {
 		[_addOwnerPopUpButton addItem:[NSMenuItem separatorItem]];
@@ -575,7 +575,7 @@
 	[_addGroupPopUpButton removeAllItems];
 	[_addGroupPopUpButton addItem:[NSMenuItem itemWithTitle:NSLS(@"None", @"Create board group popup title") tag:1]];
 	
-	array = [[[board connection] accounts] groupNames];
+	array = [[[[board connection] administration] accountsController] groupNames];
 	
 	if([array count] > 0) {
 		[_addGroupPopUpButton addItem:[NSMenuItem separatorItem]];

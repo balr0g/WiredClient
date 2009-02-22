@@ -326,13 +326,6 @@ typedef enum _WCChatActivity				WCChatActivity;
 												 target:[WCApplicationController sharedController]
 												 action:@selector(transfers:)];
 	}
-	else if([identifier isEqualToString:@"Accounts"]) {
-		return [NSToolbarItem toolbarItemWithIdentifier:identifier
-												   name:NSLS(@"Accounts", @"Accounts toolbar item")
-												content:[NSImage imageNamed:@"Accounts"]
-												 target:self
-												 action:@selector(accounts:)];
-	}
 	else if([identifier isEqualToString:@"Administration"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
 												   name:NSLS(@"Administration", @"Administration toolbar item")
@@ -376,7 +369,6 @@ typedef enum _WCChatActivity				WCChatActivity;
 		@"Files",
 		@"Search",
 		@"Transfers",
-		@"Accounts",
 		@"Administration",
 		NSToolbarFlexibleSpaceItemIdentifier,
 		@"Reconnect",
@@ -394,7 +386,6 @@ typedef enum _WCChatActivity				WCChatActivity;
 		@"Files",
 		@"Search",
 		@"Transfers",
-		@"Accounts",
 		@"Administration",
 #ifndef WCConfigurationRelease
 		@"Console",
@@ -543,8 +534,8 @@ typedef enum _WCChatActivity				WCChatActivity;
 		return (connection != NULL && [connection isConnected] && [[connection account] fileListFiles]);
 	else if(selector == @selector(broadcast:))
 		return (connection != NULL && [connection isConnected]);
-	else if(selector == @selector(serverInfo:) || selector == @selector(accounts:) ||
-			selector == @selector(administration:) || selector == @selector(console:))
+	else if(selector == @selector(serverInfo:) || selector == @selector(administration:) ||
+			selector == @selector(console:))
 		return (connection != NULL);
 	else if(selector == @selector(nextConnection:) || selector == @selector(previousConnection:))
 		return ([_chatControllers count] > 1);
@@ -631,16 +622,6 @@ typedef enum _WCChatActivity				WCChatActivity;
 	connection = [[self selectedChatController] connection];
 	
 	[WCFiles filesWithConnection:connection path:[WCFile fileWithRootDirectoryForConnection:connection]];
-}
-
-
-
-- (IBAction)accounts:(id)sender {
-	WCServerConnection		*connection;
-	
-	connection = [[self selectedChatController] connection];
-	
-	[[connection accounts] showWindow:self];
 }
 
 

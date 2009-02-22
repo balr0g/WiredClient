@@ -120,6 +120,6 @@
 @end
 
 
-/*@interface WCAccountsTableColumn : NSTableColumn
+@interface WCAccountsTableColumn : NSTableColumn
 
-@end*/
+@end

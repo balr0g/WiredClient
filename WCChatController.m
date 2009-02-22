@@ -27,7 +27,7 @@
  */
 
 #import "WCAccount.h"
-#import "WCAccounts.h"
+#import "WCAccountsController.h"
 #import "WCApplicationController.h"
 #import "WCChatController.h"
 #import "WCChatWindow.h"
@@ -2053,7 +2053,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 	
 	user = [self selectedUser];
 	
-	[[[self connection] accounts] editUserAccountWithName:[user login]];
+	[[[[self connection] administration] accountsController] editUserAccountWithName:[user login]];
 }
 
 
