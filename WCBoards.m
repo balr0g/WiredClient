@@ -2319,11 +2319,10 @@
 - (BOOL)outlineView:(NSOutlineView *)outlineView acceptDrop:(id <NSDraggingInfo>)info item:(id)item childIndex:(NSInteger)index {
 	NSPasteboard		*pasteboard;
 	NSEnumerator		*enumerator;
-	NSArray				*types, *array, *threads;
+	NSArray				*types, *array;
 	NSString			*oldPath, *oldName, *newPath, *rootPath, *threadID;
 	WIP7Message			*message;
 	WCBoard				*newBoard = item, *oldBoard;
-	WCBoardThread		*thread;
 	
 	pasteboard	= [info draggingPasteboard];
 	types		= [pasteboard types];
@@ -2346,15 +2345,12 @@
 		array		= [pasteboard propertyListForType:WCThreadPboardType];
 		oldPath		= [array objectAtIndex:0];
 		oldBoard	= [[_boards boardForConnection:[newBoard connection]] boardForPath:oldPath];
-		threads		= [array subarrayFromIndex:1];
 		enumerator	= [[array subarrayFromIndex:1] objectEnumerator];
 		
 		while((threadID = [enumerator nextObject])) {
-			thread = [oldBoard threadWithID:threadID];
-
 			message = [WIP7Message messageWithName:@"wired.board.move_thread" spec:WCP7Spec];
 			[message setString:[oldBoard path] forName:@"wired.board.board"];
-			[message setUUID:[thread threadID] forName:@"wired.board.thread"];
+			[message setUUID:threadID forName:@"wired.board.thread"];
 			[message setString:[newBoard path] forName:@"wired.board.new_board"];
 			[[newBoard connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardMoveThreadReply:)];
 		}
