@@ -45,9 +45,10 @@
 	_postDate	= [[message dateForName:@"wired.board.post_date"] retain];
 	_editDate	= [[message dateForName:@"wired.board.edit_date"] retain];
 	_nick		= [[message stringForName:@"wired.user.nick"] retain];
-	_login		= [[message stringForName:@"wired.user.login"] retain];
 	_subject	= [[message stringForName:@"wired.board.subject"] retain];
 	_text		= [[message stringForName:@"wired.board.text"] retain];
+	
+	[message getBool:&_own forName:@"wired.board.own_post"];
 	
 	return self;
 }
@@ -61,7 +62,6 @@
 	[_postDate release];
 	[_editDate release];
 	[_nick release];
-	[_login release];
 	[_subject release];
 	[_text release];
 	
@@ -126,8 +126,8 @@
 
 
 
-- (NSString *)login {
-	return _login;
+- (BOOL)isOwnPost {
+	return _own;
 }
 
 

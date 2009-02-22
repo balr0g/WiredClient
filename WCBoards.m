@@ -430,7 +430,7 @@
 	
 	string = [[_postTemplate mutableCopy] autorelease];
 
-	[string replaceOccurrencesOfString:@"<? from ?>" withString:[NSSWF:NSLS(@"%@ (%@)", @"Post from (nick, login)"), [post nick], [post login]]];
+	[string replaceOccurrencesOfString:@"<? from ?>" withString:[post nick]];
 
 	[string replaceOccurrencesOfString:@"<? subject ?>" withString:[post subject]];
 	
@@ -453,8 +453,8 @@
 		[string replaceOccurrencesOfString:@"<? replydisabled ?>" withString:@""];
 	else
 		[string replaceOccurrencesOfString:@"<? replydisabled ?>" withString:@"disabled=\"disabled\""];
-		
-	if([account boardEditAllPosts] || ([account boardEditOwnPosts] && [[[[post connection] URL] user] isEqualToString:[post login]]))
+	
+	if([account boardEditAllPosts] || ([account boardEditOwnPosts] && [post isOwnPost]))
 		[string replaceOccurrencesOfString:@"<? editdisabled ?>" withString:@""];
 	else
 		[string replaceOccurrencesOfString:@"<? editdisabled ?>" withString:@"disabled=\"disabled\""];
