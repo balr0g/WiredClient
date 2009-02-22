@@ -79,7 +79,6 @@ typedef enum _WCChatFormat					WCChatFormat;
 - (BOOL)_runCommand:(NSString *)command;
 
 - (NSString *)_stringByCompletingString:(NSString *)string;
-- (NSString *)_stringByDecomposingAttributedString:(NSAttributedString *)attributedString;
 - (void)_applyChatAttributesToAttributedString:(NSMutableAttributedString *)attributedString;
 
 - (NSColor *)_highlightColorForChat:(NSString *)chat;
@@ -477,15 +476,6 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 
 
-- (NSString *)_stringByDecomposingAttributedString:(NSAttributedString *)attributedString {
-	if(![attributedString containsAttachments])
-		return [attributedString string];
-	
-	return [[attributedString attributedStringByReplacingAttachmentsWithStrings] string];
-}
-
-
-
 - (void)_applyChatAttributesToAttributedString:(NSMutableAttributedString *)attributedString {
 	static NSCharacterSet		*whitespaceSet, *nonWhitespaceSet, *nonTimestampSet, *nonHighlightSet;
 	NSMutableCharacterSet		*characterSet;
@@ -842,20 +832,29 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 
 
++ (NSString *)stringByDecomposingSmileyAttributesInAttributedString:(NSMutableAttributedString *)attributedString {
+	if(![attributedString containsAttachments])
+		return [[[attributedString string] copy] autorelease];
+	
+	return [[attributedString attributedStringByReplacingAttachmentsWithStrings] string];
+}
+
+
+
 + (NSString *)URLRegex {
-	return @"\\w+://(?:\\w|\\.|/|~|-|_|\\?|\\!|;|&|=|%|#|:|@|\\+|$|,|\\*|\\(|\\))+?";
+	return @"\\w+://(?:\\w|\\.|/|~|-|\\?|\\!|;|&|=|%|#|:|@|\\+|$|,|\\*|\\(|\\))+?";
 }
 
 
 
 + (NSString *)schemelessURLRegex {
-	return @"www\\.(?:\\w|\\.|/|~|-|_|\\?|\\!|;|&|=|%|#|:|@|\\+|$|,|\\*|\\(|\\))+?";
+	return @"www\\.(?:\\w|\\.|/|~|-|\\?|\\!|;|&|=|%|#|:|@|\\+|$|,|\\*|\\(|\\))+?";
 }
 
 
 
 + (NSString *)mailtoURLRegex {
-	return @"(?:\\w|\\.|_|-)+@(?:\\w|\\.|_|-)+?";
+	return @"(?:\\w|\\.|-)+@(?:\\w|\\.|-)+?";
 }
 
 
@@ -1521,7 +1520,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 		NSString		*string;
 		NSUInteger		length;
 		
-		string = [self _stringByDecomposingAttributedString:[_chatInputTextView textStorage]];
+		string = [[self class] stringByDecomposingSmileyAttributesInAttributedString:[_chatInputTextView textStorage]];
 		length = [string length];
 		
 		if(length == 0)
