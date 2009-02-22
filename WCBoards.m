@@ -58,7 +58,8 @@
 
 - (void)_selectThread:(WCBoardThread *)thread;
 - (void)_reselectThread:(WCBoardThread *)thread;
-- (void)_markSelectedThreadsAsUnread:(BOOL)unread;
+- (BOOL)_markThreads:(NSArray *)threads asUnread:(BOOL)unread;
+- (BOOL)_markBoard:(WCBoard *)board asUnread:(BOOL)unread;
 - (SEL)_sortSelector;
 
 - (void)_reloadThread;
@@ -253,13 +254,13 @@
 
 
 
-- (void)_markSelectedThreadsAsUnread:(BOOL)unread {
+- (BOOL)_markThreads:(NSArray *)threads asUnread:(BOOL)unread {
 	NSEnumerator		*enumerator, *postEnumerator;
 	WCBoardThread		*thread;
 	WCBoardPost			*post;
 	BOOL				changedUnread = NO;
 	
-	enumerator = [[self _selectedThreads] objectEnumerator];
+	enumerator = [threads objectEnumerator];
 	
 	while((thread = [enumerator nextObject])) {
 		if([thread isUnread] != unread) {
@@ -283,14 +284,28 @@
 			}
 		}
 	}
-
-	if(changedUnread) {
-		[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
 	
-		[self _savePosts];
+	return changedUnread;
+}
+
+
+
+- (BOOL)_markBoard:(WCBoard *)board asUnread:(BOOL)unread {
+	NSEnumerator		*enumerator;
+	WCBoard				*eachBoard;
+	BOOL				changedUnread = NO;
+	
+	enumerator = [[board boards] objectEnumerator];
+	
+	while((eachBoard = [enumerator nextObject])) {
+		if([self _markThreads:[eachBoard threads] asUnread:NO])
+			changedUnread = YES;
 		
-		[_boardsOutlineView setNeedsDisplay:YES];
+		if([self _markBoard:eachBoard asUnread:NO])
+			changedUnread = YES;
 	}
+	
+	return changedUnread;
 }
 
 
@@ -823,6 +838,20 @@
 												 target:self
 												 action:@selector(deleteThread:)];
 	}
+	else if([identifier isEqualToString:@"MarkAsRead"]) {
+		return [NSToolbarItem toolbarItemWithIdentifier:identifier
+												   name:NSLS(@"Mask As Read", @"Mark as read toolbar item")
+												content:[NSImage imageNamed:@"MarkAsRead"]
+												 target:self
+												 action:@selector(markAsRead:)];
+	}
+	else if([identifier isEqualToString:@"MarkAllAsRead"]) {
+		return [NSToolbarItem toolbarItemWithIdentifier:identifier
+												   name:NSLS(@"Mask All As Read", @"Mark all as read toolbar item")
+												content:[NSImage imageNamed:@"MarkAllAsRead"]
+												 target:self
+												 action:@selector(markAllAsRead:)];
+	}
 	
 	return NULL;
 }
@@ -833,6 +862,9 @@
 	return [NSArray arrayWithObjects:
 		@"AddThread",
 		@"DeleteThread",
+		NSToolbarSpaceItemIdentifier,
+		@"MarkAsRead",
+		@"MarkAllAsRead",
 		NULL];
 }
 
@@ -846,6 +878,8 @@
 		NSToolbarCustomizeToolbarItemIdentifier,
 		@"AddThread",
 		@"DeleteThread",
+		@"MarkAsRead",
+		@"MarkAllAsRead",
 		NULL];
 }
 
@@ -1547,6 +1581,10 @@
 		return (board != NULL && connected && [account boardAddThreads]);
 	else if(selector == @selector(deleteThread:))
 		return (board != NULL && connected && thread != NULL && [account boardDeleteThreads]);
+	else if(selector == @selector(markAsRead:))
+		return (board != NULL);
+	else if(selector == @selector(markAllAsRead:))
+		return ([_boards numberOfUnreadThreadsForConnection:NULL includeChildBoards:YES] > 0);
 	
 	return YES;
 }
@@ -1571,7 +1609,7 @@
 	else if(selector == @selector(changePermissions:))
 		return (board != NULL && [board isModifiable] && connected && [account boardSetPermissions]);
 	else if(selector == @selector(markAsRead:) || @selector(markAsUnread:))
-		return (board != NULL && thread != NULL);
+		return (board != NULL);
 	
 	return YES;
 }
@@ -2141,13 +2179,54 @@
 
 
 - (IBAction)markAsRead:(id)sender {
-	[self _markSelectedThreadsAsUnread:NO];
+	NSArray		*threads;
+	
+	threads = [self _selectedThreads];
+	
+	if([threads count] == 0)
+		threads = [[self _selectedBoard] threads];
+	
+	if([self _markThreads:threads asUnread:NO]) {
+		[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
+	
+		[self _savePosts];
+		
+		[_boardsOutlineView setNeedsDisplay:YES];
+		[_threadsTableView setNeedsDisplay:YES];
+	}
+}
+
+
+
+- (IBAction)markAllAsRead:(id)sender {
+	if([self _markBoard:_boards asUnread:NO]) {
+		[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
+	
+		[self _savePosts];
+		
+		[_boardsOutlineView setNeedsDisplay:YES];
+		[_threadsTableView setNeedsDisplay:YES];
+	}
 }
 
 
 
 - (IBAction)markAsUnread:(id)sender {
-	[self _markSelectedThreadsAsUnread:YES];
+	NSArray		*threads;
+	
+	threads = [self _selectedThreads];
+	
+	if([threads count] == 0)
+		threads = [[self _selectedBoard] threads];
+	
+	if([self _markThreads:threads asUnread:YES]) {
+		[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
+	
+		[self _savePosts];
+		
+		[_boardsOutlineView setNeedsDisplay:YES];
+		[_threadsTableView setNeedsDisplay:YES];
+	}
 }
 
 

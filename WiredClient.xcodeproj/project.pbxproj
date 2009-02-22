@@ -280,6 +280,8 @@
 		A5AAD14B0D86F1980072FFA1 /* WCLogController.m in Sources */ = {isa = PBXBuildFile; fileRef = A5AAD14A0D86F1980072FFA1 /* WCLogController.m */; };
 		A5AAD14E0D86F1A10072FFA1 /* WCSettingsController.m in Sources */ = {isa = PBXBuildFile; fileRef = A5AAD14D0D86F1A10072FFA1 /* WCSettingsController.m */; };
 		A5AAD2DE0D879B250072FFA1 /* WCFilterView.m in Sources */ = {isa = PBXBuildFile; fileRef = A5AAD2DD0D879B250072FFA1 /* WCFilterView.m */; };
+		A5BCA1AC0F51CE7B004C5986 /* MarkAsRead.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5BCA1AB0F51CE7B004C5986 /* MarkAsRead.tiff */; };
+		A5BCA1BE0F51CFA4004C5986 /* MarkAllAsRead.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5BCA1BD0F51CFA4004C5986 /* MarkAllAsRead.tiff */; };
 		A5CD59130F4CAEB400CF374C /* Boards.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5CD59120F4CAEB400CF374C /* Boards.tiff */; };
 		A5CD594A0F4CAF4600CF374C /* Board.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5CD59490F4CAF4600CF374C /* Board.tiff */; };
 		A5CD594D0F4CAFDB00CF374C /* NewThread.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5CD594C0F4CAFDB00CF374C /* NewThread.tiff */; };
@@ -722,6 +724,8 @@
 		A5AAD14D0D86F1A10072FFA1 /* WCSettingsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCSettingsController.m; sourceTree = "<group>"; };
 		A5AAD2DC0D879B250072FFA1 /* WCFilterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCFilterView.h; sourceTree = "<group>"; };
 		A5AAD2DD0D879B250072FFA1 /* WCFilterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCFilterView.m; sourceTree = "<group>"; };
+		A5BCA1AB0F51CE7B004C5986 /* MarkAsRead.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = MarkAsRead.tiff; sourceTree = "<group>"; };
+		A5BCA1BD0F51CFA4004C5986 /* MarkAllAsRead.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = MarkAllAsRead.tiff; sourceTree = "<group>"; };
 		A5CD59120F4CAEB400CF374C /* Boards.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Boards.tiff; sourceTree = "<group>"; };
 		A5CD59490F4CAF4600CF374C /* Board.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Board.tiff; sourceTree = "<group>"; };
 		A5CD594C0F4CAFDB00CF374C /* NewThread.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = NewThread.tiff; sourceTree = "<group>"; };
@@ -1380,6 +1384,8 @@
 				A54AF9240F13AEBB00AFD50E /* LogError.tiff */,
 				A54AF9230F13AEBB00AFD50E /* LogInfo.tiff */,
 				A54AF9220F13AEBB00AFD50E /* LogWarning.tiff */,
+				A5BCA1BD0F51CFA4004C5986 /* MarkAllAsRead.tiff */,
+				A5BCA1AB0F51CE7B004C5986 /* MarkAsRead.tiff */,
 				A54AF9210F13AEBB00AFD50E /* Message.tiff */,
 				A54AF9200F13AEBB00AFD50E /* Messages.tiff */,
 				A54AF91F0F13AEBB00AFD50E /* Minus.tiff */,
@@ -1907,6 +1913,8 @@
 				A5CD594A0F4CAF4600CF374C /* Board.tiff in Resources */,
 				A5CD594D0F4CAFDB00CF374C /* NewThread.tiff in Resources */,
 				A5CD59510F4CB01B00CF374C /* DeleteThread.tiff in Resources */,
+				A5BCA1AC0F51CE7B004C5986 /* MarkAsRead.tiff in Resources */,
+				A5BCA1BE0F51CFA4004C5986 /* MarkAllAsRead.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
