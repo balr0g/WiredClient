@@ -2318,7 +2318,8 @@
 
 - (BOOL)outlineView:(NSOutlineView *)outlineView acceptDrop:(id <NSDraggingInfo>)info item:(id)item childIndex:(NSInteger)index {
 	NSPasteboard		*pasteboard;
-	NSArray				*types, *array;
+	NSEnumerator		*enumerator;
+	NSArray				*types, *array, *threads;
 	NSString			*oldPath, *oldName, *newPath, *rootPath, *threadID;
 	WIP7Message			*message;
 	WCBoard				*newBoard = item, *oldBoard;
@@ -2344,15 +2345,19 @@
 	else if([types containsObject:WCThreadPboardType]) {
 		array		= [pasteboard propertyListForType:WCThreadPboardType];
 		oldPath		= [array objectAtIndex:0];
-		threadID	= [array objectAtIndex:1];
 		oldBoard	= [[_boards boardForConnection:[newBoard connection]] boardForPath:oldPath];
-		thread		= [oldBoard threadWithID:threadID];
+		threads		= [array subarrayFromIndex:1];
+		enumerator	= [[array subarrayFromIndex:1] objectEnumerator];
 		
-		message = [WIP7Message messageWithName:@"wired.board.move_thread" spec:WCP7Spec];
-		[message setString:[oldBoard path] forName:@"wired.board.board"];
-		[message setUUID:[thread threadID] forName:@"wired.board.thread"];
-		[message setString:[newBoard path] forName:@"wired.board.new_board"];
-		[[newBoard connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardMoveThreadReply:)];
+		while((threadID = [enumerator nextObject])) {
+			thread = [oldBoard threadWithID:threadID];
+
+			message = [WIP7Message messageWithName:@"wired.board.move_thread" spec:WCP7Spec];
+			[message setString:[oldBoard path] forName:@"wired.board.board"];
+			[message setUUID:[thread threadID] forName:@"wired.board.thread"];
+			[message setString:[newBoard path] forName:@"wired.board.new_board"];
+			[[newBoard connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardMoveThreadReply:)];
+		}
 		
 		return YES;
 	}
@@ -2421,15 +2426,21 @@
 
 
 - (BOOL)tableView:(NSTableView *)tableView writeRowsWithIndexes:(NSIndexSet *)indexes toPasteboard:(NSPasteboard *)pasteboard {
-	WCBoard				*board;
+	NSEnumerator		*enumerator;
+	NSMutableArray		*threads;
 	WCBoardThread		*thread;
 	
-	board	= [self _selectedBoard];
-	thread	= [self _threadAtIndex:[indexes firstIndex]];
+	threads		= [NSMutableArray array];
+	enumerator	= [[self _selectedThreads] objectEnumerator];
+	
+	[threads addObject:[[self _selectedBoard] path]];
+	
+	while((thread = [enumerator nextObject]))
+		[threads addObject:[thread threadID]];
 	
 	[pasteboard declareTypes:[NSArray arrayWithObject:WCThreadPboardType] owner:NULL];
-	[pasteboard setPropertyList:[NSArray arrayWithObjects:[board path], [thread threadID], NULL] forType:WCThreadPboardType];
-
+	[pasteboard setPropertyList:threads forType:WCThreadPboardType];
+	
 	return YES;
 }
 
