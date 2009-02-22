@@ -367,6 +367,7 @@
 	
 	[string replaceOccurrencesOfString:@"<? nick ?>" withString:[message nick]];
 	[string replaceOccurrencesOfString:@"<? time ?>" withString:[_messageTimeDateFormatter stringFromDate:[message date]]];
+	[string replaceOccurrencesOfString:@"<? server ?>" withString:[message connectionName]];
 	[string replaceOccurrencesOfString:@"<? body ?>" withString:text];
 	
 	if(icon)
