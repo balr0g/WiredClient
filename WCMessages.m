@@ -48,9 +48,7 @@
 - (NSString *)_stringForMessageString:(NSString *)string;
 
 - (WCConversation *)_selectedConversation;
-- (void)_readMessages;
 - (void)_saveMessages;
-- (void)_removeAllMessages;
 
 - (void)_selectConversation:(WCConversation *)conversation;
 
@@ -70,6 +68,7 @@
 	conversation	= [self _selectedConversation];
 	connection		= [conversation connection];
 	
+	[_deleteConversationButton setEnabled:(conversation != NULL)];
 	[_messageTextView setEditable:(connection != NULL && [connection isConnected] && [conversation user] != NULL)];
 	
 	[[[self window] toolbar] validateVisibleItems];
@@ -175,46 +174,6 @@
 
 
 
-- (void)_readMessages {
-	NSArray			*messages;
-	WCMessage		*message;
-	NSUInteger		i, count;
-	BOOL			changedUnread = NO;
-	
-	messages = [_conversations unreadMessages];
-	count = [messages count];
-	
-	for(i = 0; i < count; i++) {
-		message = [messages objectAtIndex:i];
-		
-		if([message isUnread]) {
-			[message setUnread:NO];
-			
-			changedUnread = YES;
-		}
-	}
-
-	if(changedUnread) {
-		[[NSNotificationCenter defaultCenter] postNotificationName:WCMessagesDidChangeUnreadCountNotification];
-
-		[_conversationsOutlineView setNeedsDisplay:YES];
-	}
-}
-
-
-
-- (void)_removeAllMessages {
-	NSEnumerator	*enumerator;
-	WCConversation	*conversation;
-	
-	enumerator = [[_conversations conversations] objectEnumerator];
-	
-	while((conversation = [enumerator nextObject]))
-		[conversation removeAllConversations];
-}
-
-
-
 #pragma mark -
 
 - (void)_selectConversation:(WCConversation *)conversation {
@@ -304,8 +263,6 @@
 	
 	if(changedUnread) {
 		[[NSNotificationCenter defaultCenter] postNotificationName:WCMessagesDidChangeUnreadCountNotification];
-		
-		[_conversationsOutlineView setNeedsDisplay:YES];
 		
 		[self _saveMessages];
 	}
@@ -465,6 +422,11 @@
 		addObserver:self
 		   selector:@selector(chatUserDisappeared:)
 			   name:WCChatUserDisappearedNotification];
+
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
+		   selector:@selector(messagesDidChangeUnreadCount:)
+			   name:WCMessagesDidChangeUnreadCountNotification];
 	
 	[self window];
 	
@@ -606,8 +568,6 @@
 			[[NSNotificationCenter defaultCenter] postNotificationName:WCMessagesDidChangeUnreadCountNotification];
 			
 			[self _saveMessages];
-			
-			[_conversationsOutlineView setNeedsDisplay:YES];
 		}
 	}
 }
@@ -758,6 +718,12 @@
 	[_conversationsOutlineView reloadData];
 	
 	[self _validate];
+}
+
+
+
+- (void)messagesDidChangeUnreadCount:(NSNotification *)notification {
+	[_conversationsOutlineView setNeedsDisplay:YES];
 }
 
 
@@ -1202,9 +1168,15 @@
 
 
 - (void)clearSheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+	NSEnumerator		*enumerator;
+	WCConversation		*conversation;
+	
 	if(returnCode == NSAlertFirstButtonReturn) {
-		[self _readMessages];
-		[self _removeAllMessages];
+		enumerator = [[_conversations conversations] objectEnumerator];
+		
+		while((conversation = [enumerator nextObject]))
+			[conversation removeAllConversations];
+		
 		[self _saveMessages];
 		
 		[_conversationsOutlineView reloadData];
@@ -1214,6 +1186,8 @@
 		
 		[self _validate];
 		[self _reloadConversation];
+
+		[[NSNotificationCenter defaultCenter] postNotificationName:WCMessagesDidChangeUnreadCountNotification];
 	}
 }
 
@@ -1242,20 +1216,26 @@
 
 
 - (void)deleteConversationAlertDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-	WCConversation		*conversation = contextInfo;
+	NSEnumerator		*enumerator;
+	WCConversation		*conversation = contextInfo, *eachConversation;
 	
 	if(returnCode == NSAlertFirstButtonReturn) {
-/*		[self _readMessages];
-		[self _removeAllMessages];
-		[self _saveMessages];
+		enumerator = [[_conversations conversations] objectEnumerator];
 		
+		while((eachConversation = [enumerator nextObject]))
+			[eachConversation removeConversation:conversation];
+
+		[self _saveMessages];
+
 		[_conversationsOutlineView reloadData];
 		
 		[_selectedConversation release];
 		_selectedConversation = NULL;
-		
+
 		[self _validate];
-		[self _reloadConversation];*/
+		[self _reloadConversation];
+
+		[[NSNotificationCenter defaultCenter] postNotificationName:WCMessagesDidChangeUnreadCountNotification];
 	}
 	
 	[conversation release];
