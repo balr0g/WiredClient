@@ -1566,26 +1566,42 @@
 #pragma mark -
 
 - (BOOL)validateToolbarItem:(NSToolbarItem *)item {
+	NSEnumerator		*enumerator;
 	WCUserAccount		*account;
 	WCBoard				*board;
 	WCBoardThread		*thread;
+	NSArray				*threads;
 	SEL					selector;
 	BOOL				connected;
+	NSUInteger			unread = 0;
 	
 	selector	= [item action];
 	board		= [self _selectedBoard];
-	thread		= [self _selectedThread];
+	threads		= [self _selectedThreads];
 	account		= [[board connection] account];
 	connected	= [[board connection] isConnected];
 	
-	if(selector == @selector(addThread:))
+	if(selector == @selector(addThread:)) {
 		return (board != NULL && [board isWritableByAccount:account] && connected && [account boardAddThreads]);
-	else if(selector == @selector(deleteThread:))
-		return (board != NULL && connected && [board isWritableByAccount:account] && thread != NULL && [account boardDeleteThreads]);
-	else if(selector == @selector(markAsRead:))
-		return (board != NULL);
-	else if(selector == @selector(markAllAsRead:))
+	}
+	else if(selector == @selector(deleteThread:)) {
+		return (board != NULL && connected && [board isWritableByAccount:account] && [threads count] > 0 && [account boardDeleteThreads]);
+	}
+	else if(selector == @selector(markAsRead:)) {
+		if([threads count] > 0) {
+			enumerator = [threads objectEnumerator];
+			
+			while((thread = [enumerator nextObject]))
+				unread += [thread numberOfUnreadPosts];
+		} else {
+			unread = [board numberOfUnreadThreadsForConnection:NULL includeChildBoards:YES];
+		}
+		
+		return (unread > 0);
+	}
+	else if(selector == @selector(markAllAsRead:)) {
 		return ([_boards numberOfUnreadThreadsForConnection:NULL includeChildBoards:YES] > 0);
+	}
 	
 	return YES;
 }
