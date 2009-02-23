@@ -188,7 +188,7 @@
 			@"TBD"),
 
 		WCAccountFieldDictionary(WCAccountFieldFiles,
-			@"wired.account.files", NSLS(@"Files Directory", @"Account field name"), WCAccountFieldString, NO, 
+			@"wired.account.files", NSLS(@"Files Folder", @"Account field name"), WCAccountFieldString, NO, 
 			@"TBD"),
 		WCAccountFieldBooleanDictionary(WCAccountFieldFiles,
 			@"wired.account.file.list_files", NSLS(@"List Files", @"Account field name"),
@@ -197,7 +197,7 @@
 			@"wired.account.file.get_info", NSLS(@"Get File Info", @"Account field name"),
 			@"TBD"),
 		WCAccountFieldBooleanDictionary(WCAccountFieldFiles,
-			@"wired.account.file.create_directories", NSLS(@"Create Directories", @"Account field name"),
+			@"wired.account.file.create_directories", NSLS(@"Create Folders", @"Account field name"),
 			@"TBD"),
 		WCAccountFieldBooleanDictionary(WCAccountFieldFiles,
 			@"wired.account.file.create_links", NSLS(@"Create Links", @"Account field name"),
