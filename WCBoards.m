@@ -295,6 +295,9 @@
 	WCBoard				*eachBoard;
 	BOOL				changedUnread = NO;
 	
+	if([self _markThreads:[board threads] asUnread:NO])
+		changedUnread = YES;
+
 	enumerator = [[board boards] objectEnumerator];
 	
 	while((eachBoard = [enumerator nextObject])) {
@@ -380,9 +383,6 @@
 		[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
 		
 		[self _savePosts];
-		
-		[_boardsOutlineView setNeedsDisplay:YES];
-		[_threadsTableView setNeedsDisplay:YES];
 	}
 }
 
@@ -698,6 +698,11 @@
 		   selector:@selector(serverConnectionPrivilegesDidChange:)
 			   name:WCServerConnectionPrivilegesDidChangeNotification];
 	
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
+		   selector:@selector(boardsDidChangeUnreadCount:)
+			   name:WCBoardsDidChangeUnreadCountNotification];
+
 	[self window];
 
 	return self;
@@ -752,7 +757,7 @@
 	[_boardsOutlineView registerForDraggedTypes:[NSArray arrayWithObjects:WCBoardPboardType, WCThreadPboardType, NULL]];
 	[_boardsOutlineView setTarget:self];
 	[_boardsOutlineView setDeleteAction:@selector(deleteBoard:)];
-
+	
 	[[_boardTableColumn dataCell] setVerticalTextOffset:3.0];
 	[[_unreadBoardTableColumn dataCell] setImageAlignment:NSImageAlignRight];
 	
@@ -816,8 +821,6 @@
 			[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
 			
 			[self _savePosts];
-			
-			[_boardsOutlineView setNeedsDisplay:YES];
 		}
 	}
 }
@@ -979,6 +982,13 @@
 		[self _getBoardsForConnection:connection];
 	
 	[self _reloadThread];
+}
+
+
+
+- (void)boardsDidChangeUnreadCount:(NSNotification *)notification {
+	[_boardsOutlineView setNeedsDisplay:YES];
+	[_threadsTableView setNeedsDisplay:YES];
 }
 
 
@@ -1330,8 +1340,7 @@
 
 	[self _savePosts];
 	
-	[_boardsOutlineView setNeedsDisplay:YES];
-	[_threadsTableView setNeedsDisplay:YES];
+	[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
 	
 	if(thread == [self _selectedThread]) {
 		[_threadsTableView reloadData];
@@ -1369,12 +1378,8 @@
 
 		[self _savePosts];
 
-		if(![thread numberOfUnreadPosts] == 0) {
+		if(![thread numberOfUnreadPosts] == 0)
 			[thread setUnread:NO];
-			
-			[_boardsOutlineView setNeedsDisplay:YES];
-			[_threadsTableView setNeedsDisplay:YES];
-		}
 	}
 			
 	[post release];
@@ -2182,8 +2187,6 @@
 				[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
 			
 				[self _savePosts];
-				
-				[_boardsOutlineView setNeedsDisplay:YES];
 			}
 		}
 	}
@@ -2195,19 +2198,19 @@
 
 - (IBAction)markAsRead:(id)sender {
 	NSArray		*threads;
+	BOOL		changedUnread;
 	
 	threads = [self _selectedThreads];
 	
 	if([threads count] == 0)
-		threads = [[self _selectedBoard] threads];
+		changedUnread = [self _markBoard:[self _selectedBoard] asUnread:NO];
+	else
+		changedUnread = [self _markThreads:threads asUnread:NO];
 	
-	if([self _markThreads:threads asUnread:NO]) {
+	if(changedUnread) {
 		[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
 	
 		[self _savePosts];
-		
-		[_boardsOutlineView setNeedsDisplay:YES];
-		[_threadsTableView setNeedsDisplay:YES];
 	}
 }
 
@@ -2218,9 +2221,6 @@
 		[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
 	
 		[self _savePosts];
-		
-		[_boardsOutlineView setNeedsDisplay:YES];
-		[_threadsTableView setNeedsDisplay:YES];
 	}
 }
 
@@ -2238,9 +2238,6 @@
 		[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
 	
 		[self _savePosts];
-		
-		[_boardsOutlineView setNeedsDisplay:YES];
-		[_threadsTableView setNeedsDisplay:YES];
 	}
 }
 
