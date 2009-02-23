@@ -949,7 +949,7 @@
 	NSArray			*files;
 	WCFile			*file;
 	
-	if(![[self connection] isConnected])
+	if(![[self connection] isConnected] || [sender clickedRow] < 0)
 		return;
 
 	files = [self _selectedFiles];
