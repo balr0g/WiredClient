@@ -636,6 +636,9 @@
 	WIURL				*url;
 	WCConnect			*connect;
 	id					item;
+	
+	if([_serversOutlineView clickedRow] < 0)
+		return;
 
 	item = [self _selectedItem];
 	
