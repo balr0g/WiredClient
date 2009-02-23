@@ -1664,6 +1664,15 @@
 
 
 
+- (BOOL)outlineView:(NSOutlineView *)outlineView shouldEditTableColumn:(NSTableColumn *)tableColumn item:(id)item {
+	if(tableColumn == _valueTableColumn)
+		return ([item objectForKey:WCAccountFieldName] != NULL);
+
+	return NO;
+}
+
+
+
 - (void)outlineView:(NSOutlineView *)outlineView setObjectValue:(id)object forTableColumn:(NSTableColumn *)tableColumn byItem:(id)item {
 	NSEnumerator	*enumerator;
 	NSString		*name;
