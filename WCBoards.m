@@ -841,14 +841,14 @@
 	}
 	else if([identifier isEqualToString:@"MarkAsRead"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
-												   name:NSLS(@"Mask As Read", @"Mark as read toolbar item")
+												   name:NSLS(@"Mark As Read", @"Mark as read toolbar item")
 												content:[NSImage imageNamed:@"MarkAsRead"]
 												 target:self
 												 action:@selector(markAsRead:)];
 	}
 	else if([identifier isEqualToString:@"MarkAllAsRead"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
-												   name:NSLS(@"Mask All As Read", @"Mark all as read toolbar item")
+												   name:NSLS(@"Mark All As Read", @"Mark all as read toolbar item")
 												content:[NSImage imageNamed:@"MarkAllAsRead"]
 												 target:self
 												 action:@selector(markAllAsRead:)];
