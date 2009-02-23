@@ -452,7 +452,7 @@
 	NSEnumerator	*enumerator;
 	WCFile			*file;
 	
-	if([sender clickedRow] < 0)
+	if([[_filesController filesTableView] clickedHeader])
 		return;
 	
 	enumerator = [[_filesController selectedFiles] objectEnumerator];

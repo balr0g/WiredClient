@@ -637,7 +637,7 @@
 	WCConnect			*connect;
 	id					item;
 	
-	if([_serversOutlineView clickedRow] < 0)
+	if([_serversOutlineView clickedHeader])
 		return;
 
 	item = [self _selectedItem];
