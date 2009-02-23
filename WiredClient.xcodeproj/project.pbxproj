@@ -1448,12 +1448,12 @@
 				A57D22F707D0C444002C306E /* Connection */,
 				A52B1C1206C4033B0033D317 /* Chat */,
 				A52B1C2C06C404580033D317 /* Files */,
-				A5AAD1280D86EA8B0072FFA1 /* Administration */,
-				A52B1C2E06C404FC0033D317 /* Console */,
+				A52B1C1306C403760033D317 /* Messages */,
 				77CED3990EC068D600123164 /* Boards */,
 				A52B1C3306C4056F0033D317 /* Transfers */,
-				A52B1C1306C403760033D317 /* Messages */,
+				A5AAD1280D86EA8B0072FFA1 /* Administration */,
 				A5492D2E0D8EAD4E002D37D7 /* Servers */,
+				A52B1C2E06C404FC0033D317 /* Console */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
