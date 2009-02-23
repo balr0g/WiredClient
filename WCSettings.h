@@ -145,6 +145,8 @@
 
 #define WCReadBoardPosts						@"WCReadBoardPosts"
 
+#define WCPlaces								@"WCPlaces"
+
 #define WCDebug									@"WCDebug"
 
 

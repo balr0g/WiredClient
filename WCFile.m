@@ -419,6 +419,9 @@
 
 
 - (BOOL)isEqual:(id)object {
+	if(![object isKindOfClass:[self class]])
+		return NO;
+	
 	if(_connection == [(WCFile *) object connection])
 		return [_path isEqualToString:[object path]];
 	

@@ -28,57 +28,63 @@
 
 #import "WCFilesController.h"
 
-#define WCFilePathKey				@"WCFilePathKey"
-#define WCFileSelectPathKey			@"WCFileSelectPathKey"
+#define WCFilePathKey					@"WCFilePathKey"
+#define WCFileSelectPathKey				@"WCFileSelectPathKey"
 
 
 @class WCFile, WCFilesController, WCErrorQueue;
 
 @interface WCFiles : WCConnectionController {
-	IBOutlet WCFilesController		*_filesController;
+	IBOutlet WCFilesController			*_filesController;
 	
-	IBOutlet NSTabView				*_filesTabView;
+	IBOutlet WIOutlineView				*_sourceOutlineView;
+	IBOutlet NSTableColumn				*_sourceTableColumn;
+	
+	IBOutlet NSTabView					*_filesTabView;
 
-	IBOutlet NSBrowser				*_filesBrowser;
+	IBOutlet NSBrowser					*_filesBrowser;
 
-	IBOutlet NSPanel				*_createFolderPanel;
-	IBOutlet NSTextField			*_nameTextField;
-	IBOutlet NSPopUpButton			*_typePopUpButton;
-	IBOutlet NSPopUpButton			*_ownerPopUpButton;
-	IBOutlet NSPopUpButton			*_ownerPermissionsPopUpButton;
-	IBOutlet NSPopUpButton			*_groupPopUpButton;
-	IBOutlet NSPopUpButton			*_groupPermissionsPopUpButton;
-	IBOutlet NSPopUpButton			*_everyonePermissionsPopUpButton;
+	IBOutlet NSPanel					*_createFolderPanel;
+	IBOutlet NSTextField				*_nameTextField;
+	IBOutlet NSPopUpButton				*_typePopUpButton;
+	IBOutlet NSPopUpButton				*_ownerPopUpButton;
+	IBOutlet NSPopUpButton				*_ownerPermissionsPopUpButton;
+	IBOutlet NSPopUpButton				*_groupPopUpButton;
+	IBOutlet NSPopUpButton				*_groupPermissionsPopUpButton;
+	IBOutlet NSPopUpButton				*_everyonePermissionsPopUpButton;
 	
-	IBOutlet NSMenu					*_titleBarMenu;
+	IBOutlet NSMenu						*_titleBarMenu;
 	
-	IBOutlet NSSegmentedControl		*_historyControl;
-	IBOutlet NSSegmentedControl		*_styleControl;
-	IBOutlet NSButton				*_downloadButton;
-	IBOutlet NSButton				*_uploadButton;
-	IBOutlet NSButton				*_infoButton;
-	IBOutlet NSButton				*_previewButton;
-	IBOutlet NSButton				*_createFolderButton;
-	IBOutlet NSButton				*_reloadButton;
-	IBOutlet NSButton				*_deleteButton;
+	IBOutlet NSSegmentedControl			*_historyControl;
+	IBOutlet NSSegmentedControl			*_styleControl;
+	IBOutlet NSButton					*_downloadButton;
+	IBOutlet NSButton					*_uploadButton;
+	IBOutlet NSButton					*_infoButton;
+	IBOutlet NSButton					*_previewButton;
+	IBOutlet NSButton					*_createFolderButton;
+	IBOutlet NSButton					*_reloadButton;
+	IBOutlet NSButton					*_deleteButton;
 	
-	IBOutlet NSProgressIndicator	*_progressIndicator;
+	IBOutlet NSProgressIndicator		*_progressIndicator;
 	
-	WCErrorQueue					*_errorQueue;
+	WCErrorQueue						*_errorQueue;
 
-	NSUInteger						_type;
+	NSUInteger							_type;
 	
-	NSMutableDictionary				*_allFiles;
-	NSMutableArray					*_listFiles;
-	NSMutableDictionary				*_browserFiles;
+	NSMutableDictionary					*_allFiles;
+	NSMutableArray						*_listFiles;
+	NSMutableDictionary					*_browserFiles;
 	
-	WCFile							*_rootPath, *_listPath, *_browserPath;
-	NSString						*_selectPath;
+	WCFile								*_rootPath, *_listPath, *_browserPath;
+	NSString							*_selectPath;
 
-	NSMutableArray					*_history;
-	NSUInteger						_historyPosition;
+	NSMutableArray						*_history;
+	NSUInteger							_historyPosition;
 	
-	BOOL							_subscribed;
+	NSMutableArray						*_servers;
+	NSMutableArray						*_places;
+	
+	BOOL								_subscribed;
 }
 
 + (id)filesWithConnection:(WCServerConnection *)connection path:(WCFile *)path;
