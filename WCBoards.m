@@ -295,16 +295,16 @@
 	WCBoard				*eachBoard;
 	BOOL				changedUnread = NO;
 	
-	if([self _markThreads:[board threads] asUnread:NO])
+	if([self _markThreads:[board threads] asUnread:unread])
 		changedUnread = YES;
 
 	enumerator = [[board boards] objectEnumerator];
 	
 	while((eachBoard = [enumerator nextObject])) {
-		if([self _markThreads:[eachBoard threads] asUnread:NO])
+		if([self _markThreads:[eachBoard threads] asUnread:unread])
 			changedUnread = YES;
 		
-		if([self _markBoard:eachBoard asUnread:NO])
+		if([self _markBoard:eachBoard asUnread:unread])
 			changedUnread = YES;
 	}
 	
@@ -2228,13 +2228,16 @@
 
 - (IBAction)markAsUnread:(id)sender {
 	NSArray		*threads;
+	BOOL		changedUnread;
 	
 	threads = [self _selectedThreads];
 	
 	if([threads count] == 0)
-		threads = [[self _selectedBoard] threads];
-	
-	if([self _markThreads:threads asUnread:YES]) {
+		changedUnread = [self _markBoard:[self _selectedBoard] asUnread:YES];
+	else
+		changedUnread = [self _markThreads:threads asUnread:YES];
+
+	if(changedUnread) {
 		[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
 	
 		[self _savePosts];
