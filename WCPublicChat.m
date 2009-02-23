@@ -55,6 +55,7 @@ typedef enum _WCChatActivity				WCChatActivity;
 @interface WCPublicChat(Private)
 
 - (void)_updateToolbarForConnection:(WCServerConnection *)connection;
+- (void)_updateBannerToolbarItem:(NSToolbarItem *)item forConnection:(WCServerConnection *)connection;
 
 - (BOOL)_beginConfirmDisconnectSheetModalForWindow:(NSWindow *)window connection:(WCServerConnection *)connection modalDelegate:(id)delegate didEndSelector:(SEL)selector contextInfo:(void *)contextInfo;
 
@@ -67,11 +68,27 @@ typedef enum _WCChatActivity				WCChatActivity;
 
 - (void)_updateToolbarForConnection:(WCServerConnection *)connection {
 	NSToolbarItem		*item;
-	NSImage				*image;
-	NSSize				size;
 	
-	item = [[[self window] toolbar] itemWithIdentifier:@"Banner"];
+	if(connection == [[self selectedChatController] connection]) {
+		item = [[[self window] toolbar] itemWithIdentifier:@"Banner"];
+
+		[self _updateBannerToolbarItem:item forConnection:connection];
+	}
+
+	item = [[[self window] toolbar] itemWithIdentifier:@"Messages"];
 	
+	[item setImage:[[NSImage imageNamed:@"Messages"] badgedImageWithInt:[[WCMessages messages] numberOfUnreadMessages]]];
+
+	item = [[[self window] toolbar] itemWithIdentifier:@"Boards"];
+	
+	[item setImage:[[NSImage imageNamed:@"Boards"] badgedImageWithInt:[[WCBoards boards] numberOfUnreadThreads]]];
+}
+
+
+
+- (void)_updateBannerToolbarItem:(NSToolbarItem *)item forConnection:(WCServerConnection *)connection {
+	NSImage		*image;
+
 	if(connection) {
 		[item setLabel:[connection name]];
 		[item setPaletteLabel:[connection name]];
@@ -84,34 +101,10 @@ typedef enum _WCChatActivity				WCChatActivity;
 	
 	image = [[connection server] banner];
 	
-	if(image) {
+	if(image)
 		[(NSButton *) [item view] setImage:image];
-		
-		size = [image size];
-		
-		if(size.width <= 200.0 && size.height <= 32.0) {
-			[item setMinSize:size];
-			[item setMaxSize:size];
-		} else {
-			[item setMinSize:NSMakeSize(32.0 * (size.width / size.height), 32.0)];
-			[item setMaxSize:NSMakeSize(32.0 * (size.width / size.height), 32.0)];
-		}
-	} else {
+	else
 		[(NSButton *) [item view] setImage:[NSImage imageNamed:@"Banner"]];
-		
-		size = NSMakeSize(32.0, 32.0);
-		
-		[item setMinSize:size];
-		[item setMaxSize:size];
-	}
-
-	item = [[[self window] toolbar] itemWithIdentifier:@"Messages"];
-	
-	[item setImage:[[NSImage imageNamed:@"Messages"] badgedImageWithInt:[[WCMessages messages] numberOfUnreadMessages]]];
-
-	item = [[[self window] toolbar] itemWithIdentifier:@"Boards"];
-	
-	[item setImage:[[NSImage imageNamed:@"Boards"] badgedImageWithInt:[[WCBoards boards] numberOfUnreadThreads]]];
 }
 
 
@@ -281,7 +274,7 @@ typedef enum _WCChatActivity				WCChatActivity;
 	NSButton		*button;
 	
 	if([identifier isEqualToString:@"Banner"]) {
-		button = [[[NSButton alloc] initWithFrame:NSMakeRect(0.0, 0.0, 32.0, 32.0)] autorelease];
+		button = [[[NSButton alloc] initWithFrame:NSMakeRect(0.0, 0.0, 200.0, 32.0)] autorelease];
 		[button setBordered:NO];
 		[button setImage:[NSImage imageNamed:@"Banner"]];
 		
@@ -401,6 +394,17 @@ typedef enum _WCChatActivity				WCChatActivity;
 
 
 
+- (void)toolbarWillAddItem:(NSNotification *)notification {
+	NSToolbarItem		*item;
+	
+	item = [[notification userInfo] objectForKey:@"item"];
+	
+	if([[item itemIdentifier] isEqualToString:@"Banner"])
+		[self _updateBannerToolbarItem:item forConnection:[[self selectedChatController] connection]];
+}
+
+
+
 - (void)serverConnectionServerInfoDidChange:(NSNotification *)notification {
 	WCServerConnection		*connection;
 	
@@ -493,10 +497,14 @@ typedef enum _WCChatActivity				WCChatActivity;
 	
 	chatController = [_chatControllers objectForKey:[tabViewItem identifier]];
 	
-	[self _updateToolbarForConnection:[chatController connection]];
-
 	[_chatActivity removeObjectForKey:[[chatController connection] identifier]];
 	[_tabBarControl setIcon:NULL forTabViewItem:tabViewItem];
+}
+
+
+
+- (void)tabView:(NSTabView *)tabView didSelectTabViewItem:(NSTabViewItem *)tabViewItem {
+	[self _updateToolbarForConnection:[[self selectedChatController] connection]];
 }
 
 
