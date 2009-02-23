@@ -452,6 +452,9 @@
 	NSEnumerator	*enumerator;
 	WCFile			*file;
 	
+	if([sender clickedRow] < 0)
+		return;
+	
 	enumerator = [[_filesController selectedFiles] objectEnumerator];
 
 	while((file = [enumerator nextObject])) {
