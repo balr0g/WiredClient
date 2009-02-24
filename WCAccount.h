@@ -63,6 +63,8 @@
 
 - (void)setName:(NSString *)name;
 - (NSString *)name;
+- (void)setNewName:(NSString *)newName;
+- (NSString *)newName;
 - (NSDate *)creationDate;
 - (NSDate *)modificationDate;
 - (NSString *)editedBy;

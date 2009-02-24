@@ -152,6 +152,8 @@
 		WCAccountFieldDictionary(WCAccountFieldNone,
 			@"wired.account.name", @"", WCAccountFieldString, NO, @""),
 		WCAccountFieldDictionary(WCAccountFieldNone,
+			@"wired.account.new_name", @"", WCAccountFieldString, NO, @""),
+		WCAccountFieldDictionary(WCAccountFieldNone,
 			@"wired.account.full_name", @"", WCAccountFieldString, NO, @""),
 		WCAccountFieldDictionary(WCAccountFieldNone,
 			@"wired.account.creation_time", @"", WCAccountFieldDate, YES, @""),
@@ -454,6 +456,18 @@
 
 - (NSString *)name {
 	return [self valueForKey:@"wired.account.name"];
+}
+
+
+
+- (void)setNewName:(NSString *)newName {
+	[self setValue:newName forKey:@"wired.account.new_name"];
+}
+
+
+
+- (NSString *)newName {
+	return [self valueForKey:@"wired.account.new_name"];
 }
 
 

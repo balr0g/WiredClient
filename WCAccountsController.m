@@ -195,17 +195,17 @@
 		[_accounts removeAllObjects];
 		
 		_creating = NO;
-		_requested = NO;
-		
-		[self _validateForAccounts];
-		[self _readFromAccounts];
-		[self _requestAccounts];
 	}
+	
+	_touched = NO;
+	_requested = NO;
+
+	[self _validateForAccounts];
+	[self _readFromAccounts];
+	[self _requestAccounts];
 	
 	[[_administration window] setDocumentEdited:NO];
 
-	_touched = NO;
-	
 	[self _validate];
 }
 
@@ -388,7 +388,7 @@
 		editable	= [self _canEditAccounts];
 		
 		[_typePopUpButton setEnabled:(_creating && editable)];
-		[_nameTextField setEnabled:(_creating && editable)];
+		[_nameTextField setEnabled:editable];
 		
 		if([account isKindOfClass:[WCUserAccount class]] || (_creating && [_typePopUpButton selectedItem] == _userMenuItem)) {
 			[_fullNameTextField setEnabled:editable];
@@ -433,7 +433,10 @@
 	NSString		*password, *group;
 	NSArray			*groups;
 	
-	[account setName:[_nameTextField stringValue]];
+	if(_editing)
+		[account setNewName:[_nameTextField stringValue]];
+	else
+		[account setName:[_nameTextField stringValue]];
 	
 	if([account isKindOfClass:[WCUserAccount class]]) {
 		[(WCUserAccount *) account setFullName:[_fullNameTextField stringValue]];
