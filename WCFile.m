@@ -52,7 +52,7 @@
 
 - (id)_initWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection {
 	WIP7UInt64		size;
-	WIP7Enum		type;
+	WIP7Enum		type, label;
 	WIP7Bool		link, executable, value;
 	
 	self = [super initWithConnection:connection];
@@ -61,6 +61,7 @@
 	[message getUInt64:&size forName:@"wired.file.size"];
 	[message getBool:&link forName:@"wired.file.link"];
 	[message getBool:&executable forName:@"wired.file.executable"];
+	[message getEnum:&label forName:@"wired.file.label"];
 
 	_type				= type;
 	_size				= size;
@@ -70,6 +71,7 @@
 	_path				= [[message stringForName:@"wired.file.path"] retain];
 	_link				= link;
 	_executable			= executable;
+	_label				= label;
 	
 	_owner = [[message stringForName:@"wired.file.owner"] retain];
 	
@@ -366,6 +368,7 @@
 	_owner					= [[coder decodeObjectForKey:@"WCFileOwner"] retain];
 	_group					= [[coder decodeObjectForKey:@"WCFileGroup"] retain];
 	_permissions			= [coder decodeIntForKey:@"WCFilePermissions"];
+	_label					= [coder decodeIntForKey:@"WCFileLabel"];
 	
 	_localPath				= [[coder decodeObjectForKey:@"WCFileLocalPath"] retain];
 	_transferred			= [coder decodeInt64ForKey:@"WCFileTransferred"];
@@ -390,6 +393,7 @@
 	[coder encodeObject:_owner forKey:@"WCFileOwner"];
 	[coder encodeObject:_group forKey:@"WCFileGroup"];
 	[coder encodeInt:_permissions forKey:@"WCFilePermissions"];
+	[coder encodeInt:_label forKey:@"WCFileLabel"];
 
 	[coder encodeObject:_localPath forKey:@"WCFileLocalPath"];
 	[coder encodeInt:_transferred forKey:@"WCFileTransferred"];
@@ -552,6 +556,12 @@
 
 - (NSString *)group {
 	return _group;
+}
+
+
+
+- (WCFileLabel)label {
+	return _label;
 }
 
 

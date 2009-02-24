@@ -860,8 +860,11 @@
 	if(control == _nameTextField) {
 		type = [WCFile folderTypeForString:[_nameTextField stringValue]];
 		
-		if(type != WCFileDirectory)
+		if(type != WCFileDirectory) {
 			[_typePopUpButton selectItemWithTag:type];
+			
+			[self _validatePermissions];
+		}
 	}
 }
 

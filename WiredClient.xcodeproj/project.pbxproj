@@ -286,6 +286,13 @@
 		A5CD594A0F4CAF4600CF374C /* Board.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5CD59490F4CAF4600CF374C /* Board.tiff */; };
 		A5CD594D0F4CAFDB00CF374C /* NewThread.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5CD594C0F4CAFDB00CF374C /* NewThread.tiff */; };
 		A5CD59510F4CB01B00CF374C /* DeleteThread.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5CD59500F4CB01B00CF374C /* DeleteThread.tiff */; };
+		A5D080050F54B1FB00053320 /* LabelBlue.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5D07FFE0F54B1FB00053320 /* LabelBlue.tiff */; };
+		A5D080060F54B1FB00053320 /* LabelGray.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5D07FFF0F54B1FB00053320 /* LabelGray.tiff */; };
+		A5D080070F54B1FB00053320 /* LabelGreen.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5D080000F54B1FB00053320 /* LabelGreen.tiff */; };
+		A5D080080F54B1FB00053320 /* LabelNone.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5D080010F54B1FB00053320 /* LabelNone.tiff */; };
+		A5D080090F54B1FB00053320 /* LabelOrange.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5D080020F54B1FB00053320 /* LabelOrange.tiff */; };
+		A5D0800A0F54B1FB00053320 /* LabelPurple.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5D080030F54B1FB00053320 /* LabelPurple.tiff */; };
+		A5D0800B0F54B1FB00053320 /* LabelRed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5D080040F54B1FB00053320 /* LabelRed.tiff */; };
 		A5D409770D897771007851BD /* WCBanlistController.m in Sources */ = {isa = PBXBuildFile; fileRef = A5D409760D897770007851BD /* WCBanlistController.m */; };
 		A5D4F28006D75DA4002A33D0 /* ExceptionHandling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5D4F27F06D75DA4002A33D0 /* ExceptionHandling.framework */; };
 		A5D8DBB00D707E2E001E2CE8 /* WCTransferConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = A5D8DBAE0D707E2E001E2CE8 /* WCTransferConnection.m */; };
@@ -730,6 +737,13 @@
 		A5CD59490F4CAF4600CF374C /* Board.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Board.tiff; sourceTree = "<group>"; };
 		A5CD594C0F4CAFDB00CF374C /* NewThread.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = NewThread.tiff; sourceTree = "<group>"; };
 		A5CD59500F4CB01B00CF374C /* DeleteThread.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = DeleteThread.tiff; sourceTree = "<group>"; };
+		A5D07FFE0F54B1FB00053320 /* LabelBlue.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = LabelBlue.tiff; sourceTree = "<group>"; };
+		A5D07FFF0F54B1FB00053320 /* LabelGray.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = LabelGray.tiff; sourceTree = "<group>"; };
+		A5D080000F54B1FB00053320 /* LabelGreen.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = LabelGreen.tiff; sourceTree = "<group>"; };
+		A5D080010F54B1FB00053320 /* LabelNone.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = LabelNone.tiff; sourceTree = "<group>"; };
+		A5D080020F54B1FB00053320 /* LabelOrange.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = LabelOrange.tiff; sourceTree = "<group>"; };
+		A5D080030F54B1FB00053320 /* LabelPurple.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = LabelPurple.tiff; sourceTree = "<group>"; };
+		A5D080040F54B1FB00053320 /* LabelRed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = LabelRed.tiff; sourceTree = "<group>"; };
 		A5D409750D897770007851BD /* WCBanlistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCBanlistController.h; sourceTree = "<group>"; };
 		A5D409760D897770007851BD /* WCBanlistController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCBanlistController.m; sourceTree = "<group>"; };
 		A5D4F27F06D75DA4002A33D0 /* ExceptionHandling.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExceptionHandling.framework; path = /System/Library/Frameworks/ExceptionHandling.framework; sourceTree = "<absolute>"; };
@@ -1377,6 +1391,13 @@
 				A54AF8F50F13AEBA00AFD50E /* GreenDrop.tiff */,
 				A54AF8F40F13AEBA00AFD50E /* Group.tiff */,
 				A54AF8F30F13AEBA00AFD50E /* Kick.tiff */,
+				A5D07FFE0F54B1FB00053320 /* LabelBlue.tiff */,
+				A5D07FFF0F54B1FB00053320 /* LabelGray.tiff */,
+				A5D080000F54B1FB00053320 /* LabelGreen.tiff */,
+				A5D080010F54B1FB00053320 /* LabelNone.tiff */,
+				A5D080020F54B1FB00053320 /* LabelOrange.tiff */,
+				A5D080030F54B1FB00053320 /* LabelPurple.tiff */,
+				A5D080040F54B1FB00053320 /* LabelRed.tiff */,
 				A54AF8F20F13AEBA00AFD50E /* ListView.tiff */,
 				A54AF8F10F13AEBA00AFD50E /* Locked.tiff */,
 				A54AF9260F13AEBB00AFD50E /* Log.tiff */,
@@ -1767,6 +1788,7 @@
 				77CED3B90EC0691E00123164 /* Boards.xib in Resources */,
 				778C6A6B0E66CF7400DBF2E3 /* Connect.xib in Resources */,
 				77CFB9940E66D37E00F2D5F8 /* Console.xib in Resources */,
+				A51474C00F487FC900DBE395 /* Error.xib in Resources */,
 				77CFB9780E66D20900F2D5F8 /* FileInfo.xib in Resources */,
 				77CFB9750E66D20200F2D5F8 /* Files.xib in Resources */,
 				778C6A410E66B37F00DBF2E3 /* MainMenu.xib in Resources */,
@@ -1786,6 +1808,7 @@
 				A565B5000D5DA94000AF91BA /* wired.xml in Resources */,
 				A5326D840F379935004180AA /* MessageHeader.html in Resources */,
 				A5326D830F379935004180AA /* MessageFooter.html in Resources */,
+				A51B5A5E0F44D63F00EAB0E1 /* MessageStatus.html in Resources */,
 				A5326D850F379935004180AA /* Message.html in Resources */,
 				A5326A8F0F37981C004180AA /* PostHeader.html in Resources */,
 				A5326A900F37981C004180AA /* PostFooter.html in Resources */,
@@ -1808,6 +1831,8 @@
 				A54AF93A0F13AEBB00AFD50E /* Banlist.tiff in Resources */,
 				A54AF93B0F13AEBB00AFD50E /* Ban.tiff in Resources */,
 				A54AF93C0F13AEBB00AFD50E /* Back.tiff in Resources */,
+				A5CD594A0F4CAF4600CF374C /* Board.tiff in Resources */,
+				A5CD59130F4CAEB400CF374C /* Boards.tiff in Resources */,
 				A54AF9800F13AEBB00AFD50E /* ChangePassword.tiff in Resources */,
 				A54AF9540F13AEBB00AFD50E /* Chat.tiff in Resources */,
 				A54AF9530F13AEBB00AFD50E /* ClearMessages.tiff in Resources */,
@@ -1819,6 +1844,7 @@
 				A54AF94D0F13AEBB00AFD50E /* DefaultIcon.tiff in Resources */,
 				A54AF94C0F13AEBB00AFD50E /* DeleteAccount.tiff in Resources */,
 				A54AF94B0F13AEBB00AFD50E /* DeleteFile.tiff in Resources */,
+				A5CD59510F4CB01B00CF374C /* DeleteThread.tiff in Resources */,
 				A54AF94A0F13AEBB00AFD50E /* DeleteTracker.tiff in Resources */,
 				A54AF9490F13AEBB00AFD50E /* Disconnect.tiff in Resources */,
 				A54AF9480F13AEBB00AFD50E /* Download.tiff in Resources */,
@@ -1835,6 +1861,13 @@
 				A54AF9410F13AEBB00AFD50E /* GreenDrop.tiff in Resources */,
 				A54AF9400F13AEBB00AFD50E /* Group.tiff in Resources */,
 				A54AF93F0F13AEBB00AFD50E /* Kick.tiff in Resources */,
+				A5D080050F54B1FB00053320 /* LabelBlue.tiff in Resources */,
+				A5D080060F54B1FB00053320 /* LabelGray.tiff in Resources */,
+				A5D080070F54B1FB00053320 /* LabelGreen.tiff in Resources */,
+				A5D080080F54B1FB00053320 /* LabelNone.tiff in Resources */,
+				A5D080090F54B1FB00053320 /* LabelOrange.tiff in Resources */,
+				A5D0800A0F54B1FB00053320 /* LabelPurple.tiff in Resources */,
+				A5D0800B0F54B1FB00053320 /* LabelRed.tiff in Resources */,
 				A54AF93E0F13AEBB00AFD50E /* ListView.tiff in Resources */,
 				A54AF93D0F13AEBB00AFD50E /* Locked.tiff in Resources */,
 				A54AF9720F13AEBB00AFD50E /* Log.tiff in Resources */,
@@ -1842,6 +1875,8 @@
 				A54AF9700F13AEBB00AFD50E /* LogError.tiff in Resources */,
 				A54AF96F0F13AEBB00AFD50E /* LogInfo.tiff in Resources */,
 				A54AF96E0F13AEBB00AFD50E /* LogWarning.tiff in Resources */,
+				A5BCA1BE0F51CFA4004C5986 /* MarkAllAsRead.tiff in Resources */,
+				A5BCA1AC0F51CE7B004C5986 /* MarkAsRead.tiff in Resources */,
 				A54AF96D0F13AEBB00AFD50E /* Message.tiff in Resources */,
 				A54AF96C0F13AEBB00AFD50E /* Messages.tiff in Resources */,
 				A54AF96B0F13AEBB00AFD50E /* Minus.tiff in Resources */,
@@ -1849,6 +1884,7 @@
 				A54AF9690F13AEBB00AFD50E /* MultipleItems.tiff in Resources */,
 				A54AF9680F13AEBB00AFD50E /* NewAccount.tiff in Resources */,
 				A54AF9670F13AEBB00AFD50E /* NewFolder.tiff in Resources */,
+				A5CD594D0F4CAFDB00CF374C /* NewThread.tiff in Resources */,
 				A54AF9660F13AEBB00AFD50E /* News.tiff in Resources */,
 				A54AF9650F13AEBB00AFD50E /* Pause.tiff in Resources */,
 				A54AF9640F13AEBB00AFD50E /* Plus.tiff in Resources */,
@@ -1875,6 +1911,8 @@
 				A5F7F9F50F1D528F007BF4FD /* SourceBar.tiff in Resources */,
 				A5F7F9C60F1D50FD007BF4FD /* SourceDelete.tiff in Resources */,
 				A5F7F9C70F1D50FD007BF4FD /* SourceDeletePressed.tiff in Resources */,
+				A5923E870F4CA2C000366A5D /* SourceReload.tiff in Resources */,
+				A5923E860F4CA2C000366A5D /* SourceReloadPressed.tiff in Resources */,
 				A54AF9790F13AEBB00AFD50E /* Start.tiff in Resources */,
 				A54AF9780F13AEBB00AFD50E /* Stop.tiff in Resources */,
 				A54AF9770F13AEBB00AFD50E /* Themes.tiff in Resources */,
@@ -1905,16 +1943,6 @@
 				779951890A122BBB00600320 /* Smile.tiff in Resources */,
 				779951900A122BBB00600320 /* Wink.tiff in Resources */,
 				779951820A122BBB00600320 /* Yuck.tiff in Resources */,
-				A51B5A5E0F44D63F00EAB0E1 /* MessageStatus.html in Resources */,
-				A51474C00F487FC900DBE395 /* Error.xib in Resources */,
-				A5923E860F4CA2C000366A5D /* SourceReloadPressed.tiff in Resources */,
-				A5923E870F4CA2C000366A5D /* SourceReload.tiff in Resources */,
-				A5CD59130F4CAEB400CF374C /* Boards.tiff in Resources */,
-				A5CD594A0F4CAF4600CF374C /* Board.tiff in Resources */,
-				A5CD594D0F4CAFDB00CF374C /* NewThread.tiff in Resources */,
-				A5CD59510F4CB01B00CF374C /* DeleteThread.tiff in Resources */,
-				A5BCA1AC0F51CE7B004C5986 /* MarkAsRead.tiff in Resources */,
-				A5BCA1BE0F51CFA4004C5986 /* MarkAllAsRead.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

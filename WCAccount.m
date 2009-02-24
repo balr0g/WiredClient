@@ -223,6 +223,9 @@
 			@"wired.account.file.set_executable", NSLS(@"Set Executable", @"Account field name"),
 			@"TBD"),
 		WCAccountFieldBooleanDictionary(WCAccountFieldFiles,
+			@"wired.account.file.set_label", NSLS(@"Set Label", @"Account field name"),
+			@"TBD"),
+		WCAccountFieldBooleanDictionary(WCAccountFieldFiles,
 			@"wired.account.file.delete_files", NSLS(@"Delete Files", @"Account field name"),
 			@"TBD"),
 		WCAccountFieldBooleanDictionary(WCAccountFieldFiles,
@@ -690,6 +693,12 @@
 
 - (BOOL)fileSetExecutable {
 	return [[self valueForKey:@"wired.account.file.set_executable"] boolValue];
+}
+
+
+
+- (BOOL)fileSetLabel {
+	return [[self valueForKey:@"wired.account.file.set_label"] boolValue];
 }
 
 

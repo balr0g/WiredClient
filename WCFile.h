@@ -46,6 +46,18 @@ enum _WCFilePermissions {
 };
 typedef enum _WCFilePermissions		WCFilePermissions;
 
+enum _WCFileLabel {
+	WCFileLabelNone					= 0,
+	WCFileLabelRed,
+	WCFileLabelOrange,
+	WCFileLabelYellow,
+	WCFileLabelGreen,
+	WCFileLabelBlue,
+	WCFileLabelPurple,
+	WCFileLabelGray
+};
+typedef enum _WCFileLabel			WCFileLabel;
+
 
 @interface WCFile : WCServerConnectionObject <NSCoding> {
 	WCFileType						_type;
@@ -60,6 +72,7 @@ typedef enum _WCFilePermissions		WCFilePermissions;
 	NSString						*_owner;
 	NSString						*_group;
 	NSUInteger						_permissions;
+	WCFileLabel						_label;
 
 	NSString						*_name;
 	NSString						*_extension;
@@ -97,6 +110,7 @@ typedef enum _WCFilePermissions		WCFilePermissions;
 - (NSString *)owner;
 - (NSString *)group;
 - (NSUInteger)permissions;
+- (WCFileLabel)label;
 - (NSImage *)iconWithWidth:(CGFloat)width;
 
 - (void)setSize:(WIFileOffset)size;

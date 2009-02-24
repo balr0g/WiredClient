@@ -8,7 +8,7 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="8"/>
+			<integer value="218"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -331,7 +331,7 @@
 												</object>
 												<object class="NSTableColumn" id="270132684">
 													<string key="NSIdentifier">Size</string>
-													<double key="NSWidth">2.553800e+01</double>
+													<double key="NSWidth">2.600000e+01</double>
 													<double key="NSMinWidth">2.553800e+01</double>
 													<double key="NSMaxWidth">8.000000e+01</double>
 													<object class="NSTableHeaderCell" key="NSHeaderCell">
@@ -348,7 +348,6 @@
 														<string key="NSContents">Text Cell</string>
 														<reference key="NSSupport" ref="924405205"/>
 														<reference key="NSControlView" ref="208732282"/>
-														<bool key="NSDrawsBackground">YES</bool>
 														<reference key="NSBackgroundColor" ref="284716840"/>
 														<reference key="NSTextColor" ref="293755760"/>
 													</object>
@@ -1716,6 +1715,13 @@
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">NSObject</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier" id="10773415">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">WCFilesTableView.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">NSObject</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">WCLink.h</string>
@@ -1802,10 +1808,7 @@
 				<object class="IBPartialClassDescription">
 					<string key="className">WCFilesTableView</string>
 					<string key="superclassName">WITableView</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">WCFilesTableView.h</string>
-					</object>
+					<reference key="sourceIdentifier" ref="10773415"/>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">WCFilesTableView</string>

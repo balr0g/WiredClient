@@ -29,3 +29,10 @@
 @interface WCFilesTableView : WITableView
 
 @end
+
+
+@interface NSObject(WCFilesTableViewDelegate)
+
+- (NSColor *)tableView:(NSTableView *)tableView backgroundColorForRow:(NSInteger)row;
+
+@end

@@ -102,6 +102,7 @@
 - (BOOL)fileSetComment;
 - (BOOL)fileSetPermissions;
 - (BOOL)fileSetExecutable;
+- (BOOL)fileSetLabel;
 - (BOOL)fileDeleteFiles;
 - (BOOL)fileAccessAllDropboxes;
 - (NSUInteger)fileRecursiveListDepthLimit;

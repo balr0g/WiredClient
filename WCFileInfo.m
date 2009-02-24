@@ -102,6 +102,8 @@
 		[[popUpButton menu] insertItem:[NSMenuItem separatorItem] atIndex:0];
 		[[popUpButton menu] insertItem:item atIndex:0];
 	}
+
+	[popUpButton selectItemAtIndex:0];
 }
 
 
@@ -125,6 +127,7 @@
 		[_whereTextField setStringValue:[[file path] stringByDeletingLastPathComponent]];
 		[_createdTextField setStringValue:[_dateFormatter stringFromDate:[file creationDate]]];
 		[_modifiedTextField setStringValue:[_dateFormatter stringFromDate:[file modificationDate]]];
+		[_labelPopUpButton selectItemWithTag:[file label]];
 		[_commentTextField setStringValue:[file comment]];
 		
 		if([file type] == WCFileFile) {
@@ -179,6 +182,7 @@
 			[self removeView:&_ownerPermissionsPopUpButton];
 		}
 		
+		[self resizeTitleTextField:_labelTitleTextField withPopUpButton:_labelPopUpButton];
 		[self resizeTitleTextField:_modifiedTitleTextField withTextField:_modifiedTextField];
 		[self resizeTitleTextField:_createdTitleTextField withTextField:_createdTextField];
 		[self resizeTitleTextField:_whereTitleTextField withTextField:_whereTextField];
@@ -277,13 +281,13 @@
 			[self _addItemWithTitle:NSLS(@"Don't Change", @"File info popup title")
 								tag:-1
 				 firstInPopUpButton:_ownerPermissionsPopUpButton];
-
-			[_everyonePermissionsPopUpButton selectItemAtIndex:0];
-			[_groupPermissionsPopUpButton selectItemAtIndex:0];
-			[_groupPopUpButton selectItemAtIndex:0];
-			[_ownerPermissionsPopUpButton selectItemAtIndex:0];
-			[_ownerPopUpButton selectItemAtIndex:0];
 		}
+
+		[self resizeTitleTextField:_labelTitleTextField withPopUpButton:_labelPopUpButton];
+
+		[self _addItemWithTitle:NSLS(@"Don't Change", @"File info popup title")
+							tag:-1
+			 firstInPopUpButton:_labelPopUpButton];
 
 		[self resizeTitleTextField:_whereTitleTextField withTextField:_whereTextField];
 		[self resizeTitleTextField:_sizeTitleTextField withTextField:_sizeTextField];
@@ -330,6 +334,7 @@
 	WIP7Message			*message;
 	WCFile				*file;
 	WCFileType			type;
+	WCFileLabel			label;
 	NSUInteger			ownerPermissions, groupPermissions, everyonePermissions;
 	NSInteger			tag;
 	BOOL				sentMessage = NO;
@@ -343,7 +348,7 @@
 			path = [file path];
 			
 			if([file isFolder]) {
-				type = ([_kindPopUpButton tagOfSelectedItem] > 0)
+				type = ([_kindPopUpButton tagOfSelectedItem] >= 0)
 					? (WCFileType) [_kindPopUpButton tagOfSelectedItem]
 					: [file type];
 				
@@ -385,6 +390,19 @@
 					
 					sentMessage = YES;
 				}
+			}
+			
+			label = ([_labelPopUpButton tagOfSelectedItem] >= 0)
+				? (WCFileLabel) [_labelPopUpButton tagOfSelectedItem]
+				: [file label];
+			
+			if(label != [file label]) {
+				message = [WIP7Message messageWithName:@"wired.file.set_label" spec:WCP7Spec];
+				[message setString:[file path] forName:@"wired.file.path"];
+				[message setEnum:label forName:@"wired.file.label"];
+				[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredFileSetLabelReply:)];
+					
+				sentMessage = YES;
 			}
 		}
 		
@@ -549,6 +567,13 @@
 
 
 - (void)wiredFileSetPermissionsReply:(WIP7Message *)message {
+	if([[message name] isEqualToString:@"wired.error"])
+		[[[WCError errorWithWiredMessage:message] alert] runNonModal];
+}
+
+
+
+- (void)wiredFileSetLabelReply:(WIP7Message *)message {
 	if([[message name] isEqualToString:@"wired.error"])
 		[[[WCError errorWithWiredMessage:message] alert] runNonModal];
 }

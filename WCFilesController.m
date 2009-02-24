@@ -273,6 +273,46 @@
 
 
 
+- (NSColor *)tableView:(NSTableView *)tableView backgroundColorForRow:(NSInteger)row {
+	switch([[self fileAtIndex:row] label]) {
+		case WCFileLabelRed:
+			return [NSColor colorWithCalibratedRed:249.0 / 255.0 green:92.0 / 255.0 blue:91.0 / 255.0 alpha:1.0];
+			break;
+		
+		case WCFileLabelOrange:
+			return [NSColor colorWithCalibratedRed:245.0 / 255.0 green:168.0 / 255.0 blue:69.0 / 255.0 alpha:1.0];
+			break;
+		
+		case WCFileLabelYellow:
+			return [NSColor colorWithCalibratedRed:237.0 / 255.0 green:219.0 / 255.0 blue:73.0 / 255.0 alpha:1.0];
+			break;
+		
+		case WCFileLabelGreen:
+			return [NSColor colorWithCalibratedRed:178.0 / 255.0 green:217.0 / 255.0 blue:72.0 / 255.0 alpha:1.0];
+			break;
+		
+		case WCFileLabelBlue:
+			return [NSColor colorWithCalibratedRed:90.0 / 255.0 green:161.0 / 255.0 blue:254.0 / 255.0 alpha:1.0];
+			break;
+		
+		case WCFileLabelPurple:
+			return [NSColor colorWithCalibratedRed:191.0 / 255.0 green:137.0 / 255.0 blue:215.0 / 255.0 alpha:1.0];
+			break;
+		
+		case WCFileLabelGray:
+			return [NSColor colorWithCalibratedRed:168.0 / 255.0 green:92.0 / 168.0 blue:91.0 / 168.0 alpha:1.0];
+			break;
+		
+		default:
+			return NULL;
+			break;
+	}
+	
+	return NULL;
+}
+
+
+
 - (NSString *)tableView:(NSTableView *)tableView stringValueForRow:(NSInteger)row {
 	return [[self fileAtIndex:row] name];
 }

@@ -45,6 +45,8 @@
 	IBOutlet NSTextField			*_createdTextField;
 	IBOutlet NSTextField			*_modifiedTitleTextField;
 	IBOutlet NSTextField			*_modifiedTextField;
+	IBOutlet NSTextField			*_labelTitleTextField;
+	IBOutlet NSPopUpButton			*_labelPopUpButton;
 	IBOutlet NSTextField			*_ownerTitleTextField;
 	IBOutlet NSPopUpButton			*_ownerPopUpButton;
 	IBOutlet NSPopUpButton			*_ownerPermissionsPopUpButton;
