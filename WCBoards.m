@@ -404,13 +404,14 @@
 	[text replaceOccurrencesOfString:@">" withString:@"&#62;"];
 	[text replaceOccurrencesOfString:@"\"" withString:@"&#34;"];
 	[text replaceOccurrencesOfString:@"\'" withString:@"&#39;"];
+	[text replaceOccurrencesOfString:@"\n" withString:@"\n<br />\n"];
 
-	[text replaceOccurrencesOfRegex:@"\\[code\\](.+?)\\[/code\\]" withString:@"<blockquote><pre>$1</pre></blockquote>" options:RKLCaseless | RKLMultiline];
+	[text replaceOccurrencesOfRegex:@"\\[code\\](.+?)\\[/code\\]" withString:@"<blockquote><pre>$1</pre></blockquote>" options:RKLCaseless];
 	
-	while([text replaceOccurrencesOfRegex:@"<pre>(.*?)\\[+(.*?)</pre>" withString:@"<pre>$1&#91;$2</pre>" options:RKLCaseless | RKLMultiline] > 0)
+	while([text replaceOccurrencesOfRegex:@"<pre>(.*?)\\[+(.*?)</pre>" withString:@"<pre>$1&#91;$2</pre>" options:RKLCaseless] > 0)
 		;
 	
-	while([text replaceOccurrencesOfRegex:@"<pre>(.*?)\\]+(.*?)</pre>" withString:@"<pre>$1&#93;$2</pre>" options:RKLCaseless | RKLMultiline] > 0)
+	while([text replaceOccurrencesOfRegex:@"<pre>(.*?)\\]+(.*?)</pre>" withString:@"<pre>$1&#93;$2</pre>" options:RKLCaseless] > 0)
 		;
 	
 	if([theme boolForKey:WCThemesShowSmileys]) {
@@ -427,8 +428,6 @@
 		}
 	}
 	
-	[text replaceOccurrencesOfString:@"\n" withString:@"\n<br />\n"];
-
 	[text replaceOccurrencesOfRegex:@"\\[b\\](.+?)\\[/b\\]" withString:@"<b>$1</b>" options:RKLCaseless];
 	[text replaceOccurrencesOfRegex:@"\\[u\\](.+?)\\[/u\\]" withString:@"<u>$1</u>" options:RKLCaseless];
 	[text replaceOccurrencesOfRegex:@"\\[i\\](.+?)\\[/i\\]" withString:@"<i>$1</i>" options:RKLCaseless];
@@ -499,17 +498,17 @@
 	
 	regex = [NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController URLRegex]];
 
-	while([string replaceOccurrencesOfRegex:regex withString:@"$1[url]$2[/url]$3$4" options:RKLCaseless] > 0)
+	while([string replaceOccurrencesOfRegex:regex withString:@"$1[url]$2[/url]$3$4" options:RKLCaseless | RKLMultiline] > 0)
 		;
 	
 	regex = [NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController schemelessURLRegex]];
 	
-	while([string replaceOccurrencesOfRegex:regex withString:@"$1[url]http://$2[/url]$3$4" options:RKLCaseless] > 0)
+	while([string replaceOccurrencesOfRegex:regex withString:@"$1[url]http://$2[/url]$3$4" options:RKLCaseless | RKLMultiline] > 0)
 		;
 	
 	regex = [NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController mailtoURLRegex]];
 	
-	while([string replaceOccurrencesOfRegex:regex withString:@"$1[email]$2[/email]$3$4" options:RKLCaseless] > 0)
+	while([string replaceOccurrencesOfRegex:regex withString:@"$1[email]$2[/email]$3$4" options:RKLCaseless | RKLMultiline] > 0)
 		;
 	
 	return string;

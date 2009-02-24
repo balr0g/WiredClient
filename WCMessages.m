@@ -284,6 +284,7 @@
 	[text replaceOccurrencesOfString:@">" withString:@"&#62;"];
 	[text replaceOccurrencesOfString:@"\"" withString:@"&#34;"];
 	[text replaceOccurrencesOfString:@"\'" withString:@"&#39;"];
+	[text replaceOccurrencesOfString:@"\n" withString:@"\n<br />\n"];
 	
 	regex = [NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController URLRegex]];
 	
@@ -313,8 +314,6 @@
 									options:RKLCaseless | RKLMultiline];
 		}
 	}
-
-	[text replaceOccurrencesOfString:@"\n" withString:@"<br />"];
 
 	string = [[_messageTemplate mutableCopy] autorelease];
 	
