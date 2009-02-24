@@ -1053,7 +1053,7 @@
 
 
 - (IBAction)history:(id)sender {
-	if([_styleControl selectedSegment] == 0)
+	if([_historyControl selectedSegment] == 0)
 		[self back:self];
 	else
 		[self forward:self];
