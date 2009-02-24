@@ -404,14 +404,13 @@
 	[text replaceOccurrencesOfString:@">" withString:@"&#62;"];
 	[text replaceOccurrencesOfString:@"\"" withString:@"&#34;"];
 	[text replaceOccurrencesOfString:@"\'" withString:@"&#39;"];
-	[text replaceOccurrencesOfString:@"\n" withString:@"\n<br />\n"];
 
-	[text replaceOccurrencesOfRegex:@"\\[code\\](.+?)\\[/code\\]" withString:@"<blockquote><pre>$1</pre></blockquote>" options:RKLCaseless];
+	[text replaceOccurrencesOfRegex:@"\\[code\\](.+?)\\[/code\\]" withString:@"<blockquote><pre>$1</pre></blockquote>" options:RKLCaseless | RKLMultiline];
 	
-	while([text replaceOccurrencesOfRegex:@"<pre>(.*?)\\[+(.*?)</pre>" withString:@"<pre>$1&#91;$2</pre>" options:RKLCaseless] > 0)
+	while([text replaceOccurrencesOfRegex:@"<pre>(.*?)\\[+(.*?)</pre>" withString:@"<pre>$1&#91;$2</pre>" options:RKLCaseless | RKLMultiline] > 0)
 		;
 	
-	while([text replaceOccurrencesOfRegex:@"<pre>(.*?)\\]+(.*?)</pre>" withString:@"<pre>$1&#93;$2</pre>" options:RKLCaseless] > 0)
+	while([text replaceOccurrencesOfRegex:@"<pre>(.*?)\\]+(.*?)</pre>" withString:@"<pre>$1&#93;$2</pre>" options:RKLCaseless | RKLMultiline] > 0)
 		;
 	
 	if([theme boolForKey:WCThemesShowSmileys]) {
@@ -424,10 +423,12 @@
 			
 			[text replaceOccurrencesOfRegex:[NSSWF:@"(^|\\s)%@(\\s|$)", regex]
 								 withString:[NSSWF:@"$1<img src=\"%@\" alt=\"%@\" />$2", path, smiley]
-									options:RKLCaseless];
+									options:RKLCaseless | RKLMultiline];
 		}
 	}
 	
+	[text replaceOccurrencesOfString:@"\n" withString:@"\n<br />\n"];
+
 	[text replaceOccurrencesOfRegex:@"\\[b\\](.+?)\\[/b\\]" withString:@"<b>$1</b>" options:RKLCaseless];
 	[text replaceOccurrencesOfRegex:@"\\[u\\](.+?)\\[/u\\]" withString:@"<u>$1</u>" options:RKLCaseless];
 	[text replaceOccurrencesOfRegex:@"\\[i\\](.+?)\\[/i\\]" withString:@"<i>$1</i>" options:RKLCaseless];

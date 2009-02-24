@@ -284,21 +284,20 @@
 	[text replaceOccurrencesOfString:@">" withString:@"&#62;"];
 	[text replaceOccurrencesOfString:@"\"" withString:@"&#34;"];
 	[text replaceOccurrencesOfString:@"\'" withString:@"&#39;"];
-	[text replaceOccurrencesOfString:@"\n" withString:@"<br />"];
 	
 	regex = [NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController URLRegex]];
 	
-	while([text replaceOccurrencesOfRegex:regex withString:@"$1<a href=\"$2\">$2</a>$3$4" options:RKLCaseless] > 0)
+	while([text replaceOccurrencesOfRegex:regex withString:@"$1<a href=\"$2\">$2</a>$3$4" options:RKLCaseless | RKLMultiline] > 0)
 		;
 	
 	regex = [NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController schemelessURLRegex]];
 	
-	while([text replaceOccurrencesOfRegex:regex withString:@"$1<a href=\"http://$2\">$2</a>$3$4" options:RKLCaseless] > 0)
+	while([text replaceOccurrencesOfRegex:regex withString:@"$1<a href=\"http://$2\">$2</a>$3$4" options:RKLCaseless | RKLMultiline] > 0)
 		;
 	
 	regex = [NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController mailtoURLRegex]];
 	
-	while([text replaceOccurrencesOfRegex:regex withString:@"$1<a href=\"mailto:$2\">$2</a>$3$4" options:RKLCaseless] > 0)
+	while([text replaceOccurrencesOfRegex:regex withString:@"$1<a href=\"mailto:$2\">$2</a>$3$4" options:RKLCaseless | RKLMultiline] > 0)
 		;
 
 	if([theme boolForKey:WCThemesShowSmileys]) {
@@ -311,9 +310,11 @@
 		
 			[text replaceOccurrencesOfRegex:[NSSWF:@"(^|\\s)%@(\\s|$)", regex]
 								 withString:[NSSWF:@"$1<img src=\"%@\" alt=\"%@\" />$2", path, smiley]
-									options:RKLCaseless];
+									options:RKLCaseless | RKLMultiline];
 		}
 	}
+
+	[text replaceOccurrencesOfString:@"\n" withString:@"<br />"];
 
 	string = [[_messageTemplate mutableCopy] autorelease];
 	
