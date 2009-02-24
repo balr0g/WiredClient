@@ -605,6 +605,7 @@
 	
 	[_fileTextField setEnabled:(connected && [account fileRenameFiles])];
 	[_kindPopUpButton setEnabled:(connected && [account fileSetType])];
+	[_labelPopUpButton setEnabled:(connected && [account fileSetLabel])];
 	[_ownerPopUpButton setEnabled:(connected && [account fileSetPermissions])];
 	[_ownerPermissionsPopUpButton setEnabled:(connected && [account fileSetPermissions])];
 	[_groupPopUpButton setEnabled:(connected && [account fileSetPermissions])];
