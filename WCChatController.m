@@ -323,6 +323,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 		@"/topic",
 		@"/broadcast",
 		@"/ping",
+		@"/afk",
 		NULL];
 }
 
@@ -420,6 +421,13 @@ typedef enum _WCChatFormat					WCChatFormat;
 		
 		[_pings setObject:[NSNumber numberWithDouble:[NSDate timeIntervalSinceReferenceDate]]
 				   forKey:[NSNumber numberWithUnsignedInt:transaction]];
+		
+		return YES;
+	}
+	else if([command isEqualToString:@"/afk"]) {
+		message = [WIP7Message messageWithName:@"wired.user.set_idle" spec:WCP7Spec];
+		[message setBool:YES forName:@"wired.user.idle"];
+		[[self connection] sendMessage:message];
 		
 		return YES;
 	}
