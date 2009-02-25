@@ -1828,6 +1828,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 	
 	if(index != NSNotFound) {
 		[_userListTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
+		[_userListTableView scrollRowToVisible:index];
 		[[_userListTableView window] makeFirstResponder:_userListTableView];
 	}
 }
