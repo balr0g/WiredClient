@@ -49,7 +49,9 @@
 	IBOutlet NSTableColumn							*_unreadThreadTableColumn;
 	IBOutlet NSTableColumn							*_subjectTableColumn;
 	IBOutlet NSTableColumn							*_nickTableColumn;
-	IBOutlet NSTableColumn							*_timeTableColumn;
+	IBOutlet NSTableColumn							*_repliesTableColumn;
+	IBOutlet NSTableColumn							*_threadTimeTableColumn;
+	IBOutlet NSTableColumn							*_postTimeTableColumn;
 
 	IBOutlet WebView								*_threadWebView;
 	

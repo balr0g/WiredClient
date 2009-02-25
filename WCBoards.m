@@ -324,10 +324,14 @@
 		return @selector(compareSubject:);
 	else if(tableColumn == _nickTableColumn)
 		return @selector(compareNick:);
-	else if(tableColumn == _timeTableColumn)
+	else if(tableColumn == _repliesTableColumn)
+		return @selector(compareNumberOfPosts:);
+	else if(tableColumn == _threadTimeTableColumn)
 		return @selector(compareDate:);
+	else if(tableColumn == _postTimeTableColumn)
+		return @selector(compareLastPostDate:);
 
-	return @selector(compareDate:);
+	return @selector(compareLastPostDate:);
 }
 
 
@@ -774,6 +778,8 @@
 		[invocation invoke];
 	}
 
+	[_threadsTableView setDefaultTableColumnIdentifiers:
+		[NSArray arrayWithObjects:@"Unread", @"Subject", @"Nick", @"Replies", @"Time", @"PostTime", NULL]];
 	[_threadsTableView setDefaultHighlightedTableColumnIdentifier:@"Time"];
 	[_threadsTableView setDefaultSortOrder:WISortAscending];
 	[_threadsTableView setAllowsUserCustomization:YES];
@@ -2147,7 +2153,7 @@
 	if(count == 1) {
 		title = [NSSWF:
 			NSLS(@"Are you sure you want to delete the thread \u201c%@\u201d?", @"Delete thread dialog title (filename)"),
-			[[[threads objectAtIndex:0] postAtIndex:0] subject]];
+			[[[threads objectAtIndex:0] firstPost] subject]];
 		description = NSLS(@"All posts in the thread will be deleted as well. This cannot be undone.", @"Delete thread dialog description");
 	} else {
 		title = [NSSWF:
@@ -2485,11 +2491,15 @@
 	if(tableColumn == _unreadThreadTableColumn)
 		return [thread isUnread] ? [NSImage imageNamed:@"UnreadThread"] : NULL;
 	if(tableColumn == _subjectTableColumn)
-		return [[thread postAtIndex:0] subject];
+		return [[thread firstPost] subject];
 	else if(tableColumn == _nickTableColumn)
-		return [[thread postAtIndex:0] nick];
-	else if(tableColumn == _timeTableColumn)
-		return [_dateFormatter stringFromDate:[[thread postAtIndex:0] postDate]];
+		return [[thread firstPost] nick];
+	else if(tableColumn == _repliesTableColumn)
+		return [NSNumber numberWithUnsignedInteger:[thread numberOfPosts] - 1];
+	else if(tableColumn == _threadTimeTableColumn)
+		return [_dateFormatter stringFromDate:[[thread firstPost] postDate]];
+	else if(tableColumn == _postTimeTableColumn)
+		return [_dateFormatter stringFromDate:[[thread lastPost] postDate]];
 	
 	return NULL;
 }

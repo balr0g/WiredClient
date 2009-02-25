@@ -153,6 +153,18 @@
 
 
 
+- (WCBoardPost *)firstPost {
+	return [_posts objectAtIndex:0];
+}
+
+
+
+- (WCBoardPost *)lastPost {
+	return [_posts lastObject];
+}
+
+
+
 - (void)addPost:(WCBoardPost *)post {
 	[_posts addObject:post sortedUsingSelector:@selector(compareDate:)];
 }
@@ -187,7 +199,7 @@
 - (NSComparisonResult)compareSubject:(id)object {
 	NSComparisonResult		result;
 	
-	result = [[[_posts objectAtIndex:0] subject] compare:[[object postAtIndex:0] subject] options:NSCaseInsensitiveSearch];
+	result = [[[self firstPost] subject] compare:[[object firstPost] subject] options:NSCaseInsensitiveSearch];
 	
 	if(result == NSOrderedSame)
 		result = [self compareDate:object];
@@ -200,7 +212,7 @@
 - (NSComparisonResult)compareNick:(id)object {
 	NSComparisonResult		result;
 	
-	result = [[[_posts objectAtIndex:0] nick] compare:[[object postAtIndex:0] nick] options:NSCaseInsensitiveSearch];
+	result = [[[self firstPost] nick] compare:[[object firstPost] nick] options:NSCaseInsensitiveSearch];
 	
 	if(result == NSOrderedSame)
 		result = [self compareDate:object];
@@ -210,8 +222,25 @@
 
 
 
+- (NSComparisonResult)compareNumberOfPosts:(id)object {
+	if([self numberOfPosts] > [object numberOfPosts])
+		return NSOrderedAscending;
+	else if([self numberOfPosts] < [object numberOfPosts])
+		return NSOrderedDescending;
+
+	return [self compareLastPostDate:object];
+}
+
+
+
 - (NSComparisonResult)compareDate:(id)object {
-	return [[[_posts objectAtIndex:0] postDate] compare:[[object postAtIndex:0] postDate]];
+	return [[[self firstPost] postDate] compare:[[object firstPost] postDate]];
+}
+
+
+
+- (NSComparisonResult)compareLastPostDate:(id)object {
+	return [[[self lastPost] postDate] compare:[[object lastPost] postDate]];
 }
 
 @end

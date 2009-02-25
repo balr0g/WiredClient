@@ -49,6 +49,8 @@
 - (NSArray *)posts;
 - (WCBoardPost *)postAtIndex:(NSUInteger)index;
 - (WCBoardPost *)postWithID:(NSString *)postID;
+- (WCBoardPost *)firstPost;
+- (WCBoardPost *)lastPost;
 - (void)addPost:(WCBoardPost *)post;
 - (void)removePost:(WCBoardPost *)post;
 - (void)removeAllPosts;
@@ -56,6 +58,8 @@
 - (NSComparisonResult)compareUnread:(id)object;
 - (NSComparisonResult)compareSubject:(id)object;
 - (NSComparisonResult)compareNick:(id)object;
+- (NSComparisonResult)compareNumberOfPosts:(id)object;
 - (NSComparisonResult)compareDate:(id)object;
+- (NSComparisonResult)compareLastPostDate:(id)object;
 
 @end
