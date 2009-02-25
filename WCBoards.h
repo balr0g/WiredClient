@@ -90,6 +90,8 @@
 	NSMutableString									*_headerTemplate;
 	NSMutableString									*_footerTemplate;
 	NSMutableString									*_postTemplate;
+	
+	NSRect											_previousVisibleRect;
 }
 
 + (id)boards;

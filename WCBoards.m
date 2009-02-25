@@ -62,7 +62,7 @@
 - (BOOL)_markBoard:(WCBoard *)board asUnread:(BOOL)unread;
 - (SEL)_sortSelector;
 
-- (void)_reloadThread;
+- (void)_reloadThreadAndRememberPosition:(BOOL)rememberPosition;
 - (NSString *)_HTMLStringForPost:(WCBoardPost *)post writable:(BOOL)writable;
 - (NSString *)_textForPostText:(NSString *)text;
 
@@ -107,7 +107,7 @@
 	[_backgroundColor release];
 	_backgroundColor = [WIColorFromString([theme objectForKey:WCThemesBoardsBackgroundColor]) retain];
 	
-	[self _reloadThread];
+	[self _reloadThreadAndRememberPosition:YES];
 }
 
 
@@ -334,13 +334,18 @@
 
 #pragma mark -
 
-- (void)_reloadThread {
+- (void)_reloadThreadAndRememberPosition:(BOOL)rememberPosition {
 	NSEnumerator		*enumerator;
 	NSArray				*threads;
 	NSMutableString		*html;
 	WCBoardThread		*thread;
 	WCBoardPost			*post;
 	BOOL				changedUnread = NO, writable, isKeyWindow;
+	
+	if(rememberPosition)
+		_previousVisibleRect = [[[[[_threadWebView mainFrame] frameView] documentView] enclosingScrollView] documentVisibleRect];
+	else
+		_previousVisibleRect = NSZeroRect;
 	
 	html = [NSMutableString stringWithString:_headerTemplate];
 	
@@ -981,7 +986,7 @@
 	if(![_receivedBoards containsObject:[connection URL]])
 		[self _getBoardsForConnection:connection];
 	
-	[self _reloadThread];
+	[self _reloadThreadAndRememberPosition:YES];
 }
 
 
@@ -1088,7 +1093,7 @@
 		if(selectedThread)
 			[self _reselectThread:selectedThread];
 		
-		[self _reloadThread];
+		[self _reloadThreadAndRememberPosition:YES];
 	}
 	
 	[self _reloadLocationsAndSelectBoard:[_locationPopUpButton representedObjectOfSelectedItem]];
@@ -1229,7 +1234,7 @@
 		if(selectedThread)
 			[self _reselectThread:selectedThread];
 		
-		[self _reloadThread];
+		[self _reloadThreadAndRememberPosition:YES];
 	}
 }
 
@@ -1262,7 +1267,7 @@
 		if(selectedThread)
 			[self _reselectThread:selectedThread];
 		
-		[self _reloadThread];
+		[self _reloadThreadAndRememberPosition:YES];
 	}
 }
 
@@ -1301,7 +1306,7 @@
 		[_threadsTableView reloadData];
 		
 		if(thread == selectedThread)
-			[self _reloadThread];
+			[self _reloadThreadAndRememberPosition:YES];
 		else if(selectedThread)
 			[self _reselectThread:selectedThread];
 	}
@@ -1345,7 +1350,7 @@
 	if(thread == [self _selectedThread]) {
 		[_threadsTableView reloadData];
 
-		[self _reloadThread];
+		[self _reloadThreadAndRememberPosition:YES];
 	}
 }
 
@@ -1387,7 +1392,7 @@
 	if(board == [self _selectedBoard]) {
 		[_threadsTableView reloadData];
 
-		[self _reloadThread];
+		[self _reloadThreadAndRememberPosition:YES];
 		
 		if(selectedThread)
 			[self _reselectThread:selectedThread];
@@ -1540,6 +1545,13 @@
 	}
 	
 	return value;
+}
+
+
+
+- (void)webView:(WebView *)webView didFinishLoadForFrame:(WebFrame *)frame {
+	if(_previousVisibleRect.size.height > 0.0)
+		[[[[_threadWebView mainFrame] frameView] documentView] scrollRectToVisible:_previousVisibleRect];
 }
 
 
@@ -2502,14 +2514,14 @@
 	[[self _selectedBoard] sortThreadsUsingSelector:[self _sortSelector]];
 	[_threadsTableView reloadData];
 
-	[self _reloadThread];
+	[self _reloadThreadAndRememberPosition:YES];
 	[self _validate];
 }
 
 
 
 - (void)tableViewSelectionDidChange:(NSNotification *)notification {
-	[self _reloadThread];
+	[self _reloadThreadAndRememberPosition:NO];
 	[self _validate];
 }
 
