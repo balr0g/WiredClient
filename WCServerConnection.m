@@ -59,7 +59,7 @@
 	if(_shouldAutoReconnect && ([WCSettings boolForKey:WCAutoReconnect] || [[self bookmark] boolForKey:WCBookmarksAutoReconnect])) {
 		_autoReconnectAttempts++;
 	
-		if(_autoReconnectAttempts <= 10) {
+		if(_autoReconnectAttempts <= 30) {
 			[[self chatController] printEvent:
 				[NSSWF:NSLS(@"Reconnecting to %@ in %.0f seconds...", @"Auto-reconnecting chat message (server, time)"), [self name], 10.0]];
 			
