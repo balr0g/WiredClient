@@ -46,6 +46,7 @@
 		777D36C50987E125005B5EC1 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 777D36C40987E125005B5EC1 /* WebKit.framework */; };
 		777D3F6609890273005B5EC1 /* WCChatWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 777D3F6509890273005B5EC1 /* WCChatWindow.m */; };
 		777E657B0740F34700A8DE0B /* WCFilesBrowserCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 777E65790740F34700A8DE0B /* WCFilesBrowserCell.m */; };
+		778943850F5579280017C511 /* LabelYellow.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 778943840F5579280017C511 /* LabelYellow.tiff */; };
 		778C6A410E66B37F00DBF2E3 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 778C6A3F0E66B37F00DBF2E3 /* MainMenu.xib */; };
 		778C6A670E66B44900DBF2E3 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 778C6A650E66B44900DBF2E3 /* Preferences.xib */; };
 		778C6A6B0E66CF7400DBF2E3 /* Connect.xib in Resources */ = {isa = PBXBuildFile; fileRef = 778C6A690E66CF7400DBF2E3 /* Connect.xib */; };
@@ -460,6 +461,7 @@
 		777D3F6709890278005B5EC1 /* WCChatWindow.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCChatWindow.h; sourceTree = "<group>"; };
 		777E65780740F34700A8DE0B /* WCFilesBrowserCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCFilesBrowserCell.h; sourceTree = "<group>"; };
 		777E65790740F34700A8DE0B /* WCFilesBrowserCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCFilesBrowserCell.m; sourceTree = "<group>"; };
+		778943840F5579280017C511 /* LabelYellow.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = LabelYellow.tiff; sourceTree = "<group>"; };
 		778C6A400E66B37F00DBF2E3 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		778C6A660E66B44900DBF2E3 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Preferences.xib; sourceTree = "<group>"; };
 		778C6A6A0E66CF7400DBF2E3 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Connect.xib; sourceTree = "<group>"; };
@@ -1398,6 +1400,7 @@
 				A5D080020F54B1FB00053320 /* LabelOrange.tiff */,
 				A5D080030F54B1FB00053320 /* LabelPurple.tiff */,
 				A5D080040F54B1FB00053320 /* LabelRed.tiff */,
+				778943840F5579280017C511 /* LabelYellow.tiff */,
 				A54AF8F20F13AEBA00AFD50E /* ListView.tiff */,
 				A54AF8F10F13AEBA00AFD50E /* Locked.tiff */,
 				A54AF9260F13AEBB00AFD50E /* Log.tiff */,
@@ -1868,6 +1871,7 @@
 				A5D080090F54B1FB00053320 /* LabelOrange.tiff in Resources */,
 				A5D0800A0F54B1FB00053320 /* LabelPurple.tiff in Resources */,
 				A5D0800B0F54B1FB00053320 /* LabelRed.tiff in Resources */,
+				778943850F5579280017C511 /* LabelYellow.tiff in Resources */,
 				A54AF93E0F13AEBB00AFD50E /* ListView.tiff in Resources */,
 				A54AF93D0F13AEBB00AFD50E /* Locked.tiff in Resources */,
 				A54AF9720F13AEBB00AFD50E /* Log.tiff in Resources */,
