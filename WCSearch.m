@@ -213,11 +213,11 @@
 	[self setShouldCascadeWindows:NO];
 	[self setWindowFrameAutosaveName:@"Search"];
 
-	[[_filesController filesTableView] setAutosaveName:@"Search"];
-    [[_filesController filesTableView] setAutosaveTableColumns:YES];
-	[[_filesController filesTableView] setTarget:self];
-	[[_filesController filesTableView] setDoubleAction:@selector(open:)];
-	[[_filesController filesTableView] setDefaultTableColumnIdentifiers:
+	[[_filesController filesOutlineView] setAutosaveName:@"Search"];
+    [[_filesController filesOutlineView] setAutosaveTableColumns:YES];
+	[[_filesController filesOutlineView] setTarget:self];
+	[[_filesController filesOutlineView] setDoubleAction:@selector(open:)];
+	[[_filesController filesOutlineView] setDefaultTableColumnIdentifiers:
 		[NSArray arrayWithObjects:@"Name", @"Server", @"Size", NULL]];
 
 	[_filesController updateStatus];
@@ -452,7 +452,7 @@
 	NSEnumerator	*enumerator;
 	WCFile			*file;
 	
-	if([[_filesController filesTableView] clickedHeader])
+	if([[_filesController filesOutlineView] clickedHeader])
 		return;
 	
 	enumerator = [[_filesController selectedFiles] objectEnumerator];

@@ -26,11 +26,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WCFilesTableView.h"
+#import "WCFilesOutlineView.h"
 
-static void _WCFilesTableViewShader(void *, const CGFloat *, CGFloat *);
+static void _WCFilesOutlineViewShader(void *, const CGFloat *, CGFloat *);
 
-static void _WCFilesTableViewShader(void *info, const CGFloat *in, CGFloat *out) {
+static void _WCFilesOutlineViewShader(void *info, const CGFloat *in, CGFloat *out) {
 	CGFloat		*colors;
 	
 	colors = info;
@@ -43,14 +43,14 @@ static void _WCFilesTableViewShader(void *info, const CGFloat *in, CGFloat *out)
 
 
 
-@interface WCFilesTableView(Private)
+@interface WCFilesOutlineView(Private)
 
 - (void)_drawRowBackgroundGradientWithStartingColor:(NSColor *)startingColor endingColor:(NSColor *)endingColor inRect:(NSRect)rect;
 
 @end
 
 
-@implementation WCFilesTableView(Private)
+@implementation WCFilesOutlineView(Private)
 
 - (void)_drawRowBackgroundGradientWithStartingColor:(NSColor *)startingColor endingColor:(NSColor *)endingColor inRect:(NSRect)rect {
 	static const CGFloat		domain[] = { 0.0, 2.0 };
@@ -77,7 +77,7 @@ static void _WCFilesTableViewShader(void *info, const CGFloat *in, CGFloat *out)
 	colors[7]				= [deviceEndingColor alphaComponent];
 	
 	callbacks.version		= 0;
-	callbacks.evaluate		= _WCFilesTableViewShader;
+	callbacks.evaluate		= _WCFilesOutlineViewShader;
 	callbacks.releaseInfo	= NULL;
 	
 	function = CGFunctionCreate(colors, 1, domain, 4, range, &callbacks);
@@ -118,23 +118,30 @@ static void _WCFilesTableViewShader(void *info, const CGFloat *in, CGFloat *out)
 
 
 
-@implementation WCFilesTableView
+@implementation WCFilesOutlineView
 
 - (void)drawRow:(NSInteger)row clipRect:(NSRect)clipRect {
 	NSColor			*color;
 	NSRect			rowRect;
+	id				item;
 	
-	color = [[self delegate] tableView:self backgroundColorForRow:row];
+	item	= [self itemAtRow:row];
+	color	= [[self delegate] outlineView:self backgroundColorForItem:item];
 
 	if(color) {
-		if(![[self selectedRowIndexes] containsIndex:row]) {
-			rowRect = [self rectOfRow:row];
-			rowRect.size.height -= 1.0;
+		rowRect = [self rectOfRow:row];
+		
+		rowRect.origin.x += 2.0;
+		rowRect.size.width -= 4.0;
+
+		if([[self selectedRowIndexes] containsIndex:row])
+			rowRect.size.width = 18.0;
 			
-			[self _drawRowBackgroundGradientWithStartingColor:[color blendedColorWithFraction:0.6 ofColor:[NSColor whiteColor]]
-												  endingColor:[color blendedColorWithFraction:0.2 ofColor:[NSColor whiteColor]]
-													   inRect:rowRect];
-		}
+		rowRect.size.height -= 1.0;
+
+		[self _drawRowBackgroundGradientWithStartingColor:[color blendedColorWithFraction:0.6 ofColor:[NSColor whiteColor]]
+											  endingColor:[color blendedColorWithFraction:0.2 ofColor:[NSColor whiteColor]]
+												   inRect:rowRect];
 	}
 	
 	[super drawRow:row clipRect:clipRect];

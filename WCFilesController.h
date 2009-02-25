@@ -31,23 +31,23 @@
 #define WCFilePboardType			@"WCFilePboardType"
 
 
-@class WCFile;
+@class WCFilesOutlineView, WCFile;
 
 @interface WCFilesController : WIObject {
-	IBOutlet WITableView			*_filesTableView;
-	IBOutlet NSTableColumn			*_nameTableColumn;
-	IBOutlet NSTableColumn			*_kindTableColumn;
-	IBOutlet NSTableColumn			*_createdTableColumn;
-	IBOutlet NSTableColumn			*_modifiedTableColumn;
-	IBOutlet NSTableColumn			*_sizeTableColumn;
-	IBOutlet NSTableColumn			*_serverTableColumn;
+	IBOutlet WCFilesOutlineView			*_filesOutlineView;
+	IBOutlet NSTableColumn				*_nameTableColumn;
+	IBOutlet NSTableColumn				*_kindTableColumn;
+	IBOutlet NSTableColumn				*_createdTableColumn;
+	IBOutlet NSTableColumn				*_modifiedTableColumn;
+	IBOutlet NSTableColumn				*_sizeTableColumn;
+	IBOutlet NSTableColumn				*_serverTableColumn;
 
-	IBOutlet NSTextField			*_statusTextField;
+	IBOutlet NSTextField				*_statusTextField;
 
-	NSMutableArray					*_files;
-	WIDateFormatter					*_dateFormatter;
+	NSMutableArray						*_files;
+	WIDateFormatter						*_dateFormatter;
 	
-	IBOutlet id						delegate;
+	IBOutlet id							delegate;
 }
 
 - (void)themeDidChange:(NSDictionary *)theme;
@@ -61,6 +61,6 @@
 - (NSArray *)selectedFiles;
 - (NSArray *)shownFiles;
 - (void)sortFiles;
-- (WITableView *)filesTableView;
+- (WCFilesOutlineView *)filesOutlineView;
 
 @end

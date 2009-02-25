@@ -8,7 +8,7 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="218"/>
+			<integer value="16"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -331,7 +331,7 @@
 												</object>
 												<object class="NSTableColumn" id="270132684">
 													<string key="NSIdentifier">Size</string>
-													<double key="NSWidth">2.600000e+01</double>
+													<double key="NSWidth">2.553800e+01</double>
 													<double key="NSMinWidth">2.553800e+01</double>
 													<double key="NSMaxWidth">8.000000e+01</double>
 													<object class="NSTableHeaderCell" key="NSHeaderCell">
@@ -883,14 +883,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">_filesTableView</string>
-						<reference key="source" ref="611417743"/>
-						<reference key="destination" ref="208732282"/>
-					</object>
-					<int key="connectionID">148</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">_kindTableColumn</string>
 						<reference key="source" ref="611417743"/>
 						<reference key="destination" ref="517857287"/>
@@ -936,22 +928,6 @@
 						<reference key="destination" ref="1039267420"/>
 					</object>
 					<int key="connectionID">154</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">dataSource</string>
-						<reference key="source" ref="208732282"/>
-						<reference key="destination" ref="611417743"/>
-					</object>
-					<int key="connectionID">155</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">delegate</string>
-						<reference key="source" ref="208732282"/>
-						<reference key="destination" ref="611417743"/>
-					</object>
-					<int key="connectionID">156</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -1008,6 +984,30 @@
 						<reference key="destination" ref="43883152"/>
 					</object>
 					<int key="connectionID">252</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_filesOutlineView</string>
+						<reference key="source" ref="611417743"/>
+						<reference key="destination" ref="208732282"/>
+					</object>
+					<int key="connectionID">272</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">delegate</string>
+						<reference key="source" ref="208732282"/>
+						<reference key="destination" ref="611417743"/>
+					</object>
+					<int key="connectionID">273</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">dataSource</string>
+						<reference key="source" ref="208732282"/>
+						<reference key="destination" ref="611417743"/>
+					</object>
+					<int key="connectionID">274</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1563,7 +1563,7 @@
 					<reference ref="5"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
-					<string>WCFilesTableView</string>
+					<string>WCFilesOutlineView</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1633,8 +1633,8 @@
 					<reference ref="5"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
-					<string>{{266, 304}, {528, 468}}</string>
-					<string>{{266, 304}, {528, 468}}</string>
+					<string>{{817, 319}, {528, 468}}</string>
+					<string>{{817, 319}, {528, 468}}</string>
 					<reference ref="5"/>
 					<reference ref="5"/>
 					<string>{3.40282e+38, 3.40282e+38}</string>
@@ -1679,7 +1679,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">271</int>
+			<int key="maxID">274</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -1715,9 +1715,9 @@
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">NSObject</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier" id="10773415">
+					<object class="IBClassDescriptionSource" key="sourceIdentifier" id="985367830">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">WCFilesTableView.h</string>
+						<string key="minorKey">WCFilesOutlineView.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -1770,7 +1770,7 @@
 						<object class="NSMutableArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>_createdTableColumn</string>
-							<string>_filesTableView</string>
+							<string>_filesOutlineView</string>
 							<string>_kindTableColumn</string>
 							<string>_modifiedTableColumn</string>
 							<string>_nameTableColumn</string>
@@ -1782,7 +1782,7 @@
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>NSTableColumn</string>
-							<string>WITableView</string>
+							<string>WCFilesOutlineView</string>
 							<string>NSTableColumn</string>
 							<string>NSTableColumn</string>
 							<string>NSTableColumn</string>
@@ -1806,17 +1806,9 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
-					<string key="className">WCFilesTableView</string>
-					<string key="superclassName">WITableView</string>
-					<reference key="sourceIdentifier" ref="10773415"/>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">WCFilesTableView</string>
-					<string key="superclassName">WITableView</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBUserSource</string>
-						<string key="minorKey"/>
-					</object>
+					<string key="className">WCFilesOutlineView</string>
+					<string key="superclassName">WIOutlineView</string>
+					<reference key="sourceIdentifier" ref="985367830"/>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">WCSearch</string>
@@ -1885,24 +1877,31 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
-					<string key="className">WITableView</string>
-					<string key="superclassName">NSTableView</string>
-					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">showViewOptions:</string>
-						<string key="NS.object.0">id</string>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBUserSource</string>
-						<string key="minorKey"/>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
 					<string key="className">WIWindowController</string>
 					<string key="superclassName">NSWindowController</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBUserSource</string>
 						<string key="minorKey"/>
 					</object>
+				</object>
+			</object>
+			<object class="NSMutableArray" key="referencedPartialClassDescriptionsV3.1+">
+				<bool key="EncodedWithXMLCoder">YES</bool>
+				<object class="IBPartialClassDescription">
+					<string key="className">NSObject</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier" id="84642913">
+						<string key="majorKey">IBDocumentRelativeSource</string>
+						<string key="minorKey">../WiredAdditions/WiredAppKit/WIOutlineView.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">WIOutlineView</string>
+					<string key="superclassName">NSOutlineView</string>
+					<object class="NSMutableDictionary" key="actions">
+						<string key="NS.key.0">showViewOptions:</string>
+						<string key="NS.object.0">id</string>
+					</object>
+					<reference key="sourceIdentifier" ref="84642913"/>
 				</object>
 			</object>
 		</object>

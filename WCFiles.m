@@ -35,6 +35,7 @@
 #import "WCFiles.h"
 #import "WCFilesController.h"
 #import "WCFilesBrowserCell.h"
+#import "WCFilesOutlineView.h"
 #import "WCPreferences.h"
 #import "WCServerConnection.h"
 #import "WCTransfers.h"
@@ -274,7 +275,7 @@
 - (void)_showList {
 	_type = WCFilesStyleList;
 
-	[[_filesController filesTableView] sizeToFit];
+	[[_filesController filesOutlineView] sizeToFit];
 	[_filesTabView selectTabViewItemWithIdentifier:@"List"];
 	
 	if(_listPath)
@@ -311,7 +312,7 @@
 	
 	switch(_type) {
 		case WCFilesStyleList:
-			[[self window] makeFirstResponder:[_filesController filesTableView]];
+			[[self window] makeFirstResponder:[_filesController filesOutlineView]];
 			break;
 			
 		case WCFilesStyleBrowser:
@@ -677,19 +678,19 @@
 	[_filesBrowser registerForDraggedTypes:[NSArray arrayWithObjects:WCFilePboardType, NSFilenamesPboardType, NULL]];
 	[_filesBrowser loadColumnZero];
 
-	[[_filesController filesTableView] registerForDraggedTypes:[NSArray arrayWithObjects:WCFilePboardType, NSFilenamesPboardType, NULL]];
-	[[_filesController filesTableView] setTarget:self];
-	[[_filesController filesTableView] setDoubleAction:@selector(open:)];
-	[[_filesController filesTableView] setDeleteAction:@selector(deleteFiles:)];
-	[[_filesController filesTableView] setBackAction:@selector(back:)];
-	[[_filesController filesTableView] setForwardAction:@selector(forward:)];
+	[[_filesController filesOutlineView] registerForDraggedTypes:[NSArray arrayWithObjects:WCFilePboardType, NSFilenamesPboardType, NULL]];
+	[[_filesController filesOutlineView] setTarget:self];
+	[[_filesController filesOutlineView] setDoubleAction:@selector(open:)];
+	[[_filesController filesOutlineView] setDeleteAction:@selector(deleteFiles:)];
+	[[_filesController filesOutlineView] setBackAction:@selector(back:)];
+	[[_filesController filesOutlineView] setForwardAction:@selector(forward:)];
 	
 	[_titleBarMenu removeAllItems];
 
 	[self setShouldCascadeWindows:YES];
 	[self setWindowFrameAutosaveName:@"Files"];
 
-	[[_filesController filesTableView] setPropertiesFromDictionary:
+	[[_filesController filesOutlineView] setPropertiesFromDictionary:
 		[[WCSettings objectForKey:WCWindowProperties] objectForKey:@"WCFilesTableView"]];
 	
 	[[self window] setTitle:[[self _currentPath] path] withSubtitle:[[self connection] name]];
@@ -705,7 +706,7 @@
 
 
 - (void)windowWillClose:(NSNotification *)notification {
-	[WCSettings setObject:[[_filesController filesTableView] propertiesDictionary]
+	[WCSettings setObject:[[_filesController filesOutlineView] propertiesDictionary]
 				   forKey:@"WCFilesTableView"
 	   inDictionaryForKey:WCWindowProperties];
 	
@@ -980,7 +981,7 @@
 	NSArray			*files;
 	WCFile			*file;
 	
-	if(![[self connection] isConnected] || [[_filesController filesTableView] clickedHeader])
+	if(![[self connection] isConnected] || [[_filesController filesOutlineView] clickedHeader])
 		return;
 
 	files = [self _selectedFiles];
@@ -1441,37 +1442,42 @@
 	pasteboard	= [info draggingPasteboard];
 	types		= [pasteboard types];
 	
-	if([types containsObject:WCFilePboardType]) {
-		if(!item)
-			return NSDragOperationNone;
+	if(outlineView == _sourceOutlineView) {
+		if([types containsObject:WCFilePboardType]) {
+			if(!item)
+				return NSDragOperationNone;
+			
+			if([item isKindOfClass:[NSNumber class]] && [item unsignedIntegerValue] == 0)
+				return NSDragOperationNone;
 		
-		if([item isKindOfClass:[NSNumber class]] && [item unsignedIntegerValue] == 0)
-			return NSDragOperationNone;
-	
-		if([item isKindOfClass:[NSNumber class]]) {
-			sources		= [NSKeyedUnarchiver unarchiveObjectWithData:[pasteboard dataForType:WCFilePboardType]];
-			enumerator	= [sources reverseObjectEnumerator];
-		
-			while((file = [enumerator nextObject])) {
-				if(![file isFolder])
-					return NSDragOperationNone;
+			if([item isKindOfClass:[NSNumber class]]) {
+				sources		= [NSKeyedUnarchiver unarchiveObjectWithData:[pasteboard dataForType:WCFilePboardType]];
+				enumerator	= [sources reverseObjectEnumerator];
+			
+				while((file = [enumerator nextObject])) {
+					if(![file isFolder])
+						return NSDragOperationNone;
+				}
+				
+				return NSDragOperationCopy;
 			}
-			
-			return NSDragOperationCopy;
-		}
 
-		return NSDragOperationMove;
-	}
-	else if([types containsObject:WCPlacePboardType]) {
-		if(!item)
-			return NSDragOperationDelete;
-		
-		if([item isKindOfClass:[NSNumber class]] && [item unsignedIntegerValue] == 1 && index >= 0) {
-			[_sourceOutlineView setDropRow:-1 dropOperation:NSDragOperationMove];
-			
 			return NSDragOperationMove;
 		}
-		
+		else if([types containsObject:WCPlacePboardType]) {
+			if(!item)
+				return NSDragOperationDelete;
+			
+			if([item isKindOfClass:[NSNumber class]] && [item unsignedIntegerValue] == 1 && index >= 0) {
+				[_sourceOutlineView setDropRow:-1 dropOperation:NSDragOperationMove];
+				
+				return NSDragOperationMove;
+			}
+			
+			return NSDragOperationNone;
+		}
+	}
+	else if(outlineView == [_filesController filesOutlineView]) {
 		return NSDragOperationNone;
 	}
 	
@@ -1492,56 +1498,83 @@
 	pasteboard	= [info draggingPasteboard];
 	types		= [pasteboard types];
 	
-	if([types containsObject:WCFilePboardType]) {
-		sources		= [NSKeyedUnarchiver unarchiveObjectWithData:[pasteboard dataForType:WCFilePboardType]];
-		enumerator	= [sources reverseObjectEnumerator];
-		
-		if([item isKindOfClass:[NSNumber class]]) {
-			while((file = [enumerator nextObject])) {
-				if([file isFolder])
-					[_places insertObject:file atIndex:index];
-			}
+	if(outlineView == _sourceOutlineView) {
+		if([types containsObject:WCFilePboardType]) {
+			sources		= [NSKeyedUnarchiver unarchiveObjectWithData:[pasteboard dataForType:WCFilePboardType]];
+			enumerator	= [sources reverseObjectEnumerator];
 			
-			[WCSettings setObject:[NSKeyedArchiver archivedDataWithRootObject:_places] forKey:WCPlaces];
-		} else {
-			destinationPath = [item path];
-			
-			while((file = [enumerator nextObject])) {
-				message = [WIP7Message messageWithName:@"wired.file.move" spec:WCP7Spec];
-				[message setString:[file path] forName:@"wired.file.path"];
-				[message setString:[destinationPath stringByAppendingPathComponent:[file name]] forName:@"wired.file.new_path"];
-				[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredFileMoveReply:)];
-			}
-		}
-		
-		[_sourceOutlineView reloadData];
-		
-		return YES;
-	}
-	else if([types containsObject:WCPlacePboardType]) {
-		sources		= [NSKeyedUnarchiver unarchiveObjectWithData:[pasteboard dataForType:WCPlacePboardType]];
-		enumerator	= [sources reverseObjectEnumerator];
-		
-		if(!item) {
-			while((file = [enumerator nextObject])) {
-				oldIndex = [_places indexOfObject:file];
-			
-				[_places removeObjectAtIndex:oldIndex];
-			}
-		} else {
-			while((file = [enumerator nextObject])) {
-				oldIndex = [_places indexOfObject:file];
+			if([item isKindOfClass:[NSNumber class]]) {
+				while((file = [enumerator nextObject])) {
+					if([file isFolder])
+						[_places insertObject:file atIndex:index];
+				}
 				
-				[_places moveObjectAtIndex:oldIndex toIndex:index];
+				[WCSettings setObject:[NSKeyedArchiver archivedDataWithRootObject:_places] forKey:WCPlaces];
+			} else {
+				destinationPath = [item path];
+				
+				while((file = [enumerator nextObject])) {
+					message = [WIP7Message messageWithName:@"wired.file.move" spec:WCP7Spec];
+					[message setString:[file path] forName:@"wired.file.path"];
+					[message setString:[destinationPath stringByAppendingPathComponent:[file name]] forName:@"wired.file.new_path"];
+					[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredFileMoveReply:)];
+				}
 			}
+			
+			[_sourceOutlineView reloadData];
+			
+			return YES;
 		}
-		
-		[_sourceOutlineView reloadData];
-		
-		return YES;
+		else if([types containsObject:WCPlacePboardType]) {
+			sources		= [NSKeyedUnarchiver unarchiveObjectWithData:[pasteboard dataForType:WCPlacePboardType]];
+			enumerator	= [sources reverseObjectEnumerator];
+			
+			if(!item) {
+				while((file = [enumerator nextObject])) {
+					oldIndex = [_places indexOfObject:file];
+				
+					[_places removeObjectAtIndex:oldIndex];
+				}
+			} else {
+				while((file = [enumerator nextObject])) {
+					oldIndex = [_places indexOfObject:file];
+					
+					[_places moveObjectAtIndex:oldIndex toIndex:index];
+				}
+			}
+			
+			[_sourceOutlineView reloadData];
+			
+			return YES;
+		}
+	}
+	else if(outlineView == [_filesController filesOutlineView]) {
+		return NO;
 	}
 		
 	return NO;
+}
+
+
+
+- (NSArray *)outlineView:(NSOutlineView *)outlineView namesOfPromisedFilesDroppedAtDestination:(NSURL *)destination forDraggedItems:(NSArray *)items {
+	NSEnumerator		*enumerator;
+	NSMutableArray		*array;
+	WCFile				*file;
+	
+	if(outlineView == [_filesController filesOutlineView]) {
+		array		= [NSMutableArray array];
+		enumerator	= [items objectEnumerator];
+		
+		while((file = [enumerator nextObject])) {
+			if([[WCTransfers transfers] downloadFile:file toFolder:[destination path]])
+				[array addObject:[file name]];
+		}
+		
+		return array;
+	}
+	
+	return NULL;
 }
 
 

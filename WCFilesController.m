@@ -30,6 +30,7 @@
 #import "WCFile.h"
 #import "WCFilesController.h"
 #import "WCFileInfo.h"
+#import "WCFilesOutlineView.h"
 #import "WCPreferences.h"
 #import "WCServerConnection.h"
 #import "WCTransfers.h"
@@ -58,12 +59,12 @@
 #pragma mark -
 
 - (void)awakeFromNib {
-	[_filesTableView setAllowsUserCustomization:YES];
-	[_filesTableView setDefaultHighlightedTableColumnIdentifier:@"Name"];
-	[_filesTableView setDefaultTableColumnIdentifiers:
+	[_filesOutlineView setAllowsUserCustomization:YES];
+	[_filesOutlineView setDefaultHighlightedTableColumnIdentifier:@"Name"];
+	[_filesOutlineView setDefaultTableColumnIdentifiers:
 		[NSArray arrayWithObjects:@"Name", @"Size", NULL]];
-	[_filesTableView setDraggingSourceOperationMask:NSDragOperationEvery forLocal:NO];
-	[_filesTableView setDraggingSourceOperationMask:NSDragOperationEvery forLocal:YES];
+	[_filesOutlineView setDraggingSourceOperationMask:NSDragOperationEvery forLocal:NO];
+	[_filesOutlineView setDraggingSourceOperationMask:NSDragOperationEvery forLocal:YES];
 
 	_dateFormatter = [[WIDateFormatter alloc] init];
 	[_dateFormatter setTimeStyle:NSDateFormatterShortStyle];
@@ -76,7 +77,7 @@
 #pragma mark -
 
 - (void)themeDidChange:(NSDictionary *)theme {
-	[_filesTableView setUsesAlternatingRowBackgroundColors:[theme boolForKey:WCThemesFileListAlternateRows]];
+	[_filesOutlineView setUsesAlternatingRowBackgroundColors:[theme boolForKey:WCThemesFileListAlternateRows]];
 }
 
 
@@ -121,13 +122,13 @@
 
 
 - (void)showFiles {
-	[_filesTableView reloadData];
+	[_filesOutlineView reloadData];
 }
 
 
 
 - (void)selectFileWithName:(NSString *)name {
-	[_filesTableView selectRowWithStringValue:name options:NSCaseInsensitiveSearch];
+	[_filesOutlineView selectRowWithStringValue:name options:NSCaseInsensitiveSearch];
 }
 
 
@@ -141,7 +142,7 @@
 - (WCFile *)fileAtIndex:(NSUInteger)index {
 	NSUInteger	i;
 	
-	i = ([_filesTableView sortOrder] == WISortDescending)
+	i = ([_filesOutlineView sortOrder] == WISortDescending)
 		? [_files count] - index - 1
 		: index;
 	
@@ -156,7 +157,7 @@
 - (WCFile *)selectedFile {
 	NSInteger		row;
 
-	row = [_filesTableView selectedRow];
+	row = [_filesOutlineView selectedRow];
 
 	if(row < 0)
 		return NULL;
@@ -172,7 +173,7 @@
 	NSUInteger			index;
 
 	array = [NSMutableArray array];
-	indexes = [_filesTableView selectedRowIndexes];
+	indexes = [_filesOutlineView selectedRowIndexes];
 	index = [indexes firstIndex];
 	
 	while(index != NSNotFound) {
@@ -195,7 +196,7 @@
 - (void)sortFiles {
 	NSTableColumn	*tableColumn;
 
-	tableColumn = [_filesTableView highlightedTableColumn];
+	tableColumn = [_filesOutlineView highlightedTableColumn];
 	
 	if(tableColumn == _nameTableColumn)
 		[_files sortUsingSelector:@selector(compareName:)];
@@ -211,33 +212,34 @@
 
 
 
-- (WITableView *)filesTableView {
-	return _filesTableView;
+- (WCFilesOutlineView *)filesOutlineView {
+	return _filesOutlineView;
 }
 
 
 
 #pragma mark -
 
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
+- (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item {
+	if(item)
+		return 0;
+	
 	return [_files count];
 }
 
 
 
-- (void)tableView:(NSTableView *)tableView didClickTableColumn:(NSTableColumn *)tableColumn {
-	[_filesTableView setHighlightedTableColumn:tableColumn];
-	[self sortFiles];
-	[_filesTableView reloadData];
-	[delegate validate];
+- (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(id)item {
+	if(item)
+		return NULL;
+	
+	return [self fileAtIndex:index];
 }
 
 
 
-- (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
-	WCFile		*file;
-
-	file = [self fileAtIndex:row];
+- (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item {
+	WCFile		*file = item;
 
 	if(tableColumn == _nameTableColumn)
 		return [file name];
@@ -266,15 +268,25 @@
 
 
 
-- (void)tableView:(NSTableView *)tableView willDisplayCell:(id)cell forTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
-	if(tableColumn == _nameTableColumn)
-		[cell setImage:[[self fileAtIndex:row] iconWithWidth:16.0]];
+- (id)outlineView:(NSOutlineView *)outlineView stringValueForRow:(NSInteger)row {
+	return [[self fileAtIndex:row] name];
 }
 
 
 
-- (NSColor *)tableView:(NSTableView *)tableView backgroundColorForRow:(NSInteger)row {
-	switch([[self fileAtIndex:row] label]) {
+- (void)outlineView:(NSOutlineView *)outlineView willDisplayCell:(id)cell forTableColumn:(NSTableColumn *)tableColumn item:(id)item {
+	WCFile		*file = item;
+	
+	if(tableColumn == _nameTableColumn)
+		[cell setImage:[file iconWithWidth:16.0]];
+}
+
+
+
+- (NSColor *)outlineView:(NSOutlineView *)outlineView backgroundColorForItem:(id)item {
+	WCFile		*file = item;
+	
+	switch([file label]) {
 		case WCFileLabelRed:
 			return [NSColor colorWithCalibratedRed:249.0 / 255.0 green:92.0 / 255.0 blue:91.0 / 255.0 alpha:1.0];
 			break;
@@ -313,53 +325,47 @@
 
 
 
-- (NSString *)tableView:(NSTableView *)tableView stringValueForRow:(NSInteger)row {
-	return [[self fileAtIndex:row] name];
+- (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item {
+	WCFile		*file = item;
+	
+	return [file isFolder];
 }
 
 
 
-- (void)tableViewSelectionDidChange:(NSNotification *)notification {
+- (void)outlineViewSelectionDidChange:(NSNotification *)notification {
 	[delegate validate];
 }
 
 
 
-- (void)tableViewShouldCopyInfo:(NSTableView *)tableView {
-	NSPasteboard	*pasteboard;
-
-	pasteboard = [NSPasteboard generalPasteboard];
-	[pasteboard declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:NULL];
-	[pasteboard setString:[[self selectedFile] name] forType:NSStringPboardType];
+- (void)outlineView:(NSOutlineView *)outlineView didClickTableColumn:(NSTableColumn *)tableColumn {
+	[_filesOutlineView setHighlightedTableColumn:tableColumn];
+	[self sortFiles];
+	[_filesOutlineView reloadData];
+	[delegate validate];
 }
 
 
 
-- (BOOL)tableView:(NSTableView *)tableView writeRowsWithIndexes:(NSIndexSet *)indexes toPasteboard:(NSPasteboard *)pasteboard {
-	NSMutableArray		*sources;
+- (BOOL)outlineView:(NSOutlineView *)tableView writeItems:(NSArray *)items toPasteboard:(NSPasteboard *)pasteboard {
+	NSEnumerator		*enumerator;
 	NSMutableString		*string;
 	WCFile				*file;
-	NSUInteger			index;
 
-	sources			= [NSMutableArray array];
 	string			= [NSMutableString string];
-	index			= [indexes firstIndex];
+	enumerator		= [items objectEnumerator];
 	
-	while(index != NSNotFound) {
-		file = [self fileAtIndex:index];
-		
+	while((file = [enumerator nextObject])) {
 		if([string length] > 0)
 			[string appendString:@"\n"];
 
 		[string appendString:[file path]];
-		[sources addObject:file];
-		
-		index = [indexes indexGreaterThanIndex:index];
 	}
 
 	[pasteboard declareTypes:[NSArray arrayWithObjects:
 		WCFilePboardType, NSStringPboardType, NSFilesPromisePboardType, NULL] owner:NULL];
-	[pasteboard setData:[NSKeyedArchiver archivedDataWithRootObject:sources] forType:WCFilePboardType];
+	[pasteboard setData:[NSKeyedArchiver archivedDataWithRootObject:items] forType:WCFilePboardType];
 	[pasteboard setString:string forType:NSStringPboardType];
 	[pasteboard setPropertyList:[NSArray arrayWithObject:NSFileTypeForHFSTypeCode('\0\0\0\0')] forType:NSFilesPromisePboardType];
 	
@@ -368,20 +374,20 @@
 
 
 
-- (NSDragOperation)tableView:(NSTableView *)tableView validateDrop:(id <NSDraggingInfo>)info proposedRow:(NSInteger)proposedRow proposedDropOperation:(NSTableViewDropOperation)proposedOperation {
-	return [delegate tableView:tableView validateDrop:info proposedRow:proposedRow proposedDropOperation:proposedOperation];
+- (NSDragOperation)outlineView:(NSOutlineView *)outlineView validateDrop:(id <NSDraggingInfo>)info proposedItem:(id)item proposedChildIndex:(NSInteger)index {
+	return [delegate outlineView:outlineView validateDrop:info proposedItem:item proposedChildIndex:index];
 }
 
 
 
-- (BOOL)tableView:(NSTableView *)tableView acceptDrop:(id <NSDraggingInfo>)info row:(NSInteger)row dropOperation:(NSTableViewDropOperation)operation {
-	return [delegate tableView:tableView acceptDrop:info row:row dropOperation:operation];
+- (BOOL)outlineView:(NSOutlineView *)outlineView acceptDrop:(id <NSDraggingInfo>)info item:(id)item childIndex:(NSInteger)index {
+	return [delegate outlineView:outlineView acceptDrop:info item:item childIndex:index];
 }
 
 
 
-- (NSArray *)tableView:(NSTableView *)tableView namesOfPromisedFilesDroppedAtDestination:(NSURL *)destination forDraggedRowsWithIndexes:(NSIndexSet *)indexes {
-	return [delegate tableView:tableView namesOfPromisedFilesDroppedAtDestination:destination forDraggedRowsWithIndexes:indexes];
+- (NSArray *)outlineView:(NSOutlineView *)outlineView namesOfPromisedFilesDroppedAtDestination:(NSURL *)destination forDraggedItems:(NSArray *)items {
+	return [delegate outlineView:outlineView namesOfPromisedFilesDroppedAtDestination:destination forDraggedItems:items];
 }
 
 @end

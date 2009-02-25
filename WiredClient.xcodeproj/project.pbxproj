@@ -143,7 +143,7 @@
 		77CFBABF0E66EEDD00F2D5F8 /* Growl.framework in Copy Files (Frameworks) */ = {isa = PBXBuildFile; fileRef = 77CFBAB60E66EED500F2D5F8 /* Growl.framework */; };
 		77CFBCBC0E66EFD200F2D5F8 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77CFBCB30E66EFCF00F2D5F8 /* Sparkle.framework */; };
 		77CFBCBD0E66EFD500F2D5F8 /* Sparkle.framework in Copy Files (Frameworks) */ = {isa = PBXBuildFile; fileRef = 77CFBCB30E66EFCF00F2D5F8 /* Sparkle.framework */; };
-		77E2888E0A2D9E9B00035403 /* WCFilesTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 77E2888C0A2D9E9B00035403 /* WCFilesTableView.m */; };
+		77E2888E0A2D9E9B00035403 /* WCFilesOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 77E2888C0A2D9E9B00035403 /* WCFilesOutlineView.m */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		A509A96305F3B8F000E6AE2D /* WiredClient.icns in Resources */ = {isa = PBXBuildFile; fileRef = A509A96205F3B8F000E6AE2D /* WiredClient.icns */; };
@@ -565,8 +565,8 @@
 		77CFB9970E66D39000F2D5F8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Servers.xib; sourceTree = "<group>"; };
 		77CFBAB60E66EED500F2D5F8 /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Growl.framework; sourceTree = "<group>"; };
 		77CFBCB30E66EFCF00F2D5F8 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
-		77E2888C0A2D9E9B00035403 /* WCFilesTableView.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCFilesTableView.m; sourceTree = "<group>"; };
-		77E2888D0A2D9E9B00035403 /* WCFilesTableView.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCFilesTableView.h; sourceTree = "<group>"; };
+		77E2888C0A2D9E9B00035403 /* WCFilesOutlineView.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCFilesOutlineView.m; sourceTree = "<group>"; };
+		77E2888D0A2D9E9B00035403 /* WCFilesOutlineView.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCFilesOutlineView.h; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A509A96205F3B8F000E6AE2D /* WiredClient.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = WiredClient.icns; sourceTree = "<group>"; };
 		A509A98305F4A6D300E6AE2D /* WiredTransfer.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = WiredTransfer.icns; sourceTree = "<group>"; };
@@ -1188,8 +1188,8 @@
 				777E65780740F34700A8DE0B /* WCFilesBrowserCell.h */,
 				A5FD60610D77FEE8000A7941 /* WCFilesController.m */,
 				A5FD60620D77FEE8000A7941 /* WCFilesController.h */,
-				77E2888C0A2D9E9B00035403 /* WCFilesTableView.m */,
-				77E2888D0A2D9E9B00035403 /* WCFilesTableView.h */,
+				77E2888C0A2D9E9B00035403 /* WCFilesOutlineView.m */,
+				77E2888D0A2D9E9B00035403 /* WCFilesOutlineView.h */,
 				A5DC7ED3057AAF2900736BBF /* WCSearch.m */,
 				A5DC7ED2057AAF2900736BBF /* WCSearch.h */,
 			);
@@ -2070,7 +2070,7 @@
 				A5DC7F0E057AAF6C00736BBF /* WCFiles.m in Sources */,
 				777E657B0740F34700A8DE0B /* WCFilesBrowserCell.m in Sources */,
 				A5FD60630D77FEE8000A7941 /* WCFilesController.m in Sources */,
-				77E2888E0A2D9E9B00035403 /* WCFilesTableView.m in Sources */,
+				77E2888E0A2D9E9B00035403 /* WCFilesOutlineView.m in Sources */,
 				A51B4FE50F4222AF00EAB0E1 /* WCFilterButtonCell.m in Sources */,
 				A5AAD2DE0D879B250072FFA1 /* WCFilterView.m in Sources */,
 				A515FD380D61ED4800922A2D /* WCInfoController.m in Sources */,

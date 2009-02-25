@@ -26,13 +26,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-@interface WCFilesTableView : WITableView
+@interface WCFilesOutlineView : WIOutlineView
 
 @end
 
 
-@interface NSObject(WCFilesTableViewDelegate)
+@interface NSObject(WCFilesOutlineViewDelegate)
 
-- (NSColor *)tableView:(NSTableView *)tableView backgroundColorForRow:(NSInteger)row;
+- (NSColor *)outlineView:(NSOutlineView *)outlineView backgroundColorForItem:(id)item;
 
 @end
