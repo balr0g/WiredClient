@@ -1336,27 +1336,30 @@
 	board			= [[_boards boardForConnection:connection] boardForPath:[message stringForName:@"wired.board.board"]];
 	thread			= [board threadWithID:[message UUIDForName:@"wired.board.thread"]];
 	post			= [thread postWithID:[message UUIDForName:@"wired.board.post"]];
-	editDate		= [message dateForName:@"wired.board.edit_date"];
-	subject			= [message stringForName:@"wired.board.subject"];
-	text			= [message stringForName:@"wired.board.text"];
 	
-	[post setEditDate:editDate];
-	[post setSubject:subject];
-	[post setText:text];
-	
-	[post setUnread:YES];
-	[thread setUnread:YES];
+	if(thread && post) {
+		editDate	= [message dateForName:@"wired.board.edit_date"];
+		subject		= [message stringForName:@"wired.board.subject"];
+		text		= [message stringForName:@"wired.board.text"];
+		
+		[post setEditDate:editDate];
+		[post setSubject:subject];
+		[post setText:text];
+		
+		[post setUnread:YES];
+		[thread setUnread:YES];
 
-	[_readPosts removeObject:[post postID]];
+		[_readPosts removeObject:[post postID]];
 
-	[self _savePosts];
-	
-	[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
-	
-	if(thread == [self _selectedThread]) {
-		[_threadsTableView reloadData];
+		[self _savePosts];
+		
+		[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
+		
+		if(thread == [self _selectedThread]) {
+			[_threadsTableView reloadData];
 
-		[self _reloadThreadAndRememberPosition:YES];
+			[self _reloadThreadAndRememberPosition:YES];
+		}
 	}
 }
 
