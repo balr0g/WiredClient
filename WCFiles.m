@@ -1523,10 +1523,11 @@
 		enumerator	= [sources reverseObjectEnumerator];
 		
 		if(!item) {
-			while((file = [enumerator nextObject]))
+			while((file = [enumerator nextObject])) {
 				oldIndex = [_places indexOfObject:file];
 			
 				[_places removeObjectAtIndex:oldIndex];
+			}
 		} else {
 			while((file = [enumerator nextObject])) {
 				oldIndex = [_places indexOfObject:file];
