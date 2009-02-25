@@ -272,8 +272,12 @@
 	else if([[self domain] isEqualToString:WCWiredProtocolErrorDomain]) {
 		switch([self code]) {
 			case WCWiredProtocolInternalError:
-				return [NSSWF:NSLS(@"The server failed to process a command. The server administrator can check the log for more information.\n\nThe message from the server was \u201c%@\u201d.", @"Wired protocol error description (internal error string)"),
-						argument];
+				if(argument) {
+					return [NSSWF:NSLS(@"The server failed to process a command. The server administrator can check the log for more information.\n\nThe message from the server was \u201c%@\u201d.", @"Wired protocol error description (internal error string)"),
+							argument];
+				} else {
+					return NSLS(@"The server failed to process a command. The server administrator can check the log for more information.", @"Wired protocol error description");
+				}
 				break;
 		
 			case WCWiredProtocolInvalidMessage:
