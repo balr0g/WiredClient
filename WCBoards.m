@@ -341,7 +341,7 @@
 - (void)_reloadThreadAndRememberPosition:(BOOL)rememberPosition {
 	NSEnumerator		*enumerator;
 	NSArray				*threads;
-	NSMutableString		*html;
+	NSMutableString		*html, *string;
 	WCBoardThread		*thread;
 	WCBoardPost			*post;
 	BOOL				changedUnread = NO, writable, isKeyWindow;
@@ -382,6 +382,17 @@
 			
 			changedUnread = YES;
 		}
+		
+		string = [_replyTemplate mutableCopy];
+
+		if([[[thread connection] account] boardAddPosts] && writable)
+			[string replaceOccurrencesOfString:@"<? replydisabled ?>" withString:@""];
+		else
+			[string replaceOccurrencesOfString:@"<? replydisabled ?>" withString:@"disabled=\"disabled\""];
+
+		[string replaceOccurrencesOfString:@"<? replystring ?>" withString:NSLS(@"Post Reply", @"Post reply button title")];
+
+		[html appendString:string];
 	}
 	
 	[html appendString:_footerTemplate];
@@ -476,9 +487,9 @@
 	[string replaceOccurrencesOfString:@"<? postid ?>" withString:[post postID]];
 	
 	if([account boardAddPosts] && writable)
-		[string replaceOccurrencesOfString:@"<? replydisabled ?>" withString:@""];
+		[string replaceOccurrencesOfString:@"<? quotedisabled ?>" withString:@""];
 	else
-		[string replaceOccurrencesOfString:@"<? replydisabled ?>" withString:@"disabled=\"disabled\""];
+		[string replaceOccurrencesOfString:@"<? quotedisabled ?>" withString:@"disabled=\"disabled\""];
 	
 	if([account boardEditAllPosts] || ([account boardEditOwnPosts] && [post isOwnPost]))
 		[string replaceOccurrencesOfString:@"<? editdisabled ?>" withString:@""];
@@ -490,7 +501,7 @@
 	else
 		[string replaceOccurrencesOfString:@"<? deletedisabled ?>" withString:@"disabled=\"disabled\""];
 
-	[string replaceOccurrencesOfString:@"<? replystring ?>" withString:NSLS(@"Reply", @"Reply post button title")];
+	[string replaceOccurrencesOfString:@"<? quotestring ?>" withString:NSLS(@"Quote", @"Quote post button title")];
 	[string replaceOccurrencesOfString:@"<? editstring ?>" withString:NSLS(@"Edit", @"Edit post button title")];
 	[string replaceOccurrencesOfString:@"<? deletestring ?>" withString:NSLS(@"Delete", @"Delete post button title")];
 	
@@ -630,7 +641,8 @@
 @implementation WCBoards
 
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)selector {
-	if(selector == @selector(replyToPostWithID:) ||
+	if(selector == @selector(replyToThread) ||
+	   selector == @selector(replyToPostWithID:) ||
 	   selector == @selector(deletePostWithID:) ||
 	   selector == @selector(editPostWithID:))
 		return NO;
@@ -672,6 +684,9 @@
 	_postTemplate		= [[NSMutableString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"Post" ofType:@"html"]
 															encoding:NSUTF8StringEncoding
 															   error:NULL];
+	_replyTemplate		= [[NSMutableString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"PostReply" ofType:@"html"]
+															 encoding:NSUTF8StringEncoding
+																error:NULL];
 	
 	[_headerTemplate replaceOccurrencesOfString:@"<? fromstring ?>" withString:NSLS(@"From", @"Post header")];
 	[_headerTemplate replaceOccurrencesOfString:@"<? subjectstring ?>" withString:NSLS(@"Subject", @"Post header")];
@@ -737,6 +752,7 @@
 	[_headerTemplate release];
 	[_footerTemplate release];
 	[_postTemplate release];
+	[_replyTemplate release];
 	
 	[super dealloc];
 }
@@ -1775,6 +1791,39 @@
 
 #pragma mark -
 
+- (void)replyToThread {
+	NSString			*subject;
+	WCBoard				*board;
+	WCBoardThread		*thread;
+	WCBoardPost			*post;
+	
+	board	= [self _selectedBoard];
+	thread	= [self _selectedThread];
+	post	= [thread firstPost];
+	
+	if(!post)
+		return;
+	
+	subject	= [post subject];
+	
+	if(![subject hasPrefix:@"Re: "])
+		subject = [@"Re: " stringByAppendingString:subject];
+	
+	[_subjectTextField setStringValue:subject];
+	[_postTextView setString:@""];
+	[_postButton setTitle:NSLS(@"Reply", @"Reply post button title")];
+	
+	[_postPanel makeFirstResponder:_postTextView];
+	
+	[NSApp beginSheet:_postPanel
+	   modalForWindow:[self window]
+		modalDelegate:self
+	   didEndSelector:@selector(replyPanelDidEnd:returnCode:contextInfo:)
+		  contextInfo:[[NSArray alloc] initWithObjects:board, thread, NULL]];
+}
+
+
+
 - (void)replyToPostWithID:(NSString *)postID {
 	NSString			*subject;
 	WCBoard				*board;
@@ -1794,7 +1843,7 @@
 		subject = [@"Re: " stringByAppendingString:subject];
 	
 	[_subjectTextField setStringValue:subject];
-	[_postTextView setString:@""];
+	[_postTextView setString:[NSSWF:@"[quote=%@]%@[/quote]\n\n", [post nick], [post text]]];
 	[_postButton setTitle:NSLS(@"Reply", @"Reply post button title")];
 	
 	[_postPanel makeFirstResponder:_postTextView];

@@ -93,6 +93,7 @@
 	NSMutableString									*_headerTemplate;
 	NSMutableString									*_footerTemplate;
 	NSMutableString									*_postTemplate;
+	NSMutableString									*_replyTemplate;
 	
 	NSRect											_previousVisibleRect;
 }
