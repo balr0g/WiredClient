@@ -65,6 +65,7 @@
 - (void)_reloadThreadAndRememberPosition:(BOOL)rememberPosition;
 - (NSString *)_HTMLStringForPost:(WCBoardPost *)post writable:(BOOL)writable;
 - (NSString *)_textForPostText:(NSString *)text;
+- (void)_insertBBCodeWithStartTag:(NSString *)startTag endTag:(NSString *)endTag;
 
 - (void)_reloadLocationsAndSelectBoard:(WCBoard *)board;
 - (void)_addLocationsForChildrenOfBoard:(WCBoard *)board level:(NSUInteger)level;
@@ -532,6 +533,23 @@
 		;
 	
 	return string;
+}
+
+
+
+- (void)_insertBBCodeWithStartTag:(NSString *)startTag endTag:(NSString *)endTag {
+	NSTextStorage	*textStorage;
+	NSRange			range;
+	
+	range			= [_postTextView selectedRange];
+	textStorage		= [_postTextView textStorage];
+
+	[textStorage replaceCharactersInRange:range withString:
+		[NSSWF:@"%@%@%@", startTag, [[textStorage string] substringWithRange:range], endTag]];
+	
+	range.location += [startTag length];
+
+	[_postTextView setSelectedRange:range];
 }
 
 
@@ -2348,6 +2366,71 @@
 	_selectedBoard = _searchBoard;
 	
 	[_threadsTableView reloadData];
+}
+
+
+
+#pragma mark -
+
+- (IBAction)bold:(id)sender {
+	[self _insertBBCodeWithStartTag:@"[B]" endTag:@"[/B]"];
+}
+
+
+
+- (IBAction)italic:(id)sender {
+	[self _insertBBCodeWithStartTag:@"[I]" endTag:@"[/I]"];
+}
+
+
+
+- (IBAction)underline:(id)sender {
+	[self _insertBBCodeWithStartTag:@"[U]" endTag:@"[/U]"];
+}
+
+
+
+- (IBAction)color:(id)sender {
+	NSString	*color;
+	NSInteger	tag;
+	
+	tag		= [sender tagOfSelectedItem];
+	color	= [NSSWF:@"#%02X%02X%02X", (tag & 0xFF0000) >> 16, (tag & 0x00FF00) >> 8, (tag & 0x0000FF)];
+	
+	[self _insertBBCodeWithStartTag:[NSSWF:@"[COLOR=%@]", color] endTag:@"[/COLOR]"];
+}
+
+
+
+- (IBAction)quote:(id)sender {
+	[self _insertBBCodeWithStartTag:@"[QUOTE]" endTag:@"[/QUOTE]"];
+}
+
+
+
+- (IBAction)code:(id)sender {
+	[self _insertBBCodeWithStartTag:@"[CODE]" endTag:@"[/CODE]"];
+}
+
+
+
+- (IBAction)url:(id)sender {
+	NSRange		range;
+	
+	[self _insertBBCodeWithStartTag:@"[URL=]" endTag:@"[/URL]"];
+	
+	range = [_postTextView selectedRange];
+
+	range.location	-= 1;
+	range.length	= 0;
+	
+	[_postTextView setSelectedRange:range];
+}
+
+
+
+- (IBAction)image:(id)sender {
+	[self _insertBBCodeWithStartTag:@"[IMG]" endTag:@"[/IMG]"];
 }
 
 

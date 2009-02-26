@@ -115,4 +115,13 @@
 - (IBAction)markAsUnread:(id)sender;
 - (IBAction)search:(id)sender;
 
+- (IBAction)bold:(id)sender;
+- (IBAction)italic:(id)sender;
+- (IBAction)underline:(id)sender;
+- (IBAction)color:(id)sender;
+- (IBAction)quote:(id)sender;
+- (IBAction)code:(id)sender;
+- (IBAction)url:(id)sender;
+- (IBAction)image:(id)sender;
+
 @end
