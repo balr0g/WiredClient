@@ -435,6 +435,33 @@
 
 
 
+- (NSArray *)threadsMatchingString:(NSString *)string includeChildBoards:(BOOL)includeChildBoards {
+	NSMutableArray		*threads;
+	WCBoardThread		*thread;
+	NSUInteger			i, count;
+	
+	threads		= [NSMutableArray array];
+	count		= [_threadsArray count];
+	
+	for(i = 0; i < count; i++) {
+		thread = [_threadsArray objectAtIndex:i];
+		
+		if([thread hasPostMatchingString:string])
+			[threads addObject:thread];
+	}
+	
+	if(includeChildBoards) {
+		count = [_boards count];
+		
+		for(i = 0; i < count; i++)
+			[threads addObjectsFromArray:[[_boards objectAtIndex:i] threadsMatchingString:string includeChildBoards:includeChildBoards]];
+	}
+	
+	return threads;
+}
+
+
+
 - (WCBoardThread *)previousUnreadThreadStartingAtBoard:(WCBoard *)board thread:(WCBoardThread *)thread forwardsInThreads:(BOOL)forwardsInThreads {
 	BOOL	passed = NO;
 	
@@ -454,6 +481,20 @@
 - (void)addThread:(WCBoardThread *)thread sortedUsingSelector:(SEL)selector {
 	[_threadsArray addObject:thread sortedUsingSelector:selector];
 	[_threadsDictionary setObject:thread forKey:[thread threadID]];
+}
+
+
+
+- (void)addThreads:(NSArray *)threads {
+	NSEnumerator		*enumerator;
+	WCBoardThread		*thread;
+	
+	[_threadsArray addObjectsFromArray:threads];
+	
+	enumerator = [threads objectEnumerator];
+	
+	while((thread = [enumerator nextObject]))
+		[_threadsDictionary setObject:thread forKey:[thread threadID]];
 }
 
 

@@ -659,6 +659,7 @@
 	self = [super initWithWindowNibName:@"Boards"];
 	
 	_boards				= [[WCBoard rootBoard] retain];
+	_searchBoard		= [[WCBoard rootBoard] retain];
 	_receivedBoards		= [[NSMutableSet alloc] init];
 	_readPosts			= [[NSMutableSet alloc] initWithArray:[WCSettings objectForKey:WCReadBoardPosts]];
 	
@@ -726,6 +727,7 @@
 	
 	[_boards release];
 	[_selectedBoard release];
+	[_searchBoard release];
 	
 	[_threadFont release];
 	[_threadColor release];
@@ -839,6 +841,8 @@
 
 
 - (NSToolbarItem *)toolbar:(NSToolbar *)toolbar itemForItemIdentifier:(NSString *)identifier willBeInsertedIntoToolbar:(BOOL)willBeInsertedIntoToolbar {
+	NSSearchField		*searchField;
+	
 	if([identifier isEqualToString:@"AddThread"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
 												   name:NSLS(@"New Thread", @"New thread toolbar item")
@@ -867,6 +871,15 @@
 												 target:self
 												 action:@selector(markAllAsRead:)];
 	}
+	else if([identifier isEqualToString:@"Search"]) {
+		searchField = [[[NSSearchField alloc] initWithFrame:NSMakeRect(0.0, 0.0, 300.0, 22.0)] autorelease];
+		
+		return [NSToolbarItem toolbarItemWithIdentifier:identifier
+												   name:NSLS(@"Search", @"Search board toolbar item")
+												content:searchField
+												 target:self
+												 action:@selector(search:)];
+	}
 	
 	return NULL;
 }
@@ -880,6 +893,8 @@
 		NSToolbarSpaceItemIdentifier,
 		@"MarkAsRead",
 		@"MarkAllAsRead",
+		NSToolbarFlexibleSpaceItemIdentifier,
+		@"Search",
 		NULL];
 }
 
@@ -895,6 +910,7 @@
 		@"DeleteThread",
 		@"MarkAsRead",
 		@"MarkAllAsRead",
+		@"Search",
 		NULL];
 }
 
@@ -2263,6 +2279,26 @@
 	
 		[self _savePosts];
 	}
+}
+
+
+
+- (IBAction)search:(id)sender {
+	NSString		*string;
+	
+	[_searchBoard removeAllThreads];
+	
+	string = [sender stringValue];
+	
+	if([string length] > 0)
+		[_searchBoard addThreads:[_boards threadsMatchingString:string includeChildBoards:YES]];
+	
+	[_searchBoard retain];
+	[_selectedBoard release];
+	
+	_selectedBoard = _searchBoard;
+	
+	[_threadsTableView reloadData];
 }
 
 

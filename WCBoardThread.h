@@ -51,6 +51,7 @@
 - (WCBoardPost *)postWithID:(NSString *)postID;
 - (WCBoardPost *)firstPost;
 - (WCBoardPost *)lastPost;
+- (BOOL)hasPostMatchingString:(NSString *)string;
 - (void)addPost:(WCBoardPost *)post;
 - (void)removePost:(WCBoardPost *)post;
 - (void)removeAllPosts;

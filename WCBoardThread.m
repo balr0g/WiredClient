@@ -165,6 +165,23 @@
 
 
 
+- (BOOL)hasPostMatchingString:(NSString *)string {
+	NSEnumerator		*enumerator;
+	WCBoardPost			*post;
+	
+	enumerator = [_posts objectEnumerator];
+	
+	while((post = [enumerator nextObject])) {
+		if([[post subject] containsSubstring:string options:NSCaseInsensitiveSearch] ||
+		   [[post text] containsSubstring:string options:NSCaseInsensitiveSearch])
+			return YES;
+	}
+	
+	return NO;
+}
+
+
+
 - (void)addPost:(WCBoardPost *)post {
 	[_posts addObject:post sortedUsingSelector:@selector(compareDate:)];
 }

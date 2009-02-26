@@ -80,6 +80,7 @@
 	
 	WCBoard											*_boards;
 	WCBoard											*_selectedBoard;
+	WCBoard											*_searchBoard;
 	
 	NSFont											*_threadFont;
 	NSColor											*_threadColor;
@@ -111,5 +112,6 @@
 - (IBAction)markAllAsRead:(id)sender;
 - (IBAction)markAsRead:(id)sender;
 - (IBAction)markAsUnread:(id)sender;
+- (IBAction)search:(id)sender;
 
 @end
