@@ -104,6 +104,8 @@
 - (NSUInteger)numberOfUnreadThreadsForConnection:(WCServerConnection *)connection;
 
 - (IBAction)addBoard:(id)sender;
+- (IBAction)addSmartBoard:(id)sender;
+- (IBAction)editSmartBoard:(id)sender;
 - (IBAction)deleteBoard:(id)sender;
 - (IBAction)renameBoard:(id)sender;
 - (IBAction)changePermissions:(id)sender;

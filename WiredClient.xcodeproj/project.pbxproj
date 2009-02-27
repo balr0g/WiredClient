@@ -48,6 +48,9 @@
 		777E657B0740F34700A8DE0B /* WCFilesBrowserCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 777E65790740F34700A8DE0B /* WCFilesBrowserCell.m */; };
 		778943850F5579280017C511 /* LabelYellow.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 778943840F5579280017C511 /* LabelYellow.tiff */; };
 		7789555B0F56D9A50017C511 /* PostReply.html in Resources */ = {isa = PBXBuildFile; fileRef = 7789555A0F56D9A50017C511 /* PostReply.html */; };
+		7789583C0F5828D10017C511 /* SourceAddArrow.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 7789583A0F5828D10017C511 /* SourceAddArrow.tiff */; };
+		7789583D0F5828D10017C511 /* SourceAddArrowPressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 7789583B0F5828D10017C511 /* SourceAddArrowPressed.tiff */; };
+		7789584B0F582B1B0017C511 /* SmartBoard.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 7789584A0F582B1B0017C511 /* SmartBoard.tiff */; };
 		778C6A410E66B37F00DBF2E3 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 778C6A3F0E66B37F00DBF2E3 /* MainMenu.xib */; };
 		778C6A670E66B44900DBF2E3 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 778C6A650E66B44900DBF2E3 /* Preferences.xib */; };
 		778C6A6B0E66CF7400DBF2E3 /* Connect.xib in Resources */ = {isa = PBXBuildFile; fileRef = 778C6A690E66CF7400DBF2E3 /* Connect.xib */; };
@@ -464,6 +467,9 @@
 		777E65790740F34700A8DE0B /* WCFilesBrowserCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCFilesBrowserCell.m; sourceTree = "<group>"; };
 		778943840F5579280017C511 /* LabelYellow.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = LabelYellow.tiff; sourceTree = "<group>"; };
 		7789555A0F56D9A50017C511 /* PostReply.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = PostReply.html; sourceTree = "<group>"; };
+		7789583A0F5828D10017C511 /* SourceAddArrow.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = SourceAddArrow.tiff; sourceTree = "<group>"; };
+		7789583B0F5828D10017C511 /* SourceAddArrowPressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = SourceAddArrowPressed.tiff; sourceTree = "<group>"; };
+		7789584A0F582B1B0017C511 /* SmartBoard.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = SmartBoard.tiff; sourceTree = "<group>"; };
 		778C6A400E66B37F00DBF2E3 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		778C6A660E66B44900DBF2E3 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Preferences.xib; sourceTree = "<group>"; };
 		778C6A6A0E66CF7400DBF2E3 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Connect.xib; sourceTree = "<group>"; };
@@ -1439,9 +1445,12 @@
 				A54AF9300F13AEBB00AFD50E /* RevealInUserList.tiff */,
 				A54AF92F0F13AEBB00AFD50E /* Search.tiff */,
 				A54AF92E0F13AEBB00AFD50E /* Settings.tiff */,
+				7789584A0F582B1B0017C511 /* SmartBoard.tiff */,
 				A5F7F9C00F1D50FD007BF4FD /* SourceAction.tiff */,
 				A5F7F9C10F1D50FD007BF4FD /* SourceActionPressed.tiff */,
 				A5F7F9A50F1D4D3A007BF4FD /* SourceAdd.tiff */,
+				7789583A0F5828D10017C511 /* SourceAddArrow.tiff */,
+				7789583B0F5828D10017C511 /* SourceAddArrowPressed.tiff */,
 				A5F7F9A60F1D4D3A007BF4FD /* SourceAddPressed.tiff */,
 				A5F7F9BE0F1D50D8007BF4FD /* SourceBackground.tiff */,
 				A5F7F9F40F1D528F007BF4FD /* SourceBar.tiff */,
@@ -1818,6 +1827,7 @@
 				A5326D850F379935004180AA /* Message.html in Resources */,
 				A5326A8F0F37981C004180AA /* PostHeader.html in Resources */,
 				A5326A900F37981C004180AA /* PostFooter.html in Resources */,
+				7789555B0F56D9A50017C511 /* PostReply.html in Resources */,
 				A5326A910F37981C004180AA /* Post.html in Resources */,
 				A5326A930F379826004180AA /* UnreadPost.png in Resources */,
 				A509A96305F3B8F000E6AE2D /* WiredClient.icns in Resources */,
@@ -1910,7 +1920,10 @@
 				A54AF97C0F13AEBB00AFD50E /* RevealInUserList.tiff in Resources */,
 				A54AF97B0F13AEBB00AFD50E /* Search.tiff in Resources */,
 				A54AF97A0F13AEBB00AFD50E /* Settings.tiff in Resources */,
+				7789584B0F582B1B0017C511 /* SmartBoard.tiff in Resources */,
 				A5F7F9A70F1D4D3A007BF4FD /* SourceAdd.tiff in Resources */,
+				7789583C0F5828D10017C511 /* SourceAddArrow.tiff in Resources */,
+				7789583D0F5828D10017C511 /* SourceAddArrowPressed.tiff in Resources */,
 				A5F7F9A80F1D4D3A007BF4FD /* SourceAddPressed.tiff in Resources */,
 				A5F7F9C40F1D50FD007BF4FD /* SourceAction.tiff in Resources */,
 				A5F7F9C50F1D50FD007BF4FD /* SourceActionPressed.tiff in Resources */,
@@ -1950,7 +1963,6 @@
 				779951890A122BBB00600320 /* Smile.tiff in Resources */,
 				779951900A122BBB00600320 /* Wink.tiff in Resources */,
 				779951820A122BBB00600320 /* Yuck.tiff in Resources */,
-				7789555B0F56D9A50017C511 /* PostReply.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

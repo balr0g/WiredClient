@@ -83,7 +83,6 @@
 	board			= [self _selectedBoard];
 	connection		= [board connection];
 	
-	[_addBoardButton setEnabled:([_locationPopUpButton numberOfItems] > 0)];
 	[_deleteBoardButton setEnabled:(board != NULL &&
 									[board isModifiable] &&
 									[connection isConnected] &&
@@ -1697,11 +1696,15 @@
 	account		= [[board connection] account];
 	connected	= [[board connection] isConnected];
 	
-	if(selector == @selector(renameBoard:))
+	if(selector == @selector(addBoard:))
+		return ([_locationPopUpButton numberOfItems] > 0);
+	else if(selector == @selector(renameBoard:))
 		return (board != NULL && [board isModifiable] && connected && [account boardRenameBoards]);
 	else if(selector == @selector(changePermissions:))
 		return (board != NULL && [board isModifiable] && connected && [account boardSetPermissions]);
-	else if(selector == @selector(markAsRead:) || @selector(markAsUnread:))
+	else if(selector == @selector(editSmartBoard:))
+		return [board isKindOfClass:[WCSmartBoard class]];
+	else if(selector == @selector(markAsRead:) || selector == @selector(markAsUnread:))
 		return (board != NULL);
 	
 	return YES;
@@ -2064,6 +2067,26 @@
 
 
 
+- (IBAction)addSmartBoard:(id)sender {
+}
+
+
+
+- (void)addSmartBoardPanelDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+}
+
+
+
+- (IBAction)editSmartBoard:(id)sender {
+}
+
+
+
+- (void)editSmartBoardPanelDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+}
+
+
+
 - (IBAction)deleteBoard:(id)sender {
 	NSAlert		*alert;
 	WCBoard		*board;
@@ -2365,6 +2388,7 @@
 		[filter setText:string];
 		[filter setSubject:string];
 		[_searchBoard addThreads:[_boards threadsMatchingFilter:filter includeChildBoards:YES]];
+		[_searchBoard sortThreadsUsingSelector:[self _sortSelector]];
 	
 		board	= _searchBoard;
 	} else {
