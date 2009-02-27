@@ -689,7 +689,7 @@
 	self = [super initWithWindowNibName:@"Boards"];
 	
 	_boards				= [[WCBoard rootBoard] retain];
-	_searchBoard		= [[WCBoard rootBoard] retain];
+	_searchBoard		= [[WCSmartBoard rootBoard] retain];
 	_receivedBoards		= [[NSMutableSet alloc] init];
 	_readPosts			= [[NSMutableSet alloc] initWithArray:[WCSettings objectForKey:WCReadBoardPosts]];
 	
@@ -2351,19 +2351,31 @@
 
 
 - (IBAction)search:(id)sender {
-	NSString		*string;
+	NSString				*string;
+	WCBoard					*board;
+	WCBoardThreadFilter		*filter;
+	NSInteger				row;
 	
 	[_searchBoard removeAllThreads];
 	
 	string = [sender stringValue];
 	
-	if([string length] > 0)
-		[_searchBoard addThreads:[_boards threadsMatchingString:string includeChildBoards:YES]];
+	if([string length] > 0) {
+		filter = [WCBoardThreadFilter filter];
+		[filter setText:string];
+		[filter setSubject:string];
+		[_searchBoard addThreads:[_boards threadsMatchingFilter:filter includeChildBoards:YES]];
 	
-	[_searchBoard retain];
+		board	= _searchBoard;
+	} else {
+		row		= [_boardsOutlineView selectedRow];
+		board	= (row < 0) ? NULL : [_boardsOutlineView itemAtRow:row];
+	}
+	
+	[board retain];
 	[_selectedBoard release];
 	
-	_selectedBoard = _searchBoard;
+	_selectedBoard = board;
 	
 	[_threadsTableView reloadData];
 }

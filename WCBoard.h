@@ -39,7 +39,7 @@ enum _WCBoardPermissions {
 typedef enum _WCBoardPermissions		WCBoardPermissions;
 
 
-@class WCBoardThread, WCUserAccount;
+@class WCBoardThread, WCBoardThreadFilter, WCUserAccount;
 
 @interface WCBoard : WCServerConnectionObject {
 	NSString							*_name;
@@ -87,7 +87,7 @@ typedef enum _WCBoardPermissions		WCBoardPermissions;
 - (WCBoardThread *)threadAtIndex:(NSUInteger)index;
 - (WCBoardThread *)threadWithID:(NSString *)string;
 - (NSUInteger)indexOfThread:(WCBoardThread *)thread;
-- (NSArray *)threadsMatchingString:(NSString *)string includeChildBoards:(BOOL)includeChildBoards;
+- (NSArray *)threadsMatchingFilter:(WCBoardThreadFilter *)filter includeChildBoards:(BOOL)includeChildBoards;
 - (WCBoardThread *)previousUnreadThreadStartingAtBoard:(WCBoard *)board thread:(WCBoardThread *)thread forwardsInThreads:(BOOL)forwardsInThreads;
 - (WCBoardThread *)nextUnreadThreadStartingAtBoard:(WCBoard *)board thread:(WCBoardThread *)thread forwardsInThreads:(BOOL)forwardsInThreads;
 - (void)addThread:(WCBoardThread *)thread sortedUsingSelector:(SEL)selector;
@@ -100,5 +100,17 @@ typedef enum _WCBoardPermissions		WCBoardPermissions;
 - (void)revalidateForConnection:(WCServerConnection *)connection;
 
 - (NSComparisonResult)compareName:(WCBoard *)board;
+
+@end
+
+
+@interface WCSmartBoard : WCBoard {
+	WCBoardThreadFilter				*_filter;
+}
+
++ (id)smartBoard;
+
+- (void)setFilter:(WCBoardThreadFilter *)filter;
+- (WCBoardThreadFilter *)filter;
 
 @end

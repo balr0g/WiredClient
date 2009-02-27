@@ -26,7 +26,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-@class WCBoard, WCBoardPost;
+@class WCBoard, WCBoardThreadFilter, WCBoardPost;
 
 @interface WCBoardThread : WCServerConnectionObject {
 	NSString					*_threadID;
@@ -52,6 +52,7 @@
 - (WCBoardPost *)firstPost;
 - (WCBoardPost *)lastPost;
 - (BOOL)hasPostMatchingString:(NSString *)string;
+- (BOOL)hasPostMatchingFilter:(WCBoardThreadFilter *)filter;
 - (void)addPost:(WCBoardPost *)post;
 - (void)removePost:(WCBoardPost *)post;
 - (void)removeAllPosts;
@@ -62,5 +63,20 @@
 - (NSComparisonResult)compareNumberOfPosts:(id)object;
 - (NSComparisonResult)compareDate:(id)object;
 - (NSComparisonResult)compareLastPostDate:(id)object;
+
+@end
+
+
+@interface WCBoardThreadFilter : WIObject {
+	NSString					*_text;
+	NSString					*_subject;
+}
+
++ (id)filter;
+
+- (void)setText:(NSString *)text;
+- (NSString *)text;
+- (void)setSubject:(NSString *)subject;
+- (NSString *)subject;
 
 @end

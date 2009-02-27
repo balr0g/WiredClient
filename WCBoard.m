@@ -435,7 +435,7 @@
 
 
 
-- (NSArray *)threadsMatchingString:(NSString *)string includeChildBoards:(BOOL)includeChildBoards {
+- (NSArray *)threadsMatchingFilter:(WCBoardThreadFilter *)filter includeChildBoards:(BOOL)includeChildBoards {
 	NSMutableArray		*threads;
 	WCBoardThread		*thread;
 	NSUInteger			i, count;
@@ -446,7 +446,7 @@
 	for(i = 0; i < count; i++) {
 		thread = [_threadsArray objectAtIndex:i];
 		
-		if([thread hasPostMatchingString:string])
+		if([thread hasPostMatchingFilter:filter])
 			[threads addObject:thread];
 	}
 	
@@ -454,7 +454,7 @@
 		count = [_boards count];
 		
 		for(i = 0; i < count; i++)
-			[threads addObjectsFromArray:[[_boards objectAtIndex:i] threadsMatchingString:string includeChildBoards:includeChildBoards]];
+			[threads addObjectsFromArray:[[_boards objectAtIndex:i] threadsMatchingFilter:filter includeChildBoards:includeChildBoards]];
 	}
 	
 	return threads;
@@ -585,6 +585,33 @@
 
 - (NSComparisonResult)compareName:(WCBoard *)board {
 	return [[self name] compare:[board name] options:NSCaseInsensitiveSearch];
+}
+
+@end
+
+
+
+@implementation WCSmartBoard
+
++ (id)smartBoard {
+	return [self rootBoard];
+}
+
+
+
+#pragma mark -
+
+- (void)setFilter:(WCBoardThreadFilter *)filter {
+	[filter retain];
+	[_filter release];
+	
+	_filter = filter;
+}
+
+
+
+- (WCBoardThreadFilter *)filter {
+	return _filter;
 }
 
 @end

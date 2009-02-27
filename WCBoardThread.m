@@ -182,6 +182,30 @@
 
 
 
+- (BOOL)hasPostMatchingFilter:(WCBoardThreadFilter *)filter {
+	NSEnumerator		*enumerator;
+	NSString			*string;
+	WCBoardPost			*post;
+	
+	enumerator = [_posts objectEnumerator];
+	
+	while((post = [enumerator nextObject])) {
+		string = [filter text];
+		
+		if([string length] > 0 && [[post text] containsSubstring:string options:NSCaseInsensitiveSearch])
+			return YES;
+
+		string = [filter subject];
+		
+		if([string length] > 0 && [[post subject] containsSubstring:string options:NSCaseInsensitiveSearch])
+			return YES;
+	}
+	
+	return NO;
+}
+
+
+
 - (void)addPost:(WCBoardPost *)post {
 	[_posts addObject:post sortedUsingSelector:@selector(compareDate:)];
 }
@@ -258,6 +282,57 @@
 
 - (NSComparisonResult)compareLastPostDate:(id)object {
 	return [[[self lastPost] postDate] compare:[[object lastPost] postDate]];
+}
+
+@end
+
+
+
+@implementation WCBoardThreadFilter
+
++ (id)filter {
+	return [[[self alloc] init] autorelease];
+}
+
+
+
+- (void)dealloc {
+	[_text release];
+	[_subject release];
+	
+	[super dealloc];
+}
+
+
+
+#pragma mark -
+
+- (void)setText:(NSString *)text {
+	[text retain];
+	[_text release];
+	
+	_text = text;
+}
+
+
+
+- (NSString *)text {
+	return _text;
+}
+
+
+
+- (void)setSubject:(NSString *)subject {
+	[subject retain];
+	[_subject release];
+	
+	_subject = subject;
+}
+
+
+
+- (NSString *)subject {
+	return _subject;
 }
 
 @end
