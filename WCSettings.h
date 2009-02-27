@@ -144,6 +144,7 @@
 #define WCWindowProperties						@"WCWindowProperties"
 
 #define WCReadBoardPosts						@"WCReadBoardPosts"
+#define WCBoardFilters							@"WCBoardFilters"
 
 #define WCPlaces								@"WCPlaces"
 

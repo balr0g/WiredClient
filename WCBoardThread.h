@@ -29,10 +29,10 @@
 @class WCBoard, WCBoardThreadFilter, WCBoardPost;
 
 @interface WCBoardThread : WCServerConnectionObject {
-	NSString					*_threadID;
-	NSMutableArray				*_posts;
-	BOOL						_unread;
-	WCBoard						*_board;
+	NSString							*_threadID;
+	NSMutableArray						*_posts;
+	BOOL								_unread;
+	WCBoard								*_board;
 }
 
 + (WCBoardThread *)threadWithPost:(WCBoardPost *)post connection:(WCServerConnection *)connection;
@@ -68,15 +68,24 @@
 
 
 @interface WCBoardThreadFilter : WIObject {
-	NSString					*_text;
-	NSString					*_subject;
+	NSString							*_name;
+	NSString							*_text;
+	NSString							*_subject;
+	NSString							*_nick;
+	BOOL								_unread;
 }
 
 + (id)filter;
 
+- (void)setName:(NSString *)name;
+- (NSString *)name;
 - (void)setText:(NSString *)text;
 - (NSString *)text;
 - (void)setSubject:(NSString *)subject;
 - (NSString *)subject;
+- (void)setNick:(NSString *)nick;
+- (NSString *)nick;
+- (void)setUnread:(BOOL)unread;
+- (BOOL)unread;
 
 @end

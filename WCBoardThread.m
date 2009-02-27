@@ -187,21 +187,29 @@
 	NSString			*string;
 	WCBoardPost			*post;
 	
+	if([filter unread] && ![self isUnread])
+		return NO;
+	
 	enumerator = [_posts objectEnumerator];
 	
 	while((post = [enumerator nextObject])) {
 		string = [filter text];
 		
-		if([string length] > 0 && [[post text] containsSubstring:string options:NSCaseInsensitiveSearch])
-			return YES;
+		if([string length] > 0 && ![[post text] containsSubstring:string options:NSCaseInsensitiveSearch])
+			return NO;
 
 		string = [filter subject];
 		
-		if([string length] > 0 && [[post subject] containsSubstring:string options:NSCaseInsensitiveSearch])
-			return YES;
+		if([string length] > 0 && ![[post subject] containsSubstring:string options:NSCaseInsensitiveSearch])
+			return NO;
+
+		string = [filter nick];
+		
+		if([string length] > 0 && ![[post nick] containsSubstring:string options:NSCaseInsensitiveSearch])
+			return NO;
 	}
 	
-	return NO;
+	return YES;
 }
 
 
@@ -290,8 +298,48 @@
 
 @implementation WCBoardThreadFilter
 
++ (NSInteger)version {
+	return 1;
+}
+
+
+
+#pragma mark -
+
 + (id)filter {
 	return [[[self alloc] init] autorelease];
+}
+
+
+
+- (id)initWithCoder:(NSCoder *)coder {
+	self = [super init];
+	
+    if([coder decodeIntForKey:@"WCBoardThreadFilterVersion"] != [[self class] version]) {
+        [self release];
+		
+        return NULL;
+    }
+	
+	_name			= [[coder decodeObjectForKey:@"WCBoardThreadFilterName"] retain];
+	_text			= [[coder decodeObjectForKey:@"WCBoardThreadFilterText"] retain];
+	_subject		= [[coder decodeObjectForKey:@"WCBoardThreadFilterSubject"] retain];
+	_nick			= [[coder decodeObjectForKey:@"WCBoardThreadFilterNick"] retain];
+	_unread			= [coder decodeBoolForKey:@"WCBoardThreadFilterUnread"];
+
+	return self;
+}
+
+
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    [coder encodeInt:[[self class] version] forKey:@"WCBoardThreadFilterVersion"];
+	
+	[coder encodeObject:_name forKey:@"WCBoardThreadFilterName"];
+	[coder encodeObject:_text forKey:@"WCBoardThreadFilterText"];
+	[coder encodeObject:_subject forKey:@"WCBoardThreadFilterSubject"];
+	[coder encodeObject:_nick forKey:@"WCBoardThreadFilterNick"];
+	[coder encodeBool:_unread forKey:@"WCBoardThreadFilterUnread"];
 }
 
 
@@ -299,6 +347,7 @@
 - (void)dealloc {
 	[_text release];
 	[_subject release];
+	[_nick release];
 	
 	[super dealloc];
 }
@@ -306,6 +355,21 @@
 
 
 #pragma mark -
+
+- (void)setName:(NSString *)name {
+	[name retain];
+	[_name release];
+	
+	_name = name;
+}
+
+
+
+- (NSString *)name {
+	return _name;
+}
+
+
 
 - (void)setText:(NSString *)text {
 	[text retain];
@@ -333,6 +397,33 @@
 
 - (NSString *)subject {
 	return _subject;
+}
+
+
+
+- (void)setNick:(NSString *)nick {
+	[nick retain];
+	[_nick release];
+	
+	_nick = nick;
+}
+
+
+
+- (NSString *)nick {
+	return _nick;
+}
+
+
+
+- (void)setUnread:(BOOL)unread {
+	_unread = unread;
+}
+
+
+
+- (BOOL)unread {
+	return _unread;
 }
 
 @end

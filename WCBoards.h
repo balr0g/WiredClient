@@ -76,10 +76,17 @@
 	IBOutlet NSTextView								*_postTextView;
 	IBOutlet NSButton								*_postButton;
 	
+	IBOutlet NSPanel								*_smartBoardPanel;
+	IBOutlet NSTextField							*_smartBoardNameTextField;
+	IBOutlet NSTextField							*_subjectFilterTextField;
+	IBOutlet NSTextField							*_textFilterTextField;
+	IBOutlet NSTextField							*_nickFilterTextField;
+	IBOutlet NSButton								*_unreadFilterButton;
+	
 	WCErrorQueue									*_errorQueue;
 	
 	WCBoard											*_boards;
-	WCBoard											*_selectedBoard;
+	id												_selectedBoard;
 	WCSmartBoard									*_searchBoard;
 	
 	NSFont											*_threadFont;

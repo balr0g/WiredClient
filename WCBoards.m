@@ -56,6 +56,9 @@
 - (NSArray *)_selectedThreads;
 - (void)_savePosts;
 
+- (void)_reloadFilters;
+- (void)_saveFilters;
+
 - (void)_selectThread:(WCBoardThread *)thread;
 - (void)_reselectThread:(WCBoardThread *)thread;
 - (BOOL)_markThreads:(NSArray *)threads asUnread:(BOOL)unread;
@@ -83,10 +86,14 @@
 	board			= [self _selectedBoard];
 	connection		= [board connection];
 	
-	[_deleteBoardButton setEnabled:(board != NULL &&
-									[board isModifiable] &&
-									[connection isConnected] &&
-									[[connection account] boardDeleteBoards])];
+	if([board isKindOfClass:[WCSmartBoard class]]) {
+		[_deleteBoardButton setEnabled:YES];
+	} else {
+		[_deleteBoardButton setEnabled:(board != NULL &&
+										[board isModifiable] &&
+										[connection isConnected] &&
+										[[connection account] boardDeleteBoards])];
+	}
 	
 	[[[self window] toolbar] validateVisibleItems];
 }
@@ -218,6 +225,58 @@
 
 - (void)_savePosts {
 	[WCSettings setObject:[_readPosts allObjects] forKey:WCReadBoardPosts];
+}
+
+
+
+#pragma mark -
+
+- (void)_reloadFilters {
+	NSEnumerator		*enumerator;
+	WCBoard				*selectedBoard;
+	WCBoardThread		*selectedThread;
+	id					board;
+	
+	selectedBoard	= [self _selectedBoard];
+	selectedThread	= [self _selectedThread];
+	enumerator		= [[_boards boards] objectEnumerator];
+	
+	while((board = [enumerator nextObject])) {
+		if([board isKindOfClass:[WCSmartBoard class]]) {
+			[board removeAllThreads];
+			[board addThreads:[_boards threadsMatchingFilter:[board filter] includeChildBoards:YES]];
+			
+			if(board == selectedBoard) {
+				[_threadsTableView reloadData];
+
+				[self _reselectThread:selectedThread];
+			}
+		}
+	}
+	
+	[_boardsOutlineView setNeedsDisplay:YES];
+}
+
+
+
+- (void)_saveFilters {
+	NSEnumerator			*enumerator;
+	NSMutableArray			*filters;
+	WCBoardThreadFilter		*filter;
+	id						board;
+	
+	filters		= [NSMutableArray array];
+	enumerator	= [[_boards boards] objectEnumerator];
+	
+	while((board = [enumerator nextObject])) {
+		if([board isKindOfClass:[WCSmartBoard class]]) {
+			filter = [board filter];
+			[filter setName:[board name]];
+			[filters addObject:filter];
+		}
+	}
+	
+	[WCSettings setObject:[NSKeyedArchiver archivedDataWithRootObject:filters] forKey:WCBoardFilters];
 }
 
 
@@ -779,9 +838,13 @@
 #pragma mark -
 
 - (void)windowDidLoad {
-	NSToolbar		*toolbar;
-	NSInvocation	*invocation;
-	NSUInteger		style;
+	NSEnumerator			*enumerator;
+	NSToolbar				*toolbar;
+	NSInvocation			*invocation;
+	NSData					*data;
+	WCBoardThreadFilter		*filter;
+	WCSmartBoard			*smartBoard;
+	NSUInteger				style;
 	
 	_errorQueue = [[WCErrorQueue alloc] initWithWindow:[self window]];
 	
@@ -811,6 +874,21 @@
 		invocation = [NSInvocation invocationWithTarget:_boardsOutlineView action:@selector(setSelectionHighlightStyle:)];
 		[invocation setArgument:&style atIndex:2];
 		[invocation invoke];
+	}
+	
+	data = [WCSettings objectForKey:WCBoardFilters];
+	
+	if(data) {
+		enumerator = [[NSKeyedUnarchiver unarchiveObjectWithData:data] objectEnumerator];
+		
+		while((filter = [enumerator nextObject])) {
+			smartBoard = [WCSmartBoard smartBoard];
+			[smartBoard setName:[filter name]];
+			[smartBoard setFilter:filter];
+			[_boards addBoard:smartBoard];
+		}
+		
+		[_boardsOutlineView reloadData];
 	}
 
 	[_threadsTableView setDefaultTableColumnIdentifiers:
@@ -1049,6 +1127,8 @@
 - (void)boardsDidChangeUnreadCount:(NSNotification *)notification {
 	[_boardsOutlineView setNeedsDisplay:YES];
 	[_threadsTableView setNeedsDisplay:YES];
+	
+	[self _reloadFilters];
 }
 
 
@@ -1111,7 +1191,8 @@
 	}
 	else if([[message name] isEqualToString:@"wired.board.post_list.done"]) {
 		[_receivedBoards addObject:[connection URL]];
-
+	
+		[_boardsOutlineView setNeedsDisplay:YES];
 		[_threadsTableView reloadData];
 
 		[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
@@ -1284,6 +1365,7 @@
 	[board removeThread:thread];
 	
 	if(board == [self _selectedBoard]) {
+		[_boardsOutlineView setNeedsDisplay:YES];
 		[_threadsTableView reloadData];
 		
 		if(selectedThread)
@@ -1291,6 +1373,8 @@
 		
 		[self _reloadThreadAndRememberPosition:YES];
 	}
+	
+	[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
 }
 
 
@@ -1317,6 +1401,7 @@
 	[thread release];
 	
 	if(oldBoard == [self _selectedBoard] || newBoard == [self _selectedBoard]) {
+		[_boardsOutlineView setNeedsDisplay:YES];
 		[_threadsTableView reloadData];
 		
 		if(selectedThread)
@@ -1358,6 +1443,7 @@
 	}
 	
 	if(board == [self _selectedBoard]) {
+		[_boardsOutlineView setNeedsDisplay:YES];
 		[_threadsTableView reloadData];
 		
 		if(thread == selectedThread)
@@ -1365,7 +1451,7 @@
 		else if(selectedThread)
 			[self _reselectThread:selectedThread];
 	}
-
+	
 	[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
 	
 	[connection triggerEvent:WCEventsBoardPostReceived info1:[post nick] info2:[post text]];
@@ -1405,6 +1491,7 @@
 		[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
 		
 		if(thread == [self _selectedThread]) {
+			[_boardsOutlineView setNeedsDisplay:YES];
 			[_threadsTableView reloadData];
 
 			[self _reloadThreadAndRememberPosition:YES];
@@ -1448,6 +1535,7 @@
 	[post release];
 	
 	if(board == [self _selectedBoard]) {
+		[_boardsOutlineView setNeedsDisplay:YES];
 		[_threadsTableView reloadData];
 
 		[self _reloadThreadAndRememberPosition:YES];
@@ -1723,6 +1811,8 @@
 		valid = ([_setOwnerPermissionsPopUpButton tagOfSelectedItem] > 0);
 	else if([sender window] == _postPanel)
 		valid = ([[_subjectTextField stringValue] length] > 0 && [[_postTextView string] length] > 0);
+	else if([sender window] == _smartBoardPanel)
+		valid = ([[_smartBoardNameTextField stringValue] length] > 0);
 	
 	if(valid)
 		[super submitSheet:sender];
@@ -2068,21 +2158,91 @@
 
 
 - (IBAction)addSmartBoard:(id)sender {
+	[_smartBoardNameTextField setStringValue:NSLS(@"Untitled", @"Smart board name")];
+	[_subjectFilterTextField setStringValue:@""];
+	[_textFilterTextField setStringValue:@""];
+	[_nickFilterTextField setStringValue:@""];
+	[_unreadFilterButton setState:NSOffState];
+	
+	[NSApp beginSheet:_smartBoardPanel
+	   modalForWindow:[self window]
+		modalDelegate:self
+	   didEndSelector:@selector(addSmartBoardPanelDidEnd:returnCode:contextInfo:)
+		  contextInfo:NULL];
 }
 
 
 
 - (void)addSmartBoardPanelDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+	WCSmartBoard				*smartBoard;
+	WCBoardThreadFilter			*filter;
+	
+	if(returnCode == NSOKButton) {
+		filter = [WCBoardThreadFilter filter];
+		[filter setSubject:[_subjectFilterTextField stringValue]];
+		[filter setText:[_textFilterTextField stringValue]];
+		[filter setNick:[_nickFilterTextField stringValue]];
+		[filter setUnread:[_unreadFilterButton state]];
+		
+		smartBoard = [WCSmartBoard smartBoard];
+		[smartBoard setName:[_smartBoardNameTextField stringValue]];
+		[smartBoard setFilter:filter];
+		
+		[_boards addBoard:smartBoard];
+		
+		[_boardsOutlineView reloadData];
+		
+		[self _saveFilters];
+		[self _reloadFilters];
+	}
+	
+	[_smartBoardPanel close];
 }
 
 
 
 - (IBAction)editSmartBoard:(id)sender {
+	WCBoardThreadFilter		*filter;
+	id						board;
+	
+	board	= [self _selectedBoard];
+	filter	= [board filter];
+	
+	[_smartBoardNameTextField setStringValue:[board name]];
+	[_subjectFilterTextField setStringValue:[filter subject]];
+	[_textFilterTextField setStringValue:[filter text]];
+	[_nickFilterTextField setStringValue:[filter nick]];
+	[_unreadFilterButton setState:[filter unread]];
+	
+	[NSApp beginSheet:_smartBoardPanel
+	   modalForWindow:[self window]
+		modalDelegate:self
+	   didEndSelector:@selector(editSmartBoardPanelDidEnd:returnCode:contextInfo:)
+		  contextInfo:[board retain]];
 }
 
 
 
 - (void)editSmartBoardPanelDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+	WCSmartBoard			*smartBoard = contextInfo;
+	WCBoardThreadFilter		*filter;
+
+	if(returnCode == NSOKButton) {
+		filter = [smartBoard filter];
+		
+		[filter setSubject:[_subjectFilterTextField stringValue]];
+		[filter setText:[_textFilterTextField stringValue]];
+		[filter setNick:[_nickFilterTextField stringValue]];
+		[filter setUnread:[_unreadFilterButton state]];
+		
+		[smartBoard setName:[_smartBoardNameTextField stringValue]];
+		
+		[self _saveFilters];
+		[self _reloadFilters];
+	}
+	
+	[_smartBoardPanel close];
+	[smartBoard release];
 }
 
 
@@ -2093,7 +2253,7 @@
 	
 	board = [self _selectedBoard];
 	
-	if(![board isModifiable])
+	if(![board isKindOfClass:[WCSmartBoard class]] && ![board isModifiable])
 		return;
 	
 	alert = [[[NSAlert alloc] init] autorelease];
@@ -2114,7 +2274,13 @@
 	WCBoard			*board = contextInfo;
 	
 	if(returnCode == NSAlertFirstButtonReturn) {
-		if([[board connection] isConnected]) {
+		if([board isKindOfClass:[WCSmartBoard class]]) {
+			[_boards removeBoard:board];
+			
+			[_boardsOutlineView reloadData];
+			
+			[self _saveFilters];
+		} else {
 			message = [WIP7Message messageWithName:@"wired.board.delete_board" spec:WCP7Spec];
 			[message setString:[board path] forName:@"wired.board.board"];
 			[[board connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardDeleteBoardReply:)];
@@ -2513,7 +2679,10 @@
 		else
 			[cell setFont:[[cell font] fontByAddingTrait:NSUnboldFontMask]];
 		
-		[cell setImage:[NSImage imageNamed:@"Board"]];
+		if([item isKindOfClass:[WCSmartBoard class]])
+			[cell setImage:[NSImage imageNamed:@"SmartBoard"]];
+		else
+			[cell setImage:[NSImage imageNamed:@"Board"]];
 	}
 }
 
@@ -2543,7 +2712,7 @@
 		_selectedBoard = board;
 	}
 	
-	[[self _selectedBoard] sortThreadsUsingSelector:[self _sortSelector]];
+	[_selectedBoard sortThreadsUsingSelector:[self _sortSelector]];
 	
 	[_threadsTableView reloadData];
 	[_threadsTableView deselectAll:self];
@@ -2557,6 +2726,9 @@
 	WCServerConnection		*connection;
 	WCBoard					*board = item;
 	
+	if([board isKindOfClass:[WCSmartBoard class]])
+		return YES;
+	
 	connection = [board connection];
 	
 	return ([board isModifiable] && [connection isConnected] && [[connection account] boardRenameBoards]);
@@ -2566,18 +2738,23 @@
 
 - (void)outlineView:(NSOutlineView *)outlineView setObjectValue:(id)object forTableColumn:(NSTableColumn *)tableColumn byItem:(id)item {
 	NSString		*oldPath, *newPath;
-	WCBoard			*board;
+	WCBoard			*board = item;
 	WIP7Message		*message;
 	
-	board		= item;
-	oldPath		= [item path];
-	newPath		= [[[item path] stringByDeletingLastPathComponent] stringByAppendingPathComponent:object];
-	
-	if(![oldPath isEqualToString:newPath]) {
-		message = [WIP7Message messageWithName:@"wired.board.rename_board" spec:WCP7Spec];
-		[message setString:oldPath forName:@"wired.board.board"];
-		[message setString:newPath forName:@"wired.board.new_board"];
-		[[board connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardRenameBoardReply:)];
+	if([board isKindOfClass:[WCSmartBoard class]]) {
+		[board setName:object];
+		
+		[self _saveFilters];
+	} else {
+		oldPath		= [item path];
+		newPath		= [[[item path] stringByDeletingLastPathComponent] stringByAppendingPathComponent:object];
+		
+		if(![oldPath isEqualToString:newPath]) {
+			message = [WIP7Message messageWithName:@"wired.board.rename_board" spec:WCP7Spec];
+			[message setString:oldPath forName:@"wired.board.board"];
+			[message setString:newPath forName:@"wired.board.new_board"];
+			[[board connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardRenameBoardReply:)];
+		}
 	}
 }
 
@@ -2587,6 +2764,9 @@
 	WCBoard			*board;
 	
 	board = [items objectAtIndex:0];
+	
+	if([board isKindOfClass:[WCSmartBoard class]])
+		return NO;
 	
 	[pasteboard declareTypes:[NSArray arrayWithObject:WCBoardPboardType] owner:NULL];
 	[pasteboard setPropertyList:[NSArray arrayWithObjects:[board path], [board name], NULL] forType:WCBoardPboardType];
@@ -2604,6 +2784,9 @@
 
 	pasteboard	= [info draggingPasteboard];
 	types		= [pasteboard types];
+	
+	if([newBoard isKindOfClass:[WCSmartBoard class]])
+		return NSDragOperationNone;
 	
 	if([types containsObject:WCBoardPboardType]) {
 		array		= [pasteboard propertyListForType:WCBoardPboardType];

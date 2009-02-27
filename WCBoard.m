@@ -385,6 +385,7 @@
 
 
 - (NSUInteger)numberOfUnreadThreadsForConnection:(WCServerConnection *)connection includeChildBoards:(BOOL)includeChildBoards {
+	WCBoard				*board;
 	WCBoardThread		*thread;
 	NSUInteger			i, count, unread = 0;
 	
@@ -402,8 +403,12 @@
 	if(includeChildBoards) {
 		count = [_boards count];
 		
-		for(i = 0; i < count; i++)
-			unread += [[_boards objectAtIndex:i] numberOfUnreadThreadsForConnection:connection includeChildBoards:includeChildBoards];
+		for(i = 0; i < count; i++) {
+			board = [_boards objectAtIndex:i];
+			
+			if(![board isKindOfClass:[WCSmartBoard class]])
+				unread += [board numberOfUnreadThreadsForConnection:connection includeChildBoards:includeChildBoards];
+		}
 	}
 	
 	return unread;
@@ -437,6 +442,7 @@
 
 - (NSArray *)threadsMatchingFilter:(WCBoardThreadFilter *)filter includeChildBoards:(BOOL)includeChildBoards {
 	NSMutableArray		*threads;
+	WCBoard				*board;
 	WCBoardThread		*thread;
 	NSUInteger			i, count;
 	
@@ -453,8 +459,12 @@
 	if(includeChildBoards) {
 		count = [_boards count];
 		
-		for(i = 0; i < count; i++)
-			[threads addObjectsFromArray:[[_boards objectAtIndex:i] threadsMatchingFilter:filter includeChildBoards:includeChildBoards]];
+		for(i = 0; i < count; i++) {
+			board = [_boards objectAtIndex:i];
+			
+			if(![board isKindOfClass:[WCSmartBoard class]])
+				[threads addObjectsFromArray:[board threadsMatchingFilter:filter includeChildBoards:includeChildBoards]];
+		}
 	}
 	
 	return threads;
