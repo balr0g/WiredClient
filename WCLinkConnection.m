@@ -259,7 +259,7 @@
 	
 	[message setContextInfo:self];
 	
-	if([WCP7Spec verifyMessage:message error:&error]) {
+	if([[_link socket] verifyMessage:message error:&error]) {
 		if([[message name] isEqualToString:@"wired.error"])
 			[_notificationCenter postNotificationName:WCLinkConnectionReceivedErrorMessageNotification object:message];
 		else
