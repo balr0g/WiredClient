@@ -243,8 +243,8 @@
 	
 	while((board = [enumerator nextObject])) {
 		if([board isKindOfClass:[WCSmartBoard class]]) {
-			[board removeAllThreads];
 			[board addThreads:[_boards threadsMatchingFilter:[board filter] includeChildBoards:YES]];
+			[board sortThreadsUsingSelector:[self _sortSelector]];
 			
 			if(board == selectedBoard) {
 				[_threadsTableView reloadData];

@@ -517,12 +517,14 @@
 	NSEnumerator		*enumerator;
 	WCBoardThread		*thread;
 	
-	[_threadsArray addObjectsFromArray:threads];
-	
 	enumerator = [threads objectEnumerator];
 	
-	while((thread = [enumerator nextObject]))
-		[_threadsDictionary setObject:thread forKey:[thread threadID]];
+	while((thread = [enumerator nextObject])) {
+		if(![_threadsDictionary objectForKey:[thread threadID]]) {
+			[_threadsArray addObject:thread];
+			[_threadsDictionary setObject:thread forKey:[thread threadID]];
+		}
+	}
 }
 
 
