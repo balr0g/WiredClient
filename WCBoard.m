@@ -123,6 +123,12 @@
 
 
 
++ (WCBoard *)rootBoardWithName:(NSString *)name {
+	return [[[self alloc] _initWithPath:@"/" name:name connection:NULL] autorelease];
+}
+
+
+
 + (WCBoard *)boardWithConnection:(WCServerConnection *)connection {
 	return [[[self alloc] _initWithPath:@"/" name:[connection name] connection:connection] autorelease];
 }
@@ -263,14 +269,26 @@
 
 
 
+- (void)setSorting:(NSInteger)sorting {
+	_sorting = sorting;
+}
+
+
+
+- (NSInteger)sorting {
+	return _sorting;
+}
+
+
+
 - (BOOL)isExpandable {
 	return ([_boards count] > 0);
 }
 
 
 
-- (BOOL)isModifiable {
-	return ![_path isEqualToString:@"/"];
+- (BOOL)isRootBoard {
+	return [_path isEqualToString:@"/"];
 }
 
 
@@ -359,7 +377,7 @@
 
 
 - (void)addBoard:(WCBoard *)board {
-	[_boards addObject:board sortedUsingSelector:@selector(compareName:)];
+	[_boards addObject:board sortedUsingSelector:@selector(compareBoard:)];
 }
 
 
@@ -593,7 +611,12 @@
 
 #pragma mark -
 
-- (NSComparisonResult)compareName:(WCBoard *)board {
+- (NSComparisonResult)compareBoard:(WCBoard *)board {
+	if([self sorting] > [board sorting])
+		return NSOrderedAscending;
+	else if([self sorting] < [board sorting])
+		return NSOrderedDescending;
+	
 	return [[self name] compare:[board name] options:NSCaseInsensitiveSearch];
 }
 
@@ -604,7 +627,7 @@
 @implementation WCSmartBoard
 
 + (id)smartBoard {
-	return [self rootBoard];
+	return [[[self alloc] _initWithPath:@"/SmartBoard" name:@"<root>" connection:NULL] autorelease];
 }
 
 

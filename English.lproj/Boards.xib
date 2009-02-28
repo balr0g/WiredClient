@@ -9,6 +9,7 @@
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<integer value="607"/>
+			<integer value="123"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -46,7 +47,7 @@
 				<string key="NSWindowContentMaxSize">{3.40282e+38, 3.40282e+38}</string>
 				<string key="NSWindowContentMinSize">{300, 300}</string>
 				<object class="NSView" key="NSWindowView" id="485047301">
-					<nil key="NSNextResponder"/>
+					<reference key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
 					<object class="NSMutableArray" key="NSSubviews">
 						<bool key="EncodedWithXMLCoder">YES</bool>
@@ -191,7 +192,7 @@
 															</object>
 															<double key="NSRowHeight">1.700000e+01</double>
 															<int key="NSTvFlags">306184192</int>
-															<int key="NSColumnAutoresizingStyle">3</int>
+															<int key="NSColumnAutoresizingStyle">5</int>
 															<int key="NSDraggingSourceMaskForLocal">15</int>
 															<int key="NSDraggingSourceMaskForNonLocal">0</int>
 															<bool key="NSAllowsTypeSelect">YES</bool>
@@ -200,6 +201,7 @@
 													</object>
 													<string key="NSFrameSize">{260, 524}</string>
 													<reference key="NSSuperview" ref="641866308"/>
+													<reference key="NSNextKeyView" ref="999494502"/>
 													<reference key="NSDocView" ref="999494502"/>
 													<reference key="NSBGColor" ref="641791346"/>
 													<int key="NScvFlags">4</int>
@@ -226,6 +228,7 @@
 											</object>
 											<string key="NSFrame">{{0, 23}, {260, 524}}</string>
 											<reference key="NSSuperview" ref="135191328"/>
+											<reference key="NSNextKeyView" ref="781345088"/>
 											<int key="NSsFlags">528</int>
 											<reference key="NSVScroller" ref="21954541"/>
 											<reference key="NSHScroller" ref="541760467"/>
@@ -341,7 +344,7 @@
 												<reference key="NSControlView" ref="738751736"/>
 												<int key="NSButtonFlags">-2046803713</int>
 												<int key="NSButtonFlags2">6</int>
-												<object class="NSCustomResource" key="NSNormalImage" id="683739067">
+												<object class="NSCustomResource" key="NSNormalImage">
 													<string key="NSClassName">NSImage</string>
 													<string key="NSResourceName">SourceAction</string>
 												</object>
@@ -355,7 +358,10 @@
 													<string key="NSKeyEquiv"/>
 													<int key="NSMnemonicLoc">2147483647</int>
 													<int key="NSState">1</int>
-													<reference key="NSImage" ref="683739067"/>
+													<object class="NSCustomResource" key="NSImage">
+														<string key="NSClassName">NSImage</string>
+														<string key="NSResourceName">SourceAction</string>
+													</object>
 													<object class="NSCustomResource" key="NSOnImage" id="651194922">
 														<string key="NSClassName">NSImage</string>
 														<string key="NSResourceName">NSMenuCheckmark</string>
@@ -730,6 +736,7 @@
 															</object>
 															<string key="NSFrame">{{0, 17}, {546, 221}}</string>
 															<reference key="NSSuperview" ref="797960826"/>
+															<reference key="NSNextKeyView" ref="379273979"/>
 															<reference key="NSDocView" ref="379273979"/>
 															<reference key="NSBGColor" ref="641791346"/>
 															<int key="NScvFlags">4</int>
@@ -763,6 +770,7 @@
 															</object>
 															<string key="NSFrameSize">{546, 17}</string>
 															<reference key="NSSuperview" ref="797960826"/>
+															<reference key="NSNextKeyView" ref="876392262"/>
 															<reference key="NSDocView" ref="876392262"/>
 															<reference key="NSBGColor" ref="641791346"/>
 															<int key="NScvFlags">4</int>
@@ -771,6 +779,7 @@
 													</object>
 													<string key="NSFrame">{{0, 1}, {561, 238}}</string>
 													<reference key="NSSuperview" ref="490044106"/>
+													<reference key="NSNextKeyView" ref="803962991"/>
 													<int key="NSsFlags">16</int>
 													<reference key="NSVScroller" ref="974653883"/>
 													<reference key="NSHScroller" ref="986291732"/>
@@ -813,6 +822,7 @@
 													</object>
 													<string key="NSFrameSize">{561, 299}</string>
 													<reference key="NSSuperview" ref="272284880"/>
+													<reference key="NSNextKeyView"/>
 													<string key="FrameName"/>
 													<string key="GroupName"/>
 													<object class="WebPreferences" key="Preferences">
@@ -852,6 +862,7 @@
 						</object>
 					</object>
 					<string key="NSFrameSize">{830, 547}</string>
+					<reference key="NSSuperview"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1280, 778}}</string>
 				<string key="NSMinSize">{300, 322}</string>
@@ -1990,6 +2001,7 @@
 									</object>
 									<string key="NSFrame">{{1, 1}, {448, 224}}</string>
 									<reference key="NSSuperview" ref="69734870"/>
+									<reference key="NSNextKeyView" ref="89105204"/>
 									<reference key="NSDocView" ref="89105204"/>
 									<reference key="NSBGColor" ref="76857678"/>
 									<object class="NSCursor" key="NSCursor">
@@ -2021,6 +2033,7 @@
 							</object>
 							<string key="NSFrame">{{20, 85}, {465, 226}}</string>
 							<reference key="NSSuperview" ref="562932445"/>
+							<reference key="NSNextKeyView" ref="409870172"/>
 							<int key="NSsFlags">18</int>
 							<reference key="NSVScroller" ref="869863865"/>
 							<reference key="NSHScroller" ref="2336581"/>
@@ -5482,6 +5495,7 @@
 					<string>602.IBPluginDependency</string>
 					<string>603.IBPluginDependency</string>
 					<string>604.IBPluginDependency</string>
+					<string>607.IBPluginDependency</string>
 					<string>618.IBPluginDependency</string>
 					<string>619.IBPluginDependency</string>
 				</object>
@@ -5812,6 +5826,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>

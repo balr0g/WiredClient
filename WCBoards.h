@@ -86,6 +86,7 @@
 	WCErrorQueue									*_errorQueue;
 	
 	WCBoard											*_boards;
+	WCBoard											*_smartBoards;
 	id												_selectedBoard;
 	WCSmartBoard									*_searchBoard;
 	

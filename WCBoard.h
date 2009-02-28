@@ -48,6 +48,8 @@ typedef enum _WCBoardPermissions		WCBoardPermissions;
 	NSString							*_group;
 	NSUInteger							_permissions;
 	
+	NSInteger							_sorting;
+	
 	NSMutableArray						*_boards;
 	
 	NSMutableArray						*_threadsArray;
@@ -55,6 +57,7 @@ typedef enum _WCBoardPermissions		WCBoardPermissions;
 }
 
 + (WCBoard *)rootBoard;
++ (WCBoard *)rootBoardWithName:(NSString *)name;
 + (WCBoard *)boardWithConnection:(WCServerConnection *)connection;
 + (WCBoard *)boardWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection;
 
@@ -68,8 +71,10 @@ typedef enum _WCBoardPermissions		WCBoardPermissions;
 - (NSString *)group;
 - (void)setPermissions:(NSUInteger)permissions;
 - (NSUInteger)permissions;
+- (void)setSorting:(NSInteger)sorting;
+- (NSInteger)sorting;
 - (BOOL)isExpandable;
-- (BOOL)isModifiable;
+- (BOOL)isRootBoard;
 - (BOOL)isWritableByAccount:(WCUserAccount *)account;
 
 - (NSUInteger)numberOfBoards;
@@ -99,7 +104,7 @@ typedef enum _WCBoardPermissions		WCBoardPermissions;
 - (void)invalidateForConnection:(WCServerConnection *)connection;
 - (void)revalidateForConnection:(WCServerConnection *)connection;
 
-- (NSComparisonResult)compareName:(WCBoard *)board;
+- (NSComparisonResult)compareBoard:(WCBoard *)board;
 
 @end
 

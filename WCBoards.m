@@ -90,7 +90,7 @@
 		[_deleteBoardButton setEnabled:YES];
 	} else {
 		[_deleteBoardButton setEnabled:(board != NULL &&
-										[board isModifiable] &&
+										![board isRootBoard] &&
 										[connection isConnected] &&
 										[[connection account] boardDeleteBoards])];
 	}
@@ -239,7 +239,7 @@
 	
 	selectedBoard	= [self _selectedBoard];
 	selectedThread	= [self _selectedThread];
-	enumerator		= [[_boards boards] objectEnumerator];
+	enumerator		= [[_smartBoards boards] objectEnumerator];
 	
 	while((board = [enumerator nextObject])) {
 		if([board isKindOfClass:[WCSmartBoard class]]) {
@@ -266,7 +266,7 @@
 	id						board;
 	
 	filters		= [NSMutableArray array];
-	enumerator	= [[_boards boards] objectEnumerator];
+	enumerator	= [[_smartBoards boards] objectEnumerator];
 	
 	while((board = [enumerator nextObject])) {
 		if([board isKindOfClass:[WCSmartBoard class]]) {
@@ -744,6 +744,11 @@
 #pragma mark -
 
 - (id)init {
+	NSEnumerator			*enumerator;
+	NSData					*data;
+	WCBoardThreadFilter		*filter;
+	WCSmartBoard			*smartBoard;
+	
 	self = [super initWithWindowNibName:@"Boards"];
 	
 	_boards				= [[WCBoard rootBoard] retain];
@@ -769,6 +774,24 @@
 	[_headerTemplate replaceOccurrencesOfString:@"<? postdatestring ?>" withString:NSLS(@"Post Date", @"Post header")];
 	[_headerTemplate replaceOccurrencesOfString:@"<? editdatestring ?>" withString:NSLS(@"Edit Date", @"Post header")];
 	
+	_smartBoards		= [[WCBoard rootBoardWithName:NSLS(@"Smart Boards", @"Smart boards title")] retain];
+
+	[_smartBoards setSorting:1];
+	[_boards addBoard:_smartBoards];
+
+	data = [WCSettings objectForKey:WCBoardFilters];
+	
+	if(data) {
+		enumerator = [[NSKeyedUnarchiver unarchiveObjectWithData:data] objectEnumerator];
+		
+		while((filter = [enumerator nextObject])) {
+			smartBoard = [WCSmartBoard smartBoard];
+			[smartBoard setName:[filter name]];
+			[smartBoard setFilter:filter];
+			[_smartBoards addBoard:smartBoard];
+		}
+	}
+
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(selectedThemeDidChange:)
@@ -838,13 +861,9 @@
 #pragma mark -
 
 - (void)windowDidLoad {
-	NSEnumerator			*enumerator;
-	NSToolbar				*toolbar;
-	NSInvocation			*invocation;
-	NSData					*data;
-	WCBoardThreadFilter		*filter;
-	WCSmartBoard			*smartBoard;
-	NSUInteger				style;
+	NSToolbar			*toolbar;
+	NSInvocation		*invocation;
+	NSUInteger			style;
 	
 	_errorQueue = [[WCErrorQueue alloc] initWithWindow:[self window]];
 	
@@ -864,6 +883,7 @@
 	[_boardsOutlineView registerForDraggedTypes:[NSArray arrayWithObjects:WCBoardPboardType, WCThreadPboardType, NULL]];
 	[_boardsOutlineView setTarget:self];
 	[_boardsOutlineView setDeleteAction:@selector(deleteBoard:)];
+	[_boardsOutlineView expandItem:_smartBoards];
 	
 	[[_boardTableColumn dataCell] setVerticalTextOffset:3.0];
 	[[_unreadBoardTableColumn dataCell] setImageAlignment:NSImageAlignRight];
@@ -876,21 +896,6 @@
 		[invocation invoke];
 	}
 	
-	data = [WCSettings objectForKey:WCBoardFilters];
-	
-	if(data) {
-		enumerator = [[NSKeyedUnarchiver unarchiveObjectWithData:data] objectEnumerator];
-		
-		while((filter = [enumerator nextObject])) {
-			smartBoard = [WCSmartBoard smartBoard];
-			[smartBoard setName:[filter name]];
-			[smartBoard setFilter:filter];
-			[_boards addBoard:smartBoard];
-		}
-		
-		[_boardsOutlineView reloadData];
-	}
-
 	[_threadsTableView setDefaultTableColumnIdentifiers:
 		[NSArray arrayWithObjects:@"Unread", @"Subject", @"Nick", @"Replies", @"Time", @"PostTime", NULL]];
 	[_threadsTableView setDefaultHighlightedTableColumnIdentifier:@"Time"];
@@ -1300,9 +1305,11 @@
 	[parent removeBoard:[[_boards boardForConnection:connection] boardForPath:path]];
 	
 	[_boardsOutlineView reloadData];
-	
+
 	[self _reloadLocationsAndSelectBoard:[_locationPopUpButton representedObjectOfSelectedItem]];
 	[self _validate];
+
+	[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
 }
 
 
@@ -1787,9 +1794,9 @@
 	if(selector == @selector(addBoard:))
 		return ([_locationPopUpButton numberOfItems] > 0);
 	else if(selector == @selector(renameBoard:))
-		return (board != NULL && [board isModifiable] && connected && [account boardRenameBoards]);
+		return (board != NULL && ![board isRootBoard] && connected && [account boardRenameBoards]);
 	else if(selector == @selector(changePermissions:))
-		return (board != NULL && [board isModifiable] && connected && [account boardSetPermissions]);
+		return (board != NULL && ![board isRootBoard] && connected && [account boardSetPermissions]);
 	else if(selector == @selector(editSmartBoard:))
 		return [board isKindOfClass:[WCSmartBoard class]];
 	else if(selector == @selector(markAsRead:) || selector == @selector(markAsUnread:))
@@ -2188,9 +2195,10 @@
 		[smartBoard setName:[_smartBoardNameTextField stringValue]];
 		[smartBoard setFilter:filter];
 		
-		[_boards addBoard:smartBoard];
+		[_smartBoards addBoard:smartBoard];
 		
 		[_boardsOutlineView reloadData];
+		[_boardsOutlineView expandItem:_smartBoards];
 		
 		[self _saveFilters];
 		[self _reloadFilters];
@@ -2253,12 +2261,14 @@
 	
 	board = [self _selectedBoard];
 	
-	if(![board isKindOfClass:[WCSmartBoard class]] && ![board isModifiable])
-		return;
-	
 	alert = [[[NSAlert alloc] init] autorelease];
 	[alert setMessageText:[NSSWF:NSLS(@"Are you sure you want to delete the board \u201c%@\u201d?", @"Delete board dialog title"), [board name]]];
-	[alert setInformativeText:NSLS(@"All child boards and posts of this board will also be deleted. This cannot be undone.", @"Delete board dialog description")];
+	
+	if([board isKindOfClass:[WCSmartBoard class]])
+		[alert setInformativeText:NSLS(@" This cannot be undone.", @"Delete board dialog description")];
+	else
+		[alert setInformativeText:NSLS(@"All child boards and posts of this board will also be deleted. This cannot be undone.", @"Delete board dialog description")];
+
 	[alert addButtonWithTitle:NSLS(@"Delete", @"Delete board button title")];
 	[alert addButtonWithTitle:NSLS(@"Cancel", @"Delete board button title")];
 	[alert beginSheetModalForWindow:[self window]
@@ -2275,9 +2285,10 @@
 	
 	if(returnCode == NSAlertFirstButtonReturn) {
 		if([board isKindOfClass:[WCSmartBoard class]]) {
-			[_boards removeBoard:board];
+			[_smartBoards removeBoard:board];
 			
 			[_boardsOutlineView reloadData];
+			[_boardsOutlineView deselectAll:self];
 			
 			[self _saveFilters];
 		} else {
@@ -2658,8 +2669,24 @@
 
 
 - (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item {
+	NSDictionary	*attributes;
+	NSString		*label;
+	
 	if(tableColumn == _boardTableColumn) {
-		return [item name];
+		label = [item name];
+		
+		if([item isRootBoard]) {
+			attributes = [NSDictionary dictionaryWithObjectsAndKeys:
+				[NSColor colorWithCalibratedRed:96.0 / 255.0 green:110.0 / 255.0 blue:128.0 / 255.0 alpha:1.0],
+					NSForegroundColorAttributeName,
+				[NSFont boldSystemFontOfSize:11.0],
+					NSFontAttributeName,
+				NULL];
+			
+			return [NSAttributedString attributedStringWithString:[label uppercaseString] attributes:attributes];
+		} else {
+			return label;
+		}
 	}
 	else if(tableColumn == _unreadBoardTableColumn) {
 		return [NSImage imageWithPillForCount:[item numberOfUnreadThreadsForConnection:NULL includeChildBoards:NO]
@@ -2679,7 +2706,9 @@
 		else
 			[cell setFont:[[cell font] fontByAddingTrait:NSUnboldFontMask]];
 		
-		if([item isKindOfClass:[WCSmartBoard class]])
+		if([item isRootBoard])
+			[cell setImage:NULL];
+		else if([item isKindOfClass:[WCSmartBoard class]])
 			[cell setImage:[NSImage imageNamed:@"SmartBoard"]];
 		else
 			[cell setImage:[NSImage imageNamed:@"Board"]];
@@ -2722,6 +2751,12 @@
 
 
 
+- (BOOL)outlineView:(NSOutlineView *)outlineView shouldSelectItem:(id)item {
+	return ![item isRootBoard];
+}
+
+
+
 - (BOOL)outlineView:(NSOutlineView *)outlineView shouldEditTableColumn:(NSTableColumn *)tableColumn item:(id)item {
 	WCServerConnection		*connection;
 	WCBoard					*board = item;
@@ -2731,7 +2766,7 @@
 	
 	connection = [board connection];
 	
-	return ([board isModifiable] && [connection isConnected] && [[connection account] boardRenameBoards]);
+	return (![board isRootBoard] && [connection isConnected] && [[connection account] boardRenameBoards]);
 }
 
 
@@ -2765,7 +2800,7 @@
 	
 	board = [items objectAtIndex:0];
 	
-	if([board isKindOfClass:[WCSmartBoard class]])
+	if([board isRootBoard] || [board isKindOfClass:[WCSmartBoard class]])
 		return NO;
 	
 	[pasteboard declareTypes:[NSArray arrayWithObject:WCBoardPboardType] owner:NULL];
