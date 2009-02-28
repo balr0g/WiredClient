@@ -777,7 +777,6 @@
 	_smartBoards		= [[WCBoard rootBoardWithName:NSLS(@"Smart Boards", @"Smart boards title")] retain];
 
 	[_smartBoards setSorting:1];
-	[_boards addBoard:_smartBoards];
 
 	data = [WCSettings objectForKey:WCBoardFilters];
 	
@@ -789,6 +788,9 @@
 			[smartBoard setName:[filter name]];
 			[smartBoard setFilter:filter];
 			[_smartBoards addBoard:smartBoard];
+		
+			if([_smartBoards numberOfBoards] == 1)
+				[_boards addBoard:_smartBoards];
 		}
 	}
 
@@ -2197,6 +2199,9 @@
 		
 		[_smartBoards addBoard:smartBoard];
 		
+		if([_smartBoards numberOfBoards] == 1)
+			[_boards addBoard:_smartBoards];
+		
 		[_boardsOutlineView reloadData];
 		[_boardsOutlineView expandItem:_smartBoards];
 		
@@ -2287,6 +2292,9 @@
 		if([board isKindOfClass:[WCSmartBoard class]]) {
 			[_smartBoards removeBoard:board];
 			
+			if([_smartBoards numberOfBoards] == 0)
+				[_boards removeBoard:_smartBoards];
+
 			[_boardsOutlineView reloadData];
 			[_boardsOutlineView deselectAll:self];
 			
