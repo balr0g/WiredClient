@@ -485,12 +485,18 @@
 	[text replaceOccurrencesOfString:@"\'" withString:@"&#39;"];
 	[text replaceOccurrencesOfString:@"\n" withString:@"\n<br />\n"];
 
-	[text replaceOccurrencesOfRegex:@"\\[code\\](.+?)\\[/code\\]" withString:@"<blockquote><pre>$1</pre></blockquote>" options:RKLCaseless];
+	[text replaceOccurrencesOfRegex:@"\\[code\\](.+?)\\[/code\\]"
+						 withString:@"<blockquote><pre>$1</pre></blockquote>"
+							options:RKLCaseless | RKLDotAll];
 	
-	while([text replaceOccurrencesOfRegex:@"<pre>(.*?)\\[+(.*?)</pre>" withString:@"<pre>$1&#91;$2</pre>" options:RKLCaseless] > 0)
+	while([text replaceOccurrencesOfRegex:@"<pre>(.*?)\\[+(.*?)</pre>"
+							   withString:@"<pre>$1&#91;$2</pre>"
+								  options:RKLCaseless | RKLDotAll] > 0)
 		;
 	
-	while([text replaceOccurrencesOfRegex:@"<pre>(.*?)\\]+(.*?)</pre>" withString:@"<pre>$1&#93;$2</pre>" options:RKLCaseless] > 0)
+	while([text replaceOccurrencesOfRegex:@"<pre>(.*?)\\]+(.*?)</pre>"
+							   withString:@"<pre>$1&#93;$2</pre>"
+								  options:RKLCaseless | RKLDotAll] > 0)
 		;
 	
 	if([theme boolForKey:WCThemesShowSmileys]) {
@@ -520,9 +526,11 @@
 
 	[text replaceOccurrencesOfRegex:@"\\[quote=(.+?)\\](.+?)\\[/quote\\]"
 						 withString:[NSSWF:@"<blockquote><b>%@</b><br />$2</blockquote>", NSLS(@"$1 wrote:", @"Board quote (nick)")]
-							options:RKLCaseless];
+							options:RKLCaseless | RKLDotAll];
 
-	[text replaceOccurrencesOfRegex:@"\\[quote\\](.+?)\\[/quote\\]" withString:@"<blockquote>$1</blockquote>" options:RKLCaseless];
+	[text replaceOccurrencesOfRegex:@"\\[quote\\](.+?)\\[/quote\\]"
+						 withString:@"<blockquote>$1</blockquote>"
+							options:RKLCaseless | RKLDotAll];
 	
 	string = [[_postTemplate mutableCopy] autorelease];
 
