@@ -2757,6 +2757,11 @@
 		_selectedBoard = board;
 	}
 	
+	if([_selectedBoard isKindOfClass:[WCSmartBoard class]]) {
+		[_selectedBoard removeAllThreads];
+		[_selectedBoard addThreads:[_boards threadsMatchingFilter:[_selectedBoard filter] includeChildBoards:YES]];
+	}
+	
 	[_selectedBoard sortThreadsUsingSelector:[self _sortSelector]];
 	
 	[_threadsTableView reloadData];
