@@ -1218,6 +1218,7 @@
 - (void)deleteConversationAlertDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
 	NSEnumerator		*enumerator;
 	WCConversation		*conversation = contextInfo, *eachConversation;
+	NSInteger			row;
 	
 	if(returnCode == NSAlertFirstButtonReturn) {
 		enumerator = [[_conversations conversations] objectEnumerator];
@@ -1230,7 +1231,11 @@
 		[_conversationsOutlineView reloadData];
 		
 		[_selectedConversation release];
-		_selectedConversation = NULL;
+		
+		row = [_conversationsOutlineView selectedRow];
+		
+		if(row >= 0)
+			_selectedConversation = [[_conversationsOutlineView itemAtRow:row] retain];
 
 		[self _validate];
 		[self _reloadConversation];
