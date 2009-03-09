@@ -456,6 +456,8 @@
 	
 	[html appendString:_footerTemplate];
 	
+	NSLog(@"loading [%@]", html);
+	
 	[[_threadWebView mainFrame] loadHTMLString:html baseURL:[NSURL fileURLWithPath:[[self bundle] resourcePath]]];
 	
 	if(changedUnread) {
@@ -1713,6 +1715,7 @@
 
 
 - (void)webView:(WebView *)webView didFinishLoadForFrame:(WebFrame *)frame {
+	NSLog(@"finished loading");
 	if(_previousVisibleRect.size.height > 0.0)
 		[[[[_threadWebView mainFrame] frameView] documentView] scrollRectToVisible:_previousVisibleRect];
 }
