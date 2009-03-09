@@ -222,6 +222,8 @@ typedef enum _WCChatActivity				WCChatActivity;
 
 
 - (void)dealloc {
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	
 	[_tabBarControl release];
 	
 	[_chatControllers release];

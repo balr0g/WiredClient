@@ -32,8 +32,6 @@
 @implementation WCPrivateChatController
 
 - (void)dealloc {
-	[[NSNotificationCenter defaultCenter] removeObserver:self];
-
 	[_inviteUser release];
 	
 	[super dealloc];

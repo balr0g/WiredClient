@@ -27,6 +27,9 @@
 
 - (void)dealloc
 {
+	// Axel Andersson: removeObserver
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+
     [_PSMTabBarOverflowPopUpImage release];
 	[_PSMTabBarOverflowDownPopUpImage release];
     [super dealloc];

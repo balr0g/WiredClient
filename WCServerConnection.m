@@ -139,6 +139,8 @@
 
 
 - (void)dealloc {
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+
 	[_identifier release];
 	[_theme release];
 	
