@@ -542,6 +542,8 @@ typedef enum _WCChatActivity				WCChatActivity;
 		return (connection != NULL && [connection isConnected] && [[connection account] fileListFiles]);
 	else if(selector == @selector(broadcast:))
 		return (connection != NULL && [connection isConnected]);
+	else if(selector == @selector(changePassword:))
+		return (connection != NULL && [connection isConnected] && [[connection account] accountChangePassword]);
 	else if(selector == @selector(serverInfo:) || selector == @selector(administration:) ||
 			selector == @selector(console:))
 		return (connection != NULL);
@@ -668,6 +670,12 @@ typedef enum _WCChatActivity				WCChatActivity;
 	connection = [[self selectedChatController] connection];
 	
 	[[WCMessages messages] showBroadcastForConnection:connection];
+}
+
+
+
+- (IBAction)changePassword:(id)sender {
+	[[self selectedChatController] changePassword:sender];
 }
 
 

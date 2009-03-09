@@ -63,6 +63,7 @@
 - (IBAction)accounts:(id)sender;
 - (IBAction)administration:(id)sender;
 - (IBAction)broadcast:(id)sender;
+- (IBAction)changePassword:(id)sender;
 
 - (IBAction)search:(id)sender;
 

@@ -1267,53 +1267,6 @@
 
 
 
-/*- (IBAction)changePassword:(id)sender {
-	[_newPasswordTextField setStringValue:@""];
-	[_verifyPasswordTextField setStringValue:@""];
-	[_passwordMismatchTextField setHidden:YES];
-
-	[_changePasswordPanel makeFirstResponder:_newPasswordTextField];
-
-	[NSApp beginSheet:_changePasswordPanel
-	   modalForWindow:[self window]
-		modalDelegate:self
-	   didEndSelector:@selector(changePasswordSheetDidEnd:returnCode:contextInfo:)
-		  contextInfo:NULL];
-}
-
-
-
-- (void)changePasswordSheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-	WIP7Message		*message;
-
-	[_changePasswordPanel close];
-
-	if(returnCode == NSAlertDefaultReturn) {
-		message = [WIP7Message messageWithName:@"wired.account.change_password" spec:WCP7Spec];
-		[message setString:[[_newPasswordTextField stringValue] SHA1] forName:@"wired.account.password"];
-		[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredAccountChangePasswordReply:)];
-	}
-}
-
-
-
-- (IBAction)submitPasswordSheet:(id)sender {
-	NSString		*newPassword, *verifyPassword;
-	
-	newPassword		= [_newPasswordTextField stringValue];
-	verifyPassword	= [_verifyPasswordTextField stringValue];
-	
-	if([newPassword isEqualToString:verifyPassword]) {
-		[self submitSheet:sender];
-	} else {
-		NSBeep();
-		
-		[_passwordMismatchTextField setHidden:NO];
-	}
-}*/
-
-
-
 - (IBAction)all:(id)sender {
 	[_usersFilterButton setState:NSOffState];
 	[_groupsFilterButton setState:NSOffState];

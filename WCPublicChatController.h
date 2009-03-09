@@ -37,11 +37,19 @@
 	IBOutlet NSPanel					*_banMessagePanel;
 	IBOutlet NSTextField				*_banMessageTextField;
 	IBOutlet NSPopUpButton				*_banMessagePopUpButton;
+	
+	IBOutlet NSPanel					*_changePasswordPanel;
+	IBOutlet NSSecureTextField			*_newPasswordTextField;
+	IBOutlet NSSecureTextField			*_verifyPasswordTextField;
+	IBOutlet NSTextField				*_passwordMismatchTextField;
 }
 
 + (id)publicChatControllerWithConnection:(WCServerConnection *)connection;
 
 - (IBAction)startPrivateChat:(id)sender;
 - (IBAction)ban:(id)sender;
+
+- (IBAction)changePassword:(id)sender;
+- (IBAction)submitPasswordSheet:(id)sender;
 
 @end

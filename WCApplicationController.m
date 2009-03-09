@@ -823,9 +823,9 @@ static WCApplicationController		*sharedController;
 	if(selector == @selector(disconnect:) || selector == @selector(reconnect:) ||
 	   selector == @selector(serverInfo:) || selector == @selector(files:) ||
 	   selector == @selector(accounts:) || selector == @selector(administration:) ||
-	   selector == @selector(broadcast:) || selector == @selector(addBookmark:) ||
-	   selector == @selector(console:) || selector == @selector(nextConnection:) ||
-	   selector == @selector(previousConnection:)) {
+	   selector == @selector(broadcast:) || selector == @selector(changePassword:) ||
+	   selector == @selector(addBookmark:) || selector == @selector(console:) ||
+	   selector == @selector(nextConnection:) || selector == @selector(previousConnection:)) {
 		return [[WCPublicChat publicChat] validateMenuItem:item];
 	}
 	else if(selector == @selector(insertSmiley:)) {
@@ -960,6 +960,12 @@ static WCApplicationController		*sharedController;
 
 - (IBAction)broadcast:(id)sender {
 	[[WCPublicChat publicChat] broadcast:sender];
+}
+
+
+
+- (IBAction)changePassword:(id)sender {
+	[[WCPublicChat publicChat] changePassword:sender];
 }
 
 

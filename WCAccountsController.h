@@ -105,8 +105,6 @@
 - (IBAction)add:(id)sender;
 - (IBAction)delete:(id)sender;
 - (IBAction)reload:(id)sender;
-//- (IBAction)changePassword:(id)sender;
-//- (IBAction)submitPasswordSheet:(id)sender;
 - (IBAction)all:(id)sender;
 - (IBAction)users:(id)sender;
 - (IBAction)groups:(id)sender;
