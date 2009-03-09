@@ -1,7 +1,7 @@
 /* $Id: WCMessage.h 6709 2009-01-22 16:08:51Z morris $ */
 
 /*
- *  Copyright (c) 2003-2007 Axel Andersson
+ *  Copyright (c) 2003-2009 Axel Andersson
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without

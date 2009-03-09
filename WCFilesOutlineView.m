@@ -1,7 +1,7 @@
 /* $Id$ */
 
 /*
- *  Copyright (c) 2006-2007 Daniel Ericsson, Axel Andersson
+ *  Copyright (c) 2006-2009 Daniel Ericsson, Axel Andersson
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
