@@ -165,51 +165,31 @@
 
 
 
-- (BOOL)hasPostMatchingString:(NSString *)string {
-	NSEnumerator		*enumerator;
-	WCBoardPost			*post;
-	
-	enumerator = [_posts objectEnumerator];
-	
-	while((post = [enumerator nextObject])) {
-		if([[post subject] containsSubstring:string options:NSCaseInsensitiveSearch] ||
-		   [[post text] containsSubstring:string options:NSCaseInsensitiveSearch])
-			return YES;
-	}
-	
-	return NO;
-}
-
-
-
 - (BOOL)hasPostMatchingFilter:(WCBoardThreadFilter *)filter {
 	NSEnumerator		*enumerator;
-	NSString			*string;
+	NSString			*textString, *subjectString, *nickString;
 	WCBoardPost			*post;
 	
 	if([filter unread] && ![self isUnread])
 		return NO;
 	
-	enumerator = [_posts objectEnumerator];
+	textString		= [filter text];
+	subjectString	= [filter subject];
+	nickString		= [filter nick];
+	enumerator		= [_posts objectEnumerator];
 	
 	while((post = [enumerator nextObject])) {
-		string = [filter text];
-		
-		if([string length] > 0 && ![[post text] containsSubstring:string options:NSCaseInsensitiveSearch])
-			return NO;
+		if([textString length] > 0 && [[post text] containsSubstring:textString options:NSCaseInsensitiveSearch])
+			return YES;
 
-		string = [filter subject];
-		
-		if([string length] > 0 && ![[post subject] containsSubstring:string options:NSCaseInsensitiveSearch])
-			return NO;
+		if([subjectString length] > 0 && [[post subject] containsSubstring:subjectString options:NSCaseInsensitiveSearch])
+			return YES;
 
-		string = [filter nick];
-		
-		if([string length] > 0 && ![[post nick] containsSubstring:string options:NSCaseInsensitiveSearch])
-			return NO;
+		if([nickString length] > 0 && [[post nick] containsSubstring:nickString options:NSCaseInsensitiveSearch])
+			return YES;
 	}
 	
-	return YES;
+	return NO;
 }
 
 
