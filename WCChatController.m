@@ -2190,18 +2190,12 @@ typedef enum _WCChatFormat					WCChatFormat;
 - (NSString *)tableView:(NSTableView *)tableView toolTipForCell:(NSCell *)cell rect:(NSRectPointer)rect tableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row mouseLocation:(NSPoint)mouseLocation {
 	NSMutableString		*toolTip;
 	WCUser				*user;
-	NSTimeInterval		interval;
 	
 	user = [self userAtIndex:row];
 	toolTip = [[[user nick] mutableCopy] autorelease];
 	
 	if([[user status] length] > 0)
 		[toolTip appendFormat:@"\n%@", [user status]];
-	
-	interval = [[NSDate date] timeIntervalSinceDate:[user idleDate]];
-	[toolTip appendFormat:@"\n"];
-	[toolTip appendFormat:NSLS(@"Idle %@", @"Chat tooltip (idle time)"),
-	 [NSString humanReadableStringForTimeInterval:interval]];
 	
 	return toolTip;
 }
