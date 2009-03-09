@@ -1953,10 +1953,11 @@
 
 
 - (void)replyToPostWithID:(NSString *)postID {
-	NSString			*subject;
-	WCBoard				*board;
-	WCBoardThread		*thread;
-	WCBoardPost			*post;
+	NSString					*subject, *text;
+	WCBoard						*board;
+	WCBoardThread				*thread;
+	WCBoardPost					*post;
+	NSView <WebDocumentView>	*document;
 	
 	board	= [self _selectedBoard];
 	thread	= [self _selectedThread];
@@ -1970,8 +1971,18 @@
 	if(![subject hasPrefix:@"Re: "])
 		subject = [@"Re: " stringByAppendingString:subject];
 	
+	document = [[[_threadWebView mainFrame] frameView] documentView];
+	
+	if([document conformsToProtocol:@protocol(WebDocumentText)])
+		text = [(NSView <WebDocumentText> *) document selectedString];
+	else
+		text = @"";
+	
+	if([text length] == 0)
+		text = [post text];
+	
 	[_subjectTextField setStringValue:subject];
-	[_postTextView setString:[NSSWF:@"[quote=%@]%@[/quote]\n\n", [post nick], [post text]]];
+	[_postTextView setString:[NSSWF:@"[quote=%@]%@[/quote]\n\n", [post nick], text]];
 	[_postButton setTitle:NSLS(@"Reply", @"Reply post button title")];
 	
 	[_postPanel makeFirstResponder:_postTextView];
