@@ -1264,8 +1264,24 @@
 
 
 - (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item {
+	NSDictionary	*attributes;
+	NSString		*name;
+	
 	if(tableColumn == _conversationTableColumn) {
-		return [item name];
+		name = [item name];
+		
+		if(item == _messageConversations || item == _broadcastConversations) {
+			attributes = [NSDictionary dictionaryWithObjectsAndKeys:
+				[NSColor colorWithCalibratedRed:96.0 / 255.0 green:110.0 / 255.0 blue:128.0 / 255.0 alpha:1.0],
+					NSForegroundColorAttributeName,
+				[NSFont boldSystemFontOfSize:11.0],
+					NSFontAttributeName,
+				NULL];
+			
+			return [NSAttributedString attributedStringWithString:[name uppercaseString] attributes:attributes];
+		}
+		
+		return name;
 	}
 	else if(tableColumn == _unreadTableColumn) {
 		return [NSImage imageWithPillForCount:[item numberOfUnreadMessagesForConnection:NULL includeChildConversations:NO]
@@ -1286,9 +1302,9 @@
 			[cell setFont:[[cell font] fontByAddingTrait:NSUnboldFontMask]];
 		
 		if(item == _messageConversations || item == _broadcastConversations)
-			[cell setImage:_conversationIcon];
-		else
 			[cell setImage:NULL];
+		else
+			[cell setImage:_conversationIcon];
 	}
 }
 
@@ -1320,6 +1336,15 @@
 	
 	[self _reloadConversation];
 	[self _validate];
+}
+
+
+
+- (BOOL)outlineView:(NSOutlineView *)outlineView shouldSelectItem:(id)item {
+	if(item == _messageConversations || item == _broadcastConversations)
+		return NO;
+	
+	return YES;
 }
 
 @end
