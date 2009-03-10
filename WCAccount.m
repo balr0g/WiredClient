@@ -281,7 +281,10 @@
 			@"wired.account.board.edit_all_posts", NSLS(@"Edit All Posts", @"Account field name"),
 			@"TBD"),
 		WCAccountFieldBooleanDictionary(WCAccountFieldBoards,
-			@"wired.account.board.delete_posts", NSLS(@"Delete Posts", @"Account field name"),
+			@"wired.account.board.delete_own_posts", NSLS(@"Delete Own Posts", @"Account field name"),
+			@"TBD"),
+		WCAccountFieldBooleanDictionary(WCAccountFieldBoards,
+			@"wired.account.board.delete_all_posts", NSLS(@"Delete All Posts", @"Account field name"),
 			@"TBD"),
 			  
 		WCAccountFieldBooleanDictionary(WCAccountFieldTracker,
@@ -631,8 +634,14 @@
 
 
 
-- (BOOL)boardDeletePosts {
-	return [[self valueForKey:@"wired.account.board.delete_posts"] boolValue];
+- (BOOL)boardDeleteOwnPosts {
+	return [[self valueForKey:@"wired.account.board.delete_own_posts"] boolValue];
+}
+
+
+
+- (BOOL)boardDeleteAllPosts {
+	return [[self valueForKey:@"wired.account.board.delete_all_posts"] boolValue];
 }
 
 

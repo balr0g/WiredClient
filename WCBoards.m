@@ -572,7 +572,7 @@
 	else
 		[string replaceOccurrencesOfString:@"<? editdisabled ?>" withString:@"disabled=\"disabled\""];
 
-	if([account boardDeletePosts] && writable)
+	if(([account boardDeleteAllPosts] || ([account boardDeleteOwnPosts] && [post isOwnPost])) && writable)
 		[string replaceOccurrencesOfString:@"<? deletedisabled ?>" withString:@""];
 	else
 		[string replaceOccurrencesOfString:@"<? deletedisabled ?>" withString:@"disabled=\"disabled\""];

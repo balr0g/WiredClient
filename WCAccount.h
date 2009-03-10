@@ -91,7 +91,8 @@
 - (BOOL)boardAddPosts;
 - (BOOL)boardEditOwnPosts;
 - (BOOL)boardEditAllPosts;
-- (BOOL)boardDeletePosts;
+- (BOOL)boardDeleteOwnPosts;
+- (BOOL)boardDeleteAllPosts;
 - (BOOL)fileListFiles;
 - (BOOL)fileGetInfo;
 - (BOOL)fileCreateDirectories;
