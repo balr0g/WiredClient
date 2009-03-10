@@ -35,6 +35,7 @@
 	NSDate						*_postDate;
 	NSDate						*_editDate;
 	NSString					*_nick;
+	NSString					*_icon;
 	WIP7Bool					_own;
 	NSString					*_subject;
 	NSString					*_text;
@@ -52,6 +53,7 @@
 - (void)setEditDate:(NSDate *)editDate;
 - (NSDate *)editDate;
 - (NSString *)nick;
+- (NSString *)icon;
 - (BOOL)isOwnPost;
 - (void)setSubject:(NSString *)subject;
 - (NSString *)subject;

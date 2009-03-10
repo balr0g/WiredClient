@@ -473,7 +473,7 @@
 	NSEnumerator		*enumerator;
 	NSDictionary		*theme, *regexs;
 	NSMutableString		*string, *text, *regex;
-	NSString			*smiley, *path;
+	NSString			*smiley, *path, *icon;
 	WCAccount			*account;
 	
 	theme		= [post theme];
@@ -552,6 +552,13 @@
 	else
 		[string replaceOccurrencesOfString:@"<div class=\"posteditdate\"><? editdate ?></div>" withString:@""];
 	
+	icon = [post icon];
+	
+	if([icon length] > 0)
+		[string replaceOccurrencesOfString:@"<? icon ?>" withString:[NSSWF:@"data:image/tiff;base64,%@", icon]];
+	else
+		[string replaceOccurrencesOfString:@"<? icon ?>" withString:@"DefaultIcon.tiff"];
+
 	[string replaceOccurrencesOfString:@"<? body ?>" withString:text];
 	[string replaceOccurrencesOfString:@"<? postid ?>" withString:[post postID]];
 	
