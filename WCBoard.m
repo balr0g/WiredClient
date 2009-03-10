@@ -281,6 +281,18 @@
 
 
 
+- (void)setExpanded:(BOOL)expanded {
+	_expanded = expanded;
+}
+
+
+
+- (BOOL)isExpanded {
+	return _expanded;
+}
+
+
+
 - (BOOL)isExpandable {
 	return ([_boards count] > 0);
 }

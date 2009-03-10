@@ -49,6 +49,7 @@ typedef enum _WCBoardPermissions		WCBoardPermissions;
 	NSUInteger							_permissions;
 	
 	NSInteger							_sorting;
+	BOOL								_expanded;
 	
 	NSMutableArray						*_boards;
 	
@@ -73,6 +74,8 @@ typedef enum _WCBoardPermissions		WCBoardPermissions;
 - (NSUInteger)permissions;
 - (void)setSorting:(NSInteger)sorting;
 - (NSInteger)sorting;
+- (void)setExpanded:(BOOL)expanded;
+- (BOOL)isExpanded;
 - (BOOL)isExpandable;
 - (BOOL)isRootBoard;
 - (BOOL)isWritableByAccount:(WCUserAccount *)account;

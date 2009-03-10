@@ -652,13 +652,18 @@
 	enumerator = [[board boards] objectEnumerator];
 	
 	while((childBoard = [enumerator nextObject])) {
-		item = [NSMenuItem itemWithTitle:[childBoard name]];
-		[item setRepresentedObject:childBoard];
-		[item setIndentationLevel:level];
-		
-		[_locationPopUpButton addItem:item];
-		
-		[self _addLocationsForChildrenOfBoard:childBoard level:level + 1];
+		if([childBoard connection]) {
+			item = [NSMenuItem itemWithTitle:[childBoard name]];
+			[item setRepresentedObject:childBoard];
+			[item setIndentationLevel:level];
+
+			if(![childBoard isRootBoard])
+				[item setImage:[NSImage imageNamed:@"Board"]];
+			
+			[_locationPopUpButton addItem:item];
+			
+			[self _addLocationsForChildrenOfBoard:childBoard level:level + 1];
+		}
 	}
 }
 
@@ -2707,6 +2712,7 @@
 - (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item {
 	NSDictionary	*attributes;
 	NSString		*label;
+	NSUInteger		count;
 	
 	if(tableColumn == _boardTableColumn) {
 		label = [item name];
@@ -2725,7 +2731,9 @@
 		}
 	}
 	else if(tableColumn == _unreadBoardTableColumn) {
-		return [NSImage imageWithPillForCount:[item numberOfUnreadThreadsForConnection:NULL includeChildBoards:NO]
+		count = [item numberOfUnreadThreadsForConnection:NULL includeChildBoards:![item isExpanded]];
+		
+		return [NSImage imageWithPillForCount:count
 							   inActiveWindow:([NSApp keyWindow] == [self window])
 								onSelectedRow:([_boardsOutlineView rowForItem:item] == [_boardsOutlineView selectedRow])];
 	}
@@ -2755,6 +2763,26 @@
 
 - (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item {
 	return [item isExpandable];
+}
+
+
+
+- (void)outlineViewItemDidExpand:(NSNotification *)notification {
+	id		item;
+	
+	item = [[notification userInfo] objectForKey:@"NSObject"];
+	
+	[item setExpanded:YES];
+}
+
+
+
+- (void)outlineViewItemDidCollapse:(NSNotification *)notification {
+	id		item;
+	
+	item = [[notification userInfo] objectForKey:@"NSObject"];
+	
+	[item setExpanded:NO];
 }
 
 
