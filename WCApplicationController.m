@@ -44,6 +44,8 @@
 #import "WCTransfers.h"
 #import "WCUser.h"
 
+#import <Foundation/NSDebug.h>
+
 #define WCApplicationSupportPath		@"~/Library/Application Support/Wired Client"
 
 #define WCGrowlServerConnected			@"Connected to server"
@@ -265,11 +267,11 @@ static NSInteger _WCCompareSmileyLength(id object1, id object2, void *context) {
 	[url setUser:login];
 	[url setPassword:password ? password : @""];
 	
-//	if(![self _openConnectionWithURL:url]) {
+	if(![self _openConnectionWithURL:url]) {
 		connect = [WCConnect connectWithURL:url bookmark:bookmark];
 		[connect showWindow:self];
 		[connect connect:self];
-//	}
+	}
 }
 
 
@@ -309,6 +311,8 @@ static WCApplicationController		*sharedController;
 - (id)init {
 	NSTimer		*timer;
 	NSDate		*date;
+	
+	NSZombieEnabled = YES;
 
 	sharedController = self = [super init];
 	
