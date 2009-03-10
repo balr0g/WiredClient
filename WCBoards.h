@@ -78,6 +78,7 @@
 	
 	IBOutlet NSPanel								*_smartBoardPanel;
 	IBOutlet NSTextField							*_smartBoardNameTextField;
+	IBOutlet NSComboBox								*_boardFilterComboBox;
 	IBOutlet NSTextField							*_subjectFilterTextField;
 	IBOutlet NSTextField							*_textFilterTextField;
 	IBOutlet NSTextField							*_nickFilterTextField;

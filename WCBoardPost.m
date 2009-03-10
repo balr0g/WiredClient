@@ -83,6 +83,15 @@
 
 #pragma mark -
 
+- (void)setBoard:(NSString *)board {
+	[board retain];
+	[_board release];
+	
+	_board = board;
+}
+
+
+
 - (NSString *)board {
 	return _board;
 }

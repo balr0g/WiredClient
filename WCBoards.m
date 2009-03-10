@@ -70,8 +70,8 @@
 - (NSString *)_textForPostText:(NSString *)text;
 - (void)_insertBBCodeWithStartTag:(NSString *)startTag endTag:(NSString *)endTag;
 
-- (void)_reloadLocationsAndSelectBoard:(WCBoard *)board;
-- (void)_addLocationsForChildrenOfBoard:(WCBoard *)board level:(NSUInteger)level;
+- (void)_reloadBoardListsSelectingBoard:(WCBoard *)board;
+- (void)_reloadBoardListsWithChildrenOfBoard:(WCBoard *)board level:(NSUInteger)level;
 - (void)_updatePermissions;
 
 @end
@@ -243,6 +243,9 @@
 	
 	while((board = [enumerator nextObject])) {
 		if([board isKindOfClass:[WCSmartBoard class]]) {
+			if(board != selectedBoard)
+				[board removeAllThreads];
+			
 			[board addThreads:[_boards threadsMatchingFilter:[board filter] includeChildBoards:YES]];
 			[board sortThreadsUsingSelector:[self _sortSelector]];
 			
@@ -631,20 +634,25 @@
 
 #pragma mark -
 
-- (void)_reloadLocationsAndSelectBoard:(WCBoard *)board {
+- (void)_reloadBoardListsSelectingBoard:(WCBoard *)board {
+	NSInteger		index;
+	
+	if(!board)
+		board = [_locationPopUpButton representedObjectOfSelectedItem];
+	
 	[_locationPopUpButton removeAllItems];
+	[_boardFilterComboBox removeAllItems];
 	
-	[self _addLocationsForChildrenOfBoard:_boards level:0];
+	[self _reloadBoardListsWithChildrenOfBoard:_boards level:0];
 	
-	if(board)
-		[_locationPopUpButton selectItemWithRepresentedObject:board];
-	else
-		[_locationPopUpButton selectItemAtIndex:0];
+	index = board ? [_locationPopUpButton indexOfItemWithRepresentedObject:board] : 0;
+	
+	[_locationPopUpButton selectItemAtIndex:index < 0 ? 0 : index];
 }
 
 
 
-- (void)_addLocationsForChildrenOfBoard:(WCBoard *)board level:(NSUInteger)level {
+- (void)_reloadBoardListsWithChildrenOfBoard:(WCBoard *)board level:(NSUInteger)level {
 	NSEnumerator		*enumerator;
 	NSMenuItem			*item;
 	WCBoard				*childBoard;
@@ -662,7 +670,10 @@
 			
 			[_locationPopUpButton addItem:item];
 			
-			[self _addLocationsForChildrenOfBoard:childBoard level:level + 1];
+			if(![childBoard isRootBoard])
+				[_boardFilterComboBox addItemWithObjectValue:[childBoard name]];
+			
+			[self _reloadBoardListsWithChildrenOfBoard:childBoard level:level + 1];
 		}
 	}
 }
@@ -1154,10 +1165,12 @@
 
 
 - (void)boardsDidChangeUnreadCount:(NSNotification *)notification {
+	[self _reloadFilters];
+
 	[_boardsOutlineView setNeedsDisplay:YES];
 	[_threadsTableView setNeedsDisplay:YES];
 	
-	[self _reloadFilters];
+	[_boardsOutlineView reloadData];
 }
 
 
@@ -1177,7 +1190,7 @@
 		[_boardsOutlineView reloadData];
 		[_boardsOutlineView expandItem:[_boards boardForConnection:[message contextInfo]] expandChildren:YES];
 	
-		[self _reloadLocationsAndSelectBoard:NULL];
+		[self _reloadBoardListsSelectingBoard:NULL];
 		[self _validate];
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
@@ -1261,7 +1274,7 @@
 		[self _reloadThreadAndRememberPosition:YES];
 	}
 	
-	[self _reloadLocationsAndSelectBoard:[_locationPopUpButton representedObjectOfSelectedItem]];
+	[self _reloadBoardListsSelectingBoard:NULL];
 	[self _validate];
 }
 
@@ -1282,7 +1295,7 @@
 	
 	[_boardsOutlineView reloadData];
 	
-	[self _reloadLocationsAndSelectBoard:[_locationPopUpButton representedObjectOfSelectedItem]];
+	[self _reloadBoardListsSelectingBoard:NULL];
 	[self _validate];
 }
 
@@ -1311,7 +1324,7 @@
 	[_boardsOutlineView reloadData];
 	[_boardsOutlineView expandItem:newParent];
 	
-	[self _reloadLocationsAndSelectBoard:[_locationPopUpButton representedObjectOfSelectedItem]];
+	[self _reloadBoardListsSelectingBoard:NULL];
 	[self _validate];
 }
 
@@ -1330,7 +1343,7 @@
 	
 	[_boardsOutlineView reloadData];
 
-	[self _reloadLocationsAndSelectBoard:[_locationPopUpButton representedObjectOfSelectedItem]];
+	[self _reloadBoardListsSelectingBoard:NULL];
 	[self _validate];
 
 	[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
@@ -1396,7 +1409,6 @@
 	[board removeThread:thread];
 	
 	if(board == [self _selectedBoard]) {
-		[_boardsOutlineView setNeedsDisplay:YES];
 		[_threadsTableView reloadData];
 		
 		if(selectedThread)
@@ -1432,7 +1444,6 @@
 	[thread release];
 	
 	if(oldBoard == [self _selectedBoard] || newBoard == [self _selectedBoard]) {
-		[_boardsOutlineView setNeedsDisplay:YES];
 		[_threadsTableView reloadData];
 		
 		if(selectedThread)
@@ -1440,6 +1451,8 @@
 		
 		[self _reloadThreadAndRememberPosition:YES];
 	}
+	
+	[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
 }
 
 
@@ -2138,7 +2151,7 @@
 #pragma mark -
 
 - (IBAction)addBoard:(id)sender {
-	[self _reloadLocationsAndSelectBoard:[self _selectedBoard]];
+	[self _reloadBoardListsSelectingBoard:[self _selectedBoard]];
 	[self _updatePermissions];
 	
 	[_addOwnerPermissionsPopUpButton selectItemWithTag:WCBoardOwnerRead | WCBoardOwnerWrite];
@@ -2201,11 +2214,14 @@
 
 - (IBAction)addSmartBoard:(id)sender {
 	[_smartBoardNameTextField setStringValue:NSLS(@"Untitled", @"Smart board name")];
+	[_boardFilterComboBox setStringValue:@""];
 	[_subjectFilterTextField setStringValue:@""];
 	[_textFilterTextField setStringValue:@""];
 	[_nickFilterTextField setStringValue:@""];
 	[_unreadFilterButton setState:NSOffState];
 	
+	[self _reloadBoardListsSelectingBoard:[self _selectedBoard]];
+
 	[NSApp beginSheet:_smartBoardPanel
 	   modalForWindow:[self window]
 		modalDelegate:self
@@ -2221,6 +2237,8 @@
 	
 	if(returnCode == NSOKButton) {
 		filter = [WCBoardThreadFilter filter];
+
+		[filter setBoard:[_boardFilterComboBox stringValue]];
 		[filter setSubject:[_subjectFilterTextField stringValue]];
 		[filter setText:[_textFilterTextField stringValue]];
 		[filter setNick:[_nickFilterTextField stringValue]];
@@ -2255,11 +2273,14 @@
 	filter	= [board filter];
 	
 	[_smartBoardNameTextField setStringValue:[board name]];
+	[_boardFilterComboBox setStringValue:[filter board]];
 	[_subjectFilterTextField setStringValue:[filter subject]];
 	[_textFilterTextField setStringValue:[filter text]];
 	[_nickFilterTextField setStringValue:[filter nick]];
 	[_unreadFilterButton setState:[filter unread]];
 	
+	[self _reloadBoardListsSelectingBoard:[self _selectedBoard]];
+
 	[NSApp beginSheet:_smartBoardPanel
 	   modalForWindow:[self window]
 		modalDelegate:self
@@ -2276,6 +2297,7 @@
 	if(returnCode == NSOKButton) {
 		filter = [smartBoard filter];
 		
+		[filter setBoard:[_boardFilterComboBox stringValue]];
 		[filter setSubject:[_subjectFilterTextField stringValue]];
 		[filter setText:[_textFilterTextField stringValue]];
 		[filter setNick:[_nickFilterTextField stringValue]];
@@ -3032,18 +3054,21 @@
 
 
 - (BOOL)tableView:(NSTableView *)tableView writeRowsWithIndexes:(NSIndexSet *)indexes toPasteboard:(NSPasteboard *)pasteboard {
-	NSEnumerator		*enumerator;
 	NSMutableArray		*threads;
-	WCBoardThread		*thread;
+	NSUInteger			index;
 	
-	threads		= [NSMutableArray array];
-	enumerator	= [[self _selectedThreads] objectEnumerator];
+	threads = [NSMutableArray array];
 	
 	[threads addObject:[[self _selectedBoard] path]];
 	
-	while((thread = [enumerator nextObject]))
-		[threads addObject:[thread threadID]];
+	index = [indexes firstIndex];
 	
+	while(index != NSNotFound) {
+		[threads addObject:[[self _threadAtIndex:index] threadID]];
+		
+		index = [indexes indexGreaterThanIndex:index];
+	}
+
 	[pasteboard declareTypes:[NSArray arrayWithObject:WCThreadPboardType] owner:NULL];
 	[pasteboard setPropertyList:threads forType:WCThreadPboardType];
 	

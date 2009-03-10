@@ -68,6 +68,7 @@
 
 @interface WCBoardThreadFilter : WIObject {
 	NSString							*_name;
+	NSString							*_board;
 	NSString							*_text;
 	NSString							*_subject;
 	NSString							*_nick;
@@ -78,6 +79,8 @@
 
 - (void)setName:(NSString *)name;
 - (NSString *)name;
+- (void)setBoard:(NSString *)board;
+- (NSString *)board;
 - (void)setText:(NSString *)text;
 - (NSString *)text;
 - (void)setSubject:(NSString *)subject;

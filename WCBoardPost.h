@@ -46,6 +46,7 @@
 + (WCBoardPost *)postWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection;
 - (id)initWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection;
 
+- (void)setBoard:(NSString *)board;
 - (NSString *)board;
 - (NSString *)threadID;
 - (NSString *)postID;
