@@ -187,6 +187,9 @@
 
 		if([nickString length] > 0 && [[post nick] containsSubstring:nickString options:NSCaseInsensitiveSearch])
 			return YES;
+		
+		if([filter unread] && [post isUnread])
+			return YES;
 	}
 	
 	return NO;
