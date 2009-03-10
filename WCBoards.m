@@ -560,12 +560,12 @@
 	else
 		[string replaceOccurrencesOfString:@"<? quotedisabled ?>" withString:@"disabled=\"disabled\""];
 	
-	if([account boardEditAllPosts] || ([account boardEditOwnPosts] && [post isOwnPost]))
+	if(([account boardEditAllPosts] || ([account boardEditOwnPosts] && [post isOwnPost])) && writable)
 		[string replaceOccurrencesOfString:@"<? editdisabled ?>" withString:@""];
 	else
 		[string replaceOccurrencesOfString:@"<? editdisabled ?>" withString:@"disabled=\"disabled\""];
 
-	if([account boardDeletePosts])
+	if([account boardDeletePosts] && writable)
 		[string replaceOccurrencesOfString:@"<? deletedisabled ?>" withString:@""];
 	else
 		[string replaceOccurrencesOfString:@"<? deletedisabled ?>" withString:@"disabled=\"disabled\""];
