@@ -617,13 +617,17 @@
 
 - (void)_insertBBCodeWithStartTag:(NSString *)startTag endTag:(NSString *)endTag {
 	NSTextStorage	*textStorage;
+	NSString		*string;
 	NSRange			range;
 	
 	range			= [_postTextView selectedRange];
 	textStorage		= [_postTextView textStorage];
+	string			= [NSSWF:@"%@%@%@", startTag, [[textStorage string] substringWithRange:range], endTag];
 
-	[textStorage replaceCharactersInRange:range withString:
-		[NSSWF:@"%@%@%@", startTag, [[textStorage string] substringWithRange:range], endTag]];
+	if([_postTextView shouldChangeTextInRange:range replacementString:string]) {
+		[textStorage replaceCharactersInRange:range withString:string];
+		[_postTextView didChangeText];
+	}
 	
 	range.location += [startTag length];
 
