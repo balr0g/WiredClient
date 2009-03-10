@@ -1280,6 +1280,7 @@
 
 - (IBAction)users:(id)sender {
 	[_allFilterButton setState:NSOffState];
+	[_groupsFilterButton setState:NSOffState];
 	
 	[self _reloadFilter];
 	
@@ -1289,6 +1290,7 @@
 
 
 - (IBAction)groups:(id)sender {
+	[_usersFilterButton setState:NSOffState];
 	[_allFilterButton setState:NSOffState];
 
 	[self _reloadFilter];

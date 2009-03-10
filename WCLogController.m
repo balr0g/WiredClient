@@ -229,6 +229,8 @@
 
 - (IBAction)info:(id)sender {
 	[_allFilterButton setState:NSOffState];
+	[_warningsFilterButton setState:NSOffState];
+	[_errorsFilterButton setState:NSOffState];
 
 	[self _reloadFilter];
 }
@@ -237,6 +239,8 @@
 
 - (IBAction)warnings:(id)sender {
 	[_allFilterButton setState:NSOffState];
+	[_infoFilterButton setState:NSOffState];
+	[_errorsFilterButton setState:NSOffState];
 	
 	[self _reloadFilter];
 }
@@ -245,6 +249,8 @@
 
 - (IBAction)errors:(id)sender {
 	[_allFilterButton setState:NSOffState];
+	[_infoFilterButton setState:NSOffState];
+	[_warningsFilterButton setState:NSOffState];
 
 	[self _reloadFilter];
 }

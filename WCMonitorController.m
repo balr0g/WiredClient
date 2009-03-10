@@ -240,6 +240,7 @@
 
 - (IBAction)downloading:(id)sender {
 	[_allFilterButton setState:NSOffState];
+	[_uploadingFilterButton setState:NSOffState];
 	
 	[self _reloadFilter];
 	
@@ -250,6 +251,7 @@
 
 - (IBAction)uploading:(id)sender {
 	[_allFilterButton setState:NSOffState];
+	[_downloadingFilterButton setState:NSOffState];
 
 	[self _reloadFilter];
 	
