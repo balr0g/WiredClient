@@ -279,6 +279,7 @@ typedef enum _WCChatActivity				WCChatActivity;
 		button = [[[NSButton alloc] initWithFrame:NSMakeRect(0.0, 0.0, 200.0, 32.0)] autorelease];
 		[button setBordered:NO];
 		[button setImage:[NSImage imageNamed:@"Banner"]];
+		[button setButtonType:NSMomentaryChangeButton];
 		
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
 												   name:NSLS(@"Banner", @"Banner toolbar item")
