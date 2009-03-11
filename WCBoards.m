@@ -516,10 +516,10 @@
 		}
 	}
 	
-	[text replaceOccurrencesOfRegex:@"\\[b\\](.+?)\\[/b\\]" withString:@"<b>$1</b>" options:RKLCaseless];
-	[text replaceOccurrencesOfRegex:@"\\[u\\](.+?)\\[/u\\]" withString:@"<u>$1</u>" options:RKLCaseless];
-	[text replaceOccurrencesOfRegex:@"\\[i\\](.+?)\\[/i\\]" withString:@"<i>$1</i>" options:RKLCaseless];
-	[text replaceOccurrencesOfRegex:@"\\[color=(.+?)\\](.+?)\\[/color\\]" withString:@"<span style=\"color: $1\">$2</span>" options:RKLCaseless];
+	[text replaceOccurrencesOfRegex:@"\\[b\\](.+?)\\[/b\\]" withString:@"<b>$1</b>" options:RKLCaseless | RKLDotAll];
+	[text replaceOccurrencesOfRegex:@"\\[u\\](.+?)\\[/u\\]" withString:@"<u>$1</u>" options:RKLCaseless | RKLDotAll];
+	[text replaceOccurrencesOfRegex:@"\\[i\\](.+?)\\[/i\\]" withString:@"<i>$1</i>" options:RKLCaseless | RKLDotAll];
+	[text replaceOccurrencesOfRegex:@"\\[color=(.+?)\\](.+?)\\[/color\\]" withString:@"<span style=\"color: $1\">$2</span>" options:RKLCaseless | RKLDotAll];
 	
 	[text replaceOccurrencesOfRegex:@"\\[url=(.+?)\\](.+?)\\[/url\\]" withString:@"<a href=\"$1\">$2</a>" options:RKLCaseless];
 	[text replaceOccurrencesOfRegex:@"\\[url](.+?)\\[/url\\]" withString:@"<a href=\"$1\">$1</a>" options:RKLCaseless];
