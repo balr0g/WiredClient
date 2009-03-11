@@ -459,8 +459,6 @@
 	
 	[html appendString:_footerTemplate];
 	
-	NSLog(@"loading HTML of length %u in %@ %@", [html length], _threadWebView, [_threadWebView mainFrame]);
-	
 	[[_threadWebView mainFrame] loadHTMLString:html baseURL:[NSURL fileURLWithPath:[[self bundle] resourcePath]]];
 	
 	if(changedUnread) {
