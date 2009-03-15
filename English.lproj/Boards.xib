@@ -8,9 +8,9 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="607"/>
 			<integer value="189"/>
 			<integer value="229"/>
+			<integer value="607"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -345,7 +345,7 @@
 												<reference key="NSControlView" ref="738751736"/>
 												<int key="NSButtonFlags">-2046803713</int>
 												<int key="NSButtonFlags2">6</int>
-												<object class="NSCustomResource" key="NSNormalImage">
+												<object class="NSCustomResource" key="NSNormalImage" id="987045940">
 													<string key="NSClassName">NSImage</string>
 													<string key="NSResourceName">SourceAction</string>
 												</object>
@@ -359,10 +359,7 @@
 													<string key="NSKeyEquiv"/>
 													<int key="NSMnemonicLoc">2147483647</int>
 													<int key="NSState">1</int>
-													<object class="NSCustomResource" key="NSImage">
-														<string key="NSClassName">NSImage</string>
-														<string key="NSResourceName">SourceAction</string>
-													</object>
+													<reference key="NSImage" ref="987045940"/>
 													<object class="NSCustomResource" key="NSOnImage" id="651194922">
 														<string key="NSClassName">NSImage</string>
 														<string key="NSResourceName">NSMenuCheckmark</string>
@@ -838,13 +835,21 @@
 																<bool key="EncodedWithXMLCoder">YES</bool>
 																<string>WebKitDefaultFixedFontSize</string>
 																<string>WebKitDefaultFontSize</string>
+																<string>WebKitJavaEnabled</string>
+																<string>WebKitJavaScriptCanOpenWindowsAutomatically</string>
+																<string>WebKitJavaScriptEnabled</string>
 																<string>WebKitMinimumFontSize</string>
+																<string>WebKitPluginsEnabled</string>
 															</object>
 															<object class="NSMutableArray" key="dict.values">
 																<bool key="EncodedWithXMLCoder">YES</bool>
 																<integer value="12" id="411579729"/>
 																<reference ref="411579729"/>
+																<boolean value="NO" id="6"/>
+																<reference ref="6"/>
+																<reference ref="6"/>
 																<integer value="1" id="9"/>
+																<reference ref="6"/>
 															</object>
 														</object>
 													</object>
@@ -5700,7 +5705,7 @@
 					<real value="0.000000e+00"/>
 					<string>{{217, 80}, {425, 289}}</string>
 					<string>{{217, 80}, {425, 289}}</string>
-					<boolean value="NO" id="6"/>
+					<reference ref="6"/>
 					<reference ref="6"/>
 					<reference ref="6"/>
 					<string>{425, 136}</string>

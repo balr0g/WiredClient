@@ -207,9 +207,16 @@ static PSMTabDragAssistant *sharedDragAssistant = nil;
 
 - (void)performDragOperation
 {
+	unsigned int	index;
+	
     // move cell
-    [[[self destinationTabBar] cells] replaceObjectAtIndex:[[[self destinationTabBar] cells] indexOfObject:[self targetCell]] withObject:[self draggedCell]];
-    [[self draggedCell] setControlView:[self destinationTabBar]];
+	// Axel Andersson: test against NSNotFound to avoid exception
+	index = [[[self destinationTabBar] cells] indexOfObject:[self targetCell]];
+	
+	if(index != NSNotFound)
+		[[[self destinationTabBar] cells] replaceObjectAtIndex:index withObject:[self draggedCell]];
+    
+	[[self draggedCell] setControlView:[self destinationTabBar]];
     // move actual NSTabViewItem
     if([self sourceTabBar] != [self destinationTabBar]){
         [[[self sourceTabBar] tabView] removeTabViewItem:[[self draggedCell] representedObject]];
