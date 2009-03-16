@@ -56,7 +56,7 @@
 	IBOutlet WebView								*_threadWebView;
 	
 	IBOutlet NSPanel								*_addBoardPanel;
-	IBOutlet NSPopUpButton							*_locationPopUpButton;
+	IBOutlet NSPopUpButton							*_boardLocationPopUpButton;
 	IBOutlet NSTextField							*_nameTextField;
 	IBOutlet NSPopUpButton							*_addOwnerPopUpButton;
 	IBOutlet NSPopUpButton							*_addOwnerPermissionsPopUpButton;
@@ -72,6 +72,7 @@
 	IBOutlet NSPopUpButton							*_setEveryonePermissionsPopUpButton;
 
 	IBOutlet NSPanel								*_postPanel;
+	IBOutlet NSPopUpButton							*_postLocationPopUpButton;
 	IBOutlet NSTextField							*_subjectTextField;
 	IBOutlet NSTextView								*_postTextView;
 	IBOutlet NSButton								*_postButton;

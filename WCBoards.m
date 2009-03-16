@@ -640,16 +640,18 @@
 	NSInteger		index;
 	
 	if(!board)
-		board = [_locationPopUpButton representedObjectOfSelectedItem];
+		board = [_boardLocationPopUpButton representedObjectOfSelectedItem];
 	
-	[_locationPopUpButton removeAllItems];
+	[_boardLocationPopUpButton removeAllItems];
 	[_boardFilterComboBox removeAllItems];
+	[_postLocationPopUpButton removeAllItems];
 	
 	[self _reloadBoardListsWithChildrenOfBoard:_boards level:0];
 	
-	index = board ? [_locationPopUpButton indexOfItemWithRepresentedObject:board] : 0;
+	index = board ? [_boardLocationPopUpButton indexOfItemWithRepresentedObject:board] : 0;
 	
-	[_locationPopUpButton selectItemAtIndex:index < 0 ? 0 : index];
+	[_boardLocationPopUpButton selectItemAtIndex:index < 0 ? 0 : index];
+	[_postLocationPopUpButton selectItemAtIndex:index < 0 ? 0 : index];
 }
 
 
@@ -670,7 +672,8 @@
 			if(![childBoard isRootBoard])
 				[item setImage:[NSImage imageNamed:@"Board"]];
 			
-			[_locationPopUpButton addItem:item];
+			[_boardLocationPopUpButton addItem:item];
+			[_postLocationPopUpButton addItem:[[item copy] autorelease]];
 			
 			if(![childBoard isRootBoard])
 				[_boardFilterComboBox addItemWithObjectValue:[childBoard name]];
@@ -689,7 +692,7 @@
 	NSMenuItem		*item;
 	WCBoard			*board;
 	
-	board = [_locationPopUpButton representedObjectOfSelectedItem];
+	board = [_boardLocationPopUpButton representedObjectOfSelectedItem];
 	
 	selectedOwner = [_addOwnerPopUpButton titleOfSelectedItem];
 	
@@ -1791,7 +1794,7 @@
 	connected	= [[board connection] isConnected];
 	
 	if(selector == @selector(addThread:)) {
-		return (board != NULL && [board isWritableByAccount:account] && connected && [account boardAddThreads]);
+		return (board != NULL && connected && [board isWritableByAccount:account] && [account boardAddThreads]);
 	}
 	else if(selector == @selector(deleteThread:)) {
 		return (board != NULL && connected && [board isWritableByAccount:account] && [threads count] > 0 && [account boardDeleteThreads]);
@@ -1831,7 +1834,7 @@
 	connected	= [[board connection] isConnected];
 	
 	if(selector == @selector(addBoard:))
-		return ([_locationPopUpButton numberOfItems] > 0);
+		return ([_boardLocationPopUpButton numberOfItems] > 0);
 	else if(selector == @selector(renameBoard:))
 		return (board != NULL && ![board isRootBoard] && connected && [account boardRenameBoards]);
 	else if(selector == @selector(changePermissions:))
@@ -1966,6 +1969,9 @@
 	if(![subject hasPrefix:@"Re: "])
 		subject = [@"Re: " stringByAppendingString:subject];
 	
+	[self _reloadBoardListsSelectingBoard:board];
+	
+	[_postLocationPopUpButton setEnabled:NO];
 	[_subjectTextField setStringValue:subject];
 	[_postTextView setString:@""];
 	[_postButton setTitle:NSLS(@"Reply", @"Reply post button title")];
@@ -2010,6 +2016,9 @@
 	if([text length] == 0)
 		text = [post text];
 	
+	[self _reloadBoardListsSelectingBoard:board];
+
+	[_postLocationPopUpButton setEnabled:NO];
 	[_subjectTextField setStringValue:subject];
 	[_postTextView setString:[NSSWF:@"[quote=%@]%@[/quote]\n\n", [post nick], text]];
 	[_postButton setTitle:NSLS(@"Reply", @"Reply post button title")];
@@ -2178,7 +2187,7 @@
 	NSUInteger		ownerPermissions, groupPermissions, everyonePermissions;
 	
 	if(returnCode == NSOKButton) {
-		board = [_locationPopUpButton representedObjectOfSelectedItem];
+		board = [_boardLocationPopUpButton representedObjectOfSelectedItem];
 		
 		if(board && [[board connection] isConnected] && [[_nameTextField stringValue] length] > 0) {
 			message = [WIP7Message messageWithName:@"wired.board.add_board" spec:WCP7Spec];
@@ -2450,6 +2459,9 @@
 	if(!board)
 		return;
 	
+	[self _reloadBoardListsSelectingBoard:board];
+
+	[_postLocationPopUpButton setEnabled:YES];
 	[_subjectTextField setStringValue:@""];
 	[_postTextView setString:@""];
 	[_postButton setTitle:NSLS(@"Create", @"New thread button title")];
@@ -2460,7 +2472,7 @@
 	   modalForWindow:[self window]
 		modalDelegate:self
 	   didEndSelector:@selector(addThreadPanelDidEnd:returnCode:contextInfo:)
-		  contextInfo:[board retain]];
+		  contextInfo:NULL];
 }
 
 
@@ -2468,10 +2480,11 @@
 - (void)addThreadPanelDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
 	NSString		*string;
 	WIP7Message		*message;
-	WCBoard			*board = contextInfo;
+	WCBoard			*board;
 	
 	if(returnCode == NSOKButton) {
-		string = [WCChatController stringByDecomposingSmileyAttributesInAttributedString:[_postTextView textStorage]];
+		board		= [_postLocationPopUpButton representedObjectOfSelectedItem];
+		string		= [WCChatController stringByDecomposingSmileyAttributesInAttributedString:[_postTextView textStorage]];
 
 		message = [WIP7Message messageWithName:@"wired.board.add_thread" spec:WCP7Spec];
 		[message setString:[board path] forName:@"wired.board.board"];
@@ -2481,7 +2494,6 @@
 	}
 
 	[_postPanel close];
-	[board release];
 }
 
 
