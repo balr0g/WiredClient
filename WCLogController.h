@@ -50,11 +50,13 @@ typedef enum _WCLogLevel				WCLogLevel;
 	IBOutlet NSTableColumn				*_messageTableColumn;
 	
 	NSMutableArray						*_allEntries;
+	NSMutableArray						*_listedEntries;
 	NSMutableArray						*_shownEntries;
 	WIDateFormatter						*_dateFormatter;
 	
 	NSString							*_messageFilter;
 	
+	BOOL								_requested;
 	BOOL								_subscribed;
 }
 

@@ -129,8 +129,9 @@
 - (id)init {
 	self = [super init];
 	
-	_allEntries = [[NSMutableArray alloc] init];
-	_shownEntries = [[NSMutableArray alloc] init];
+	_allEntries			= [[NSMutableArray alloc] init];
+	_listedEntries		= [[NSMutableArray alloc] init];
+	_shownEntries		= [[NSMutableArray alloc] init];
 	
 	_dateFormatter = [[WIDateFormatter alloc] init];
 	[_dateFormatter setTimeStyle:NSDateFormatterShortStyle];
@@ -143,6 +144,7 @@
 
 - (void)dealloc {
 	[_allEntries release];
+	[_listedEntries release];
 	[_shownEntries release];
 	[_dateFormatter release];
 	[_messageFilter release];
@@ -161,7 +163,14 @@
 
 
 - (void)linkConnectionLoggedIn:(NSNotification *)notification {
-	_subscribed = NO;
+	_requested		= NO;
+	_subscribed		= NO;
+
+	[_allEntries removeAllObjects];
+	[_listedEntries removeAllObjects];
+	[_shownEntries removeAllObjects];
+	
+	[_logTableView reloadData];
 }
 
 
@@ -170,6 +179,13 @@
 	WIP7Message		*message;
 	
 	if([[[_administration connection] account] logViewLog]) {
+		if(!_requested) {
+			message = [WIP7Message messageWithName:@"wired.log.get_log" spec:WCP7Spec];
+			[[_administration connection] sendMessage:message fromObserver:self selector:@selector(wiredLogGetLogReply:)];
+
+			_requested = YES;
+		}
+		
 		if(!_subscribed) {
 			message = [WIP7Message messageWithName:@"wired.log.subscribe" spec:WCP7Spec];
 			[[_administration connection] sendMessage:message fromObserver:self selector:@selector(wiredLogSubscribeReply:)];
@@ -177,7 +193,46 @@
 			_subscribed = YES;
 		}
 	} else {
-		_subscribed = NO;
+		_requested		= NO;
+		_subscribed		= NO;
+	}
+}
+
+
+
+- (void)wiredLogGetLogReply:(WIP7Message *)message {
+	WCLogEntry		*entry;
+	NSUInteger		i, count;
+	
+	if([[message name] isEqualToString:@"wired.log.log_list"]) {
+		entry = [[WCLogEntry alloc] init];
+
+		[message getEnum:&entry->_level forName:@"wired.log.level"];
+		entry->_message = [[message stringForName:@"wired.log.message"] retain];
+		entry->_time = [[_dateFormatter stringFromDate:[message dateForName:@"wired.log.time"]] retain];
+		
+		[_listedEntries addObject:entry];
+		[entry release];
+	}
+	else if([[message name] isEqualToString:@"wired.log.log_list.done"]) {
+		[_allEntries addObjectsFromArray:_listedEntries];
+		
+		count = [_listedEntries count];
+		
+		for(i = 0; i < count; i++) {
+			entry = [_listedEntries objectAtIndex:i];
+			
+			if([self _filterIncludesEntry:entry])
+				[_shownEntries addObject:entry];
+		}
+		
+		[_listedEntries removeAllObjects];
+		
+		[_logTableView reloadData];
+		[_logTableView scrollRowToVisible:[_shownEntries count] - 1];
+	}
+	else if([[message name] isEqualToString:@"wired.error"]) {
+		[_administration showError:[WCError errorWithWiredMessage:message]];
 	}
 }
 
@@ -198,10 +253,13 @@
 		
 		if([self _filterIncludesEntry:entry]) {
 			[_shownEntries addObject:entry];
+
 			[_logTableView reloadData];
+			[_logTableView scrollRowToVisible:[_shownEntries count] - 1];
 		}
-	} else {
-		// error
+	}
+	else if([[message name] isEqualToString:@"wired.error"]) {
+		[_administration showError:[WCError errorWithWiredMessage:message]];
 	}
 }
 
