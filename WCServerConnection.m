@@ -256,7 +256,8 @@
 			reason = [reason substringToIndex:[reason length] - 1];
 		
 		if([self isReconnecting]) {
-			[_chatController printEvent:reason];
+			if(reason)
+				[_chatController printEvent:reason];
 		} else {
 			if([reason length] > 0) {
 				[_chatController printEvent:[NSSWF:NSLS(@"Disconnected from %@: %@", @"Disconnected chat message (server, error)"),
