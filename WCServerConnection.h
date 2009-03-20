@@ -102,6 +102,8 @@
 - (WCConsole *)console;
 - (WCServerInfo *)serverInfo;
 
+- (void)log:(NSString *)format, ...;
+
 - (void)addConnectionController:(WCConnectionController *)connectionController;
 - (void)removeConnectionController:(WCConnectionController *)connectionController;
 

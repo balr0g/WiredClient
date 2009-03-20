@@ -156,4 +156,12 @@
 	[self _log:[notification object] color:[NSColor redColor]];
 }
 
+
+
+#pragma mark -
+
+- (void)log:(NSString *)string {
+	[self _log:string color:[NSColor redColor]];
+}
+
 @end

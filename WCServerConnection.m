@@ -543,6 +543,23 @@
 
 #pragma mark -
 
+- (void)log:(NSString *)format, ... {
+	NSString		*string;
+	va_list			ap;
+	
+	va_start(ap, format);
+	string = [[NSString alloc] initWithFormat:format arguments:ap];
+	va_end(ap);
+	
+	[_console log:string];
+	
+	[string release];
+}
+
+
+
+#pragma mark -
+
 - (void)addConnectionController:(WCConnectionController *)connectionController {
 	[_connectionControllers addObject:connectionController];
 }

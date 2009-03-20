@@ -701,6 +701,8 @@
 	
 	array = [[[[board connection] administration] accountsController] userNames];
 	
+	[[board connection] log:@"usernames = %@", array];
+	
 	if([array count] > 0) {
 		[_addOwnerPopUpButton addItem:[NSMenuItem separatorItem]];
 		[_addOwnerPopUpButton addItemsWithTitles:array];
@@ -711,12 +713,16 @@
 			[_addOwnerPopUpButton selectItemWithTitle:[[[board connection] URL] user]];
 	}
 	
+	[[board connection] log:@"add owner items = %@", [_addOwnerPopUpButton itemArray]];
+	
 	[_setOwnerPopUpButton removeAllItems];
 	
 	enumerator = [[_addOwnerPopUpButton itemArray] objectEnumerator];
 	
 	while((item = [enumerator nextObject]))
 		[_setOwnerPopUpButton addItem:[[item copy] autorelease]];
+
+	[[board connection] log:@"set owner items = %@", [_setOwnerPopUpButton itemArray]];
 
 	[_setOwnerPopUpButton selectItemAtIndex:[_addOwnerPopUpButton indexOfSelectedItem]];
 	
