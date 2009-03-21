@@ -691,17 +691,15 @@
 	NSString		*selectedOwner, *selectedGroup;
 	NSMenuItem		*item;
 	WCBoard			*board;
-	
+
 	board = [_boardLocationPopUpButton representedObjectOfSelectedItem];
-	
+
 	selectedOwner = [_addOwnerPopUpButton titleOfSelectedItem];
 	
 	[_addOwnerPopUpButton removeAllItems];
 	[_addOwnerPopUpButton addItem:[NSMenuItem itemWithTitle:NSLS(@"None", @"Create board owner popup title") tag:1]];
 	
 	array = [[[[board connection] administration] accountsController] userNames];
-	
-	[[board connection] log:@"usernames = %@", array];
 	
 	if([array count] > 0) {
 		[_addOwnerPopUpButton addItem:[NSMenuItem separatorItem]];
@@ -713,16 +711,12 @@
 			[_addOwnerPopUpButton selectItemWithTitle:[[[board connection] URL] user]];
 	}
 	
-	[[board connection] log:@"add owner items = %@", [_addOwnerPopUpButton itemArray]];
-	
 	[_setOwnerPopUpButton removeAllItems];
 	
 	enumerator = [[_addOwnerPopUpButton itemArray] objectEnumerator];
 	
 	while((item = [enumerator nextObject]))
 		[_setOwnerPopUpButton addItem:[[item copy] autorelease]];
-
-	[[board connection] log:@"set owner items = %@", [_setOwnerPopUpButton itemArray]];
 
 	[_setOwnerPopUpButton selectItemAtIndex:[_addOwnerPopUpButton indexOfSelectedItem]];
 	
@@ -2392,6 +2386,7 @@
 - (IBAction)changePermissions:(id)sender {
 	WCBoard		*board;
 	
+	[self _reloadBoardListsSelectingBoard:[self _selectedBoard]];
 	[self _updatePermissions];
 	
 	board = [self _selectedBoard];
