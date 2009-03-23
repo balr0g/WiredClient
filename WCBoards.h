@@ -131,6 +131,7 @@
 - (IBAction)italic:(id)sender;
 - (IBAction)underline:(id)sender;
 - (IBAction)color:(id)sender;
+- (IBAction)center:(id)sender;
 - (IBAction)quote:(id)sender;
 - (IBAction)code:(id)sender;
 - (IBAction)url:(id)sender;

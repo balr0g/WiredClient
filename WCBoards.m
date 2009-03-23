@@ -502,6 +502,11 @@
 								  options:RKLCaseless | RKLDotAll] > 0)
 		;
 	
+	while([text replaceOccurrencesOfRegex:@"<pre>(.*?)<br />\n(.*?)</pre>"
+							   withString:@"<pre>$1$2</pre>"
+								  options:RKLCaseless | RKLDotAll] > 0)
+		;
+	
 	if([theme boolForKey:WCThemesShowSmileys]) {
 		regexs		= [WCChatController smileyRegexs];
 		enumerator	= [regexs keyEnumerator];
@@ -520,6 +525,7 @@
 	[text replaceOccurrencesOfRegex:@"\\[u\\](.+?)\\[/u\\]" withString:@"<u>$1</u>" options:RKLCaseless | RKLDotAll];
 	[text replaceOccurrencesOfRegex:@"\\[i\\](.+?)\\[/i\\]" withString:@"<i>$1</i>" options:RKLCaseless | RKLDotAll];
 	[text replaceOccurrencesOfRegex:@"\\[color=(.+?)\\](.+?)\\[/color\\]" withString:@"<span style=\"color: $1\">$2</span>" options:RKLCaseless | RKLDotAll];
+	[text replaceOccurrencesOfRegex:@"\\[center\\](.+?)\\[/center\\]" withString:@"<div class=\"center\">$1</div>" options:RKLCaseless | RKLDotAll];
 	
 	[text replaceOccurrencesOfRegex:@"\\[url=(.+?)\\](.+?)\\[/url\\]" withString:@"<a href=\"$1\">$2</a>" options:RKLCaseless];
 	[text replaceOccurrencesOfRegex:@"\\[url](.+?)\\[/url\\]" withString:@"<a href=\"$1\">$1</a>" options:RKLCaseless];
@@ -2070,6 +2076,9 @@
 	if(!post)
 		return;
 	
+	[self _reloadBoardListsSelectingBoard:board];
+
+	[_postLocationPopUpButton setEnabled:NO];
 	[_subjectTextField setStringValue:[post subject]];
 	[_postTextView setString:[post text]];
 	[_postButton setTitle:NSLS(@"Edit", @"Edit post button title")];
@@ -2689,6 +2698,12 @@
 	color	= [NSSWF:@"#%02X%02X%02X", (tag & 0xFF0000) >> 16, (tag & 0x00FF00) >> 8, (tag & 0x0000FF)];
 	
 	[self _insertBBCodeWithStartTag:[NSSWF:@"[COLOR=%@]", color] endTag:@"[/COLOR]"];
+}
+
+
+
+- (IBAction)center:(id)sender {
+	[self _insertBBCodeWithStartTag:@"[CENTER]" endTag:@"[/CENTER]"];
 }
 
 
