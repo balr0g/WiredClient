@@ -60,6 +60,7 @@ typedef enum _WCChatActivity				WCChatActivity;
 - (BOOL)_beginConfirmDisconnectSheetModalForWindow:(NSWindow *)window connection:(WCServerConnection *)connection modalDelegate:(id)delegate didEndSelector:(SEL)selector contextInfo:(void *)contextInfo;
 
 - (void)_closeSelectedTabViewItem;
+- (void)_removeTabViewItem:(NSTabViewItem *)tabViewItem;
 
 @end
 
@@ -69,12 +70,16 @@ typedef enum _WCChatActivity				WCChatActivity;
 - (void)_updateToolbarForConnection:(WCServerConnection *)connection {
 	NSToolbarItem		*item;
 	
+	item = [[[self window] toolbar] itemWithIdentifier:@"Banner"];
+	
+	[item setEnabled:(connection != NULL)];
+
 	if(connection == [[self selectedChatController] connection]) {
 		item = [[[self window] toolbar] itemWithIdentifier:@"Banner"];
 
 		[self _updateBannerToolbarItem:item forConnection:connection];
 	}
-
+	
 	item = [[[self window] toolbar] itemWithIdentifier:@"Messages"];
 	
 	[item setImage:[[NSImage imageNamed:@"Messages"] badgedImageWithInt:[[WCMessages messages] numberOfUnreadMessages]]];
@@ -138,12 +143,22 @@ typedef enum _WCChatActivity				WCChatActivity;
 
 - (void)_closeSelectedTabViewItem {
 	NSTabViewItem			*tabViewItem;
+	
+	tabViewItem = [_chatTabView selectedTabViewItem];
+	
+	[self _removeTabViewItem:tabViewItem];
+	
+	[_chatTabView removeTabViewItem:tabViewItem];
+}
+
+
+
+- (void)_removeTabViewItem:(NSTabViewItem *)tabViewItem {
 	NSString				*identifier;
 	WCPublicChatController	*chatController;
 	
-	tabViewItem			= [_chatTabView selectedTabViewItem];
-	identifier			= [tabViewItem identifier];
-	chatController		= [_chatControllers objectForKey:identifier];
+	identifier		= [tabViewItem identifier];
+	chatController	= [_chatControllers objectForKey:identifier];
 	
 	[chatController saveWindowProperties];
 	
@@ -151,8 +166,6 @@ typedef enum _WCChatActivity				WCChatActivity;
 	
 	[_chatControllers removeObjectForKey:identifier];
 	[_chatActivity removeObjectForKey:identifier];
-	
-	[_chatTabView removeTabViewItem:tabViewItem];
 	
 	if([_chatControllers count] == 0) {
 		[self _updateToolbarForConnection:NULL];
@@ -526,6 +539,12 @@ typedef enum _WCChatActivity				WCChatActivity;
 
 
 
+- (void)tabView:(NSTabView *)tabView willCloseTabViewItem:(NSTabViewItem *)tabViewItem {
+	[self _removeTabViewItem:tabViewItem];
+}
+
+
+
 #pragma mark -
 
 - (BOOL)validateMenuItem:(NSMenuItem *)item {
@@ -537,9 +556,7 @@ typedef enum _WCChatActivity				WCChatActivity;
 	connection		= [[self selectedChatController] connection];
 	selector		= [item action];
 	
-	if(selector == @selector(disconnect:))
-		return ([connection isConnected] && ![connection isDisconnecting]);
-	else if(selector == @selector(reconnect:))
+	if(selector == @selector(reconnect:))
 		return (connection != NULL && ![connection isConnected] && ![connection isManuallyReconnecting]);
 	else if(selector == @selector(files:))
 		return (connection != NULL && [connection isConnected] && [[connection account] fileListFiles]);
@@ -565,7 +582,9 @@ typedef enum _WCChatActivity				WCChatActivity;
 	connection		= [[self selectedChatController] connection];
 	selector		= [item action];
 	
-	if(selector == @selector(disconnect:))
+	if(selector == @selector(banner:))
+		return (connection != NULL);
+	else if(selector == @selector(disconnect:))
 		return (connection != NULL && [connection isConnected] && ![connection isDisconnecting]);
 	else if(selector == @selector(reconnect:))
 		return (connection != NULL && ![connection isConnected] && ![connection isManuallyReconnecting]);
