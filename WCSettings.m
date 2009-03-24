@@ -292,31 +292,33 @@
 
 @implementation WCSettings
 
-+ (void)loadWithIdentifier:(NSString *)identifier {
++ (void)setIdentifier:(NSString *)identifier {
 #ifndef WCConfigurationRelease
 	NSUserDefaults	*defaults;
 	NSDictionary	*persistentDomain;
 	
 	defaults = [NSUserDefaults standardUserDefaults];
-	persistentDomain = [defaults persistentDomainForName:@"com.zanka.WiredClientDebug"];
+	persistentDomain = [defaults persistentDomainForName:@"com.zanka.WiredClientDebugP7"];
 		
 	if(!persistentDomain) {
 		persistentDomain = [defaults persistentDomainForName:@"com.zanka.WiredClient"];
 		
 		if(persistentDomain)
-			[defaults setPersistentDomain:persistentDomain forName:@"com.zanka.WiredClientDebug"];
+			[defaults setPersistentDomain:persistentDomain forName:@"com.zanka.WiredClientDebugP7"];
 	}
 	
 	[defaults synchronize];
 #endif
 	
-	[super loadWithIdentifier:identifier];
+	[super setIdentifier:identifier];
 	
 	[self _upgrade];
 }
 
 
-	
+
+#pragma mark -
+
 + (NSDictionary *)defaults {
 	static NSString		*themesIdentifier;
 	
