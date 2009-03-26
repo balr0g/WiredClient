@@ -31,6 +31,7 @@
 #import "WCApplicationController.h"
 #import "WCChatController.h"
 #import "WCChatWindow.h"
+#import "WCErrorQueue.h"
 #import "WCMessages.h"
 #import "WCPreferences.h"
 #import "WCStats.h"
@@ -932,6 +933,8 @@ typedef enum _WCChatFormat					WCChatFormat;
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[_connection removeObserver:self];
 	
+	[_errorQueue release];
+	
 	if(_loadedNib) {
 		[_userListMenu release];
 		[_setTopicPanel release];
@@ -1175,6 +1178,21 @@ typedef enum _WCChatFormat					WCChatFormat;
 		topic = [WCTopic topicWithMessage:message];
 		
 		[self _setTopic:topic];
+	}
+}
+
+
+
+- (void)wiredUserGetInfoReply:(WIP7Message *)message {
+	WCUser		*user;
+	
+	if([[message name] isEqualToString:@"wired.user.info"]) {
+		user = [WCUser userWithMessage:message connection:[self connection]];
+	
+		[[[[self connection] administration] accountsController] editUserAccountWithName:[user login]];
+	}
+	else if([[message name] isEqualToString:@"wired.error"]) {
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 	}
 }
 
@@ -1694,7 +1712,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 	else if(selector == @selector(kick:))
 		return (([self chatID] != WCPublicChatID || [[[self connection] account] userKickUsers]) && connected);
 	else if(selector == @selector(editAccount:))
-		return ([[[self connection] account] accountEditUsers] && connected);
+		return ([[[self connection] account] userGetInfo] && [[[self connection] account] accountEditUsers] && connected);
 	
 	return YES;
 }
@@ -1742,6 +1760,13 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 - (NSView *)view {
 	return _userListSplitView;
+}
+
+
+
+- (void)awakeInWindow:(NSWindow *)window {
+	[_errorQueue release];
+	_errorQueue = [[WCErrorQueue alloc] initWithWindow:window];
 }
 
 
@@ -2058,11 +2083,14 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 
 - (IBAction)editAccount:(id)sender {
+	WIP7Message		*message;
 	WCUser			*user;
 	
 	user = [self selectedUser];
 	
-	[[[[self connection] administration] accountsController] editUserAccountWithName:[user login]];
+	message = [WIP7Message messageWithName:@"wired.user.get_info" spec:WCP7Spec];
+	[message setUInt32:[user userID] forName:@"wired.user.id"];
+	[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredUserGetInfoReply:)];
 }
 
 
@@ -2076,12 +2104,10 @@ typedef enum _WCChatFormat					WCChatFormat;
 	if([user isIgnored])
 		return;
 	
-	ignore = [NSDictionary dictionaryWithObjectsAndKeys:
-			  [user nick],	WCIgnoresNick,
-			  [user login],	WCIgnoresLogin,
-			  NULL];
+	ignore = [NSDictionary dictionaryWithObject:[user nick] forKey:WCIgnoresNick];
 	
 	[WCSettings addObject:ignore toArrayForKey:WCIgnores];
+	[[NSNotificationCenter defaultCenter] postNotificationName:WCIgnoresDidChangeNotification];
 	
 	[_userListTableView setNeedsDisplay:YES];
 }
@@ -2090,37 +2116,25 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 - (IBAction)unignore:(id)sender {
 	NSDictionary		*ignore;
+	NSMutableArray		*array;
 	NSEnumerator		*enumerator;
 	WCUser				*user;
-	BOOL				nick, login;
-	NSUInteger			i;
 	
 	user = [self selectedUser];
 	
 	if(![user isIgnored])
 		return;
 	
-	while([user isIgnored]) {
-		enumerator = [[WCSettings objectForKey:WCIgnores] objectEnumerator];
-		i = 0;
-		
-		while((ignore = [enumerator nextObject])) {
-			nick = login = NO;
-			
-			if([[ignore objectForKey:WCIgnoresNick] isEqualToString:[user nick]] ||
-			   [[ignore objectForKey:WCIgnoresNick] isEqualToString:@""])
-				nick = YES;
-			
-			if([[ignore objectForKey:WCIgnoresLogin] isEqualToString:[user login]] ||
-			   [[ignore objectForKey:WCIgnoresLogin] isEqualToString:@""])
-				login = YES;
-			
-			if(nick && login)
-				[WCSettings removeObjectAtIndex:i fromArrayForKey:WCIgnores];
-			
-			i++;
-		}
+	array		= [NSMutableArray array];
+	enumerator	= [[WCSettings objectForKey:WCIgnores] objectEnumerator];
+	
+	while((ignore = [enumerator nextObject])) {
+		if(![[ignore objectForKey:WCIgnoresNick] isEqualToString:[user nick]])
+			[array addObject:ignore];
 	}
+	
+	[WCSettings setObject:array forKey:WCIgnores];
+	[[NSNotificationCenter defaultCenter] postNotificationName:WCIgnoresDidChangeNotification];
 	
 	[_userListTableView setNeedsDisplay:YES];
 }

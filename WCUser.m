@@ -306,22 +306,11 @@
 - (BOOL)isIgnored {
 	NSEnumerator	*enumerator;
 	NSDictionary	*ignore;
-	BOOL			nick, login;
 
 	enumerator = [[WCSettings objectForKey:WCIgnores] objectEnumerator];
 
 	while((ignore = [enumerator nextObject])) {
-		nick = login = NO;
-
-		if([[ignore objectForKey:WCIgnoresNick] isEqualToString:[self nick]] ||
-		   [[ignore objectForKey:WCIgnoresNick] isEqualToString:@""])
-			nick = YES;
-
-		if([[ignore objectForKey:WCIgnoresLogin] isEqualToString:[self login]] ||
-		   [[ignore objectForKey:WCIgnoresLogin] isEqualToString:@""])
-			login = YES;
-
-		if(nick && login)
+		if([[ignore objectForKey:WCIgnoresNick] isEqualToString:[self nick]])
 			return YES;
 	}
 

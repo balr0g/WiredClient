@@ -65,16 +65,6 @@
 - (void)_reloadUserInfo {
 	WIP7Message		*message;
 	
-	if([[[self connection] account] accountReadAccounts]) {
-		if(![_user account] && !_requestedAccount) {
-			message = [WIP7Message messageWithName:@"wired.account.read_user" spec:WCP7Spec];
-			[message setString:[_user login] forName:@"wired.account.name"];
-			[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredAccountReadAccountReply:)];
-			
-			_requestedAccount = YES;
-		}
-	}
-	
 	message = [WIP7Message messageWithName:@"wired.user.get_info" spec:WCP7Spec];
 	[message setUInt32:[_user userID] forName:@"wired.user.id"];
 	[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredUserGetInfoReply:)];
@@ -227,6 +217,7 @@
 
 - (void)wiredUserGetInfoReply:(WIP7Message *)message {
 	WCUserAccount		*account;
+	WIP7Message			*reply;
 	
 	if([[message name] isEqualToString:@"wired.user.info"]) {
 		account = [[_user account] retain];
@@ -235,9 +226,23 @@
 		[_user setAccount:account];
 		[account release];
 		
-		[self _showUserInfo];
-		
-		[self performSelector:@selector(_reloadUserInfo) withObject:NULL afterDelay:1.0];
+		_waitingForAccount = NO;
+
+		if([[[self connection] account] accountReadAccounts]) {
+			if(![_user account] && !_requestedAccount) {
+				reply = [WIP7Message messageWithName:@"wired.account.read_user" spec:WCP7Spec];
+				[reply setString:[_user login] forName:@"wired.account.name"];
+				[[self connection] sendMessage:reply fromObserver:self selector:@selector(wiredAccountReadAccountReply:)];
+				
+				_waitingForAccount = YES;
+				_requestedAccount = YES;
+			}
+		}
+
+		if(!_waitingForAccount) {
+			[self _showUserInfo];
+			[self performSelector:@selector(_reloadUserInfo) withObject:NULL afterDelay:1.0];
+		}
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
 		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
@@ -247,8 +252,12 @@
 
 
 - (void)wiredAccountReadAccountReply:(WIP7Message *)message {
-	if([[message name] isEqualToString:@"wired.account.user"])
+	if([[message name] isEqualToString:@"wired.account.user"]) {
 		[_user setAccount:[WCUserAccount accountWithMessage:message]];
+		
+		[self _showUserInfo];
+		[self performSelector:@selector(_reloadUserInfo) withObject:NULL afterDelay:1.0];
+	}
 	else if([[message name] isEqualToString:@"wired.error"])
 		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 }

@@ -849,6 +849,7 @@ typedef enum _WCChatActivity				WCChatActivity;
 	[_chatTabView addTabViewItem:tabViewItem];
 	[_chatTabView selectTabViewItem:tabViewItem];
 	
+	[chatController awakeInWindow:[self window]];
 	[chatController loadWindowProperties];
 }
 

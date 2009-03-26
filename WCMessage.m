@@ -43,7 +43,6 @@
 
 	_direction		= direction;
 	_nick			= [[user nick] retain];
-	_login			= [[user login] retain];
 	_message		= [message retain];
 	_date			= [[NSDate date] retain];
 	_unread			= unread;
@@ -81,7 +80,6 @@
 	_direction		= [coder decodeIntForKey:@"WCMessageDirection"];
 	_unread			= ![coder decodeBoolForKey:@"WCMessageRead"];
 	_nick			= [[coder decodeObjectForKey:@"WCMessageUserNick"] retain];
-	_login			= [[coder decodeObjectForKey:@"WCMessageUserLogin"] retain];
 	_message		= [[coder decodeObjectForKey:@"WCMessageMessage"] retain];
 	_date			= [[coder decodeObjectForKey:@"WCMessageDate"] retain];
 	
@@ -96,7 +94,6 @@
 	[coder encodeInt:_direction forKey:@"WCMessageDirection"];
 	[coder encodeBool:!_unread forKey:@"WCMessageRead"];
 	[coder encodeObject:_nick forKey:@"WCMessageUserNick"];
-	[coder encodeObject:_login forKey:@"WCMessageUserLogin"];
 	[coder encodeObject:_message forKey:@"WCMessageMessage"];
 	[coder encodeObject:_date forKey:@"WCMessageDate"];
 	
@@ -152,12 +149,6 @@
 
 - (NSString *)nick {
 	return _user ? [_user nick] : _nick;
-}
-
-
-
-- (NSString *)login {
-	return _user ? [_user login] : _login;
 }
 
 

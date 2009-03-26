@@ -62,6 +62,7 @@
 	NSRect							_fieldFrame;
 	
 	BOOL							_requestedAccount;
+	BOOL							_waitingForAccount;
 }
 
 + (id)userInfoWithConnection:(WCServerConnection *)connection user:(WCUser *)user;

@@ -41,7 +41,6 @@ typedef enum _WCMessageDirection	WCMessageDirection;
 	WCMessageDirection				_direction;
 	BOOL							_unread;
 	NSString						*_nick;
-	NSString						*_login;
 	NSString						*_message;
 	NSDate							*_date;
 	
@@ -53,7 +52,6 @@ typedef enum _WCMessageDirection	WCMessageDirection;
 - (void)setUser:(WCUser *)user;
 - (WCUser *)user;
 - (NSString *)nick;
-- (NSString *)login;
 - (NSString *)message;
 - (NSDate *)date;
 

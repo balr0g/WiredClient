@@ -507,6 +507,11 @@
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
+		   selector:@selector(ignoresDidChange:)
+			   name:WCIgnoresDidChangeNotification];
+
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
 		   selector:@selector(trackerBookmarksDidChange:)
 			   name:WCTrackerBookmarksDidChangeNotification];
 
@@ -631,6 +636,12 @@
 
 - (void)bookmarksDidChange:(NSNotification *)notification {
 	[_bookmarksTableView reloadData];
+}
+
+
+
+- (void)ignoresDidChange:(NSNotification *)notification {
+	[_ignoresTableView reloadData];
 }
 
 
@@ -1327,7 +1338,6 @@
 	
 	ignore = [NSDictionary dictionaryWithObjectsAndKeys:
 		NSLS(@"Untitled", @"Untitled ignore"),		WCIgnoresNick,
-		@"",										WCIgnoresLogin,
 		NULL];
 	
 	[WCSettings addObject:ignore toArrayForKey:WCIgnores];
@@ -1639,8 +1649,6 @@
 		
 		if(column == _ignoresNickTableColumn)
 			return [dictionary objectForKey:WCIgnoresNick];
-		else if(column == _ignoresLoginTableColumn)
-			return [dictionary objectForKey:WCIgnoresLogin];
 	}
 	else if(tableView == _trackerBookmarksTableView) {
 		dictionary = [[WCSettings objectForKey:WCTrackerBookmarks] objectAtIndex:row];
@@ -1693,8 +1701,6 @@
 		
 		if(tableColumn == _ignoresNickTableColumn)
 			[dictionary setObject:object forKey:WCIgnoresNick];
-		else if(tableColumn == _ignoresLoginTableColumn)
-			[dictionary setObject:object forKey:WCIgnoresLogin];
 	
 		[WCSettings replaceObjectAtIndex:row withObject:dictionary inArrayForKey:WCIgnores];
 		

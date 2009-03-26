@@ -35,7 +35,6 @@
 	NSMutableArray				*_conversations;
 	NSMutableArray				*_messages;
 	NSString					*_nick;
-	NSString					*_login;
 	BOOL						_expandable;
 	BOOL						_unread;
 	
@@ -52,7 +51,6 @@
 - (void)setUser:(WCUser *)user;
 - (WCUser *)user;
 - (NSString *)nick;
-- (NSString *)login;
 
 - (NSUInteger)numberOfConversations;
 - (NSArray *)conversations;

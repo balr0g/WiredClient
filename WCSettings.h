@@ -97,7 +97,6 @@
 
 #define WCIgnores								@"WCIgnores"
 #define WCIgnoresNick								@"Nick"
-#define WCIgnoresLogin								@"Login"
 
 #define WCEvents								@"WCEvents"
 #define WCEventsEvent								@"WCEventsEvent"

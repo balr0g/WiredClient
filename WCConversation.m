@@ -46,7 +46,6 @@
 	
 	_name			= [name retain];
 	_nick			= [[user nick] retain];
-	_login			= [[user login] retain];
 	_expandable		= expandable;
 	_user			= user;
 	
@@ -138,7 +137,6 @@
 	_name			= [[coder decodeObjectForKey:@"WCConversationName"] retain];
 	_conversations	= [[coder decodeObjectForKey:@"WCConversationConversations"] retain];
 	_nick			= [[coder decodeObjectForKey:@"WCConversationNick"] retain];
-	_login			= [[coder decodeObjectForKey:@"WCConversationLogin"] retain];
 	_expandable		= [coder decodeBoolForKey:@"WCConversationExpandable"];
 	
 	_messages		= [[NSMutableArray alloc] init];
@@ -159,7 +157,6 @@
 	[coder encodeObject:_conversations forKey:@"WCConversationConversations"];
 	[coder encodeObject:_messages forKey:@"WCConversationMessages"];
 	[coder encodeObject:_nick forKey:@"WCConversationNick"];
-	[coder encodeObject:_login forKey:@"WCConversationLogin"];
 	[coder encodeBool:_expandable forKey:@"WCConversationExpandable"];
 	
 	[super encodeWithCoder:coder];
@@ -172,7 +169,6 @@
 	[_conversations release];
 	[_messages release];
 	[_nick release];
-	[_login release];
 	
 	[super dealloc];
 }
@@ -227,12 +223,6 @@
 
 - (NSString *)nick {
 	return _user ? [_user nick] : _nick;
-}
-
-
-
-- (NSString *)login {
-	return _user ? [_user login] : _login;
 }
 
 
@@ -397,9 +387,6 @@
 	if(!_nick)
 		_nick = [[message nick] retain];
 
-	if(!_login)
-		_login = [[message login] retain];
-	
 	[_messages addObject:message];
 }
 
@@ -520,7 +507,7 @@
 		message = [_messages objectAtIndex:i];
 		
 		if(![message user] && [message connection] == [user connection]) {
-			if([[user nick] isEqualToString:[message nick]] && [[user login] isEqualToString:[message login]])
+			if([[user nick] isEqualToString:[message nick]])
 				[message setUser:user];
 		}
 	}
@@ -531,7 +518,7 @@
 		conversation = [_conversations objectAtIndex:i];
 		
 		if(![conversation user] && [conversation connection] == [user connection]) {
-			if([[user nick] isEqualToString:[conversation nick]] && [[user login] isEqualToString:[conversation login]])
+			if([[user nick] isEqualToString:[conversation nick]])
 				[conversation setUser:user];
 		}
 		

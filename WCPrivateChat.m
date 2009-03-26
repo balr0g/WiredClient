@@ -88,6 +88,8 @@
 #pragma mark -
 
 - (void)windowDidLoad {
+	[_chatController awakeInWindow:[self window]];
+
 	[self setShouldCascadeWindows:YES];
 	[self setWindowFrameAutosaveName:@"PrivateChat"];
 

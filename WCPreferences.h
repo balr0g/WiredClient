@@ -31,6 +31,7 @@
 #define WCSelectedThemeDidChangeNotification		@"WCSelectedThemeDidChangeNotification"
 #define WCBookmarksDidChangeNotification			@"WCBookmarksDidChangeNotification"
 #define WCBookmarkDidChangeNotification				@"WCBookmarkDidChangeNotification"
+#define WCIgnoresDidChangeNotification				@"WCIgnoresDidChangeNotification"
 #define WCTrackerBookmarksDidChangeNotification		@"WCTrackerBookmarksDidChangeNotification"
 #define WCTrackerBookmarkDidChangeNotification		@"WCTrackerBookmarkDidChangeNotification"
 #define WCNickDidChangeNotification					@"WCNickDidChangeNotification"
@@ -120,7 +121,6 @@
 	IBOutlet NSButton								*_addIgnoreButton;
 	IBOutlet NSButton								*_deleteIgnoreButton;
 	IBOutlet NSTableColumn							*_ignoresNickTableColumn;
-	IBOutlet NSTableColumn							*_ignoresLoginTableColumn;
 	
 	IBOutlet NSSlider								*_eventsVolumeSlider;
 	IBOutlet NSPopUpButton							*_eventsEventPopUpButton;

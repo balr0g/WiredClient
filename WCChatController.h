@@ -40,7 +40,7 @@
 #define WCUserPboardType							@"WCUserPboardType"
 
 
-@class WCChatTextView, WCChatWindow, WCServerConnection, WCTopic, WCUser;
+@class WCChatTextView, WCChatWindow, WCServerConnection, WCErrorQueue, WCTopic, WCUser;
 
 @interface WCChatController : WIObject {
 	IBOutlet WISplitView							*_userListSplitView;
@@ -78,6 +78,8 @@
 	IBOutlet NSPopUpButton							*_saveChatPlainTextEncodingPopUpButton;
 	
 	WCServerConnection								*_connection;
+	
+	WCErrorQueue									*_errorQueue;
 
 	NSMutableArray									*_commandHistory;
 	NSUInteger										_currentCommand;
@@ -125,6 +127,7 @@
 - (WCServerConnection *)connection;
 
 - (NSView *)view;
+- (void)awakeInWindow:(NSWindow *)window;
 - (void)loadWindowProperties;
 - (void)saveWindowProperties;
 
