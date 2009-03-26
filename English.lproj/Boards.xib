@@ -8,9 +8,9 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="229"/>
 			<integer value="432"/>
-			<integer value="176"/>
+			<integer value="186"/>
+			<integer value="229"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -460,7 +460,7 @@
 												<reference key="NSControlView" ref="901166382"/>
 												<int key="NSButtonFlags">-2046803713</int>
 												<int key="NSButtonFlags2">6</int>
-												<object class="NSCustomResource" key="NSNormalImage" id="655016188">
+												<object class="NSCustomResource" key="NSNormalImage">
 													<string key="NSClassName">NSImage</string>
 													<string key="NSResourceName">SourceAddArrow</string>
 												</object>
@@ -474,7 +474,10 @@
 													<string key="NSKeyEquiv"/>
 													<int key="NSMnemonicLoc">2147483647</int>
 													<int key="NSState">1</int>
-													<reference key="NSImage" ref="655016188"/>
+													<object class="NSCustomResource" key="NSImage">
+														<string key="NSClassName">NSImage</string>
+														<string key="NSResourceName">SourceAddArrow</string>
+													</object>
 													<reference key="NSOnImage" ref="651194922"/>
 													<reference key="NSMixedImage" ref="558935212"/>
 													<string key="NSAction">_popUpItemAction:</string>
@@ -1948,7 +1951,7 @@
 													<string>WebURLsWithTitlesPboardType</string>
 												</object>
 											</object>
-											<string key="NSFrameSize">{503, 15}</string>
+											<string key="NSFrameSize">{503, 14}</string>
 											<reference key="NSSuperview" ref="409870172"/>
 											<object class="NSTextContainer" key="NSTextContainer" id="721951467">
 												<object class="NSLayoutManager" key="NSLayoutManager">
@@ -1970,7 +1973,7 @@
 												<int key="NSTCFlags">1</int>
 											</object>
 											<object class="NSTextViewSharedData" key="NSSharedData">
-												<int key="NSFlags">12263</int>
+												<int key="NSFlags">12259</int>
 												<reference key="NSBackgroundColor" ref="76857678"/>
 												<reference key="NSInsertionColor" ref="235375869"/>
 												<object class="NSDictionary" key="NSSelectedAttributes">
@@ -2016,7 +2019,7 @@
 												<nil key="NSDefaultParagraphStyle"/>
 											</object>
 											<int key="NSTVFlags">6</int>
-											<string key="NSMaxSize">{907, 1e+07}</string>
+											<string key="NSMaxSize">{1029, 1e+07}</string>
 											<string key="NSMinize">{178, 0}</string>
 											<nil key="NSDelegate"/>
 										</object>
