@@ -80,6 +80,7 @@
 	NSImage								*_groupImage;
 	
 	NSMutableArray						*_accounts;
+	NSMutableArray						*_selectAccounts;
 
 	BOOL								_requested;
 	BOOL								_creating;

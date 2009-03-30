@@ -165,6 +165,9 @@
 		[[_administration connection] sendMessage:[account createAccountMessage]
 									 fromObserver:self
 										 selector:@selector(wiredAccountChangeAccountReply:)];
+
+		[_selectAccounts removeAllObjects];
+		[_selectAccounts addObject:account];
 	} else {
 		if([_accounts count] == 1) {
 			account = [_accounts lastObject];
@@ -183,20 +186,14 @@
 												 selector:@selector(wiredAccountChangeAccountReply:)];
 			}
 		}
+
+		[_selectAccounts setArray:_accounts];
 	}
 	
-	if(clear && _editing) {
-		[_accounts removeAllObjects];
+	[_accounts removeAllObjects];
 		
-		_editing = NO;
-	}
-	
-	if(_creating) {
-		[_accounts removeAllObjects];
-		
-		_creating = NO;
-	}
-	
+	_creating = NO;
+	_editing = NO;
 	_touched = NO;
 	_requested = NO;
 
@@ -686,6 +683,7 @@
 	_userImage				= [[NSImage imageNamed:@"User"] retain];
 	_groupImage				= [[NSImage imageNamed:@"Group"] retain];
 	_accounts				= [[NSMutableArray alloc] init];
+	_selectAccounts			= [[NSMutableArray alloc] init];
 
 	basicsSettings			= [NSMutableArray array];
 	filesSettings			= [NSMutableArray array];
@@ -810,6 +808,7 @@
 	[_shownAccounts release];
 	
 	[_accounts release];
+	[_selectAccounts release];
 	
 	[_dateFormatter release];
 	[_accountFilter release];
@@ -861,6 +860,11 @@
 
 
 - (void)wiredAccountListAccountsReply:(WIP7Message *)message {
+	NSEnumerator		*enumerator;
+	NSMutableIndexSet	*indexes;
+	WCAccount			*account;
+	NSUInteger			index;
+	
 	if([[message name] isEqualToString:@"wired.account.user_list"]) {
 		[_allAccounts addObject:[WCUserAccount accountWithMessage:message]];
 	}
@@ -875,6 +879,19 @@
 		[self _reloadFilter];
 		[self _reloadGroups];
 		[_accountsTableView reloadData];
+		
+		indexes		= [NSMutableIndexSet indexSet];
+		enumerator	= [_selectAccounts objectEnumerator];
+		
+		while((account = [enumerator nextObject])) {
+			index = [_shownAccounts indexOfObject:account];
+			
+			if(index != NSNotFound)
+				[indexes addIndex:index];
+		}
+		
+		[_accountsTableView selectRowIndexes:indexes byExtendingSelection:NO];
+		[_selectAccounts removeAllObjects];
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
 		[_administration showError:[WCError errorWithWiredMessage:message]];
