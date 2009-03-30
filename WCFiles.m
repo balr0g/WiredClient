@@ -684,6 +684,7 @@
 	[[_filesController filesOutlineView] setDeleteAction:@selector(deleteFiles:)];
 	[[_filesController filesOutlineView] setBackAction:@selector(back:)];
 	[[_filesController filesOutlineView] setForwardAction:@selector(forward:)];
+	[[_filesController filesOutlineView] setEscapeAction:@selector(deselectFiles:)];
 	
 	[_titleBarMenu removeAllItems];
 
@@ -1003,6 +1004,12 @@
 
 	if(![file isEqual:[self _currentPath]])
 		[self _openFile:file overrideNewWindow:NO];
+}
+
+
+
+- (void)deselectFiles:(id)sender {
+	[[_filesController filesOutlineView] deselectAll:self];
 }
 
 
