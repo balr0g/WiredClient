@@ -1180,11 +1180,11 @@
 
 
 - (IBAction)add:(id)sender {
-	WCAccount		*account;
+	WCUserAccount		*account;
 	
 	[_accounts removeAllObjects];
 
-	account = [[[WCAccount alloc] init] autorelease];
+	account = [[[WCUserAccount alloc] init] autorelease];
 	[account setName:NSLS(@"Untitled", @"Account name")];
 	[_accounts addObject:account];
 
