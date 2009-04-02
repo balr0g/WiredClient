@@ -26,35 +26,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WCFilesController.h"
-
-#define WCFilePathKey					@"WCFilePathKey"
-#define WCFileSelectPathKey				@"WCFileSelectPathKey"
+#define WCFilePboardType				@"WCFilePboardType"
+#define WCPlacePboardType				@"WCPlacePboardType"
 
 
-@class WCFile, WCFilesController, WCErrorQueue;
+@class WCFile, WCErrorQueue;
 
-@interface WCFiles : WCConnectionController {
-	IBOutlet WCFilesController			*_filesController;
-	
-	IBOutlet WIOutlineView				*_sourceOutlineView;
-	IBOutlet NSTableColumn				*_sourceTableColumn;
-	
-	IBOutlet NSTabView					*_filesTabView;
-
-	IBOutlet NSBrowser					*_filesBrowser;
-
-	IBOutlet NSPanel					*_createFolderPanel;
-	IBOutlet NSTextField				*_nameTextField;
-	IBOutlet NSPopUpButton				*_typePopUpButton;
-	IBOutlet NSPopUpButton				*_ownerPopUpButton;
-	IBOutlet NSPopUpButton				*_ownerPermissionsPopUpButton;
-	IBOutlet NSPopUpButton				*_groupPopUpButton;
-	IBOutlet NSPopUpButton				*_groupPermissionsPopUpButton;
-	IBOutlet NSPopUpButton				*_everyonePermissionsPopUpButton;
-	
-	IBOutlet NSMenu						*_titleBarMenu;
-	
+@interface WCFiles : WIWindowController {
 	IBOutlet NSSegmentedControl			*_historyControl;
 	IBOutlet NSSegmentedControl			*_styleControl;
 	IBOutlet NSButton					*_downloadButton;
@@ -65,35 +43,52 @@
 	IBOutlet NSButton					*_reloadButton;
 	IBOutlet NSButton					*_deleteButton;
 	
+	IBOutlet WIOutlineView				*_sourceOutlineView;
+	IBOutlet NSTableColumn				*_sourceTableColumn;
+
+	IBOutlet NSTabView					*_filesTabView;
+
+	IBOutlet WIOutlineView				*_filesOutlineView;
+	IBOutlet NSTableColumn				*_nameTableColumn;
+	IBOutlet NSTableColumn				*_kindTableColumn;
+	IBOutlet NSTableColumn				*_createdTableColumn;
+	IBOutlet NSTableColumn				*_modifiedTableColumn;
+	IBOutlet NSTableColumn				*_sizeTableColumn;
+	IBOutlet NSTableColumn				*_serverTableColumn;
+
+	IBOutlet WITreeView					*_filesTreeView;
+	
+	IBOutlet NSTextField				*_statusTextField;
 	IBOutlet NSProgressIndicator		*_progressIndicator;
 	
+	IBOutlet NSPanel					*_createFolderPanel;
+	IBOutlet NSTextField				*_nameTextField;
+	IBOutlet NSPopUpButton				*_typePopUpButton;
+	IBOutlet NSPopUpButton				*_ownerPopUpButton;
+	IBOutlet NSPopUpButton				*_ownerPermissionsPopUpButton;
+	IBOutlet NSPopUpButton				*_groupPopUpButton;
+	IBOutlet NSPopUpButton				*_groupPermissionsPopUpButton;
+	IBOutlet NSPopUpButton				*_everyonePermissionsPopUpButton;
+
 	WCErrorQueue						*_errorQueue;
-
-	NSUInteger							_type;
 	
-	NSMutableDictionary					*_allFiles;
-	NSMutableArray						*_listFiles;
-	NSMutableDictionary					*_browserFiles;
-	
-	WCFile								*_rootPath, *_listPath, *_browserPath;
-	NSString							*_selectPath;
-
-	NSMutableArray						*_history;
-	NSUInteger							_historyPosition;
-	
+	NSMutableDictionary					*_directories;
+	NSMutableDictionary					*_files;
 	NSMutableArray						*_servers;
 	NSMutableArray						*_places;
+	NSMutableArray						*_selectFiles;
 	
-	BOOL								_subscribed;
+	WCFile								*_currentDirectory;
+	
+	WIDateFormatter						*_dateFormatter;
 }
 
-+ (id)filesWithConnection:(WCServerConnection *)connection path:(WCFile *)path;
-+ (id)filesWithConnection:(WCServerConnection *)connection path:(WCFile *)path selectPath:(NSString *)selectPath;
++ (id)filesWithConnection:(WCServerConnection *)connection file:(WCFile *)file;
++ (id)filesWithConnection:(WCServerConnection *)connection file:(WCFile *)file selectFile:(WCFile *)selectFile;
 
-- (IBAction)up:(id)sender;
-- (IBAction)down:(id)sender;
-- (IBAction)back:(id)sender;
-- (IBAction)forward:(id)sender;
+- (IBAction)enclosingFolder:(id)sender;
+- (IBAction)open:(id)sender;
+
 - (IBAction)history:(id)sender;
 - (IBAction)style:(id)sender;
 - (IBAction)download:(id)sender;

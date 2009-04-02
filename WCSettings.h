@@ -132,7 +132,7 @@
 #define WCRemoveTransfers						@"WCRemoveTransfers"
 #define WCFilesStyle							@"WCFilesStyle"
 #define WCFilesStyleList							0
-#define WCFilesStyleBrowser							1
+#define WCFilesStyleTree							1
 
 #define WCTrackerBookmarks						@"WCTrackerBookmarks"
 #define WCTrackerBookmarksName						@"Name"

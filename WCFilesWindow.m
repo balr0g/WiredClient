@@ -1,7 +1,7 @@
 /* $Id$ */
 
 /*
- *  Copyright (c) 2003-2009 Axel Andersson
+ *  Copyright (c) 2009 Axel Andersson
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -26,42 +26,33 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-@class WCPublicChatController, WCServerConnection;
+#import "WCFiles.h"
+#import "WCFilesWindow.h"
 
-@interface WCPublicChat : WIWindowController {
-	IBOutlet NSTabView					*_chatTabView;
+@implementation WCFilesWindow
 
-	IBOutlet NSTextField				*_noConnectionTextField;
+- (void)sendEvent:(NSEvent *)event {
+	unichar		key;
+	BOOL		handled = NO;
 	
-	PSMTabBarControl					*_tabBarControl;
+	if([event type] == NSKeyDown) {
+		if([event commandKeyModifier]) {
+			key = [event character];
+			
+			if(key == NSUpArrowFunctionKey) {
+				[[self delegate] enclosingFolder:self];
+				
+				handled = YES;
+			}
+			else if(key == NSDownArrowFunctionKey) {
+				[[self delegate] open:self];
+				
+				handled = YES;
+			}
+		}
+	}
 	
-	NSMutableDictionary					*_chatControllers;
-	NSMutableDictionary					*_chatActivity;
+	if(!handled)
+		[super sendEvent:event];
 }
-
-+ (id)publicChat;
-
-- (IBAction)disconnect:(id)sender;
-- (IBAction)reconnect:(id)sender;
-- (IBAction)serverInfo:(id)sender;
-- (IBAction)files:(id)sender;
-- (IBAction)administration:(id)sender;
-- (IBAction)getInfo:(id)sender;
-- (IBAction)saveChat:(id)sender;
-- (IBAction)setTopic:(id)sender;
-- (IBAction)broadcast:(id)sender;
-
-- (IBAction)addBookmark:(id)sender;
-
-- (IBAction)console:(id)sender;
-
-- (IBAction)nextConnection:(id)sender;
-- (IBAction)previousConnection:(id)sender;
-
-- (void)addChatController:(WCPublicChatController *)chatController;
-- (void)selectChatController:(WCPublicChatController *)chatController;
-- (WCPublicChatController *)selectedChatController;
-- (WCPublicChatController *)chatControllerForConnectionIdentifier:(NSString *)identifier;
-- (NSArray *)chatControllers;
-
 @end

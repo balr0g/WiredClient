@@ -30,7 +30,6 @@
 #import "WCFile.h"
 #import "WCFilesController.h"
 #import "WCFileInfo.h"
-#import "WCFilesOutlineView.h"
 #import "WCPreferences.h"
 #import "WCServerConnection.h"
 #import "WCTransfers.h"
@@ -212,7 +211,7 @@
 
 
 
-- (WCFilesOutlineView *)filesOutlineView {
+- (WIOutlineView *)filesOutlineView {
 	return _filesOutlineView;
 }
 

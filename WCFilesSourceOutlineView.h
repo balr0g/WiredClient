@@ -1,7 +1,7 @@
 /* $Id$ */
 
 /*
- *  Copyright (c) 2003-2009 Axel Andersson
+ *  Copyright (c) 2009 Axel Andersson
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -26,11 +26,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-@interface WCFilesBrowserCell : NSBrowserCell {
-	NSImage							*_icon;
+@interface WCFilesSourceOutlineView : WIOutlineView {
+	NSMutableArray					*_draggedFiles;
 }
 
-- (void)setIcon:(NSImage *)icon;
-- (NSImage *)icon;
+@end
+
+
+@interface NSObject(WCFilesSourceOutlineViewDataSource)
+
+- (void)outlineView:(NSOutlineView *)outlineView removeItems:(NSArray *)items;
 
 @end

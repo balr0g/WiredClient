@@ -28,79 +28,139 @@
 
 #import "WCAccount.h"
 #import "WCAccountsController.h"
-#import "WCCache.h"
+#import "WCAdministration.h"
 #import "WCErrorQueue.h"
 #import "WCFile.h"
 #import "WCFileInfo.h"
 #import "WCFiles.h"
-#import "WCFilesController.h"
-#import "WCFilesBrowserCell.h"
-#import "WCFilesOutlineView.h"
 #import "WCPreferences.h"
-#import "WCServerConnection.h"
+#import "WCPublicChat.h"
+#import "WCPublicChatController.h"
 #import "WCTransfers.h"
 
-#define WCPlacePboardType							@"WCPlacePboardType"
+#define WCFilesDirectories							@"WCFilesDirectories"
+#define WCFilesFiles								@"WCFilesFiles"
 
 
 @interface WCFiles(Private)
 
-- (id)_initFilesWithConnection:(WCServerConnection *)connection path:(WCFile *)path selectPath:(NSString *)selectPath;
+- (id)_initFilesWithConnection:(WCServerConnection *)connection file:(WCFile *)file selectFile:(WCFile *)selectFile;
 
-- (void)_setCurrentPath:(WCFile *)path;
-- (WCFile *)_currentPath;
-- (void)_setSelectPath:(NSString *)path;
-- (NSString *)_selectPath;
-- (WCFile *)_selectedFile;
+- (void)_themeDidChange;
+
+- (void)_validate;
+- (void)_validatePermissions;
+
+- (WCFile *)_selectedSource;
+- (WCServerConnection *)_selectedConnection;
 - (NSArray *)_selectedFiles;
 
-- (void)_updateStatus;
-- (void)_updateMenu;
-- (void)_updateFiles;
-- (void)_sortFiles;
-- (void)_showList;
-- (void)_showBrowser;
-- (void)_makeFirstResponder;
-- (void)_setDirectory:(WCFile *)path;
-- (void)_changeDirectory:(WCFile *)path;
+- (NSMutableDictionary *)_filesForConnection:(WCServerConnection *)connection;
+- (NSMutableDictionary *)_directoriesForConnection:(WCServerConnection *)connection;
+- (WCFile *)_existingFileForFile:(WCFile *)file;
+- (WCFile *)_existingParentFileForFile:(WCFile *)file;
+- (void)_removeDirectoryAtPath:(NSString *)path connection:(WCServerConnection *)connection;
+
+- (void)_addConnections;
+- (void)_addConnection:(WCServerConnection *)connection;
+- (void)_addPlaces;
+- (void)_revalidatePlacesForConnection:(WCServerConnection *)connection;
+- (void)_invalidatePlacesForConnection:(WCServerConnection *)connection;
+- (void)_revalidateFiles:(NSArray *)files;
+
+- (NSUInteger)_selectedStyle;
+- (void)_selectStyle:(NSUInteger)style;
+
+- (void)_changeCurrentDirectory:(WCFile *)file reselectFiles:(BOOL)reselectFiles;
+- (void)_loadFilesAtDirectory:(WCFile *)file reselectFiles:(BOOL)reselectFiles;
+- (void)_reloadFilesAtDirectory:(WCFile *)file;
+- (void)_reloadFilesAtDirectory:(WCFile *)file reselectFiles:(BOOL)reselectFiles;
+- (void)_subscribeToDirectory:(WCFile *)file;
+- (void)_unsubscribeFromDirectory:(WCFile *)file;
+
 - (void)_openFile:(WCFile *)file overrideNewWindow:(BOOL)override;
-- (void)_reloadFiles;
-- (void)_subscribe;
-- (void)_unsubscribe;
-
-- (NSDragOperation)_validateDrop:(id <NSDraggingInfo>)info inPath:(WCFile *)path onFile:(WCFile *)file dropOperation:(NSTableViewDropOperation)dropOperation;
-- (BOOL)_acceptDrop:(id <NSDraggingInfo>)info inDestination:(WCFile *)destination;
-
-- (BOOL)_validateUpload;
-
-- (void)_validatePermissions;
+- (void)_reloadStatus;
+- (void)_reselectFiles;
+- (void)_sortFiles;
+- (SEL)_sortSelector;
 
 @end
 
 
 @implementation WCFiles(Private)
 
-- (id)_initFilesWithConnection:(WCServerConnection *)connection path:(WCFile *)path selectPath:(NSString *)selectPath {
-	self = [super initWithWindowNibName:@"Files" connection:connection singleton:NO];
+- (id)_initFilesWithConnection:(WCServerConnection *)connection file:(WCFile *)file selectFile:(WCFile *)selectFile {
+	NSUInteger		i;
+	
+	self = [super initWithWindowNibName:@"Files"];
 
-	_type			= [WCSettings integerForKey:WCFilesStyle];
-	_rootPath		= [path retain];
-	_listPath		= [path retain];
-	_browserPath	= [path retain];
-	_history		= [[NSMutableArray alloc] init];
-	_allFiles		= [[NSMutableDictionary alloc] init];
-	_browserFiles	= [[NSMutableDictionary alloc] init];
+	_files			= [[NSMutableDictionary alloc] init];
 	_servers		= [[NSMutableArray alloc] init];
 	_places			= [[NSMutableArray alloc] init];
+	_selectFiles	= [[NSMutableArray alloc] init];
 	
-	[_history addObject:_listPath];
+	if(selectFile)
+		[_selectFiles addObject:selectFile];
 	
-	[self _setSelectPath:selectPath];
+	[_files setObject:[NSDictionary dictionaryWithObjectsAndKeys:
+							[NSMutableDictionary dictionary],
+								WCFilesFiles,
+							[NSMutableDictionary dictionary],
+								WCFilesDirectories,
+							NULL]
+			   forKey:[connection identifier]];
+	
+	_dateFormatter = [[WIDateFormatter alloc] init];
+	[_dateFormatter setTimeStyle:NSDateFormatterShortStyle];
+	[_dateFormatter setDateStyle:NSDateFormatterMediumStyle];
+	[_dateFormatter setNaturalLanguageStyle:WIDateFormatterCapitalizedNaturalLanguageStyle];
 
-	[[self connection] addObserver:self selector:@selector(wiredFileDirectoryChanged:) messageName:@"wired.file.directory_changed"];
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
+		   selector:@selector(selectedThemeDidChange:)
+			   name:WCSelectedThemeDidChangeNotification];
 
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
+		   selector:@selector(linkConnectionLoggedIn:)
+			   name:WCLinkConnectionLoggedInNotification];
+	
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
+		   selector:@selector(linkConnectionDidClose:)
+			   name:WCLinkConnectionDidCloseNotification];
+	
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
+		   selector:@selector(linkConnectionDidTerminate:)
+			   name:WCLinkConnectionDidTerminateNotification];
+	
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
+		   selector:@selector(serverConnectionServerInfoDidChange:)
+			   name:WCServerConnectionServerInfoDidChangeNotification];
+
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
+		   selector:@selector(serverConnectionPrivilegesDidChange:)
+			   name:WCServerConnectionPrivilegesDidChangeNotification];
+	
+	[self _addPlaces];
+	[self _addConnections];
+
+	[[[_files objectForKey:[connection identifier]] objectForKey:WCFilesFiles] setObject:file forKey:[file path]];
+	
 	[self window];
+	
+	i = [_servers indexOfObject:connection];
+
+	if(i != NSNotFound)
+		[_sourceOutlineView selectRow:i + 1 byExtendingSelection:NO];
+	
+	[_filesTreeView setRootPath:[file path]];
+	
 	[self showWindow:self];
+	[self retain];
 
 	return self;
 }
@@ -109,52 +169,132 @@
 
 #pragma mark -
 
-- (void)_setCurrentPath:(WCFile *)path {
-	[path retain];
+- (void)_themeDidChange {
+	NSDictionary		*theme;
 	
-	if(_type == WCFilesStyleList) {
-		[_listPath release];
-		_listPath = path;
-	}
-	else if(_type == WCFilesStyleBrowser) {
-		[_browserPath release];
-		_browserPath = path;
-	}
+	theme = [WCSettings themeWithIdentifier:[WCSettings objectForKey:WCTheme]];
+	
+	[_filesOutlineView setUsesAlternatingRowBackgroundColors:[theme boolForKey:WCThemesFileListAlternateRows]];
 }
 
 
 
-- (WCFile *)_currentPath {
-	if(_type == WCFilesStyleList)
-		return _listPath;
-	else if(_type == WCFilesStyleBrowser)
-		return _browserPath;
+#pragma mark -
+
+- (void)_validate {
+	NSEnumerator			*enumerator;
+	NSArray					*files;
+	WCServerConnection		*connection;
+	WCAccount				*account;
+	WCFile					*file, *parentFile;
+	BOOL					connected, preview;
+	
+	connection	= [self _selectedConnection];
+	connected	= [connection isConnected];
+	account		= [connection account];
+	files		= [self _selectedFiles];
+
+	switch([files count]) {
+		case 0:
+			[_downloadButton setEnabled:NO];
+			[_previewButton setEnabled:NO];
+			[_infoButton setEnabled:NO];
+			[_deleteButton setEnabled:NO];
+			break;
+
+		case 1:
+			file		= [files objectAtIndex:0];
+			parentFile	= [self _existingParentFileForFile:file];
+
+			[_downloadButton setEnabled:([account transferDownloadFiles] && connected)];
+			[_deleteButton setEnabled:(([account fileDeleteFiles] || [parentFile isWritable]) && connected)];
+			[_infoButton setEnabled:([account fileGetInfo] && connected)];
+			[_previewButton setEnabled:([account transferDownloadFiles] &&
+										connected &&
+										![file isFolder] &&
+										[WCTransfers canPreviewFileWithExtension:[file extension]])];
+			break;
+
+		default:
+			[_downloadButton setEnabled:([account transferDownloadFiles] && connected)];
+			
+			preview = ([account transferDownloadFiles] && connected);
+			
+			if(preview) {
+				enumerator = [files objectEnumerator];
+				
+				while((file = [enumerator nextObject])) {
+					if([file isFolder] || ![WCTransfers canPreviewFileWithExtension:[file extension]]) {
+						preview = NO;
+						
+						break;
+					}
+				}
+			}
+			
+			[_previewButton setEnabled:preview];
+			[_deleteButton setEnabled:([account fileDeleteFiles] && connected)];
+			[_infoButton setEnabled:([account fileGetInfo] && connected)];
+			break;
+	}
+
+	[[_historyControl cell] setEnabled:NO forSegment:0];
+	[[_historyControl cell] setEnabled:NO forSegment:1];
+//	[[_historyControl cell] setEnabled:(_type == WCFilesStyleList && _historyPosition > 0 && connected) forSegment:0];
+//	[[_historyControl cell] setEnabled:(_type == WCFilesStyleList && _historyPosition + 1 < [_history count] && connected) forSegment:1];
+
+//	[_uploadButton setEnabled:([self _validateUpload] && connected)];
+	[_uploadButton setEnabled:YES];
+	[_createFolderButton setEnabled:([account fileCreateDirectories] && connected)];
+	[_reloadButton setEnabled:connected];
+}
+
+
+
+- (void)_validatePermissions {
+	BOOL			setPermissions, dropBox;
+	
+	setPermissions	= [[[self _selectedConnection] account] fileSetPermissions];
+	dropBox			= ([_typePopUpButton tagOfSelectedItem] == WCFileDropBox);
+	
+	[_ownerPopUpButton setEnabled:(dropBox && setPermissions)];
+	[_ownerPermissionsPopUpButton setEnabled:(dropBox && setPermissions)];
+	[_groupPopUpButton setEnabled:(dropBox && setPermissions)];
+	[_groupPermissionsPopUpButton setEnabled:(dropBox && setPermissions)];
+	[_everyonePermissionsPopUpButton setEnabled:(dropBox && setPermissions)];
+}
+
+
+
+#pragma mark -
+
+- (WCFile *)_selectedSource {
+	id			item;
+	
+	item = [_sourceOutlineView itemAtRow:[_sourceOutlineView selectedRow]];
+	
+	if([item isKindOfClass:[WCFile class]]) {
+		return item;
+	}
+	else if([item isKindOfClass:[NSString class]]) {
+		return [WCFile fileWithRootDirectoryForConnection:
+			[[[WCPublicChat publicChat] chatControllerForConnectionIdentifier:item] connection]];
+	}
 	
 	return NULL;
 }
 
 
 
-- (void)_setSelectPath:(NSString *)path {
-	[path retain];
-	[_selectPath release];
+- (WCServerConnection *)_selectedConnection {
+	id			item;
 	
-	_selectPath = path;
-}
-
-
-
-- (NSString *)_selectPath {
-	return _selectPath;
-}
-
-
-
-- (WCFile *)_selectedFile {
-	if(_type == WCFilesStyleList)
-		return [_filesController selectedFile];
-	else if(_type == WCFilesStyleBrowser)
-		return [[_filesBrowser selectedCell] representedObject];
+	item = [_sourceOutlineView itemAtRow:[_sourceOutlineView selectedRow]];
+	
+	if([item isKindOfClass:[WCFile class]])
+		return [(WCFile *) item connection];
+	else if([item isKindOfClass:[NSString class]])
+		return [[[WCPublicChat publicChat] chatControllerForConnectionIdentifier:item] connection];
 	
 	return NULL;
 }
@@ -162,226 +302,326 @@
 
 
 - (NSArray *)_selectedFiles {
-	NSEnumerator		*enumerator;
-	NSMutableArray		*array;
-	id					cell;
-
-	if(_type == WCFilesStyleList) {
-		return [_filesController selectedFiles];
-	}
-	else if(_type == WCFilesStyleBrowser) {
-		array = [NSMutableArray array];
-		enumerator = [[_filesBrowser selectedCells] objectEnumerator];
+	NSEnumerator			*enumerator;
+	NSMutableDictionary		*files;
+	NSMutableArray			*selectedFiles, *directory;
+	NSIndexSet				*indexes;
+	NSString				*path;
+	NSUInteger				index;
+	
+	selectedFiles = [NSMutableArray array];
+	
+	if([self _selectedStyle] == WCFilesStyleList) {
+		directory		= [[self _directoriesForConnection:[self _selectedConnection]] objectForKey:[_currentDirectory path]];
+		indexes			= [_filesOutlineView selectedRowIndexes];
+		index			= [indexes firstIndex];
 		
-		while((cell = [enumerator nextObject]))
-			[array addObject:[cell representedObject]];
+		while(index != NSNotFound) {
+			[selectedFiles addObject:[_filesOutlineView itemAtRow:index]];
+			
+			index = [indexes indexGreaterThanIndex:index];
+		}
+	} else {
+		files			= [self _filesForConnection:[self _selectedConnection]];
+		enumerator		= [[_filesTreeView selectedPaths] objectEnumerator];
 		
-		return array;
+		while((path = [enumerator nextObject]))
+			[selectedFiles addObject:[files objectForKey:path]];
 	}
 	
-	return NULL;
+	return selectedFiles;
 }
+
 
 
 #pragma mark -
 
-- (void)_updateStatus {
-	if([self _validateUpload])
-		[_filesController updateStatusWithFree:[[self _currentPath] free]];
-	else
-		[_filesController updateStatus];
+- (NSMutableDictionary *)_filesForConnection:(WCServerConnection *)connection {
+	return [[_files objectForKey:[connection identifier]] objectForKey:WCFilesFiles];
 }
 
 
 
-- (void)_updateMenu {
-	NSMutableArray	*components;
-	NSString		*path;
-	NSMenuItem		*item;
-	NSUInteger		i, count, items;
+- (NSMutableDictionary *)_directoriesForConnection:(WCServerConnection *)connection {
+	return [[_files objectForKey:[connection identifier]] objectForKey:WCFilesDirectories];
+}
 
-	components = [NSMutableArray array];
-	path = [[self _currentPath] path];
 
-	while([path length] > 0) {
-		[components addObject:path];
 
-		if([path isEqualToString:@"/"])
-			break;
+- (WCFile *)_existingFileForFile:(WCFile *)file {
+	WCFile		*existingFile;
+	
+	existingFile = [[self _filesForConnection:[file connection]] objectForKey:[file path]];
+	
+	return existingFile ? existingFile : file;
+}
 
-		path = [path stringByDeletingLastPathComponent];
+
+
+- (WCFile *)_existingParentFileForFile:(WCFile *)file {
+	return [self _existingFileForFile:[WCFile fileWithDirectory:[[file path] stringByDeletingLastPathComponent]
+													 connection:[file connection]]];
+}
+
+
+
+- (void)_removeDirectoryAtPath:(NSString *)path connection:(WCServerConnection *)connection {
+	NSMutableDictionary		*directories;
+	
+	directories = [self _directoriesForConnection:connection];
+	
+	[directories removeObjectForKey:path];
+}
+
+
+
+#pragma mark -
+
+- (void)_addConnections {
+	NSEnumerator				*enumerator;
+	WCPublicChatController		*chatController;
+	WCServerConnection			*connection;
+	
+	enumerator = [[[WCPublicChat publicChat] chatControllers] objectEnumerator];
+	
+	while((chatController = [enumerator nextObject])) {
+		connection = [chatController connection];
+		
+		[self _addConnection:connection];
+		[self _revalidatePlacesForConnection:connection];
 	}
+}
 
-	count = [components count];
-	items = [_titleBarMenu numberOfItems];
 
-	for(i = 0; i < count; i++) {
-		if(i < items) {
-			if([[[_titleBarMenu itemAtIndex:i] title] isEqualToString:[components objectAtIndex:i]]) {
-				continue;
-			} else {
-				[_titleBarMenu removeItemAtIndex:i];
-				items--;
-			}
+
+- (void)_addConnection:(WCServerConnection *)connection {
+	[connection addObserver:self selector:@selector(wiredFileDirectoryChanged:) messageName:@"wired.file.directory_changed"];
+
+	[_servers addObject:connection];
+	
+	[_sourceOutlineView reloadData];
+}
+
+
+
+- (void)_addPlaces {
+	NSData		*data;
+	
+	data = [WCSettings objectForKey:WCPlaces];
+	
+	if(data)
+		[_places addObjectsFromArray:[NSKeyedUnarchiver unarchiveObjectWithData:data]];
+}
+
+
+
+- (void)_revalidatePlacesForConnection:(WCServerConnection *)connection {
+	NSEnumerator		*enumerator;
+	WCFile				*place;
+
+	enumerator = [_places objectEnumerator];
+	
+	while((place = [enumerator nextObject])) {
+		if([place belongsToConnection:connection])
+			[place setConnection:connection];
+	}
+}
+
+
+
+- (void)_invalidatePlacesForConnection:(WCServerConnection *)connection {
+	NSEnumerator		*enumerator;
+	WCFile				*place;
+
+	enumerator = [_places objectEnumerator];
+	
+	while((place = [enumerator nextObject])) {
+		if([place belongsToConnection:connection])
+			[place setConnection:NULL];
+	}
+}
+
+
+
+- (void)_revalidateFiles:(NSArray *)files {
+	NSEnumerator			*enumerator;
+	WCFile					*file;
+	WCServerConnection		*connection;
+	NSUInteger				i, count;
+	
+	enumerator = [files objectEnumerator];
+	
+	while((file = [enumerator nextObject])) {
+		count = [_servers count];
+		
+		for(i = 0; i < count; i++) {
+			connection = [_servers objectAtIndex:i];
+			
+			if([file belongsToConnection:connection])
+				[file setConnection:connection];
 		}
-
-		item = [[NSMenuItem alloc] initWithTitle:[[components objectAtIndex:i] lastPathComponent]
-										  action:@selector(openMenuItem:)
-								   keyEquivalent:@""];
-		[item setRepresentedObject:[components objectAtIndex:i]];
-		[item setImage:[NSImage imageNamed:@"Folder16"]];
-
-		[_titleBarMenu insertItem:item atIndex:i];
-		items++;
-		[item release];
-	}
-
-	while(items > count) {
-		[_titleBarMenu removeItemAtIndex:count];
-
-		items--;
 	}
 }
 
 
 
-- (void)_updateFiles {
-	[self _sortFiles];
-	[self _updateStatus];
+#pragma mark -
 
-	[_filesController showFiles];
-
-	[_filesBrowser reloadColumn:[_filesBrowser lastColumn]];
-	[[_filesBrowser matrixInColumn:[_filesBrowser lastColumn]] setMenu:[_filesBrowser menu]];
-
-	if([self _selectPath])
-		[_filesController selectFileWithName:[[self _selectPath] lastPathComponent]];
-	
-	[_progressIndicator stopAnimation:self];
-	
-	[self _makeFirstResponder];
+- (NSUInteger)_selectedStyle {
+	return [[_styleControl cell] tagForSegment:[_styleControl selectedSegment]];
 }
 
 
 
-- (void)_sortFiles {
-	[_filesController sortFiles];
-	
-	[[_browserFiles objectForKey:[[self _currentPath] path]] sortUsingSelector:@selector(compareName:)];
-}
-
-
-
-- (void)_showList {
-	_type = WCFilesStyleList;
-
-	[[_filesController filesOutlineView] sizeToFit];
-	[_filesTabView selectTabViewItemWithIdentifier:@"List"];
-	
-	if(_listPath)
-		[self _changeDirectory:_listPath];
-	
-	[self validate];
-
-	[WCSettings setInt:_type forKey:WCFilesStyle];
-
-	[self _makeFirstResponder];
-}
-
-
-
-- (void)_showBrowser {
-	_type = WCFilesStyleBrowser;
-
-	[_filesTabView selectTabViewItemWithIdentifier:@"Browser"];
-	
-	if(_browserPath)
-		[self _changeDirectory:_browserPath];
-	
-	[self validate];
-
-	[WCSettings setInt:_type forKey:WCFilesStyle];
-
-	[self _makeFirstResponder];
-}
-
-
-
-- (void)_makeFirstResponder {
-	NSInteger		column;
-	
-	switch(_type) {
-		case WCFilesStyleList:
-			[[self window] makeFirstResponder:[_filesController filesOutlineView]];
-			break;
-			
-		case WCFilesStyleBrowser:
-			column = [_filesBrowser selectedColumn];
-			
-			if(column < 0)
-				column = [_filesBrowser lastColumn];
-				
-			[[self window] makeFirstResponder:[_filesBrowser matrixInColumn:column]];
-			break;
-	}
-}
-
-
-
-- (void)_setDirectory:(WCFile *)path {
-	[self _setCurrentPath:path];
-
-	[self validate];
-	[self _updateStatus];
-
-	[self _updateMenu];
-	
-	[[self window] setTitle:[[self _currentPath] path] withSubtitle:[[self connection] name]];
-}
-
-
-
-- (void)_changeDirectory:(WCFile *)file {
-	NSArray				*files;
-	WIP7Message			*message;
-	WIFileOffset		free;
-	
-	[_allFiles removeAllObjects];
-	[_browserFiles removeObjectForKey:[file path]];
-	
-	[_filesController setFiles:[NSArray array]];
-	[_filesController showFiles];
-	
-	[_filesBrowser reloadColumn:[_filesBrowser lastColumn]];
-	
-	[self _updateStatus];
-	
-	[_progressIndicator startAnimation:self];
-
-	if(_subscribed)
-		[self _unsubscribe];
-	
-	[self _setDirectory:file];
-	
-	if((files = [[[self connection] cache] filesForPath:[file path] free:&free])) {
-		[_filesController setFiles:files];
-		[_browserFiles setObject:[[files mutableCopy] autorelease] forKey:[file path]];
-		
-		[file setFree:free];
-		
-		[self _updateFiles];
+- (void)_selectStyle:(NSUInteger)style {
+	if(style == WCFilesStyleList) {
+		[_filesTabView selectTabViewItemWithIdentifier:@"List"];
+		[[self window] makeFirstResponder:_filesOutlineView];
 	} else {
-		message = [WIP7Message messageWithName:@"wired.file.list_directory" spec:WCP7Spec];
-		[message setString:[file path] forName:@"wired.file.path"];
-		[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredFileListPathReply:)];
-	}
+		[_filesTabView selectTabViewItemWithIdentifier:@"Tree"];
 
-	[self _subscribe];
-	
-	_subscribed = YES;
+		if(_currentDirectory)
+			[_filesTreeView selectPath:[_currentDirectory path]];
+	}
 }
 
 
+
+#pragma mark -
+
+- (void)_changeCurrentDirectory:(WCFile *)file reselectFiles:(BOOL)reselectFiles {
+	file = [self _existingFileForFile:file];
+	
+	if(_currentDirectory) {
+		if([file connection] == [_currentDirectory connection] &&
+		   [[file path] isEqualToString:[_currentDirectory path]])
+			return;
+	
+		[self _unsubscribeFromDirectory:_currentDirectory];
+	}
+	
+	[file retain];
+	[_currentDirectory release];
+	
+	_currentDirectory = file;
+	
+	[[self window] setTitle:NSLS(@"Files", @"Files window title") withSubtitle:[_currentDirectory path]];
+	
+	[_filesTreeView selectPath:[_currentDirectory path]];
+
+	[self _loadFilesAtDirectory:file reselectFiles:reselectFiles];
+	[self _subscribeToDirectory:_currentDirectory];
+	
+	[self _validate];
+}
+
+
+
+- (void)_loadFilesAtDirectory:(WCFile *)file reselectFiles:(BOOL)reselectFiles {
+	NSMutableArray			*directory;
+	WCServerConnection		*connection;
+	
+	connection		= [file connection];
+	directory		= [[self _directoriesForConnection:connection] objectForKey:[file path]];
+	
+	if(directory) {
+		if([_selectFiles count] == 0)
+			[_selectFiles setArray:[self _selectedFiles]];
+		
+		[_filesOutlineView reloadData];
+		[_filesTreeView reloadData];
+		
+		[self _reloadStatus];
+		
+		if(reselectFiles)
+			[self _reselectFiles];
+		else
+			[_selectFiles removeAllObjects];
+	} else {
+		[self _reloadFilesAtDirectory:file reselectFiles:reselectFiles];
+	}
+}
+
+
+
+- (void)_reloadFilesAtDirectory:(WCFile *)file {
+	[self _reloadFilesAtDirectory:file reselectFiles:YES];
+}
+
+
+
+- (void)_reloadFilesAtDirectory:(WCFile *)file reselectFiles:(BOOL)reselectFiles {
+	NSMutableDictionary		*files, *directories;
+	NSMutableArray			*directory;
+	WIP7Message				*message;
+	WCServerConnection		*connection;
+	
+	if([_selectFiles count] == 0)
+		[_selectFiles setArray:[self _selectedFiles]];
+		
+	connection		= [file connection];
+	directory		= [[self _directoriesForConnection:connection] objectForKey:[file path]];
+	
+	[directory removeAllObjects];
+	
+	[_filesTreeView reloadData];
+	[_filesOutlineView reloadData];
+
+	[_progressIndicator startAnimation:self];
+	
+	if(!reselectFiles)
+		[_selectFiles removeAllObjects];
+	
+	files			= [self _filesForConnection:connection];
+	directories		= [self _directoriesForConnection:connection];
+		
+	if(!files || !directories) {
+		files			= [[NSMutableDictionary alloc] init];
+		directories		= [[NSMutableDictionary alloc] init];
+
+		[_files setObject:[NSDictionary dictionaryWithObjectsAndKeys: files, WCFilesFiles, directories, WCFilesDirectories, NULL]
+				   forKey:[connection identifier]];
+
+		[directories release];
+		[files release];
+	}
+		
+	directory = [directories objectForKey:[file path]];
+		
+	if(!directory) {
+		directory = [[NSMutableArray alloc] init];
+		[directories setObject:directory forKey:[file path]];
+		[directory release];
+	}
+	
+	message = [WIP7Message messageWithName:@"wired.file.list_directory" spec:WCP7Spec];
+	[message setString:[file path] forName:@"wired.file.path"];
+	[connection sendMessage:message fromObserver:self selector:@selector(wiredFileListPathReply:)];
+}
+
+
+
+- (void)_subscribeToDirectory:(WCFile *)file {
+	WIP7Message		*message;
+	
+	message = [WIP7Message messageWithName:@"wired.file.subscribe_directory" spec:WCP7Spec];
+	[message setString:[file path] forName:@"wired.file.path"];
+	[[file connection] sendMessage:message fromObserver:self selector:@selector(wiredFileSubscribeDirectoryReply:)];
+}
+
+
+
+- (void)_unsubscribeFromDirectory:(WCFile *)file {
+	WIP7Message		*message;
+	
+	message = [WIP7Message messageWithName:@"wired.file.unsubscribe_directory" spec:WCP7Spec];
+	[message setString:[file path] forName:@"wired.file.path"];
+	[[file connection] sendMessage:message fromObserver:self selector:@selector(wiredFileUnssbscribeDirectoryReply:)];
+}
+
+
+
+#pragma mark -
 
 - (void)_openFile:(WCFile *)file overrideNewWindow:(BOOL)override {
 	BOOL	optionKey, newWindows;
@@ -393,21 +633,10 @@
 		case WCFileDirectory:
 		case WCFileUploads:
 		case WCFileDropBox:
-			if(override || (newWindows && !optionKey) || (!newWindows && optionKey)) {
-				[WCFiles filesWithConnection:[self connection] path:file];
-			} else {
-				if(![[self _currentPath] isEqual:file]) {
-					[_history removeObjectsInRange:
-						NSMakeRange(_historyPosition + 1, [_history count] - _historyPosition - 1)];
-
-					[_history addObject:file];
-					_historyPosition = [_history count] - 1;
-					
-					[self _setSelectPath:NULL];
-					[self _changeDirectory:file];
-					[self validate];
-				}
-			}
+			if(override || (newWindows && !optionKey) || (!newWindows && optionKey))
+				[WCFiles filesWithConnection:[file connection] file:file];
+			else
+				[self _changeCurrentDirectory:file reselectFiles:YES];
 			break;
 
 		case WCFileFile:
@@ -418,215 +647,128 @@
 
 
 
-- (void)_reloadFiles {
-	[self _setSelectPath:[[self _selectedFile] path]];
-	
-	[[[self connection] cache] removeFilesForPath:[[self _currentPath] path]];
-	
-	[self _changeDirectory:[self _currentPath]];
-	[self validate];
+- (void)_reloadStatus {
+	NSEnumerator			*enumerator;
+	NSMutableArray			*directory;
+	WCFile					*file;
+	WIFileOffset			size = 0;
+
+	directory		= [[self _directoriesForConnection:[_currentDirectory connection]] objectForKey:[_currentDirectory path]];
+	enumerator		= [directory objectEnumerator];
+
+	while((file = [enumerator nextObject]))
+		if([file type] == WCFileFile)
+			size += [file size];
+
+	[_statusTextField setStringValue:[NSSWF:
+		NSLS(@"%lu %@, %@ total, %@ available", @"Files info (count, 'item(s)', size, available)"),
+		[directory count],
+		[directory count] == 1
+			? NSLS(@"item", @"Item singular")
+			: NSLS(@"items", @"Item plural"),
+		[NSString humanReadableStringForSizeInBytes:size],
+		[NSString humanReadableStringForSizeInBytes:[_currentDirectory free]]]];
 }
 
 
 
-- (void)_subscribe {
-	WIP7Message		*message;
+- (void)_reselectFiles {
+	NSEnumerator			*enumerator;
+	NSMutableArray			*directory;
+	NSMutableIndexSet		*indexes;
+	WCFile					*file;
+	NSUInteger				index;
 	
-	message = [WIP7Message messageWithName:@"wired.file.subscribe_directory" spec:WCP7Spec];
-	[message setString:[[self _currentPath] path] forName:@"wired.file.path"];
-	[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredFileSubscribeDirectoryReply:)];
-}
-
-
-
-- (void)_unsubscribe {
-	WIP7Message		*message;
-	
-	message = [WIP7Message messageWithName:@"wired.file.unsubscribe_directory" spec:WCP7Spec];
-	[message setString:[[self _currentPath] path] forName:@"wired.file.path"];
-	[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredFileUnssbscribeDirectoryReply:)];
-}
-
-
-
-#pragma mark -
-
-- (NSDragOperation)_validateDrop:(id <NSDraggingInfo>)info inPath:(WCFile *)path onFile:(WCFile *)file dropOperation:(NSTableViewDropOperation)dropOperation {
-	NSPasteboard		*pasteboard;
-	NSArray				*types;
-	NSEvent				*event;
-	NSDragOperation		operation;
-	
-	pasteboard		= [info draggingPasteboard];
-	types			= [pasteboard types];
-	operation		= NSDragOperationNone;
-	event			= [NSApp currentEvent];
-	
-	if([types containsObject:NSFilenamesPboardType]) {
-		if(![[[self connection] account] transferUploadFiles])
-			return NSDragOperationNone;
-
-		if((file && [file isFolder] && ![file isUploadsFolder]) || (!file && ![path isUploadsFolder])) {
-			if(![[[self connection] account] transferUploadAnywhere])
-				return NSDragOperationNone;
-		}
+	if([_selectFiles count] > 0) {
+		directory		= [[self _directoriesForConnection:[self _selectedConnection]] objectForKey:[_currentDirectory path]];
+		indexes			= [NSMutableIndexSet indexSet];
+		enumerator		= [_selectFiles objectEnumerator];
 		
-		if(file && [file isUploadsFolder] && dropOperation == NSTableViewDropAbove) {
-			if(![path isUploadsFolder]) {
-				if(![[[self connection] account] transferUploadAnywhere])
-					return NSDragOperationNone;
-			}
-		}
-		
-		operation = NSDragOperationCopy;
-	}
-	else if([types containsObject:WCFilePboardType]) {
-		if([event alternateKeyModifier] && [event commandKeyModifier]) {
-			if(![[[self connection] account] fileCreateLinks])
-				return NSDragOperationNone;
+		while((file = [enumerator nextObject])) {
+			index = [directory indexOfObject:file];
 			
-			operation = NSDragOperationLink;
-		} else {
-			if(![[[self connection] account] fileMoveFiles])
-				return NSDragOperationNone;
-			
-			operation = NSDragOperationMove;
+			if(index != NSNotFound)
+				[indexes addIndex:index];
 		}
-	}
-	
-	return operation;
-}
-
-
-
-- (BOOL)_acceptDrop:(id <NSDraggingInfo>)info inDestination:(WCFile *)destination {
-	NSEnumerator		*enumerator;
-	NSPasteboard		*pasteboard;
-	NSEvent				*event;
-	NSArray				*types, *sources;
-	NSString			*path, *sourceDirectory = NULL, *destinationDirectory = NULL, *destinationPath;
-	WIP7Message			*message;
-	WCFile				*source;
-	BOOL				result = NO;
-
-	pasteboard	= [info draggingPasteboard];
-	types		= [pasteboard types];
-	
-	[destination retain];
-
-	if([types containsObject:WCFilePboardType]) {
-		sources = [NSKeyedUnarchiver unarchiveObjectWithData:[pasteboard dataForType:WCFilePboardType]];
-		enumerator = [sources objectEnumerator];
 		
-		while((source = [enumerator nextObject])) {
-			sourceDirectory = [[source path] stringByDeletingLastPathComponent];
-			destinationDirectory = [destination path];
-			event = [NSApp currentEvent];
-
-			if([event alternateKeyModifier] && [event commandKeyModifier]) {
-				destinationPath = [[destination path] stringByAppendingPathComponent:[source name]];
-
-				if([sourceDirectory isEqualToString:destinationDirectory])
-					destinationPath = [destinationPath stringByAppendingString:@" alias"];
-
-				message = [WIP7Message messageWithName:@"wired.file.link" spec:WCP7Spec];
-				[message setString:[source path] forName:@"wired.file.path"];
-				[message setString:destinationPath forName:@"wired.file.new_path"];
-				[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredFileLinkReply:)];
-				
-				result = YES;
-			} else {
-				if(![sourceDirectory isEqualToString:destinationDirectory]) {
-					destinationPath = [[destination path] stringByAppendingPathComponent:[source name]];
-					
-					message = [WIP7Message messageWithName:@"wired.file.move" spec:WCP7Spec];
-					[message setString:[source path] forName:@"wired.file.path"];
-					[message setString:destinationPath forName:@"wired.file.new_path"];
-					[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredFileMoveReply:)];
-					
-					result = YES;
-				}
-			}
-		}
+		[_filesOutlineView selectRowIndexes:indexes byExtendingSelection:NO];
+		[_filesTreeView selectRowIndexes:indexes byExtendingSelection:NO];
+		
+		[_selectFiles removeAllObjects];
 	}
-	else if([types containsObject:NSFilenamesPboardType]) {
-		sources = [pasteboard propertyListForType:NSFilenamesPboardType];
-		enumerator = [[sources sortedArrayUsingSelector:@selector(compare:)] objectEnumerator];
-
-		while((path = [enumerator nextObject]))
-			[[WCTransfers transfers] uploadPath:path toFolder:destination];
-
-		result = YES;
-	}
-	
-	[destination release];
-	
-	return result;
 }
 
 
 
-#pragma mark -
+- (void)_sortFiles {
+	NSEnumerator			*enumerator;
+	NSMutableArray			*directory;
+	WISortOrder				sortOrder;
+	SEL						selector;
 
-- (BOOL)_validateUpload {
-	WCAccount		*account;
-	WCFileType		type;
+	selector		= [self _sortSelector];
+	sortOrder		= [_filesOutlineView sortOrder];
+	enumerator		= [[self _directoriesForConnection:[self _selectedConnection]] objectEnumerator];
 	
-	account		= [[self connection] account];
-	type		= [[self _currentPath] type];
-
-	return ([account transferUploadAnywhere] ||
-		   ([account transferUploadFiles] && (type == WCFileUploads || type == WCFileDropBox)));
+	while((directory = [enumerator nextObject])) {
+		[directory sortUsingSelector:selector];
+		
+		if(sortOrder == WISortDescending)
+			[directory reverse];
+	}
 }
 
 
 
-#pragma mark -
+- (SEL)_sortSelector {
+	NSTableColumn		*tableColumn;
 
-- (void)_validatePermissions {
-	BOOL			setPermissions, dropBox;
+	tableColumn = [_filesOutlineView highlightedTableColumn];
 	
-	setPermissions	= [[[self connection] account] fileSetPermissions];
-	dropBox			= ([_typePopUpButton tagOfSelectedItem] == WCFileDropBox);
+	if(tableColumn == _nameTableColumn)
+		return @selector(compareName:);
+	else if(tableColumn == _kindTableColumn)
+		return @selector(compareKind:);
+	else if(tableColumn == _createdTableColumn)
+		return @selector(compareCreationDate:);
+	else if(tableColumn == _modifiedTableColumn)
+		return @selector(compareModificationDate:);
+	else if(tableColumn == _sizeTableColumn)
+		return @selector(compareSize:);
 	
-	[_ownerPopUpButton setEnabled:(dropBox && setPermissions)];
-	[_ownerPermissionsPopUpButton setEnabled:(dropBox && setPermissions)];
-	[_groupPopUpButton setEnabled:(dropBox && setPermissions)];
-	[_groupPermissionsPopUpButton setEnabled:(dropBox && setPermissions)];
-	[_everyonePermissionsPopUpButton setEnabled:(dropBox && setPermissions)];
+	return @selector(compareName:);
 }
 
 @end
 
 
+
 @implementation WCFiles
 
-+ (id)filesWithConnection:(WCServerConnection *)connection path:(WCFile *)path {
-	return [[[self alloc] _initFilesWithConnection:connection path:path selectPath:NULL] autorelease];
++ (id)filesWithConnection:(WCServerConnection *)connection file:(WCFile *)file {
+	return [[[self alloc] _initFilesWithConnection:connection file:file selectFile:NULL] autorelease];
 }
 
 
 
-+ (id)filesWithConnection:(WCServerConnection *)connection path:(WCFile *)path selectPath:(NSString *)selectPath {
-	return [[[self alloc] _initFilesWithConnection:connection path:path selectPath:selectPath] autorelease];
++ (id)filesWithConnection:(WCServerConnection *)connection file:(WCFile *)file selectFile:(WCFile *)selectFile {
+	return [[[self alloc] _initFilesWithConnection:connection file:file selectFile:selectFile] autorelease];
 }
 
 
 
 - (void)dealloc {
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	
 	[_errorQueue release];
 	
-	[_history release];
-	[_allFiles release];
-	[_browserFiles release];
-	
-	[_listPath release];
-	[_browserPath release];
-	[_selectPath release];
-	
+	[_files release];
 	[_servers release];
 	[_places release];
-
+	[_selectFiles release];
+	
+	[_dateFormatter release];
+	
 	[super dealloc];
 }
 
@@ -636,19 +778,13 @@
 
 - (void)windowDidLoad {
 	NSInvocation		*invocation;
-	NSArray				*types;
-	NSData				*data;
 	NSUInteger			style;
-	
-	[super windowDidLoad];
+
+	[self setShouldCascadeWindows:YES];
+	[self setWindowFrameAutosaveName:@"Files"];
 
 	_errorQueue = [[WCErrorQueue alloc] initWithWindow:[self window]];
 	
-	data = [WCSettings objectForKey:WCPlaces];
-	
-	if(data)
-		[_places addObjectsFromArray:[NSKeyedUnarchiver unarchiveObjectWithData:data]];
-
 	if([_sourceOutlineView respondsToSelector:@selector(setSelectionHighlightStyle:)]) {
 		style = 1; // NSTableViewSelectionHighlightStyleSourceList
 	
@@ -657,160 +793,159 @@
 		[invocation invoke];
 	}
 	
-	[_sourceOutlineView registerForDraggedTypes:[NSArray arrayWithObjects:WCFilePboardType, WCPlacePboardType, NULL]];
 	[_sourceOutlineView expandItem:[NSNumber numberWithInteger:0]];
 	[_sourceOutlineView expandItem:[NSNumber numberWithInteger:1]];
+	[_sourceOutlineView registerForDraggedTypes:[NSArray arrayWithObjects:WCFilePboardType, WCPlacePboardType, NULL]];
 
-	types = [NSArray arrayWithObjects:WCFilePboardType, NSFilenamesPboardType, NULL];
-
-	[_filesBrowser setCellClass:[WCFilesBrowserCell class]];
-	[_filesBrowser setMatrixClass:[WIMatrix class]];
-
-	if([_filesBrowser respondsToSelector:@selector(setDraggingSourceOperationMask:forLocal:)]) {
-		[(NSTableView *) _filesBrowser setDraggingSourceOperationMask:NSDragOperationEvery forLocal:NO];
-		[(NSTableView *) _filesBrowser setDraggingSourceOperationMask:NSDragOperationEvery forLocal:YES];
-	}
-
-	[_filesBrowser setTarget:self];
-	[_filesBrowser setAction:@selector(browserDidSingleClick:)];
-	[_filesBrowser setDoubleAction:@selector(open:)];
-	[_filesBrowser setColumnsAutosaveName:@"Files"];
-	[_filesBrowser registerForDraggedTypes:[NSArray arrayWithObjects:WCFilePboardType, NSFilenamesPboardType, NULL]];
-	[_filesBrowser loadColumnZero];
-
-	[[_filesController filesOutlineView] registerForDraggedTypes:[NSArray arrayWithObjects:WCFilePboardType, NSFilenamesPboardType, NULL]];
-	[[_filesController filesOutlineView] setTarget:self];
-	[[_filesController filesOutlineView] setDoubleAction:@selector(open:)];
-	[[_filesController filesOutlineView] setDeleteAction:@selector(deleteFiles:)];
-	[[_filesController filesOutlineView] setBackAction:@selector(back:)];
-	[[_filesController filesOutlineView] setForwardAction:@selector(forward:)];
-	[[_filesController filesOutlineView] setEscapeAction:@selector(deselectFiles:)];
+	[_filesOutlineView setTarget:self];
+	[_filesOutlineView setDoubleAction:@selector(open:)];
+	[_filesOutlineView setEscapeAction:@selector(deselectAll:)];
+	[_filesOutlineView setAllowsUserCustomization:YES];
+	[_filesOutlineView setDefaultHighlightedTableColumnIdentifier:@"Name"];
+	[_filesOutlineView setDefaultTableColumnIdentifiers:
+		[NSArray arrayWithObjects:@"Name", @"Size", NULL]];
+	[_filesOutlineView setAutosaveName:@"Files"];
+    [_filesOutlineView setAutosaveTableColumns:YES];
+	[_filesOutlineView registerForDraggedTypes:[NSArray arrayWithObject:WCFilePboardType]];
 	
-	[_titleBarMenu removeAllItems];
+	[_filesTreeView setTarget:self];
+	[_filesTreeView setDoubleAction:@selector(open:)];
+	[_filesTreeView registerForDraggedTypes:[NSArray arrayWithObject:WCFilePboardType]];
 
-	[self setShouldCascadeWindows:YES];
-	[self setWindowFrameAutosaveName:@"Files"];
-
-	[[_filesController filesOutlineView] setPropertiesFromDictionary:
-		[[WCSettings objectForKey:WCWindowProperties] objectForKey:@"WCFilesTableView"]];
+	[_styleControl selectSegmentWithTag:[WCSettings integerForKey:WCFilesStyle]];
 	
-	[[self window] setTitle:[[self _currentPath] path] withSubtitle:[[self connection] name]];
-
-	if(_type == WCFilesStyleList) 
-		[self _showList];
-	else if(_type == WCFilesStyleBrowser) 
-		[self _showBrowser];
-	
-	[_styleControl selectSegmentWithTag:_type];
+	[self _selectStyle:[self _selectedStyle]];
+	[self _reloadStatus];
 }
 
 
 
-- (void)windowWillClose:(NSNotification *)notification {
-	[WCSettings setObject:[[_filesController filesOutlineView] propertiesDictionary]
-				   forKey:@"WCFilesTableView"
-	   inDictionaryForKey:WCWindowProperties];
-	
-	if(_subscribed)
-		[self _unsubscribe];
-}
-
-
-
-- (NSMenu *)windowTitleBarMenu:(WIWindow *)window {
-	return _titleBarMenu;
-}
-
-
-
-- (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame {
-	NSRect		frame;
-	
-	frame = [[self window] frame];
-	frame.origin.y = defaultFrame.origin.y;
-	frame.size.height = defaultFrame.size.height;
-	
-	return frame;
-}
-
-
-
-- (void)themeDidChange:(NSDictionary *)theme {
-	[_filesController themeDidChange:theme];
+- (void)selectedThemeDidChange:(NSNotification *)notification {
+	[self _themeDidChange];
 }
 
 
 
 - (void)linkConnectionLoggedIn:(NSNotification *)notification {
-	[self validate];
+	WCServerConnection		*connection;
 	
-	[self _subscribe];
+	connection = [notification object];
 	
-	_subscribed = YES;
-
-	[super linkConnectionLoggedIn:notification];
+	if(![connection isKindOfClass:[WCServerConnection class]])
+		return;
+	
+	[self _revalidatePlacesForConnection:connection];
+	
+	if(![connection isReconnecting])
+		[self _addConnection:connection];
+	
+	[self _validate];
 }
 
 
 
 - (void)linkConnectionDidClose:(NSNotification *)notification {
-	[self validate];
-
-	_subscribed = NO;
+	WCServerConnection		*connection;
 	
-	[super linkConnectionDidClose:notification];
+	connection = [notification object];
+	
+	if(![connection isKindOfClass:[WCServerConnection class]])
+		return;
+	
+	[self _invalidatePlacesForConnection:connection];
+	
+	[connection removeObserver:self];
+	
+	[self _validate];
+}
+
+
+
+- (void)linkConnectionDidTerminate:(NSNotification *)notification {
+	WCServerConnection		*connection;
+
+	connection = [notification object];
+
+	if(![connection isKindOfClass:[WCServerConnection class]])
+		return;
+	
+	[self _invalidatePlacesForConnection:connection];
+
+	[_servers removeObject:connection];
+	[_sourceOutlineView reloadData];
+	
+	[connection removeObserver:self];
+	
+	[self _validate];
 }
 
 
 
 - (void)serverConnectionServerInfoDidChange:(NSNotification *)notification {
-	[[self window] setTitle:[[self _currentPath] path] withSubtitle:[[self connection] name]];
-	
-	[super serverConnectionServerInfoDidChange:notification];
+	[_sourceOutlineView reloadData];
+}
+
+
+
+- (void)serverConnectionPrivilegesDidChange:(NSNotification *)notification {
+	[self _validate];
+}
+
+
+
+- (void)wiredFileDirectoryChanged:(WIP7Message *)message {
+	if([[message stringForName:@"wired.file.path"] isEqualToString:[_currentDirectory path]])
+		[self performSelectorOnce:@selector(_reloadFilesAtDirectory:) withObject:_currentDirectory afterDelay:0.1];
 }
 
 
 
 - (void)wiredFileListPathReply:(WIP7Message *)message {
-	WCFile			*file;
-	WIP7UInt64		free;
+	NSMutableDictionary		*files, *directories;
+	NSMutableArray			*directory;
+	NSString				*path;
+	WCServerConnection		*connection;
+	WCFile					*file;
+	WIP7UInt64				free;
 	
+	connection = [message contextInfo];
+
 	if([[message name] isEqualToString:@"wired.file.list"]) {
-		file = [WCFile fileWithMessage:message connection:[self connection]];
+		file			= [WCFile fileWithMessage:message connection:connection];
+		files			= [self _filesForConnection:connection];
+		directories		= [self _directoriesForConnection:connection];
+		directory		= [directories objectForKey:[[file path] stringByDeletingLastPathComponent]];
 		
-		if(![[[file path] stringByDeletingLastPathComponent] isEqualToString:[[self _currentPath] path]])
-			return;
-		
-		[_allFiles setObject:file forKey:[file name]];
+		[files setObject:file forKey:[file path]];
+		[directory addObject:file];
 	}
 	else if([[message name] isEqualToString:@"wired.file.list.done"]) {
-		[message getUInt64:&free forName:@"wired.file.available"];
+		[_progressIndicator stopAnimation:self];
+		
+		path		= [message stringForName:@"wired.file.path"];
+		file		= [[self _filesForConnection:connection] objectForKey:path];
+		directory	= [[self _directoriesForConnection:connection] objectForKey:path];
+		
+		[directory sortUsingSelector:[self _sortSelector]];
+		
+		if([_filesOutlineView sortOrder] == WISortDescending)
+			[directory reverse];
 
-		[[self _currentPath] setFree:free];
+		[_filesOutlineView reloadData];
+		[_filesTreeView reloadData];
 		
-		[_filesController setFiles:[_allFiles allValues]];
+		[message getUInt64:&free forName:@"wired.file.available"];
 		
-		[_browserFiles setObject:[[[_allFiles allValues] mutableCopy] autorelease]
-						  forKey:[[self _currentPath] path]];
+		[file setFree:free];
 		
-		[[[self connection] cache] setFiles:[[[_allFiles allValues] mutableCopy] autorelease]
-									   free:[[self _currentPath] free]
-									forPath:[[self _currentPath] path]];
-		
-		[self _updateFiles];
+		[self _reloadStatus];
+		[self _reselectFiles];
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
 		[_progressIndicator stopAnimation:self];
 		
 		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 	}
-}
-
-
-
-- (void)wiredFileDirectoryChanged:(WIP7Message *)message {
-	if([[message stringForName:@"wired.file.path"] isEqualToString:[[self _currentPath] path]])
-		[self _reloadFiles];
 }
 
 
@@ -840,8 +975,11 @@
 
 
 - (void)wiredFileMoveReply:(WIP7Message *)message {
-	if([[message name] isEqualToString:@"wired.error"])
+	if([[message name] isEqualToString:@"wired.error"]) {
 		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
+
+		[self performSelectorOnce:@selector(_reloadFilesAtDirectory:) withObject:_currentDirectory afterDelay:0.1];
+	}
 }
 
 
@@ -874,209 +1012,61 @@
 
 #pragma mark -
 
-- (void)validate {
-	NSEnumerator	*enumerator;
-	NSArray			*files;
-	WCAccount		*account;
-	WCFile			*file;
-	BOOL			connected, preview;
-	
-	connected	= [[self connection] isConnected];
-	account		= [[self connection] account];
-	files		= [self _selectedFiles];
-
-	switch([files count]) {
-		case 0:
-			[_downloadButton setEnabled:NO];
-			[_previewButton setEnabled:NO];
-			[_infoButton setEnabled:NO];
-			[_deleteButton setEnabled:NO];
-			break;
-
-		case 1:
-			file = [files objectAtIndex:0];
-
-			[_downloadButton setEnabled:([account transferDownloadFiles] && connected)];
-			[_deleteButton setEnabled:([account fileDeleteFiles] && connected)];
-			[_infoButton setEnabled:([account fileGetInfo] && connected)];
-			[_previewButton setEnabled:([account transferDownloadFiles] &&
-										connected &&
-										![file isFolder] &&
-										[WCTransfers canPreviewFileWithExtension:[file extension]])];
-			break;
-
-		default:
-			[_downloadButton setEnabled:([account transferDownloadFiles] && connected)];
-			
-			preview = ([account transferDownloadFiles] && connected);
-			
-			if(preview) {
-				enumerator = [files objectEnumerator];
-				
-				while((file = [enumerator nextObject])) {
-					if([file isFolder] || ![WCTransfers canPreviewFileWithExtension:[file extension]]) {
-						preview = NO;
-						
-						break;
-					}
-				}
-			}
-			
-			[_previewButton setEnabled:preview];
-			[_deleteButton setEnabled:([account fileDeleteFiles] && connected)];
-			[_infoButton setEnabled:([account fileGetInfo] && connected)];
-			break;
-	}
-
-	[[_historyControl cell] setEnabled:(_type == WCFilesStyleList && _historyPosition > 0 && connected) forSegment:0];
-	[[_historyControl cell] setEnabled:(_type == WCFilesStyleList && _historyPosition + 1 < [_history count] && connected) forSegment:1];
-
-	[_uploadButton setEnabled:([self _validateUpload] && connected)];
-	[_createFolderButton setEnabled:([account fileCreateDirectories] && connected)];
-	[_reloadButton setEnabled:connected];
-	
-	[super validate];
-}
-
-
-
-- (BOOL)validateMenuItem:(NSMenuItem *)item {
-	SEL		selector;
-	BOOL	connected;
-	
-	selector = [item action];
-	connected = [[self connection] isConnected];
-	
-	if(selector == @selector(download:))
-		return ([[[self connection] account] transferDownloadFiles] && connected);
-	else if(selector == @selector(getInfo:))
-		return ([self _selectedFile] != NULL && connected);
-	else if(selector == @selector(newFolder:))
-		return ([[[self connection] account] fileCreateDirectories] && connected);
-	else if(selector == @selector(deleteFiles:))
-		return ([[[self connection] account] fileDeleteFiles] && connected);
-
-	return YES;
-}
-
-
-
-#pragma mark -
-
-- (void)submitSheet:(id)sender {
-	BOOL	valid = YES;
-	
-	if([sender window] == _createFolderPanel)
-		valid = ([[_nameTextField stringValue] length] > 0);
-	
-	if(valid)
-		[super submitSheet:sender];
-}
-
-
-
-#pragma mark -
-
 - (IBAction)open:(id)sender {
 	NSEnumerator	*enumerator;
 	NSArray			*files;
 	WCFile			*file;
+	NSUInteger		style;
 	
-	if(![[self connection] isConnected] || [[_filesController filesOutlineView] clickedHeader])
+	if([_filesOutlineView clickedHeader])
 		return;
 
-	files = [self _selectedFiles];
-	enumerator = [files objectEnumerator];
-
+	style		= [self _selectedStyle];
+	files		= [self _selectedFiles];
+	enumerator	= [files objectEnumerator];
+	
 	while((file = [enumerator nextObject]))
-		[self _openFile:file overrideNewWindow:(_type == WCFilesStyleBrowser || [files count] > 1)];
+		[self _openFile:file overrideNewWindow:(style == WCFilesStyleTree || [files count] > 1)];
 }
 
 
 
-- (IBAction)openMenuItem:(id)sender {
+- (IBAction)deselectAll:(id)sender {
+	[_filesOutlineView deselectAll:self];
+}
+
+
+
+- (IBAction)enclosingFolder:(id)sender {
 	WCFile		*file;
 	
-	if(![[self connection] isConnected])
-		return;
-	
-	file = [WCFile fileWithDirectory:[sender representedObject] connection:[self connection]];
-
-	if(![file isEqual:[self _currentPath]])
-		[self _openFile:file overrideNewWindow:NO];
-}
-
-
-
-- (void)deselectFiles:(id)sender {
-	[[_filesController filesOutlineView] deselectAll:self];
-}
-
-
-
-- (IBAction)up:(id)sender {
-	WCFile		*file;
-	
-	if([[[self _currentPath] path] isEqualToString:@"/"])
-		return;
-	
-	file = [WCFile fileWithDirectory:[[[self _currentPath] path] stringByDeletingLastPathComponent] connection:[self connection]];
-
-	[self _openFile:file overrideNewWindow:NO];
-}
-
-
-
-- (IBAction)down:(id)sender {
-	NSEnumerator	*enumerator;
-	NSArray			*files;
-	WCFile			*file;
-	NSInteger		count;
-
-	files = [self _selectedFiles];
-	count = [files count];
-	enumerator = [files objectEnumerator];
-
-	while((file = [enumerator nextObject]))
-		[self _openFile:file overrideNewWindow:(count > 1)];
-}
-
-
-
-- (IBAction)back:(id)sender {
-	if([[_historyControl cell] isEnabledForSegment:0]) {
-		[self _setSelectPath:[[self _currentPath] path]];
-		[self _changeDirectory:[_history objectAtIndex:--_historyPosition]];
-		[self validate];
+	if(![[_currentDirectory path] isEqualToString:@"/"]) {
+		[_selectFiles addObject:_currentDirectory];
+		
+		file = [self _existingParentFileForFile:_currentDirectory];
+		
+		[self _openFile:file overrideNewWindow:([self _selectedStyle] == WCFilesStyleTree)];
 	}
 }
 
 
 
-- (IBAction)forward:(id)sender {
-	if([[_historyControl cell] isEnabledForSegment:1]) {
-		[self _setSelectPath:NULL];
-		[self _changeDirectory:[_history objectAtIndex:++_historyPosition]];
-		[self validate];
-	}
-}
-
-
+#pragma mark -
 
 - (IBAction)history:(id)sender {
-	if([_historyControl selectedSegment] == 0)
-		[self back:self];
-	else
-		[self forward:self];
 }
 
 
 
 - (IBAction)style:(id)sender {
-	if([[_styleControl cell] tagForSegment:[_styleControl selectedSegment]] == WCFilesStyleList)
-		[self _showList];
-	else
-		[self _showBrowser];
+	NSUInteger		style;
+	
+	style = [self _selectedStyle];
+	
+	[self _selectStyle:style];
+	[self _loadFilesAtDirectory:_currentDirectory reselectFiles:NO];
+	
+	[WCSettings setInteger:style forKey:WCFilesStyle];
 }
 
 
@@ -1098,7 +1088,7 @@
 
 	openPanel = [NSOpenPanel openPanel];
 
-	[openPanel setCanChooseDirectories:[[[self connection] account] transferUploadDirectories]];
+	[openPanel setCanChooseDirectories:[[[self _selectedConnection] account] transferUploadDirectories]];
 	[openPanel setCanChooseFiles:YES];
 	[openPanel setAllowsMultipleSelection:YES];
 
@@ -1123,7 +1113,7 @@
 		enumerator = [[files sortedArrayUsingSelector:@selector(compare:)] objectEnumerator];
 
 		while((path = [enumerator nextObject]))
-			[[WCTransfers transfers] uploadPath:path toFolder:[self _currentPath]];
+			[[WCTransfers transfers] uploadPath:path toFolder:_currentDirectory];
 	}
 }
 
@@ -1131,15 +1121,20 @@
 
 - (IBAction)getInfo:(id)sender {
 	NSEnumerator		*enumerator;
+	NSArray				*files;
 	WCFile				*file;
 	
+	files = [self _selectedFiles];
+	
 	if([[NSApp currentEvent] alternateKeyModifier]) {
-		enumerator = [[self _selectedFiles] objectEnumerator];
+		enumerator = [files objectEnumerator];
 		
 		while((file = [enumerator nextObject]))
-			[WCFileInfo fileInfoWithConnection:[self connection] file:file];
+			[WCFileInfo fileInfoWithConnection:[file connection] file:file];
 	} else {
-		[WCFileInfo fileInfoWithConnection:[self connection] files:[self _selectedFiles]];
+		file = [files objectAtIndex:0];
+		
+		[WCFileInfo fileInfoWithConnection:[file connection] files:files];
 	}
 }
 
@@ -1161,6 +1156,9 @@
 	NSEnumerator		*enumerator;
 	NSArray				*array;
 	NSMenuItem			*item;
+	WCServerConnection	*connection;
+	
+	connection = [self _selectedConnection];
 	
 	if(![[_typePopUpButton lastItem] image]) {
 		enumerator = [[_typePopUpButton itemArray] objectEnumerator];
@@ -1178,12 +1176,12 @@
 	[_ownerPopUpButton removeAllItems];
 	[_ownerPopUpButton addItem:[NSMenuItem itemWithTitle:NSLS(@"None", @"Create folder owner popup title") tag:1]];
 	
-	array = [[[[self connection] administration] accountsController] userNames];
+	array = [[[connection administration] accountsController] userNames];
 	
 	if([array count] > 0) {
 		[_ownerPopUpButton addItem:[NSMenuItem separatorItem]];
 		[_ownerPopUpButton addItemsWithTitles:array];
-		[_ownerPopUpButton selectItemWithTitle:[[[self connection] URL] user]];
+		[_ownerPopUpButton selectItemWithTitle:[[connection URL] user]];
 	}
 	
 	[_ownerPermissionsPopUpButton selectItemWithTag:WCFileOwnerRead | WCFileOwnerWrite];
@@ -1191,7 +1189,7 @@
 	[_groupPopUpButton removeAllItems];
 	[_groupPopUpButton addItem:[NSMenuItem itemWithTitle:NSLS(@"None", @"Create folder group popup title") tag:1]];
 	
-	array = [[[[self connection] administration] accountsController] groupNames];
+	array = [[[connection administration] accountsController] groupNames];
 	
 	if([array count] > 0) {
 		[_groupPopUpButton addItem:[NSMenuItem separatorItem]];
@@ -1221,7 +1219,7 @@
 	[_createFolderPanel close];
 
 	if(returnCode == NSAlertDefaultReturn) {
-		path = [[[self _currentPath] path] stringByAppendingPathComponent:[_nameTextField stringValue]];
+		path = [[_currentDirectory path] stringByAppendingPathComponent:[_nameTextField stringValue]];
 		
 		message = [WIP7Message messageWithName:@"wired.file.create_directory" spec:WCP7Spec];
 		[message setString:path forName:@"wired.file.path"];
@@ -1248,7 +1246,7 @@
 			[message setBool:(everyonePermissions & WCFileEveryoneWrite) forName:@"wired.file.everyone.write"];
 		}
 		
-		[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredFileCreateDirectoryReply:)];
+		[[self _selectedConnection] sendMessage:message fromObserver:self selector:@selector(wiredFileCreateDirectoryReply:)];
 	}
 }
 
@@ -1261,29 +1259,29 @@
 
 
 - (IBAction)reloadFiles:(id)sender {
-	[self _reloadFiles];
+	[self _reloadFilesAtDirectory:_currentDirectory];
 }
 
 
 
 - (IBAction)deleteFiles:(id)sender {
 	NSAlert			*alert;
+	NSArray			*files;
 	NSString		*title;
-	NSUInteger		count;
 	
 	if(![_deleteButton isEnabled])
 		return;
 
-	count = [[self _selectedFiles] count];
+	files = [self _selectedFiles];
 
-	if(count == 1) {
+	if([files count] == 1) {
 		title = [NSSWF:
 			NSLS(@"Are you sure you want to delete \u201c%@\u201d?", @"Delete file dialog title (filename)"),
-			[[self _selectedFile] name]];
+			[[files objectAtIndex:0] name]];
 	} else {
 		title = [NSSWF:
 			NSLS(@"Are you sure you want to delete %lu items?", @"Delete file dialog title (count)"),
-			count];
+			[files count]];
 	}
 
 	alert = [[NSAlert alloc] init];
@@ -1302,25 +1300,26 @@
 
 - (void)deleteSheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
 	NSEnumerator	*enumerator;
+	NSArray			*files;
+	NSString		*path;
 	WIP7Message		*message;
 	WCFile			*file;
-	NSString		*path;
 
 	if(returnCode == NSAlertFirstButtonReturn) {
-		enumerator = [[self _selectedFiles] objectEnumerator];
+		files		= [self _selectedFiles];
+		enumerator	= [files objectEnumerator];
 
-		if(_type == WCFilesStyleBrowser) {
-			path = [[[_rootPath path] stringByAppendingPathComponent:[_filesBrowser path]] stringByDeletingLastPathComponent];
+		if([self _selectedStyle] == WCFilesStyleTree) {
+			file = [files objectAtIndex:0];
+			path = [[file path] stringByDeletingLastPathComponent];
 			
-			[self _changeDirectory:[WCFile fileWithDirectory:path connection:[self connection]]];
-			
-			[_filesBrowser setPath:path];
+			[self _changeCurrentDirectory:[WCFile fileWithDirectory:path connection:[file connection]] reselectFiles:YES];
 		}
 
 		while((file = [enumerator nextObject])) {
 			message = [WIP7Message messageWithName:@"wired.file.delete" spec:WCP7Spec];
 			[message setString:[file path] forName:@"wired.file.path"];
-			[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredFileDeleteReply:)];
+			[[file connection] sendMessage:message fromObserver:self selector:@selector(wiredFileDeleteReply:)];
 		}
 	}
 }
@@ -1330,14 +1329,29 @@
 #pragma mark -
 
 - (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item {
-	if(!item)
-		return 2;
+	NSMutableDictionary		*directories;
+	NSMutableArray			*directory;
 	
-	if([item isKindOfClass:[NSNumber class]]) {
-		if([item unsignedIntegerValue] == 0)
-			return [_servers count];
+	if(outlineView == _sourceOutlineView) {
+		if(!item)
+			return 2;
+		
+		if([item isKindOfClass:[NSNumber class]]) {
+			if([item unsignedIntegerValue] == 0)
+				return [_servers count];
+			else
+				return [_places count];
+		}
+	}
+	else if(outlineView == _filesOutlineView) {
+		directories = [self _directoriesForConnection:[self _selectedConnection]];
+		
+		if(!item)
+			directory = [directories objectForKey:[_currentDirectory path]];
 		else
-			return [_places count];
+			directory = [directories objectForKey:[item path]];
+		
+		return [directory count];
 	}
 	
 	return 0;
@@ -1346,14 +1360,29 @@
 
 
 - (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(id)item {
-	if(!item)
-		return [NSNumber numberWithInteger:index];
+	NSMutableDictionary		*directories;
+	NSMutableArray			*directory;
 	
-	if([item isKindOfClass:[NSNumber class]]) {
-		if([item unsignedIntegerValue] == 0)
-			return [_servers objectAtIndex:index];
+	if(outlineView == _sourceOutlineView) {
+		if(!item)
+			return [NSNumber numberWithInteger:index];
+		
+		if([item isKindOfClass:[NSNumber class]]) {
+			if([item unsignedIntegerValue] == 0)
+				return [[_servers objectAtIndex:index] identifier];
+			else
+				return [_places objectAtIndex:index];
+		}
+	}
+	else if(outlineView == _filesOutlineView) {
+		directories = [self _directoriesForConnection:[self _selectedConnection]];
+		
+		if(!item)
+			directory = [directories objectForKey:[_currentDirectory path]];
 		else
-			return [_places objectAtIndex:index];
+			directory = [directories objectForKey:[item path]];
+		
+		return [directory objectAtIndex:index];
 	}
 	
 	return NULL;
@@ -1362,80 +1391,202 @@
 
 
 - (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item {
-	NSDictionary	*attributes;
-	NSString		*label;
+	NSDictionary			*attributes;
+	NSString				*label;
+	WCServerConnection		*connection;
+	WCFile					*file;
 	
-	if([item isKindOfClass:[NSNumber class]]) {
-		if([item unsignedIntegerValue] == 0)
-			label = NSLS(@"Servers", @"Files header");
-		else
-			label = NSLS(@"Places", @"Files header");
-		
-		attributes = [NSDictionary dictionaryWithObjectsAndKeys:
-			[NSColor colorWithCalibratedRed:96.0 / 255.0 green:110.0 / 255.0 blue:128.0 / 255.0 alpha:1.0],
-				NSForegroundColorAttributeName,
-			[NSFont boldSystemFontOfSize:11.0],
-				NSFontAttributeName,
-			NULL];
-		
-		return [NSAttributedString attributedStringWithString:[label uppercaseString] attributes:attributes];
-	} else {
-		return [item name];
+	if(outlineView == _sourceOutlineView) {
+		if([item isKindOfClass:[NSNumber class]]) {
+			if([item unsignedIntegerValue] == 0)
+				label = NSLS(@"Servers", @"Files header");
+			else
+				label = NSLS(@"Places", @"Files header");
+			
+			attributes = [NSDictionary dictionaryWithObjectsAndKeys:
+				[NSColor colorWithCalibratedRed:96.0 / 255.0 green:110.0 / 255.0 blue:128.0 / 255.0 alpha:1.0],
+					NSForegroundColorAttributeName,
+				[NSFont boldSystemFontOfSize:11.0],
+					NSFontAttributeName,
+				NULL];
+			
+			return [NSAttributedString attributedStringWithString:[label uppercaseString] attributes:attributes];
+		}
+		else if([item isKindOfClass:[WCFile class]]) {
+			connection = [(WCFile *) item connection];
+			
+			if(connection && [connection isConnected]) {
+				attributes = [NSDictionary dictionaryWithObjectsAndKeys:
+					[NSColor blackColor],
+						NSForegroundColorAttributeName,
+					[NSFont systemFontOfSize:11.0],
+						NSFontAttributeName,
+					NULL];
+			} else {
+				attributes = [NSDictionary dictionaryWithObjectsAndKeys:
+					[NSColor colorWithCalibratedRed:96.0 / 255.0 green:110.0 / 255.0 blue:128.0 / 255.0 alpha:1.0],
+						NSForegroundColorAttributeName,
+					[NSFont systemFontOfSize:11.0],
+						NSFontAttributeName,
+					NULL];
+			}
+			
+			return [NSAttributedString attributedStringWithString:[item name] attributes:attributes];
+		}
+		else if([item isKindOfClass:[NSString class]]) {
+			connection = [[[WCPublicChat publicChat] chatControllerForConnectionIdentifier:item] connection];
+			
+			return [connection name];
+		}
 	}
+	else if(outlineView == _filesOutlineView) {
+		file = item;
+		
+		if(tableColumn == _nameTableColumn)
+			return [file name];
+		else if(tableColumn == _kindTableColumn)
+			return [file kind];
+		else if(tableColumn == _createdTableColumn)
+			return [_dateFormatter stringFromDate:[file creationDate]];
+		else if(tableColumn == _modifiedTableColumn)
+			return [_dateFormatter stringFromDate:[file modificationDate]];
+		else if(tableColumn == _sizeTableColumn)
+			return [file humanReadableSize];
+		else if(tableColumn == _serverTableColumn)
+			return [[file connection] name];
+	}
+
+	return NULL;
+}
+
+
+
+- (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item {
+	if(outlineView == _sourceOutlineView)
+		return [item isKindOfClass:[NSNumber class]];
+	else if(outlineView == _filesOutlineView)
+		return [item isFolder];
+	
+	return NO;
+}
+
+
+
+- (void)outlineView:(NSOutlineView *)outlineView willDisplayCell:(id)cell forTableColumn:(NSTableColumn *)tableColumn item:(id)item {
+	if(outlineView == _sourceOutlineView) {
+		if([item isKindOfClass:[NSNumber class]])
+			[cell setImage:NULL];
+		else if([item isKindOfClass:[WCFile class]])
+			[cell setImage:[item iconWithWidth:16.0]];
+		else if([item isKindOfClass:[NSString class]])
+			[cell setImage:NULL];
+		
+		[cell setVerticalTextOffset:3.0];
+	}
+	else if(outlineView == _filesOutlineView) {
+		if(tableColumn == _nameTableColumn)
+			[cell setImage:[item iconWithWidth:16.0]];
+	}
+}
+
+
+
+- (NSColor *)outlineView:(NSOutlineView *)outlineView labelColorByItem:(id)item {
+	if(outlineView == _filesOutlineView)
+		return [item labelColor];
 	
 	return NULL;
 }
 
 
 
-- (void)outlineView:(NSOutlineView *)outlineView willDisplayCell:(id)cell forTableColumn:(NSTableColumn *)tableColumn item:(id)item {
-	if([item isKindOfClass:[NSNumber class]]) {
-		[cell setImage:NULL];
-		[cell setVerticalTextOffset:3.0];
-	} else {
-		[cell setImage:[item iconWithWidth:16.0]];
-		[cell setVerticalTextOffset:3.0];
+- (BOOL)outlineView:(NSOutlineView *)outlineView shouldSelectItem:(id)item {
+	if(outlineView == _sourceOutlineView) {
+		if([item isKindOfClass:[NSNumber class]])
+			return NO;
+		
+		if([item isKindOfClass:[WCFile class]])
+			return ([(WCFile *) item connection] != NULL && [[(WCFile *) item connection] isConnected]);
 	}
+	
+	return YES;
 }
 
 
 
-- (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item {
-	return [item isKindOfClass:[NSNumber class]];
+- (void)outlineViewItemDidExpand:(NSNotification *)notification {
+	WCFile		*file;
+	
+	if([notification object] == _filesOutlineView) {
+		file = [[notification userInfo] objectForKey:@"NSObject"];
+		
+		[self _loadFilesAtDirectory:file reselectFiles:NO];
+	}
 }
 
 
 
 - (void)outlineViewSelectionDidChange:(NSNotification *)notification {
+	NSOutlineView		*outlineView;
+	
+	outlineView = [notification object];
+	
+	if(outlineView == _sourceOutlineView)
+		[self _changeCurrentDirectory:[self _selectedSource] reselectFiles:NO];
+	else if(outlineView == _filesOutlineView)
+		[self _validate];
 }
 
 
 
-- (BOOL)outlineView:(NSOutlineView *)outlineView shouldSelectItem:(id)item {
-	return ![item isKindOfClass:[NSNumber class]];
+- (void)outlineView:(NSOutlineView *)outlineView didClickTableColumn:(NSTableColumn *)tableColumn {
+	[_filesOutlineView setHighlightedTableColumn:tableColumn];
+	[self _sortFiles];
+	[_filesOutlineView reloadData];
+	
+	[self _validate];
 }
 
 
 
-- (BOOL)outlineView:(NSOutlineView *)tableView writeItems:(NSArray *)items toPasteboard:(NSPasteboard *)pasteboard {
+- (NSString *)outlineView:(NSOutlineView *)outlineView stringValueByItem:(id)item {
+	if(outlineView == _filesOutlineView)
+		return [(WCFile *) item name];
+	
+	return NULL;
+}
+
+
+
+- (BOOL)outlineView:(NSOutlineView *)outlineView writeItems:(NSArray *)items toPasteboard:(NSPasteboard *)pasteboard {
 	NSEnumerator		*enumerator;
 	NSMutableArray		*files;
 	id					item;
 	
-	files		= [NSMutableArray array];
-	enumerator	= [items objectEnumerator];
-	
-	while((item = [enumerator nextObject])) {
-		if(![item isKindOfClass:[WCFile class]])
-			return NO;
+	if(outlineView == _sourceOutlineView) {
+		files		= [NSMutableArray array];
+		enumerator	= [items objectEnumerator];
 		
-		[files addObject:item];
+		while((item = [enumerator nextObject])) {
+			if(![item isKindOfClass:[WCFile class]])
+				return NO;
+			
+			[files addObject:item];
+		}
+		
+		[pasteboard declareTypes:[NSArray arrayWithObject:WCPlacePboardType] owner:NULL];
+		[pasteboard setData:[NSKeyedArchiver archivedDataWithRootObject:files] forType:WCPlacePboardType];
+		
+		return YES;
+	}
+	else if(outlineView == _filesOutlineView) {
+		[pasteboard declareTypes:[NSArray arrayWithObject:WCFilePboardType] owner:NULL];
+		[pasteboard setData:[NSKeyedArchiver archivedDataWithRootObject:items] forType:WCFilePboardType];
+		
+		return YES;
 	}
 	
-	[pasteboard declareTypes:[NSArray arrayWithObject:WCPlacePboardType] owner:NULL];
-	[pasteboard setData:[NSKeyedArchiver archivedDataWithRootObject:files] forType:WCPlacePboardType];
-	
-	return YES;
+	return NO;
 }
 
 
@@ -1443,38 +1594,66 @@
 - (NSDragOperation)outlineView:(NSOutlineView *)outlineView validateDrop:(id <NSDraggingInfo>)info proposedItem:(id)item proposedChildIndex:(NSInteger)index {
 	NSEnumerator		*enumerator;
 	NSPasteboard		*pasteboard;
+	NSEvent				*event;
 	NSArray				*types, *sources;
-	WCFile				*file;
+	WCFile				*sourceFile, *destinationFile;
+	BOOL				copy, link;
 
 	pasteboard	= [info draggingPasteboard];
 	types		= [pasteboard types];
-	
+	event		= [NSApp currentEvent];
+	link		= ([event alternateKeyModifier] && [event commandKeyModifier]);
+
 	if(outlineView == _sourceOutlineView) {
 		if([types containsObject:WCFilePboardType]) {
 			if(!item)
 				return NSDragOperationNone;
 			
-			if([item isKindOfClass:[NSNumber class]] && [item unsignedIntegerValue] == 0)
-				return NSDragOperationNone;
-		
-			if([item isKindOfClass:[NSNumber class]]) {
-				sources		= [NSKeyedUnarchiver unarchiveObjectWithData:[pasteboard dataForType:WCFilePboardType]];
-				enumerator	= [sources reverseObjectEnumerator];
+			sources		= [NSKeyedUnarchiver unarchiveObjectWithData:[pasteboard dataForType:WCFilePboardType]];
+			enumerator	= [sources reverseObjectEnumerator];
 			
-				while((file = [enumerator nextObject])) {
-					if(![file isFolder])
+			if([item isKindOfClass:[NSNumber class]]) {
+				if([item unsignedIntegerValue] != 0) {
+					while((sourceFile = [enumerator nextObject])) {
+						if(![sourceFile isFolder])
+							return NSDragOperationNone;
+					}
+					
+					return NSDragOperationCopy;
+				}
+			}
+			else if([item isKindOfClass:[NSString class]] || [item isKindOfClass:[WCFile class]]) {
+				if([item isKindOfClass:[NSString class]]) {
+					destinationFile = [WCFile fileWithRootDirectoryForConnection:
+						[[[WCPublicChat publicChat] chatControllerForConnectionIdentifier:item] connection]];
+				} else {
+					destinationFile = item;
+				}
+				
+				copy = NO;
+				
+				while((sourceFile = [enumerator nextObject])) {
+					if([sourceFile connection] == [destinationFile connection])
+						return NSDragOperationNone;
+					
+					if([sourceFile volume] != [destinationFile volume])
+						copy = YES;
+				
+					if([[[sourceFile path] stringByDeletingLastPathComponent] isEqualToString:[destinationFile path]])
 						return NSDragOperationNone;
 				}
 				
-				return NSDragOperationCopy;
+				if(link)
+					return NSDragOperationLink;
+				else if(copy)
+					return NSDragOperationCopy;
+				else
+					return NSDragOperationMove;
 			}
 
-			return NSDragOperationMove;
+			return NSDragOperationNone;
 		}
 		else if([types containsObject:WCPlacePboardType]) {
-			if(!item)
-				return NSDragOperationDelete;
-			
 			if([item isKindOfClass:[NSNumber class]] && [item unsignedIntegerValue] == 1 && index >= 0) {
 				[_sourceOutlineView setDropRow:-1 dropOperation:NSDragOperationMove];
 				
@@ -1484,8 +1663,47 @@
 			return NSDragOperationNone;
 		}
 	}
-	else if(outlineView == [_filesController filesOutlineView]) {
-		return NSDragOperationNone;
+	else if(outlineView == _filesOutlineView) {
+		if([types containsObject:WCFilePboardType]) {
+			destinationFile		= item ? item : _currentDirectory;
+			sources				= [NSKeyedUnarchiver unarchiveObjectWithData:[pasteboard dataForType:WCFilePboardType]];
+			enumerator			= [sources reverseObjectEnumerator];
+			
+			if(index >= 0) {
+				destinationFile = _currentDirectory;
+
+				[_filesOutlineView setDropItem:NULL dropChildIndex:NSOutlineViewDropOnItemIndex];
+			}
+			
+			if(![destinationFile isFolder]) {
+				destinationFile = [self _existingParentFileForFile:destinationFile];
+				
+				if(destinationFile == _currentDirectory)
+					[_filesOutlineView setDropItem:NULL dropChildIndex:NSOutlineViewDropOnItemIndex];
+				else
+					[_filesOutlineView setDropItem:destinationFile dropChildIndex:NSOutlineViewDropOnItemIndex];
+			}
+			
+			copy = NO;
+			
+			while((sourceFile = [enumerator nextObject])) {
+				if([sourceFile connection] == [destinationFile connection])
+					return NSDragOperationNone;
+				
+				if([sourceFile volume] != [destinationFile volume])
+					copy = YES;
+				
+				if([[[sourceFile path] stringByDeletingLastPathComponent] isEqualToString:[destinationFile path]])
+					return NSDragOperationNone;
+			}
+			
+			if(link)
+				return NSDragOperationLink;
+			else if(copy)
+				return NSDragOperationCopy;
+			else
+				return NSDragOperationMove;
+		}
 	}
 	
 	return NSDragOperationNone;
@@ -1496,14 +1714,18 @@
 - (BOOL)outlineView:(NSOutlineView *)outlineView acceptDrop:(id <NSDraggingInfo>)info item:(id)item childIndex:(NSInteger)index {
 	NSPasteboard		*pasteboard;
 	NSEnumerator		*enumerator;
+	NSEvent				*event;
 	NSArray				*types, *sources;
 	NSString			*destinationPath;
 	WIP7Message			*message;
-	WCFile				*file;
+	WCFile				*sourceFile, *destinationFile, *parentFile;
 	NSUInteger			oldIndex;
+	BOOL				link;
 	
 	pasteboard	= [info draggingPasteboard];
 	types		= [pasteboard types];
+	event		= [NSApp currentEvent];
+	link		= ([event alternateKeyModifier] && [event commandKeyModifier]);
 	
 	if(outlineView == _sourceOutlineView) {
 		if([types containsObject:WCFilePboardType]) {
@@ -1511,21 +1733,45 @@
 			enumerator	= [sources reverseObjectEnumerator];
 			
 			if([item isKindOfClass:[NSNumber class]]) {
-				while((file = [enumerator nextObject])) {
-					if([file isFolder])
-						[_places insertObject:file atIndex:index];
+				[self _revalidateFiles:sources];
+				
+				while((sourceFile = [enumerator nextObject])) {
+					if([sourceFile isFolder])
+						[_places insertObject:sourceFile atIndex:index];
 				}
 				
 				[WCSettings setObject:[NSKeyedArchiver archivedDataWithRootObject:_places] forKey:WCPlaces];
-			} else {
-				destinationPath = [item path];
-				
-				while((file = [enumerator nextObject])) {
-					message = [WIP7Message messageWithName:@"wired.file.move" spec:WCP7Spec];
-					[message setString:[file path] forName:@"wired.file.path"];
-					[message setString:[destinationPath stringByAppendingPathComponent:[file name]] forName:@"wired.file.new_path"];
-					[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredFileMoveReply:)];
+			}
+			else if([item isKindOfClass:[NSString class]] || [item isKindOfClass:[WCFile class]]) {
+				if([item isKindOfClass:[NSString class]]) {
+					destinationFile = [WCFile fileWithRootDirectoryForConnection:
+						[[[WCPublicChat publicChat] chatControllerForConnectionIdentifier:item] connection]];
+				} else {
+					destinationFile = item;
 				}
+
+				destinationPath = [destinationFile path];
+				
+				[self _revalidateFiles:sources];
+				
+				if(!link) {
+					[self _removeDirectoryAtPath:destinationPath connection:[destinationFile connection]];
+					[self performSelectorOnce:@selector(_reloadFilesAtDirectory:) withObject:destinationFile afterDelay:0.1];
+				}
+				
+				while((sourceFile = [enumerator nextObject])) {
+					parentFile = [self _existingParentFileForFile:sourceFile];
+					
+					[self _removeDirectoryAtPath:[parentFile path] connection:[parentFile connection]];
+					[self performSelectorOnce:@selector(_reloadFilesAtDirectory:) withObject:parentFile afterDelay:0.1];
+					
+					message = [WIP7Message messageWithName:link ? @"wired.file.link" : @"wired.file.move" spec:WCP7Spec];
+					[message setString:[sourceFile path] forName:@"wired.file.path"];
+					[message setString:[destinationPath stringByAppendingPathComponent:[sourceFile name]] forName:@"wired.file.new_path"];
+					[[destinationFile connection] sendMessage:message fromObserver:self selector:@selector(wiredFileMoveReply:)];
+				}
+				
+				[_filesOutlineView reloadData];
 			}
 			
 			[_sourceOutlineView reloadData];
@@ -1536,263 +1782,297 @@
 			sources		= [NSKeyedUnarchiver unarchiveObjectWithData:[pasteboard dataForType:WCPlacePboardType]];
 			enumerator	= [sources reverseObjectEnumerator];
 			
-			if(!item) {
-				while((file = [enumerator nextObject])) {
-					oldIndex = [_places indexOfObject:file];
+			while((sourceFile = [enumerator nextObject])) {
+				oldIndex = [_places indexOfObject:sourceFile];
 				
-					[_places removeObjectAtIndex:oldIndex];
-				}
-			} else {
-				while((file = [enumerator nextObject])) {
-					oldIndex = [_places indexOfObject:file];
-					
-					[_places moveObjectAtIndex:oldIndex toIndex:index];
-				}
+				[_places moveObjectAtIndex:oldIndex toIndex:index];
 			}
 			
 			[_sourceOutlineView reloadData];
 			
+			[self _revalidateFiles:sources];
+			
 			return YES;
 		}
 	}
-	else if(outlineView == [_filesController filesOutlineView]) {
-		return NO;
+	else if(outlineView == _filesOutlineView) {
+		if([types containsObject:WCFilePboardType]) {
+			destinationFile		= item ? item : _currentDirectory;
+			destinationPath		= [destinationFile path];
+			sources				= [NSKeyedUnarchiver unarchiveObjectWithData:[pasteboard dataForType:WCFilePboardType]];
+			enumerator			= [sources reverseObjectEnumerator];
+			
+			[self _revalidateFiles:sources];
+
+			if(!link) {
+				[self _removeDirectoryAtPath:destinationPath connection:[destinationFile connection]];
+				[self performSelectorOnce:@selector(_reloadFilesAtDirectory:) withObject:destinationFile afterDelay:0.1];
+			}
+			
+			while((sourceFile = [enumerator nextObject])) {
+				parentFile = [self _existingParentFileForFile:sourceFile];
+				
+				[self _removeDirectoryAtPath:[parentFile path] connection:[parentFile connection]];
+				[self performSelectorOnce:@selector(_reloadFilesAtDirectory:) withObject:parentFile afterDelay:0.1];
+				
+				message = [WIP7Message messageWithName:link ? @"wired.file.link" : @"wired.file.move" spec:WCP7Spec];
+				[message setString:[sourceFile path] forName:@"wired.file.path"];
+				[message setString:[destinationPath stringByAppendingPathComponent:[sourceFile name]] forName:@"wired.file.new_path"];
+				[[destinationFile connection] sendMessage:message fromObserver:self selector:@selector(wiredFileMoveReply:)];
+			}
+				
+			[_filesOutlineView reloadData];
+			
+			return YES;
+		}
 	}
-		
+	
 	return NO;
 }
 
 
-
-- (NSArray *)outlineView:(NSOutlineView *)outlineView namesOfPromisedFilesDroppedAtDestination:(NSURL *)destination forDraggedItems:(NSArray *)items {
+- (void)outlineView:(NSOutlineView *)outlineView removeItems:(NSArray *)items {
 	NSEnumerator		*enumerator;
-	NSMutableArray		*array;
-	WCFile				*file;
+	id					item;
+	NSUInteger			index;
 	
-	if(outlineView == [_filesController filesOutlineView]) {
-		array		= [NSMutableArray array];
-		enumerator	= [items objectEnumerator];
+	if(outlineView == _sourceOutlineView) {
+		[self _revalidateFiles:items];
 		
-		while((file = [enumerator nextObject])) {
-			if([[WCTransfers transfers] downloadFile:file toFolder:[destination path]])
-				[array addObject:[file name]];
+		enumerator = [items objectEnumerator];
+		
+		while((item = [enumerator nextObject])) {
+			index = [_places indexOfObject:item];
+			
+			if(index != NSNotFound)
+				[_places removeObjectAtIndex:index];
 		}
 		
-		return array;
+		[WCSettings setObject:[NSKeyedArchiver archivedDataWithRootObject:_places] forKey:WCPlaces];
+
+		[_sourceOutlineView reloadData];
 	}
-	
-	return NULL;
 }
 
 
 
 #pragma mark -
 
-- (NSDragOperation)tableView:(NSTableView *)tableView validateDrop:(id <NSDraggingInfo>)info proposedRow:(NSInteger)proposedRow proposedDropOperation:(NSTableViewDropOperation)proposedOperation {
-	WCFile				*file, *path;
-	NSDragOperation		operation;
-
-	file		= (proposedRow >= 0) ? [_filesController fileAtIndex:proposedRow] : NULL;
-	path		= [self _currentPath];
-	operation	= [self _validateDrop:info inPath:path onFile:file dropOperation:proposedOperation];
-
-	if(operation != NSDragOperationNone) {
-		if((file && [file type] == WCFileFile) || proposedOperation == NSTableViewDropAbove)
-			[tableView setDropRow:-1 dropOperation:NSTableViewDropOn];
-	}
+- (NSUInteger)treeView:(WITreeView *)tree numberOfItemsForPath:(NSString *)path {
+	NSMutableArray		*directory;
 	
-	return operation;
+	directory = [[self _directoriesForConnection:[self _selectedConnection]] objectForKey:path];
+	
+	return [directory count];
 }
 
 
 
-- (BOOL)tableView:(NSTableView *)tableView acceptDrop:(id <NSDraggingInfo>)info row:(NSInteger)row dropOperation:(NSTableViewDropOperation)operation {
-	WCFile		*destination;
-	
-	destination = (row >= 0) ? [_filesController fileAtIndex:row] : [self _currentPath];
-	
-	return [self _acceptDrop:info inDestination:destination];
-}
-
-
-
-- (NSArray *)tableView:(NSTableView *)tableView namesOfPromisedFilesDroppedAtDestination:(NSURL *)destination forDraggedRowsWithIndexes:(NSIndexSet *)indexes {
-	NSMutableArray		*array;
+- (NSString *)treeView:(WITreeView *)tree nameForRow:(NSUInteger)row inPath:(NSString *)path {
+	NSMutableArray		*directory;
 	WCFile				*file;
-	NSUInteger			index;
 	
-	array = [NSMutableArray array];
-	index = [indexes firstIndex];
+	directory	= [[self _directoriesForConnection:[self _selectedConnection]] objectForKey:path];
+	file		= [directory objectAtIndex:row];
 	
-	while(index != NSNotFound) {
-		file = [_filesController fileAtIndex:index];
-
-		if([[WCTransfers transfers] downloadFile:file toFolder:[destination path]])
-			[array addObject:[file name]];
-
-		index = [indexes indexGreaterThanIndex:index];
-    }
-	
-	return array;
+	return [file name];
 }
 
 
 
-#pragma mark -
-
-- (NSInteger)browser:(NSBrowser *)browser numberOfRowsInColumn:(NSInteger)column {
-	return [[_browserFiles objectForKey:[[_rootPath path] stringByAppendingPathComponent:[_filesBrowser pathToColumn:column]]] count];
+- (BOOL)treeView:(WITreeView *)tree isPathExpandable:(NSString *)path {
+	WCFile			*file;
+	
+	file = [[self _filesForConnection:[self _selectedConnection]] objectForKey:path];
+	
+	return [file isFolder];
 }
 
 
 
-- (void)browser:(NSBrowser *)browser willDisplayCell:(id)cell atRow:(NSInteger)row column:(NSInteger)column {
-	WCFile		*file;
+- (NSDictionary *)treeView:(WITreeView *)tree attributesForPath:(NSString *)path {
+	WCFile			*file;
 	
-	file = [[_browserFiles objectForKey:[[_rootPath path] stringByAppendingPathComponent:[_filesBrowser pathToColumn:column]]] objectAtIndex:row];
-	[cell setLeaf:![file isFolder]];
-	[cell setStringValue:[file name]];
-	[cell setIcon:[file iconWithWidth:16.0]];
-	[cell setRepresentedObject:file];
+	file = [[self _filesForConnection:[self _selectedConnection]] objectForKey:path];
+
+	return [NSDictionary dictionaryWithObjectsAndKeys:
+		[file iconWithWidth:128.0],							WIFileIcon,
+		[NSNumber numberWithUnsignedLongLong:[file size]],	WIFileSize,
+		[file kind],										WIFileKind,
+		[file creationDate],								WIFileCreationDate,
+		[file modificationDate],							WIFileModificationDate,
+		NULL];
 }
 
 
 
-- (void)browserDidSingleClick:(id)sender {
-	WCFile		*file;
+- (void)treeView:(WITreeView *)tree changedPath:(NSString *)path {
+	WCFile			*file;
 	
-	if(![[self connection] isConnected])
-		return;
-
-	[self validate];
-	
-	file = [[_filesBrowser selectedCell] representedObject];
-	
-	if(!file)
-		return;
-
-	if(![file isFolder]) {
-		file = [WCFile fileWithPath:[[file path] stringByDeletingLastPathComponent] type:[file type] connection:[self connection]];
+	if([self _selectedStyle] == WCFilesStyleTree) {
+		file = [[self _filesForConnection:[self _selectedConnection]] objectForKey:path];
 		
-		if(![[file path] isEqualToString:[[self _currentPath] path]]) {
-			[self _setDirectory:file];
-			[self _updateStatus];
+		if(![file isFolder]) {
+			file = [self _existingFileForFile:[WCFile fileWithDirectory:[[file path] stringByDeletingLastPathComponent]
+															 connection:[file connection]]];
 		}
-	} else {
-		if(![[file path] isEqualToString:[[self _currentPath] path]])
-			[self _changeDirectory:file];
+		
+		[self _changeCurrentDirectory:file reselectFiles:YES];
+		[self _validate];
 	}
 }
 
 
 
-- (BOOL)browser:(NSBrowser *)browser writeRowsWithIndexes:(NSIndexSet *)indexes inColumn:(NSInteger)column toPasteboard:(NSPasteboard *)pasteboard {
-	NSMutableArray		*sources;
-	NSMutableString		*string;
-	NSArray				*files;
-	WCFile				*file;
-	NSUInteger			index;
+- (void)treeView:(WITreeView *)tree willDisplayCell:(id)cell forPath:(NSString *)path {
+	WCFile			*file;
 	
-	files		= [_browserFiles objectForKey:[[_rootPath path] stringByAppendingPathComponent:[_filesBrowser pathToColumn:column]]];
+	file = [[self _filesForConnection:[self _selectedConnection]] objectForKey:path];
+	
+	[cell setImage:[file iconWithWidth:16.0]];
+}
+
+
+
+- (NSColor *)treeView:(WITreeView *)treeView labelColorForPath:(NSString *)path {
+	WCFile			*file;
+	
+	file = [[self _filesForConnection:[self _selectedConnection]] objectForKey:path];
+	
+	return [file labelColor];
+}
+
+
+
+- (BOOL)treeView:(WITreeView *)treeView writePaths:(NSArray *)paths toPasteboard:(NSPasteboard *)pasteboard {
+	NSEnumerator			*enumerator;
+	NSMutableDictionary		*files;
+	NSMutableArray			*sources;
+	NSString				*path;
+	WCFile					*file;
+	
+	files		= [self _filesForConnection:[self _selectedConnection]];
 	sources		= [NSMutableArray array];
-	string		= [NSMutableString string];
-	index		= [indexes firstIndex];
+	enumerator	= [paths objectEnumerator];
 	
-	while(index != NSNotFound) {
-		file = [files objectAtIndex:index];
+	while((path = [enumerator nextObject])) {
+		file = [files objectForKey:path];
 		
-		if([string length] > 0)
-			[string appendString:@"\n"];
+		if(!file)
+			return NO;
 		
-		[string appendString:[file path]];
 		[sources addObject:file];
-
-		index = [indexes indexGreaterThanIndex:index];
-    }
-	
-	[pasteboard declareTypes:[NSArray arrayWithObjects:
-		WCFilePboardType, NSStringPboardType, NSFilesPromisePboardType, NULL] owner:NULL];
-	[pasteboard setData:[NSKeyedArchiver archivedDataWithRootObject:sources] forType:WCFilePboardType];
-	[pasteboard setString:string forType:NSStringPboardType];
-	[pasteboard setPropertyList:[NSArray arrayWithObject:NSFileTypeForHFSTypeCode('\0\0\0\0')] forType:NSFilesPromisePboardType];
-	
-	return YES;
-}
-
-
-
-- (BOOL)browser:(NSBrowser *)browser canDragRowsWithIndexes:(NSIndexSet *)indexes inColumn:(NSInteger)column withEvent:(NSEvent *)event {
-	return YES;
-}
-
-
-
-- (NSDragOperation)browser:(NSBrowser *)browser validateDrop:(id <NSDraggingInfo>)info proposedRow:(NSInteger *)proposedRow column:(NSInteger *)proposedColumn dropOperation:(NSTableViewDropOperation *)dropOperation { /* NSBrowserDropOperation */
-	NSArray				*files;
-	NSString			*path;
-	WCFile				*file;
-	NSDragOperation		operation;
-	
-	if(*proposedColumn < 0)
-		return NSDragOperationNone;
-	
-	path		= [[_rootPath path] stringByAppendingPathComponent:[_filesBrowser pathToColumn:*proposedColumn]];
-	files		= [_browserFiles objectForKey:path];
-	
-	if((NSUInteger) *proposedRow >= [files count])
-		*proposedRow = -1;
-
-	file		= (*proposedRow >= 0) ? [files objectAtIndex:*proposedRow] : NULL;
-	operation	= [self _validateDrop:info inPath:[WCFile fileWithDirectory:path connection:[self connection]] onFile:file dropOperation:*dropOperation];
-	
-	if(operation != NSDragOperationNone) {
-		if((file && [file type] == WCFileFile) || *dropOperation == NSTableViewDropAbove /* NSBrowserDropAbove */) {
-			*proposedRow = -1;
-			*dropOperation = NSTableViewDropOn; // NSBrowserDropOn
-		}
 	}
 	
-	return operation;
+	[pasteboard declareTypes:[NSArray arrayWithObject:WCFilePboardType] owner:NULL];
+	[pasteboard setData:[NSKeyedArchiver archivedDataWithRootObject:sources] forType:WCFilePboardType];
+	
+	return YES;
 }
 
 
 
-- (BOOL)browser:(NSBrowser *)browser acceptDrop:(id <NSDraggingInfo>)info atRow:(NSInteger)row column:(NSInteger)column dropOperation:(NSTableViewDropOperation)dropOperation { /* NSBrowserDropOperation */
-	NSString		*path;
-	WCFile			*destination;
+- (NSDragOperation)treeView:(WITreeView *)treeView validateDrop:(id <NSDraggingInfo>)info proposedPath:(NSString *)path {
+	NSPasteboard		*pasteboard;
+	NSEnumerator		*enumerator;
+	NSEvent				*event;
+	NSArray				*types, *sources;
+	NSString			*destinationPath;
+	WCFile				*sourceFile, *destinationFile;
+	BOOL				link, copy;
 	
-	path = [[_rootPath path] stringByAppendingPathComponent:[_filesBrowser pathToColumn:column]];
+	pasteboard			= [info draggingPasteboard];
+	types				= [pasteboard types];
+	event				= [NSApp currentEvent];
+	destinationPath		= path;
+	link				= ([event alternateKeyModifier] && [event commandKeyModifier]);
 	
-	if(row >= 0)
-		destination = [[_browserFiles objectForKey:path] objectAtIndex:row];
-	else
-		destination = [WCFile fileWithDirectory:path connection:[self connection]];
+	if([types containsObject:WCFilePboardType]) {
+		destinationFile		= [[self _filesForConnection:[self _selectedConnection]] objectForKey:destinationPath];
+		sources				= [NSKeyedUnarchiver unarchiveObjectWithData:[pasteboard dataForType:WCFilePboardType]];
+		enumerator			= [sources reverseObjectEnumerator];
+		
+		if(!destinationFile)
+			return NSDragOperationNone;
+		
+		[self _revalidateFiles:sources];
 
-	return [self _acceptDrop:info inDestination:destination];
+		copy = NO;
+		
+		while((sourceFile = [enumerator nextObject])) {
+			if([sourceFile connection] != [destinationFile connection])
+				return NSDragOperationNone;
+			
+			if([sourceFile volume] != [destinationFile volume])
+				copy = YES;
+			
+			if([[[sourceFile path] stringByDeletingLastPathComponent] isEqualToString:[destinationFile path]])
+				return NSDragOperationNone;
+		}
+		
+		if(link)
+			return NSDragOperationLink;
+		else if(copy)
+			return NSDragOperationCopy;
+		else
+			return NSDragOperationMove;
+	}
+
+	return NSDragOperationNone;
 }
 
 
 
-- (NSArray *)browser:(NSBrowser *)browser namesOfPromisedFilesDroppedAtDestination:(NSURL *)destination forDraggedRowsWithIndexes:(NSIndexSet *)indexes inColumn:(NSInteger)column {
-	NSMutableArray		*array;
-	NSArray				*files;
-	WCFile				*file;
-	NSUInteger			index;
-	
-	files = [_browserFiles objectForKey:[[_rootPath path] stringByAppendingPathComponent:[_filesBrowser pathToColumn:column]]];
-	array = [NSMutableArray array];
-	index = [indexes firstIndex];
-	
-	while(index != NSNotFound) {
-		file = [files objectAtIndex:index];
 
-		if([[WCTransfers transfers] downloadFile:file toFolder:[destination path]])
-			[array addObject:[file name]];
-
-		index = [indexes indexGreaterThanIndex:index];
-    }
+- (BOOL)treeView:(WITreeView *)treeView acceptDrop:(id <NSDraggingInfo>)info path:(NSString *)path {
+	NSPasteboard		*pasteboard;
+	NSEnumerator		*enumerator;
+	NSEvent				*event;
+	NSArray				*types, *sources;
+	NSString			*destinationPath;
+	WIP7Message			*message;
+	WCFile				*sourceFile, *destinationFile, *parentFile;
+	BOOL				link;
 	
-	return array;
+	pasteboard			= [info draggingPasteboard];
+	types				= [pasteboard types];
+	event				= [NSApp currentEvent];
+	destinationPath		= path;
+	link				= ([event alternateKeyModifier] && [event commandKeyModifier]);
+
+	if([types containsObject:WCFilePboardType]) {
+		destinationFile		= [[self _filesForConnection:[self _selectedConnection]] objectForKey:destinationPath];
+		sources				= [NSKeyedUnarchiver unarchiveObjectWithData:[pasteboard dataForType:WCFilePboardType]];
+		enumerator			= [sources reverseObjectEnumerator];
+		
+		if(!destinationFile)
+			return NO;
+		
+		[self _revalidateFiles:sources];
+		
+		if(!link) {
+			[self _removeDirectoryAtPath:destinationPath connection:[destinationFile connection]];
+			[self performSelectorOnce:@selector(_reloadFilesAtDirectory:) withObject:destinationFile afterDelay:0.1];
+		}
+		
+		while((sourceFile = [enumerator nextObject])) {
+			parentFile = [self _existingParentFileForFile:sourceFile];
+			
+			[self _removeDirectoryAtPath:[parentFile path] connection:[destinationFile connection]];
+			[self performSelectorOnce:@selector(_reloadFilesAtDirectory:) withObject:parentFile afterDelay:0.1];
+			
+			message = [WIP7Message messageWithName:link ? @"wired.file.link" : @"wired.file.move" spec:WCP7Spec];
+			[message setString:[sourceFile path] forName:@"wired.file.path"];
+			[message setString:[destinationPath stringByAppendingPathComponent:[sourceFile name]] forName:@"wired.file.new_path"];
+			[[destinationFile connection] sendMessage:message fromObserver:self selector:@selector(wiredFileMoveReply:)];
+		}
+		
+		[_filesTreeView reloadData];
+			
+		return YES;
+	}
+	
+	return NO;
 }
 
 @end

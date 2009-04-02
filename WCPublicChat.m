@@ -653,7 +653,7 @@ typedef enum _WCChatActivity				WCChatActivity;
 	
 	connection = [[self selectedChatController] connection];
 	
-	[WCFiles filesWithConnection:connection path:[WCFile fileWithRootDirectoryForConnection:connection]];
+	[WCFiles filesWithConnection:connection file:[WCFile fileWithRootDirectoryForConnection:connection]];
 }
 
 
@@ -868,6 +868,12 @@ typedef enum _WCChatActivity				WCChatActivity;
 	
 	identifier = [[_chatTabView selectedTabViewItem] identifier];
 	
+	return [_chatControllers objectForKey:identifier];
+}
+
+
+
+- (WCPublicChatController *)chatControllerForConnectionIdentifier:(NSString *)identifier {
 	return [_chatControllers objectForKey:identifier];
 }
 

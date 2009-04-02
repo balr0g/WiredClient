@@ -460,7 +460,7 @@
 	while((file = [enumerator nextObject])) {
 		if([[file connection] isConnected]) {
 			if([file isFolder])
-				[WCFiles filesWithConnection:[file connection] path:file];
+				[WCFiles filesWithConnection:[file connection] file:file];
 			else
 				[[WCTransfers transfers] downloadFile:file];
 		}
@@ -524,7 +524,7 @@
 	while((file = [enumerator nextObject])) {
 		parentFile = [WCFile fileWithDirectory:[[file path] stringByDeletingLastPathComponent] connection:[file connection]];
 		
-		[WCFiles filesWithConnection:[file connection] path:parentFile selectPath:[file path]];
+		[WCFiles filesWithConnection:[file connection] file:parentFile selectFile:file];
 	}
 }
 

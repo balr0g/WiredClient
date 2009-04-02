@@ -51,6 +51,7 @@
 
 
 - (id)_initWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection {
+	WIP7UInt32		volume;
 	WIP7UInt64		size;
 	WIP7Enum		type, label;
 	WIP7Bool		link, executable, value;
@@ -62,6 +63,7 @@
 	[message getBool:&link forName:@"wired.file.link"];
 	[message getBool:&executable forName:@"wired.file.executable"];
 	[message getEnum:&label forName:@"wired.file.label"];
+	[message getUInt32:&volume forName:@"wired.file.volume"];
 
 	_type				= type;
 	_size				= size;
@@ -72,6 +74,7 @@
 	_link				= link;
 	_executable			= executable;
 	_label				= label;
+	_volume				= volume;
 	
 	_owner = [[message stringForName:@"wired.file.owner"] retain];
 	
@@ -101,6 +104,12 @@
 	if([message getBool:&value forName:@"wired.file.everyone.write"] && value)
 		_permissions |= WCFileEveryoneWrite;
 	
+	if([message getBool:&value forName:@"wired.file.readable"])
+		_readable = value;
+	
+	if([message getBool:&value forName:@"wired.file.writable"])
+		_writable = value;
+
 	return self;
 }
 
@@ -365,10 +374,13 @@
 	_comment				= [[coder decodeObjectForKey:@"WCFileComment"] retain];
 	_link					= [coder decodeBoolForKey:@"WCFileLink"];
 	_executable				= [coder decodeBoolForKey:@"WCFileExecutable"];
+	_readable				= [coder decodeBoolForKey:@"WCFileReadable"];
+	_writable				= [coder decodeBoolForKey:@"WCFileWritable"];
 	_owner					= [[coder decodeObjectForKey:@"WCFileOwner"] retain];
 	_group					= [[coder decodeObjectForKey:@"WCFileGroup"] retain];
 	_permissions			= [coder decodeIntForKey:@"WCFilePermissions"];
 	_label					= [coder decodeIntForKey:@"WCFileLabel"];
+	_volume					= [coder decodeIntForKey:@"WCFileVolume"];
 	
 	_localPath				= [[coder decodeObjectForKey:@"WCFileLocalPath"] retain];
 	_transferred			= [coder decodeInt64ForKey:@"WCFileTransferred"];
@@ -390,10 +402,13 @@
 	[coder encodeObject:_comment forKey:@"WCFileComment"];
 	[coder encodeBool:_link forKey:@"WCFileLink"];
 	[coder encodeBool:_executable forKey:@"WCFileExecutable"];
+	[coder encodeBool:_readable forKey:@"WCFileReadable"];
+	[coder encodeBool:_writable forKey:@"WCFileWritable"];
 	[coder encodeObject:_owner forKey:@"WCFileOwner"];
 	[coder encodeObject:_group forKey:@"WCFileGroup"];
 	[coder encodeInt:_permissions forKey:@"WCFilePermissions"];
 	[coder encodeInt:_label forKey:@"WCFileLabel"];
+	[coder encodeInt:_volume forKey:@"WCFileVolume"];
 
 	[coder encodeObject:_localPath forKey:@"WCFileLocalPath"];
 	[coder encodeInt:_transferred forKey:@"WCFileTransferred"];
@@ -548,6 +563,18 @@
 
 
 
+- (BOOL)isReadable {
+	return _readable;
+}
+
+
+
+- (BOOL)isWritable {
+	return _writable;
+}
+
+
+
 - (NSString *)owner {
 	return _owner;
 }
@@ -562,6 +589,52 @@
 
 - (WCFileLabel)label {
 	return _label;
+}
+
+
+
+- (NSColor *)labelColor {	
+	switch(_label) {
+		case WCFileLabelRed:
+			return [NSColor colorWithCalibratedRed:249.0 / 255.0 green:92.0 / 255.0 blue:91.0 / 255.0 alpha:1.0];
+			break;
+		
+		case WCFileLabelOrange:
+			return [NSColor colorWithCalibratedRed:245.0 / 255.0 green:168.0 / 255.0 blue:69.0 / 255.0 alpha:1.0];
+			break;
+		
+		case WCFileLabelYellow:
+			return [NSColor colorWithCalibratedRed:237.0 / 255.0 green:219.0 / 255.0 blue:73.0 / 255.0 alpha:1.0];
+			break;
+		
+		case WCFileLabelGreen:
+			return [NSColor colorWithCalibratedRed:178.0 / 255.0 green:217.0 / 255.0 blue:72.0 / 255.0 alpha:1.0];
+			break;
+		
+		case WCFileLabelBlue:
+			return [NSColor colorWithCalibratedRed:90.0 / 255.0 green:161.0 / 255.0 blue:254.0 / 255.0 alpha:1.0];
+			break;
+		
+		case WCFileLabelPurple:
+			return [NSColor colorWithCalibratedRed:191.0 / 255.0 green:137.0 / 255.0 blue:215.0 / 255.0 alpha:1.0];
+			break;
+		
+		case WCFileLabelGray:
+			return [NSColor colorWithCalibratedRed:168.0 / 255.0 green:92.0 / 168.0 blue:91.0 / 168.0 alpha:1.0];
+			break;
+		
+		default:
+			return NULL;
+			break;
+	}
+	
+	return NULL;
+}
+
+
+
+- (NSUInteger)volume {
+	return _volume;
 }
 
 
@@ -608,6 +681,20 @@
 	}
 	
 	return icon;
+}
+
+
+
+- (NSString *)humanReadableSize {
+	if([self type] == WCFileFile) {
+		return [NSString humanReadableStringForSizeInBytes:[self size]];
+	} else {
+		return [NSSWF:NSLS(@"%llu %@", @"Files folder size (count, 'item(s)'"),
+			[self size],
+			[self size] == 1
+				? NSLS(@"item", @"Item singular")
+				: NSLS(@"items", @"Item plural")];
+	}
 }
 
 

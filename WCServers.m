@@ -830,8 +830,8 @@
 
 
 
-- (NSString *)outlineView:(NSOutlineView *)outlineView stringValueForRow:(NSInteger)row {
-	return [[self _itemAtIndex:row] name];
+- (NSString *)outlineView:(NSOutlineView *)outlineView stringValueByItem:(id)item {
+	return [item name];
 }
 
 @end

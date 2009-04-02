@@ -1832,8 +1832,8 @@ end:
 	path = [transfer remotePath];
 	
 	[WCFiles filesWithConnection:[transfer connection]
-							path:[WCFile fileWithDirectory:[path stringByDeletingLastPathComponent] connection:[transfer connection]]
-					  selectPath:path];
+							file:[WCFile fileWithDirectory:[path stringByDeletingLastPathComponent] connection:[transfer connection]]
+					  selectFile:[WCFile fileWithDirectory:path connection:[transfer connection]]];
 }
 
 

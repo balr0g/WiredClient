@@ -305,14 +305,6 @@
 	if([[message name] isEqualToString:@"wired.login"]) {
 		[message getUInt32:&_userID forName:@"wired.user.id"];
 
-		_manuallyReconnecting	= NO;
-		_autoReconnecting		= NO;
-		_shouldAutoReconnect	= YES;
-
-		_autoReconnectAttempts	= 0;
-		
-		_hasConnected			= YES;
-		
 		[self triggerEvent:WCEventsServerConnected];
 	}
 	else if([[message name] isEqualToString:@"wired.account.privileges"]) {
@@ -334,6 +326,14 @@
 	}
 	
 	[super wiredLoginReply:message];
+
+	_manuallyReconnecting	= NO;
+	_autoReconnecting		= NO;
+	_shouldAutoReconnect	= YES;
+
+	_autoReconnectAttempts	= 0;
+	
+	_hasConnected			= YES;
 }
 
 

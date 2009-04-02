@@ -1147,7 +1147,6 @@
 
 
 
-
 - (void)serverConnectionServerInfoDidChange:(NSNotification *)notification {
 	WCServerConnection		*connection;
 	WCBoard					*board;

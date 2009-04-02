@@ -31,10 +31,10 @@
 #define WCFilePboardType			@"WCFilePboardType"
 
 
-@class WCFilesOutlineView, WCFile;
+@class WCFile;
 
 @interface WCFilesController : WIObject {
-	IBOutlet WCFilesOutlineView			*_filesOutlineView;
+	IBOutlet WIOutlineView				*_filesOutlineView;
 	IBOutlet NSTableColumn				*_nameTableColumn;
 	IBOutlet NSTableColumn				*_kindTableColumn;
 	IBOutlet NSTableColumn				*_createdTableColumn;
@@ -61,6 +61,6 @@
 - (NSArray *)selectedFiles;
 - (NSArray *)shownFiles;
 - (void)sortFiles;
-- (WCFilesOutlineView *)filesOutlineView;
+- (WIOutlineView *)filesOutlineView;
 
 @end

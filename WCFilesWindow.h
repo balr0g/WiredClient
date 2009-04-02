@@ -1,7 +1,7 @@
 /* $Id$ */
 
 /*
- *  Copyright (c) 2006-2009 Daniel Ericsson, Axel Andersson
+ *  Copyright (c) 2009 Axel Andersson
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -26,13 +26,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-@interface WCFilesOutlineView : WIOutlineView
-
-@end
-
-
-@interface NSObject(WCFilesOutlineViewDelegate)
-
-- (NSColor *)outlineView:(NSOutlineView *)outlineView backgroundColorForItem:(id)item;
+@interface WCFilesWindow : WIWindow
 
 @end

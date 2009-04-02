@@ -425,6 +425,21 @@
 
 #pragma mark -
 
+- (NSUInteger)hash {
+	return [[self name] hash];
+}
+
+
+
+- (BOOL)isEqual:(id)object {
+	if(![object isKindOfClass:[self class]])
+		return NO;
+	
+	return [[self name] isEqualToString:[object name]];
+}
+
+
+
 - (NSString *)description {
 	return [NSSWF:@"<%@ %p>{name = %@}",
 		[self className],

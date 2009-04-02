@@ -45,7 +45,6 @@
 		7739D4AB0E7FFC6400D76C47 /* WiredNetworking.framework in Copy Files (Frameworks) */ = {isa = PBXBuildFile; fileRef = 774897940CC8A63300E95A83 /* WiredNetworking.framework */; };
 		777D36C50987E125005B5EC1 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 777D36C40987E125005B5EC1 /* WebKit.framework */; };
 		777D3F6609890273005B5EC1 /* WCChatWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 777D3F6509890273005B5EC1 /* WCChatWindow.m */; };
-		777E657B0740F34700A8DE0B /* WCFilesBrowserCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 777E65790740F34700A8DE0B /* WCFilesBrowserCell.m */; };
 		778943850F5579280017C511 /* LabelYellow.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 778943840F5579280017C511 /* LabelYellow.tiff */; };
 		7789555B0F56D9A50017C511 /* PostReply.html in Resources */ = {isa = PBXBuildFile; fileRef = 7789555A0F56D9A50017C511 /* PostReply.html */; };
 		7789583C0F5828D10017C511 /* SourceAddArrow.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 7789583A0F5828D10017C511 /* SourceAddArrow.tiff */; };
@@ -136,7 +135,6 @@
 		77CFB9580E66D1B100F2D5F8 /* SaveChat.xib in Resources */ = {isa = PBXBuildFile; fileRef = 77CFB9560E66D1B100F2D5F8 /* SaveChat.xib */; };
 		77CFB95C0E66D1BB00F2D5F8 /* UserInfo.xib in Resources */ = {isa = PBXBuildFile; fileRef = 77CFB95A0E66D1BB00F2D5F8 /* UserInfo.xib */; };
 		77CFB9720E66D1F600F2D5F8 /* Search.xib in Resources */ = {isa = PBXBuildFile; fileRef = 77CFB9700E66D1F600F2D5F8 /* Search.xib */; };
-		77CFB9750E66D20200F2D5F8 /* Files.xib in Resources */ = {isa = PBXBuildFile; fileRef = 77CFB9730E66D20200F2D5F8 /* Files.xib */; };
 		77CFB9780E66D20900F2D5F8 /* FileInfo.xib in Resources */ = {isa = PBXBuildFile; fileRef = 77CFB9760E66D20900F2D5F8 /* FileInfo.xib */; };
 		77CFB9820E66D28100F2D5F8 /* Transfers.xib in Resources */ = {isa = PBXBuildFile; fileRef = 77CFB9800E66D28100F2D5F8 /* Transfers.xib */; };
 		77CFB9870E66D2C300F2D5F8 /* Messages.xib in Resources */ = {isa = PBXBuildFile; fileRef = 77CFB9850E66D2C300F2D5F8 /* Messages.xib */; };
@@ -147,7 +145,8 @@
 		77CFBABF0E66EEDD00F2D5F8 /* Growl.framework in Copy Files (Frameworks) */ = {isa = PBXBuildFile; fileRef = 77CFBAB60E66EED500F2D5F8 /* Growl.framework */; };
 		77CFBCBC0E66EFD200F2D5F8 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77CFBCB30E66EFCF00F2D5F8 /* Sparkle.framework */; };
 		77CFBCBD0E66EFD500F2D5F8 /* Sparkle.framework in Copy Files (Frameworks) */ = {isa = PBXBuildFile; fileRef = 77CFBCB30E66EFCF00F2D5F8 /* Sparkle.framework */; };
-		77E2888E0A2D9E9B00035403 /* WCFilesOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 77E2888C0A2D9E9B00035403 /* WCFilesOutlineView.m */; };
+		77E361A40F80EC070065329A /* Files.xib in Resources */ = {isa = PBXBuildFile; fileRef = 77E361A20F80EC070065329A /* Files.xib */; };
+		77E36EEE0F82414F0065329A /* WCFilesSourceOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 77E36EED0F82414F0065329A /* WCFilesSourceOutlineView.m */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		A509A96305F3B8F000E6AE2D /* WiredClient.icns in Resources */ = {isa = PBXBuildFile; fileRef = A509A96205F3B8F000E6AE2D /* WiredClient.icns */; };
@@ -277,6 +276,7 @@
 		A58EBF240D658ED60080AAAA /* WCConnect.m in Sources */ = {isa = PBXBuildFile; fileRef = A58EBF230D658ED50080AAAA /* WCConnect.m */; };
 		A5923E860F4CA2C000366A5D /* SourceReloadPressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5923E840F4CA2C000366A5D /* SourceReloadPressed.tiff */; };
 		A5923E870F4CA2C000366A5D /* SourceReload.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5923E850F4CA2C000366A5D /* SourceReload.tiff */; };
+		A5929D5F0F8153D300680E4D /* WCFilesWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = A5929D5E0F8153D300680E4D /* WCFilesWindow.m */; };
 		A5A335EA071C484700A16E9A /* WCKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = A5A335E8071C484700A16E9A /* WCKeychain.m */; };
 		A5A338FE0720483C00A16E9A /* WCConnectionController.m in Sources */ = {isa = PBXBuildFile; fileRef = A5A338FC0720483C00A16E9A /* WCConnectionController.m */; };
 		A5A3400707216D8900A16E9A /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5A3400607216D8900A16E9A /* Security.framework */; };
@@ -463,8 +463,6 @@
 		777D36C40987E125005B5EC1 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = /System/Library/Frameworks/WebKit.framework; sourceTree = "<absolute>"; };
 		777D3F6509890273005B5EC1 /* WCChatWindow.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCChatWindow.m; sourceTree = "<group>"; };
 		777D3F6709890278005B5EC1 /* WCChatWindow.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCChatWindow.h; sourceTree = "<group>"; };
-		777E65780740F34700A8DE0B /* WCFilesBrowserCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCFilesBrowserCell.h; sourceTree = "<group>"; };
-		777E65790740F34700A8DE0B /* WCFilesBrowserCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCFilesBrowserCell.m; sourceTree = "<group>"; };
 		778943840F5579280017C511 /* LabelYellow.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = LabelYellow.tiff; sourceTree = "<group>"; };
 		7789555A0F56D9A50017C511 /* PostReply.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = PostReply.html; sourceTree = "<group>"; };
 		7789583A0F5828D10017C511 /* SourceAddArrow.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = SourceAddArrow.tiff; sourceTree = "<group>"; };
@@ -564,7 +562,6 @@
 		77CFB9570E66D1B100F2D5F8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/SaveChat.xib; sourceTree = "<group>"; };
 		77CFB95B0E66D1BB00F2D5F8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/UserInfo.xib; sourceTree = "<group>"; };
 		77CFB9710E66D1F600F2D5F8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Search.xib; sourceTree = "<group>"; };
-		77CFB9740E66D20200F2D5F8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Files.xib; sourceTree = "<group>"; };
 		77CFB9770E66D20900F2D5F8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/FileInfo.xib; sourceTree = "<group>"; };
 		77CFB9810E66D28100F2D5F8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Transfers.xib; sourceTree = "<group>"; };
 		77CFB9860E66D2C300F2D5F8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Messages.xib; sourceTree = "<group>"; };
@@ -573,8 +570,9 @@
 		77CFB9970E66D39000F2D5F8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Servers.xib; sourceTree = "<group>"; };
 		77CFBAB60E66EED500F2D5F8 /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Growl.framework; sourceTree = "<group>"; };
 		77CFBCB30E66EFCF00F2D5F8 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
-		77E2888C0A2D9E9B00035403 /* WCFilesOutlineView.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCFilesOutlineView.m; sourceTree = "<group>"; };
-		77E2888D0A2D9E9B00035403 /* WCFilesOutlineView.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCFilesOutlineView.h; sourceTree = "<group>"; };
+		77E361A30F80EC070065329A /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Files.xib; sourceTree = "<group>"; };
+		77E36EEC0F82414F0065329A /* WCFilesSourceOutlineView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCFilesSourceOutlineView.h; sourceTree = "<group>"; };
+		77E36EED0F82414F0065329A /* WCFilesSourceOutlineView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCFilesSourceOutlineView.m; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A509A96205F3B8F000E6AE2D /* WiredClient.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = WiredClient.icns; sourceTree = "<group>"; };
 		A509A98305F4A6D300E6AE2D /* WiredTransfer.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = WiredTransfer.icns; sourceTree = "<group>"; };
@@ -726,6 +724,8 @@
 		A58EBF230D658ED50080AAAA /* WCConnect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCConnect.m; sourceTree = "<group>"; };
 		A5923E840F4CA2C000366A5D /* SourceReloadPressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = SourceReloadPressed.tiff; sourceTree = "<group>"; };
 		A5923E850F4CA2C000366A5D /* SourceReload.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = SourceReload.tiff; sourceTree = "<group>"; };
+		A5929D5D0F8153D300680E4D /* WCFilesWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCFilesWindow.h; sourceTree = "<group>"; };
+		A5929D5E0F8153D300680E4D /* WCFilesWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCFilesWindow.m; sourceTree = "<group>"; };
 		A5A335E8071C484700A16E9A /* WCKeychain.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCKeychain.m; sourceTree = "<group>"; };
 		A5A335E9071C484700A16E9A /* WCKeychain.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCKeychain.h; sourceTree = "<group>"; };
 		A5A338FC0720483C00A16E9A /* WCConnectionController.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCConnectionController.m; sourceTree = "<group>"; };
@@ -1193,12 +1193,12 @@
 				A5DC7EFB057AAF6C00736BBF /* WCFileInfo.h */,
 				A5DC7EFE057AAF6C00736BBF /* WCFiles.m */,
 				A5DC7EFD057AAF6C00736BBF /* WCFiles.h */,
-				777E65790740F34700A8DE0B /* WCFilesBrowserCell.m */,
-				777E65780740F34700A8DE0B /* WCFilesBrowserCell.h */,
 				A5FD60610D77FEE8000A7941 /* WCFilesController.m */,
 				A5FD60620D77FEE8000A7941 /* WCFilesController.h */,
-				77E2888C0A2D9E9B00035403 /* WCFilesOutlineView.m */,
-				77E2888D0A2D9E9B00035403 /* WCFilesOutlineView.h */,
+				77E36EED0F82414F0065329A /* WCFilesSourceOutlineView.m */,
+				77E36EEC0F82414F0065329A /* WCFilesSourceOutlineView.h */,
+				A5929D5E0F8153D300680E4D /* WCFilesWindow.m */,
+				A5929D5D0F8153D300680E4D /* WCFilesWindow.h */,
 				A5DC7ED3057AAF2900736BBF /* WCSearch.m */,
 				A5DC7ED2057AAF2900736BBF /* WCSearch.h */,
 			);
@@ -1209,7 +1209,7 @@
 			isa = PBXGroup;
 			children = (
 				77CFB9760E66D20900F2D5F8 /* FileInfo.xib */,
-				77CFB9730E66D20200F2D5F8 /* Files.xib */,
+				77E361A20F80EC070065329A /* Files.xib */,
 				77CFB9700E66D1F600F2D5F8 /* Search.xib */,
 			);
 			name = Resources;
@@ -1805,7 +1805,7 @@
 				77CFB9940E66D37E00F2D5F8 /* Console.xib in Resources */,
 				A51474C00F487FC900DBE395 /* Error.xib in Resources */,
 				77CFB9780E66D20900F2D5F8 /* FileInfo.xib in Resources */,
-				77CFB9750E66D20200F2D5F8 /* Files.xib in Resources */,
+				77E361A40F80EC070065329A /* Files.xib in Resources */,
 				778C6A410E66B37F00DBF2E3 /* MainMenu.xib in Resources */,
 				77CFB9870E66D2C300F2D5F8 /* Messages.xib in Resources */,
 				778C6A670E66B44900DBF2E3 /* Preferences.xib in Resources */,
@@ -2084,9 +2084,9 @@
 				A5DC7FA4057AB0A600736BBF /* WCFile.m in Sources */,
 				A5DC7F0C057AAF6C00736BBF /* WCFileInfo.m in Sources */,
 				A5DC7F0E057AAF6C00736BBF /* WCFiles.m in Sources */,
-				777E657B0740F34700A8DE0B /* WCFilesBrowserCell.m in Sources */,
 				A5FD60630D77FEE8000A7941 /* WCFilesController.m in Sources */,
-				77E2888E0A2D9E9B00035403 /* WCFilesOutlineView.m in Sources */,
+				77E36EEE0F82414F0065329A /* WCFilesSourceOutlineView.m in Sources */,
+				A5929D5F0F8153D300680E4D /* WCFilesWindow.m in Sources */,
 				A51B4FE50F4222AF00EAB0E1 /* WCFilterButtonCell.m in Sources */,
 				A5AAD2DE0D879B250072FFA1 /* WCFilterView.m in Sources */,
 				A515FD380D61ED4800922A2D /* WCInfoController.m in Sources */,
@@ -2234,14 +2234,6 @@
 			name = Search.xib;
 			sourceTree = "<group>";
 		};
-		77CFB9730E66D20200F2D5F8 /* Files.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				77CFB9740E66D20200F2D5F8 /* English */,
-			);
-			name = Files.xib;
-			sourceTree = "<group>";
-		};
 		77CFB9760E66D20900F2D5F8 /* FileInfo.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -2288,6 +2280,14 @@
 				77CFB9970E66D39000F2D5F8 /* English */,
 			);
 			name = Servers.xib;
+			sourceTree = "<group>";
+		};
+		77E361A20F80EC070065329A /* Files.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				77E361A30F80EC070065329A /* English */,
+			);
+			name = Files.xib;
 			sourceTree = "<group>";
 		};
 		A51474BE0F487FC900DBE395 /* Error.xib */ = {
