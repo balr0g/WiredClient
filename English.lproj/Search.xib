@@ -2,7 +2,7 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.03">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">9G55</string>
+		<string key="IBDocument.SystemVersion">9G2030</string>
 		<string key="IBDocument.InterfaceBuilderVersion">677</string>
 		<string key="IBDocument.AppKitVersion">949.43</string>
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
@@ -1633,8 +1633,8 @@
 					<reference ref="5"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="5"/>
-					<string>{{817, 319}, {528, 468}}</string>
-					<string>{{817, 319}, {528, 468}}</string>
+					<string>{{698, 319}, {528, 468}}</string>
+					<string>{{698, 319}, {528, 468}}</string>
 					<reference ref="5"/>
 					<reference ref="5"/>
 					<string>{3.40282e+38, 3.40282e+38}</string>
@@ -1782,7 +1782,7 @@
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>NSTableColumn</string>
-							<string>WCFilesOutlineView</string>
+							<string>WIOutlineView</string>
 							<string>NSTableColumn</string>
 							<string>NSTableColumn</string>
 							<string>NSTableColumn</string>
