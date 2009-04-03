@@ -796,6 +796,8 @@
 	[_sourceOutlineView expandItem:[NSNumber numberWithInteger:0]];
 	[_sourceOutlineView expandItem:[NSNumber numberWithInteger:1]];
 	[_sourceOutlineView registerForDraggedTypes:[NSArray arrayWithObjects:WCFilePboardType, WCPlacePboardType, NULL]];
+	[_sourceOutlineView setDraggingSourceOperationMask:NSDragOperationEvery forLocal:YES];
+	[_sourceOutlineView setDraggingSourceOperationMask:NSDragOperationEvery forLocal:NO];
 
 	[_filesOutlineView setTarget:self];
 	[_filesOutlineView setDoubleAction:@selector(open:)];
@@ -807,10 +809,14 @@
 	[_filesOutlineView setAutosaveName:@"Files"];
     [_filesOutlineView setAutosaveTableColumns:YES];
 	[_filesOutlineView registerForDraggedTypes:[NSArray arrayWithObject:WCFilePboardType]];
+	[_filesOutlineView setDraggingSourceOperationMask:NSDragOperationEvery forLocal:YES];
+	[_filesOutlineView setDraggingSourceOperationMask:NSDragOperationEvery forLocal:NO];
 	
 	[_filesTreeView setTarget:self];
 	[_filesTreeView setDoubleAction:@selector(open:)];
 	[_filesTreeView registerForDraggedTypes:[NSArray arrayWithObject:WCFilePboardType]];
+	[_filesTreeView setDraggingSourceOperationMask:NSDragOperationEvery forLocal:YES];
+	[_filesTreeView setDraggingSourceOperationMask:NSDragOperationEvery forLocal:NO];
 
 	[_styleControl selectSegmentWithTag:[WCSettings integerForKey:WCFilesStyle]];
 	
