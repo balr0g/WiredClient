@@ -822,6 +822,8 @@
 	
 	[self _selectStyle:[self _selectedStyle]];
 	[self _reloadStatus];
+	[self _themeDidChange];
+	[self _validate];
 }
 
 
