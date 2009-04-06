@@ -493,8 +493,7 @@
 	file = [self _existingFileForFile:file];
 	
 	if(_currentDirectory) {
-		if([file connection] == [_currentDirectory connection] &&
-		   [[file path] isEqualToString:[_currentDirectory path]])
+		if([file isEqual:_currentDirectory])
 			return;
 	
 		[self _unsubscribeFromDirectory:_currentDirectory];
@@ -795,7 +794,7 @@
 	
 	[_sourceOutlineView expandItem:[NSNumber numberWithInteger:0]];
 	[_sourceOutlineView expandItem:[NSNumber numberWithInteger:1]];
-	[_sourceOutlineView registerForDraggedTypes:[NSArray arrayWithObjects:WCFilePboardType, WCPlacePboardType, NULL]];
+	[_sourceOutlineView registerForDraggedTypes:[NSArray arrayWithObjects:WCFilePboardType, WCPlacePboardType, NSFilenamesPboardType, NULL]];
 	[_sourceOutlineView setDraggingSourceOperationMask:NSDragOperationEvery forLocal:YES];
 	[_sourceOutlineView setDraggingSourceOperationMask:NSDragOperationEvery forLocal:NO];
 
@@ -808,13 +807,13 @@
 		[NSArray arrayWithObjects:@"Name", @"Size", NULL]];
 	[_filesOutlineView setAutosaveName:@"Files"];
     [_filesOutlineView setAutosaveTableColumns:YES];
-	[_filesOutlineView registerForDraggedTypes:[NSArray arrayWithObject:WCFilePboardType]];
+	[_filesOutlineView registerForDraggedTypes:[NSArray arrayWithObjects:WCFilePboardType, NSFilenamesPboardType, NULL]];
 	[_filesOutlineView setDraggingSourceOperationMask:NSDragOperationEvery forLocal:YES];
 	[_filesOutlineView setDraggingSourceOperationMask:NSDragOperationEvery forLocal:NO];
 	
 	[_filesTreeView setTarget:self];
 	[_filesTreeView setDoubleAction:@selector(open:)];
-	[_filesTreeView registerForDraggedTypes:[NSArray arrayWithObject:WCFilePboardType]];
+	[_filesTreeView registerForDraggedTypes:[NSArray arrayWithObjects:WCFilePboardType, NSFilenamesPboardType, NULL]];
 	[_filesTreeView setDraggingSourceOperationMask:NSDragOperationEvery forLocal:YES];
 	[_filesTreeView setDraggingSourceOperationMask:NSDragOperationEvery forLocal:NO];
 
@@ -1590,8 +1589,9 @@
 				return NO;
 		}
 		
-		[pasteboard declareTypes:[NSArray arrayWithObject:WCFilePboardType] owner:NULL];
+		[pasteboard declareTypes:[NSArray arrayWithObjects:WCFilePboardType, NSFilesPromisePboardType, NULL] owner:NULL];
 		[pasteboard setData:[NSKeyedArchiver archivedDataWithRootObject:items] forType:WCFilePboardType];
+	    [pasteboard setPropertyList:[NSArray arrayWithObject:NSFileTypeForHFSTypeCode('\0\0\0\0')] forType:NSFilesPromisePboardType];
 		
 		return YES;
 	}
@@ -1675,6 +1675,9 @@
 			
 			return NSDragOperationNone;
 		}
+		else if([types containsObject:NSFilenamesPboardType]) {
+			return NSDragOperationCopy;
+		}
 	}
 	else if(outlineView == _filesOutlineView) {
 		if([types containsObject:WCFilePboardType]) {
@@ -1716,6 +1719,9 @@
 				return NSDragOperationCopy;
 			else
 				return NSDragOperationMove;
+		}
+		else if([types containsObject:NSFilenamesPboardType]) {
+			return NSDragOperationCopy;
 		}
 	}
 	
@@ -1807,6 +1813,9 @@
 			
 			return YES;
 		}
+		else if([types containsObject:NSFilenamesPboardType]) {
+			return NO;
+		}
 	}
 	else if(outlineView == _filesOutlineView) {
 		if([types containsObject:WCFilePboardType]) {
@@ -1838,6 +1847,9 @@
 			
 			return YES;
 		}
+		else if([types containsObject:NSFilenamesPboardType]) {
+			return NO;
+		}
 	}
 	
 	return NO;
@@ -1865,6 +1877,24 @@
 
 		[_sourceOutlineView reloadData];
 	}
+}
+
+
+
+- (NSArray *)outlineView:(NSOutlineView *)outlineView namesOfPromisedFilesDroppedAtDestination:(NSURL *)destination forDraggedItems:(NSArray *)items {
+	NSEnumerator		*enumerator;
+	NSMutableArray		*names;
+	WCFile				*file;
+	
+	names		= [NSMutableArray array];
+	enumerator	= [items objectEnumerator];
+	
+	while((file = [enumerator nextObject])) {
+		if([[WCTransfers transfers] downloadFile:file toFolder:[destination path]])
+			[names addObject:[file name]];
+	}
+	
+	return names;
 }
 
 
@@ -1977,8 +2007,9 @@
 		[sources addObject:file];
 	}
 	
-	[pasteboard declareTypes:[NSArray arrayWithObject:WCFilePboardType] owner:NULL];
+	[pasteboard declareTypes:[NSArray arrayWithObjects:WCFilePboardType, NSFilesPromisePboardType, NULL] owner:NULL];
 	[pasteboard setData:[NSKeyedArchiver archivedDataWithRootObject:sources] forType:WCFilePboardType];
+    [pasteboard setPropertyList:[NSArray arrayWithObject:NSFileTypeForHFSTypeCode('\0\0\0\0')] forType:NSFilesPromisePboardType];
 	
 	return YES;
 }
@@ -2029,6 +2060,9 @@
 			return NSDragOperationCopy;
 		else
 			return NSDragOperationMove;
+	}
+	else if([types containsObject:NSFilenamesPboardType]) {
+		return NSDragOperationCopy;
 	}
 
 	return NSDragOperationNone;
@@ -2081,11 +2115,40 @@
 		}
 		
 		[_filesTreeView reloadData];
-			
+		
 		return YES;
+	}
+	else if([types containsObject:NSFilenamesPboardType]) {
+		return NO;
 	}
 	
 	return NO;
+}
+
+
+
+- (NSArray *)treeView:(WITreeView *)treeView namesOfPromisedFilesDroppedAtDestination:(NSURL *)destination forDraggedPaths:(NSArray *)paths {
+	NSEnumerator			*enumerator;
+	NSMutableDictionary		*files;
+	NSMutableArray			*names;
+	NSString				*path;
+	WCFile					*file;
+	
+	files		= [self _filesForConnection:[self _selectedConnection]];
+	names		= [NSMutableArray array];
+	enumerator	= [paths objectEnumerator];
+	
+	while((path = [enumerator nextObject])) {
+		file = [files objectForKey:path];
+		
+		if(!file || ![file connection] || ![[file connection] isConnected])
+			continue;
+		
+		if([[WCTransfers transfers] downloadFile:file toFolder:[destination path]])
+			[names addObject:[file name]];
+	}
+	
+	return names;
 }
 
 @end
