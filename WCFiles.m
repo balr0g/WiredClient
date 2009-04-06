@@ -1568,26 +1568,28 @@
 
 - (BOOL)outlineView:(NSOutlineView *)outlineView writeItems:(NSArray *)items toPasteboard:(NSPasteboard *)pasteboard {
 	NSEnumerator		*enumerator;
-	NSMutableArray		*files;
+	WCFile				*file;
 	id					item;
 	
+	enumerator = [items objectEnumerator];
+
 	if(outlineView == _sourceOutlineView) {
-		files		= [NSMutableArray array];
-		enumerator	= [items objectEnumerator];
-		
 		while((item = [enumerator nextObject])) {
 			if(![item isKindOfClass:[WCFile class]])
 				return NO;
-			
-			[files addObject:item];
 		}
 		
 		[pasteboard declareTypes:[NSArray arrayWithObject:WCPlacePboardType] owner:NULL];
-		[pasteboard setData:[NSKeyedArchiver archivedDataWithRootObject:files] forType:WCPlacePboardType];
+		[pasteboard setData:[NSKeyedArchiver archivedDataWithRootObject:items] forType:WCPlacePboardType];
 		
 		return YES;
 	}
 	else if(outlineView == _filesOutlineView) {
+		while((file = [enumerator nextObject])) {
+			if(![file connection] || ![[file connection] isConnected])
+				return NO;
+		}
+		
 		[pasteboard declareTypes:[NSArray arrayWithObject:WCFilePboardType] owner:NULL];
 		[pasteboard setData:[NSKeyedArchiver archivedDataWithRootObject:items] forType:WCFilePboardType];
 		
@@ -1637,6 +1639,9 @@
 				} else {
 					destinationFile = item;
 				}
+				
+				if(![destinationFile connection] || ![[destinationFile connection] isConnected])
+					return NSDragOperationNone;
 				
 				copy = NO;
 				
@@ -1966,7 +1971,7 @@
 	while((path = [enumerator nextObject])) {
 		file = [files objectForKey:path];
 		
-		if(!file)
+		if(!file || ![file connection] || ![[file connection] isConnected])
 			return NO;
 		
 		[sources addObject:file];
