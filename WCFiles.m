@@ -436,7 +436,7 @@
 	enumerator = [_places objectEnumerator];
 	
 	while((place = [enumerator nextObject])) {
-		if([place belongsToConnection:connection])
+		if([place connection] == connection)
 			[place setConnection:NULL];
 	}
 }
