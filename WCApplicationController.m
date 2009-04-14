@@ -872,17 +872,17 @@ static WCApplicationController		*sharedController;
 #pragma mark -
 
 - (IBAction)about:(id)sender {
-	NSMutableParagraphStyle		*style;
+/*	NSMutableParagraphStyle		*style;
 	NSMutableAttributedString	*credits;
 	NSDictionary				*attributes;
 	NSAttributedString			*header, *stats;
 	NSData						*rtf;
-	NSString					*string;
+	NSString					*string;*/
 	
 	if([[NSApp currentEvent] alternateKeyModifier]) {
 		[[WCAboutWindow aboutWindow] makeKeyAndOrderFront:self];
 	} else {
-		rtf = [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Credits" ofType:@"rtf"]];
+/*		rtf = [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Credits" ofType:@"rtf"]];
 		credits = [[[NSMutableAttributedString alloc] initWithRTF:rtf documentAttributes:NULL] autorelease];
 
 		style = [[[NSMutableParagraphStyle alloc] init] autorelease];
@@ -906,7 +906,8 @@ static WCApplicationController		*sharedController;
 		[credits insertAttributedString:header atIndex:0];
 
 		[NSApp orderFrontStandardAboutPanelWithOptions:
-			[NSDictionary dictionaryWithObject:credits forKey:@"Credits"]];
+			[NSDictionary dictionaryWithObject:credits forKey:@"Credits"]];*/
+		[NSApp orderFrontStandardAboutPanelWithOptions:NULL];
 	}
 }
 
