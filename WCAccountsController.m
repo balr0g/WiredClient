@@ -910,7 +910,7 @@
 		else
 			account = [WCGroupAccount accountWithMessage:message];
 		
-		if(_requestedAccounts == 1 && [_accounts count] == 1) {
+		if(_requestedAccounts <= 1 && [_accounts count] == 1) {
 			userAccount = [_accounts lastObject];
 			
 			if([userAccount isKindOfClass:[WCUserAccount class]] && [account isKindOfClass:[WCGroupAccount class]] &&
@@ -1341,6 +1341,19 @@
 
 
 - (IBAction)type:(id)sender {
+	WCUserAccount		*userAccount;
+	
+	if(_creating) {
+		if([_typePopUpButton selectedItem] == _groupMenuItem) {
+			[_groupPopUpButton selectItemAtIndex:0];
+		
+			userAccount = [_accounts lastObject];
+			
+			[userAccount setGroup:@""];
+			[userAccount setGroupAccount:NULL];
+		}
+	}
+	
 	[self _validateForAccounts];
 }
 
@@ -1349,19 +1362,23 @@
 - (IBAction)group:(id)sender {
 	WCUserAccount		*account;
 	
-	account = [_accounts lastObject];
-	
-	if([_groupPopUpButton selectedItem] != _noneMenuItem) {
-		[account setGroup:[_groupPopUpButton titleOfSelectedItem]];
+	if([_typePopUpButton selectedItem] == _userMenuItem) {
+		account = [_accounts lastObject];
 		
-		[self _readAccount:[WCGroupAccount accountWithName:[account group]]];
-	} else {
-		[account setGroup:@""];
-		
-		[_settingsOutlineView reloadData];
-	}
+		if([_groupPopUpButton selectedItem] != _noneMenuItem) {
+			[account setGroup:[_groupPopUpButton titleOfSelectedItem]];
+			
+			[self _readAccount:[WCGroupAccount accountWithName:[account group]]];
+		} else {
+			[account setGroup:@""];
+			
+			[_settingsOutlineView reloadData];
+		}
 
-	[self touch:self];
+		[self touch:self];
+	} else {
+		[_groupPopUpButton selectItemAtIndex:0];
+	}
 }
 
 
