@@ -153,7 +153,7 @@
 	[self window];
 	
 	i = [_servers indexOfObject:connection];
-
+	
 	if(i != NSNotFound)
 		[_sourceOutlineView selectRow:i + 1 byExtendingSelection:NO];
 	
@@ -492,6 +492,9 @@
 - (void)_changeCurrentDirectory:(WCFile *)file reselectFiles:(BOOL)reselectFiles {
 	file = [self _existingFileForFile:file];
 	
+	if(!file)
+		return;
+	
 	if(_currentDirectory) {
 		if([file isEqual:_currentDirectory])
 			return;
@@ -786,14 +789,12 @@
 	
 	if([_sourceOutlineView respondsToSelector:@selector(setSelectionHighlightStyle:)]) {
 		style = 1; // NSTableViewSelectionHighlightStyleSourceList
-	
+		
 		invocation = [NSInvocation invocationWithTarget:_sourceOutlineView action:@selector(setSelectionHighlightStyle:)];
 		[invocation setArgument:&style atIndex:2];
 		[invocation invoke];
 	}
 	
-	[_sourceOutlineView expandItem:[NSNumber numberWithInteger:0]];
-	[_sourceOutlineView expandItem:[NSNumber numberWithInteger:1]];
 	[_sourceOutlineView registerForDraggedTypes:[NSArray arrayWithObjects:WCFilePboardType, WCPlacePboardType, NSFilenamesPboardType, NULL]];
 	[_sourceOutlineView setDraggingSourceOperationMask:NSDragOperationEvery forLocal:YES];
 	[_sourceOutlineView setDraggingSourceOperationMask:NSDragOperationEvery forLocal:NO];
@@ -823,6 +824,13 @@
 	[self _reloadStatus];
 	[self _themeDidChange];
 	[self _validate];
+	
+	[_sourceOutlineView reloadData];
+	[_filesOutlineView reloadData];
+	[_filesTreeView reloadData];
+
+	[_sourceOutlineView expandItem:[NSNumber numberWithInteger:0]];
+	[_sourceOutlineView expandItem:[NSNumber numberWithInteger:1]];
 }
 
 
