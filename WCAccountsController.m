@@ -1677,10 +1677,15 @@
 	name	= [item objectForKey:WCAccountFieldName];
 	value	= object;
 	
-	if(type == WCAccountFieldNumber)
+	if(type == WCAccountFieldNumber) {
+		if([object isKindOfClass:[NSString class]] && [object length] == 0)
+			return;
+		
 		value = [NSNumber numberWithInteger:[value integerValue]];
-	else if(type == WCAccountFieldBoolean)
+	}
+	else if(type == WCAccountFieldBoolean) {
 		value = [NSNumber numberWithBool:([value integerValue] == -1) ? YES : [value boolValue]];
+	}
 
 	if([name isEqualToString:@"wired.account.transfer.download_speed_limit"] ||
 	   [name isEqualToString:@"wired.account.transfer.upload_speed_limit"])
