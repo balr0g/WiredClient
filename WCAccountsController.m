@@ -1371,6 +1371,7 @@
 			[self _readAccount:[WCGroupAccount accountWithName:[account group]]];
 		} else {
 			[account setGroup:@""];
+			[account setGroupAccount:NULL];
 			
 			[_settingsOutlineView reloadData];
 		}
