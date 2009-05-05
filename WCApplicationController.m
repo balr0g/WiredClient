@@ -759,6 +759,18 @@ static WCApplicationController		*sharedController;
 
 
 
+- (void)exceptionHandler:(WIExceptionHandler *)exceptionHandler receivedException:(NSException *)exception {
+	NSAlert		*alert;
+	
+	alert = [[NSAlert alloc] init];
+	[alert setMessageText:NSLS(@"Internal Client Error", @"Internal error dialog title")];
+	[alert setInformativeText:NSLS(@"Wired Client has encountered an exception.", @"Internal error dialog description")];
+	[alert runModal];
+	[alert release];
+}
+
+
+
 - (NSDictionary *)registrationDictionaryForGrowl {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 		[NSArray arrayWithObjects:
