@@ -765,6 +765,8 @@ static WCApplicationController		*sharedController;
 	[alert setInformativeText:NSLS(@"Wired Client has encountered an exception.", @"Internal error dialog description")];
 	[alert runModal];
 	[alert release];
+	
+	[exceptionHandler crash];
 }
 
 
