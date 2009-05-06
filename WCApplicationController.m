@@ -312,8 +312,6 @@ static WCApplicationController		*sharedController;
 	NSTimer		*timer;
 	NSDate		*date;
 	
-	NSZombieEnabled = YES;
-
 	sharedController = self = [super init];
 	
 #ifndef WCConfigurationRelease
