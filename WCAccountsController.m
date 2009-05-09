@@ -288,22 +288,29 @@
 	if([_accounts count] == 1) {
 		account = [_accounts lastObject];
 
-		if(_editing) {
+		if(YES) {
 			if([account isKindOfClass:[WCUserAccount class]]) {
 				[_typePopUpButton selectItem:_userMenuItem];
-				[_fullNameTextField setStringValue:[(WCUserAccount *) account fullName]];
 				
-				if([[(WCUserAccount *) account password] isEqualToString:[@"" SHA1]])
-					[_passwordTextField setStringValue:@""];
+				if([(WCUserAccount *) account fullName])
+					[_fullNameTextField setStringValue:[(WCUserAccount *) account fullName]];
 				else
+					[_fullNameTextField setStringValue:@""];
+				
+				if([(WCUserAccount *) account password] && ![[(WCUserAccount *) account password] isEqualToString:[@"" SHA1]])
 					[_passwordTextField setStringValue:[(WCUserAccount *) account password]];
+				else
+					[_passwordTextField setStringValue:@""];
 				
 				if([[(WCUserAccount *) account group] length] > 0)
 					[_groupPopUpButton selectItemWithTitle:[(WCUserAccount *) account group]];
 				else
 					[_groupPopUpButton selectItem:_noneMenuItem];
 				
-				[_groupsTokenField setStringValue:[[(WCUserAccount *) account groups] componentsJoinedByString:@","]];
+				if([(WCUserAccount *) account groups])
+					[_groupsTokenField setStringValue:[[(WCUserAccount *) account groups] componentsJoinedByString:@","]];
+				else
+					[_groupsTokenField setStringValue:@""];
 		
 				if([(WCUserAccount *) account loginDate] && ![[(WCUserAccount *) account loginDate] isAtBeginningOfAnyEpoch])
 					[_loginTimeTextField setStringValue:[_dateFormatter stringFromDate:[(WCUserAccount *) account loginDate]]];
