@@ -288,7 +288,7 @@
 	if([_accounts count] == 1) {
 		account = [_accounts lastObject];
 
-		if(YES) {
+		if(_editing) {
 			if([account isKindOfClass:[WCUserAccount class]]) {
 				[_typePopUpButton selectItem:_userMenuItem];
 				
@@ -1190,6 +1190,8 @@
 	WCUserAccount		*account;
 	
 	[_accounts removeAllObjects];
+
+	[self _readFromAccounts];
 
 	account = [[[WCUserAccount alloc] init] autorelease];
 	[account setName:NSLS(@"Untitled", @"Account name")];
