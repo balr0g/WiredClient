@@ -124,7 +124,6 @@
 		77A1AF800F15020600F7D24B /* PSMWiredTabStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 77A1AF7E0F15020600F7D24B /* PSMWiredTabStyle.h */; };
 		77A1BA230F161A8100F7D24B /* SUPublicDSAKeyFile.pem in Resources */ = {isa = PBXBuildFile; fileRef = 77A1BA220F161A8100F7D24B /* SUPublicDSAKeyFile.pem */; };
 		77ACA8580F4AF26E00577FA1 /* WCAccountsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 77ACA8570F4AF26E00577FA1 /* WCAccountsController.m */; };
-		77B5F96F097FDD3B00C055E1 /* NSAlert-WCAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 77B5F96D097FDD3B00C055E1 /* NSAlert-WCAdditions.m */; };
 		77BB1C9A0F28C20E00A402B7 /* WCBoardsWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 77BB1C990F28C20E00A402B7 /* WCBoardsWindow.m */; };
 		77C83C340B70FBD8000F8478 /* WCChatTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 77C83C320B70FBD8000F8478 /* WCChatTextView.m */; };
 		77CED3A50EC068F500123164 /* WCBoard.m in Sources */ = {isa = PBXBuildFile; fileRef = 77CED39E0EC068F500123164 /* WCBoard.m */; };
@@ -544,8 +543,6 @@
 		77A1BA220F161A8100F7D24B /* SUPublicDSAKeyFile.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SUPublicDSAKeyFile.pem; sourceTree = "<group>"; };
 		77ACA8560F4AF26E00577FA1 /* WCAccountsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCAccountsController.h; sourceTree = "<group>"; };
 		77ACA8570F4AF26E00577FA1 /* WCAccountsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCAccountsController.m; sourceTree = "<group>"; };
-		77B5F96C097FDD3B00C055E1 /* NSAlert-WCAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAlert-WCAdditions.h"; sourceTree = "<group>"; };
-		77B5F96D097FDD3B00C055E1 /* NSAlert-WCAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAlert-WCAdditions.m"; sourceTree = "<group>"; };
 		77BB1C980F28C20E00A402B7 /* WCBoardsWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCBoardsWindow.h; sourceTree = "<group>"; };
 		77BB1C990F28C20E00A402B7 /* WCBoardsWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCBoardsWindow.m; sourceTree = "<group>"; };
 		77C83C310B70FBD8000F8478 /* WCChatTextView.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCChatTextView.h; sourceTree = "<group>"; };
@@ -1070,15 +1067,6 @@
 			name = Sources;
 			sourceTree = "<group>";
 		};
-		77B5F96B097FDD2900C055E1 /* Additions */ = {
-			isa = PBXGroup;
-			children = (
-				77B5F96D097FDD3B00C055E1 /* NSAlert-WCAdditions.m */,
-				77B5F96C097FDD3B00C055E1 /* NSAlert-WCAdditions.h */,
-			);
-			name = Additions;
-			sourceTree = "<group>";
-		};
 		77CED3990EC068D600123164 /* Boards */ = {
 			isa = PBXGroup;
 			children = (
@@ -1311,7 +1299,6 @@
 			children = (
 				A55C73330F26800B006E8568 /* Classes */,
 				772F6CE90F1E1A8E00CB8001 /* Views */,
-				77B5F96B097FDD2900C055E1 /* Additions */,
 				29B97315FDCFA39411CA2CEA /* Sources */,
 				A5E8BABF08748D6D0010F2A4 /* Config */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
@@ -2055,7 +2042,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
-				77B5F96F097FDD3B00C055E1 /* NSAlert-WCAdditions.m in Sources */,
 				A55C733B0F26803B006E8568 /* RegexKitLite.m in Sources */,
 				A509ADAC05F7FF8400E6AE2D /* WCAboutWindow.m in Sources */,
 				A5DC7FA9057AB0A600736BBF /* WCAccount.m in Sources */,
