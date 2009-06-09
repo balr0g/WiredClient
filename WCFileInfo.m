@@ -26,7 +26,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "NSAlert-WCAdditions.h"
 #import "WCAccount.h"
 #import "WCAccountsController.h"
 #import "WCFile.h"

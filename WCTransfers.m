@@ -26,7 +26,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "NSAlert-WCAdditions.h"
 #import "WCCache.h"
 #import "WCConnect.h"
 #import "WCErrorQueue.h"

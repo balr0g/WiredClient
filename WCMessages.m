@@ -26,7 +26,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "NSAlert-WCAdditions.h"
 #import "WCApplicationController.h"
 #import "WCChatController.h"
 #import "WCConversation.h"
