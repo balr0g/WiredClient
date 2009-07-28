@@ -38,8 +38,9 @@
 #import "WCPublicChatController.h"
 #import "WCTransfers.h"
 
-#define WCFilesDirectories							@"WCFilesDirectories"
 #define WCFilesFiles								@"WCFilesFiles"
+#define WCFilesDirectories							@"WCFilesDirectories"
+#define WCFilesReceivedFiles						@"WCFilesReceivedFiles"
 
 
 @interface WCFiles(Private)
@@ -60,6 +61,8 @@
 - (WCFile *)_existingFileForFile:(WCFile *)file;
 - (WCFile *)_existingParentFileForFile:(WCFile *)file;
 - (void)_removeDirectoryAtPath:(NSString *)path connection:(WCServerConnection *)connection;
+- (NSMutableArray *)_receivedFilesForConnection:(WCServerConnection *)connection message:(WIP7Message *)message;
+- (void)_removeReceivedFilesForConnection:(WCServerConnection *)connection message:(WIP7Message *)message;
 
 - (void)_addConnections;
 - (void)_addConnection:(WCServerConnection *)connection;
@@ -107,6 +110,8 @@
 								WCFilesFiles,
 							[NSMutableDictionary dictionary],
 								WCFilesDirectories,
+							[NSMutableDictionary dictionary],
+								WCFilesReceivedFiles,
 							NULL]
 			   forKey:[connection identifier]];
 	
@@ -371,6 +376,34 @@
 	directories = [self _directoriesForConnection:connection];
 	
 	[directories removeObjectForKey:path];
+}
+
+
+
+- (NSMutableArray *)_receivedFilesForConnection:(WCServerConnection *)connection message:(WIP7Message *)message {
+	NSMutableArray			*receivedFiles;
+	NSNumber				*messageID;
+	
+	messageID		= [message numberForName:@"wired.transaction"];
+	receivedFiles	= [[[_files objectForKey:[connection identifier]] objectForKey:WCFilesReceivedFiles] objectForKey:messageID];
+	
+	if(!receivedFiles) {
+		receivedFiles = [NSMutableArray array];
+
+		[[[_files objectForKey:[connection identifier]] objectForKey:WCFilesReceivedFiles] setObject:receivedFiles forKey:messageID];
+	}
+	
+	return receivedFiles;
+}
+
+
+
+- (void)_removeReceivedFilesForConnection:(WCServerConnection *)connection message:(WIP7Message *)message {
+	NSNumber		*messageID;
+
+	messageID = [message numberForName:@"wired.transaction"];
+
+	[[[_files objectForKey:[connection identifier]] objectForKey:WCFilesReceivedFiles] removeObjectForKey:messageID];
 }
 
 
@@ -916,30 +949,40 @@
 
 
 - (void)wiredFileListPathReply:(WIP7Message *)message {
-	NSMutableDictionary		*files, *directories;
-	NSMutableArray			*directory;
+	NSEnumerator			*enumerator;
+	NSMutableDictionary		*files;
+	NSMutableArray			*receivedFiles, *directory;
 	NSString				*path;
 	WCServerConnection		*connection;
-	WCFile					*file;
+	WCFile					*file, *receivedFile;
 	WIP7UInt64				free;
 	
 	connection = [message contextInfo];
 
 	if([[message name] isEqualToString:@"wired.file.list"]) {
 		file			= [WCFile fileWithMessage:message connection:connection];
-		files			= [self _filesForConnection:connection];
-		directories		= [self _directoriesForConnection:connection];
-		directory		= [directories objectForKey:[[file path] stringByDeletingLastPathComponent]];
+		receivedFiles	= [self _receivedFilesForConnection:connection message:message];
 		
-		[files setObject:file forKey:[file path]];
-		[directory addObject:file];
+		[receivedFiles addObject:file];
 	}
 	else if([[message name] isEqualToString:@"wired.file.list.done"]) {
 		[_progressIndicator stopAnimation:self];
 		
-		path		= [message stringForName:@"wired.file.path"];
-		file		= [[self _filesForConnection:connection] objectForKey:path];
-		directory	= [[self _directoriesForConnection:connection] objectForKey:path];
+		path			= [message stringForName:@"wired.file.path"];
+		files			= [self _filesForConnection:connection];
+		file			= [files objectForKey:path];
+		directory		= [[self _directoriesForConnection:connection] objectForKey:path];
+		receivedFiles	= [self _receivedFilesForConnection:connection message:message];
+		enumerator		= [receivedFiles objectEnumerator];
+		
+		[directory removeAllObjects];
+		
+		while((receivedFile = [enumerator nextObject])) {
+			[files setObject:receivedFile forKey:[receivedFile path]];
+			[directory addObject:receivedFile];
+		}
+		
+		[self _removeReceivedFilesForConnection:connection message:message];
 		
 		[directory sortUsingSelector:[self _sortSelector]];
 		
