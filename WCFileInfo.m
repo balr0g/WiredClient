@@ -131,10 +131,10 @@
 		
 		if([file type] == WCFileFile) {
 			[_sizeTextField setStringValue:
-				[NSString humanReadableStringForSizeInBytes:[file size] withBytes:YES]];
+				[NSString humanReadableStringForSizeInBytes:[file dataSize] + [file rsrcSize] withBytes:YES]];
 		} else {
 			[_sizeTextField setStringValue:
-				[[self class] _stringForFolderCount:[file size]]];
+				[[self class] _stringForFolderCount:[file directoryCount]]];
 		}
 
 		[self setYOffset:74.0];
@@ -203,14 +203,14 @@
 		
 		while((file = [enumerator nextObject])) {
 			if([file isFolder]) {
-				folderSize += [file size];
+				folderSize += [file directoryCount];
 				folders++;
 				
 				if([file type] == WCFileDropBox)
 					dropBoxes++;
 			} else {
 				files++;
-				fileSize += [file size];
+				fileSize += [file dataSize] + [file rsrcSize];
 			}
 		}
 		

@@ -99,8 +99,6 @@
 - (id)initWithWindow:(NSWindow *)window {
 	self = [self init];
 	
-	[NSBundle loadNibNamed:@"Error" owner:self];
-	
 	_window				= [window retain];
 	_errors				= [[NSMutableArray alloc] init];
 	
@@ -121,6 +119,9 @@
 #pragma mark -
 
 - (void)showError:(NSError *)error {
+	if(!_errorPanel)
+		[NSBundle loadNibNamed:@"Error" owner:self];
+	
 	[_errors addObject:error];
 
 	if(_showingPanel) {

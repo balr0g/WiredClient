@@ -61,7 +61,9 @@ typedef enum _WCFileLabel			WCFileLabel;
 
 @interface WCFile : WCServerConnectionObject <NSCoding> {
 	WCFileType						_type;
-	WIFileOffset					_size;
+	WIFileOffset					_dataSize;
+	WIFileOffset					_rsrcSize;
+	NSUInteger						_directoryCount;
 	WIFileOffset					_free;
 	NSString						*_path;
 	NSDate							*_creationDate;
@@ -82,10 +84,14 @@ typedef enum _WCFileLabel			WCFileLabel;
 	NSString						*_kind;
 	NSMutableDictionary				*_icons;
 
-	NSString						*_localPath;
+	NSString						*_transferLocalPath;
+	
+	WIFileOffset					_uploadDataSize;
+	WIFileOffset					_uploadRsrcSize;
 
 @public
-	WIFileOffset					_transferred;
+	WIFileOffset					_dataTransferred;
+	WIFileOffset					_rsrcTransferred;
 }
 
 + (NSImage *)iconForFolderType:(WCFileType)type width:(CGFloat)width;
@@ -121,14 +127,25 @@ typedef enum _WCFileLabel			WCFileLabel;
 - (NSImage *)iconWithWidth:(CGFloat)width;
 - (NSString *)humanReadableSize;
 
-- (void)setSize:(WIFileOffset)size;
-- (WIFileOffset)size;
-- (void)setFree:(WIFileOffset)free;
-- (WIFileOffset)free;
-- (void)setLocalPath:(NSString *)localPath;
-- (NSString *)localPath;
-- (void)setTransferred:(WIFileOffset)transferred;
-- (WIFileOffset)transferred;
+- (void)setDataSize:(WIFileOffset)size;
+- (WIFileOffset)dataSize;
+- (void)setRsrcSize:(WIFileOffset)size;
+- (WIFileOffset)rsrcSize;
+- (void)setDirectoryCount:(NSUInteger)directoryCount;
+- (NSUInteger)directoryCount;
+- (void)setFreeSpace:(WIFileOffset)free;
+- (WIFileOffset)freeSpace;
+
+- (void)setTransferLocalPath:(NSString *)localPath;
+- (NSString *)transferLocalPath;
+- (void)setUploadDataSize:(WIFileOffset)size;
+- (WIFileOffset)uploadDataSize;
+- (void)setUploadRsrcSize:(WIFileOffset)size;
+- (WIFileOffset)uploadRsrcSize;
+- (void)setDataTransferred:(WIFileOffset)transferred;
+- (WIFileOffset)dataTransferred;
+- (void)setRsrcTransferred:(WIFileOffset)transferred;
+- (WIFileOffset)rsrcTransferred;
 
 - (NSComparisonResult)compareName:(WCFile *)file;
 - (NSComparisonResult)compareKind:(WCFile *)file;

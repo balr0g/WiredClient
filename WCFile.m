@@ -51,22 +51,32 @@
 
 
 - (id)_initWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection {
-	WIP7UInt32		volume;
-	WIP7UInt64		size;
+	WIP7UInt32		volume, directoryCount;
+	WIP7UInt64		dataSize, rsrcSize;
 	WIP7Enum		type, label;
 	WIP7Bool		link, executable, value;
 	
 	self = [super initWithConnection:connection];
 	
 	[message getEnum:&type forName:@"wired.file.type"];
-	[message getUInt64:&size forName:@"wired.file.size"];
 	[message getBool:&link forName:@"wired.file.link"];
 	[message getBool:&executable forName:@"wired.file.executable"];
 	[message getEnum:&label forName:@"wired.file.label"];
 	[message getUInt32:&volume forName:@"wired.file.volume"];
 
+	if(![message getUInt64:&dataSize forName:@"wired.file.data_size"])
+		dataSize = 0;
+	
+	if(![message getUInt64:&rsrcSize forName:@"wired.file.rsrc_size"])
+		rsrcSize = 0;
+	
+	if(![message getUInt32:&directoryCount forName:@"wired.file.directory_count"])
+		directoryCount = 0;
+	
 	_type				= type;
-	_size				= size;
+	_rsrcSize			= rsrcSize;
+	_dataSize			= dataSize;
+	_directoryCount		= directoryCount;
 	_creationDate		= [[message dateForName:@"wired.file.creation_time"] retain];
 	_modificationDate	= [[message dateForName:@"wired.file.modification_time"] retain];
 	_comment			= [[message stringForName:@"wired.file.comment"] retain];
@@ -366,7 +376,9 @@
     }
 	
 	_type					= [coder decodeIntForKey:@"WCFileType"];
-	_size					= [coder decodeInt64ForKey:@"WCFileSize"];
+	_dataSize				= [coder decodeInt64ForKey:@"WCFileDataSize"];
+	_rsrcSize				= [coder decodeInt64ForKey:@"WCFileRsrcSize"];
+	_directoryCount			= [coder decodeInt32ForKey:@"WCFileDirectoryCount"];
 	_free					= [coder decodeInt64ForKey:@"WCFileFree"];
 	_path					= [[coder decodeObjectForKey:@"WCFilePath"] retain];
 	_creationDate			= [[coder decodeObjectForKey:@"WCFileCreationDate"] retain];
@@ -382,8 +394,11 @@
 	_label					= [coder decodeIntForKey:@"WCFileLabel"];
 	_volume					= [coder decodeIntForKey:@"WCFileVolume"];
 	
-	_localPath				= [[coder decodeObjectForKey:@"WCFileLocalPath"] retain];
-	_transferred			= [coder decodeInt64ForKey:@"WCFileTransferred"];
+	_transferLocalPath		= [[coder decodeObjectForKey:@"WCFileLocalPath"] retain];
+	_uploadDataSize			= [coder decodeInt64ForKey:@"WCFileUploadDataSize"];
+	_uploadRsrcSize			= [coder decodeInt64ForKey:@"WCFileUploadRsrcSize"];
+	_dataTransferred		= [coder decodeInt64ForKey:@"WCFileDataTransferred"];
+	_rsrcTransferred		= [coder decodeInt64ForKey:@"WCFileRsrcTransferred"];
 
 	return self;
 }
@@ -394,7 +409,9 @@
     [coder encodeInt:[[self class] version] forKey:@"WCFileVersion"];
 	
 	[coder encodeInt:_type forKey:@"WCFileType"];
-	[coder encodeInt64:_size forKey:@"WCFileSize"];
+	[coder encodeInt64:_dataSize forKey:@"WCFileDataSize"];
+	[coder encodeInt64:_rsrcSize forKey:@"WCFileRsrcSize"];
+	[coder encodeInt32:_directoryCount forKey:@"WCFileDirectoryCount"];
 	[coder encodeInt64:_free forKey:@"WCFileFree"];
 	[coder encodeObject:_path forKey:@"WCFilePath"];
 	[coder encodeObject:_creationDate forKey:@"WCFileCreationDate"];
@@ -410,8 +427,11 @@
 	[coder encodeInt:_label forKey:@"WCFileLabel"];
 	[coder encodeInt:_volume forKey:@"WCFileVolume"];
 
-	[coder encodeObject:_localPath forKey:@"WCFileLocalPath"];
-	[coder encodeInt:_transferred forKey:@"WCFileTransferred"];
+	[coder encodeObject:_transferLocalPath forKey:@"WCFileLocalPath"];
+	[coder encodeInt64:_uploadDataSize forKey:@"WCFileUploadDataSize"];
+	[coder encodeInt64:_uploadRsrcSize forKey:@"WCFileUploadRsrcSize"];
+	[coder encodeInt64:_dataTransferred forKey:@"WCFileDataTransferred"];
+	[coder encodeInt64:_rsrcTransferred forKey:@"WCFileRsrcTransferred"];
 
 	[super encodeWithCoder:coder];
 }
@@ -426,7 +446,9 @@
 	file = [[[self class] allocWithZone:zone] init];
 
 	file->_type				= _type;
-	file->_size				= _size;
+	file->_dataSize			= _dataSize;
+	file->_rsrcSize			= _rsrcSize;
+	file->_directoryCount	= _directoryCount;
 	file->_free				= _free;
 	file->_path				= [_path copy];
 	file->_modificationDate	= [_modificationDate copy];
@@ -687,11 +709,11 @@
 
 - (NSString *)humanReadableSize {
 	if([self type] == WCFileFile) {
-		return [NSString humanReadableStringForSizeInBytes:[self size]];
+		return [NSString humanReadableStringForSizeInBytes:[self dataSize] + [self rsrcSize]];
 	} else {
-		return [NSSWF:NSLS(@"%llu %@", @"Files folder size (count, 'item(s)'"),
-			[self size],
-			[self size] == 1
+		return [NSSWF:NSLS(@"%u %@", @"Files folder size (count, 'item(s)'"),
+			[self directoryCount],
+			[self directoryCount] == 1
 				? NSLS(@"item", @"Item singular")
 				: NSLS(@"items", @"Item plural")];
 	}
@@ -701,53 +723,115 @@
 
 #pragma mark -
 
-- (void)setSize:(WIFileOffset)size {
-	_size = size;
+- (void)setDataSize:(WIFileOffset)size {
+	_dataSize = size;
 }
 
 
 
-- (WIFileOffset)size {
-	return _size;
+- (WIFileOffset)dataSize {
+	return _dataSize;
 }
 
 
 
-- (void)setFree:(WIFileOffset)free {
+- (void)setRsrcSize:(WIFileOffset)size {
+	_rsrcSize = size;
+}
+
+
+
+- (WIFileOffset)rsrcSize {
+	return _rsrcSize;
+}
+
+
+
+- (void)setDirectoryCount:(NSUInteger)directoryCount {
+	_directoryCount = directoryCount;
+}
+
+
+
+- (NSUInteger)directoryCount {
+	return _directoryCount;
+}
+
+
+
+- (void)setFreeSpace:(WIFileOffset)free {
 	_free = free;
 }
 
 
 
-- (WIFileOffset)free {
+- (WIFileOffset)freeSpace {
 	return _free;
 }
 
 
 
-- (void)setLocalPath:(NSString *)path {
+#pragma mark -
+
+- (void)setTransferLocalPath:(NSString *)path {
 	[path retain];
-	[_localPath release];
+	[_transferLocalPath release];
 
-	_localPath = path;
+	_transferLocalPath = path;
 }
 
 
 
-- (NSString *)localPath {
-	return _localPath;
+- (NSString *)transferLocalPath {
+	return _transferLocalPath;
 }
 
 
 
-- (void)setTransferred:(WIFileOffset)transferred {
-	_transferred = transferred;
+- (void)setUploadDataSize:(WIFileOffset)size {
+	_uploadDataSize = size;
 }
 
 
 
-- (WIFileOffset)transferred {
-	return _transferred;
+- (WIFileOffset)uploadDataSize {
+	return _uploadDataSize;
+}
+
+
+
+- (void)setUploadRsrcSize:(WIFileOffset)size {
+	_uploadRsrcSize = size;
+}
+
+
+
+- (WIFileOffset)uploadRsrcSize {
+	return _uploadRsrcSize;
+}
+
+
+
+- (void)setDataTransferred:(WIFileOffset)transferred {
+	_dataTransferred = transferred;
+}
+
+
+
+- (WIFileOffset)dataTransferred {
+	return _dataTransferred;
+}
+
+
+
+- (void)setRsrcTransferred:(WIFileOffset)transferred {
+	_rsrcTransferred = transferred;
+}
+
+
+
+- (WIFileOffset)rsrcTransferred {
+	return _rsrcTransferred;
 }
 
 
@@ -805,9 +889,9 @@
 	else if([self type] != WCFileFile && [file type] == WCFileFile)
 		return NSOrderedDescending;
 
-	if([self size] > [file size])
+	if([self dataSize] + [self rsrcSize] > [file dataSize] + [file rsrcSize])
 		return NSOrderedAscending;
-	else if([self size] < [file size])
+	else if([self dataSize] + [self rsrcSize] < [file dataSize] + [file rsrcSize])
 		return NSOrderedDescending;
 
 	return [self compareName:file];

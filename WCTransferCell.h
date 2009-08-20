@@ -28,7 +28,6 @@
 
 #define WCTransferCellNameKey			@"WCTransferCellNameKey"
 #define WCTransferCellStatusKey			@"WCTransferCellStatusKey"
-#define WCTransferCellIconKey			@"WCTransferCellIconKey"
 #define WCTransferCellProgressKey		@"WCTransferCellProgressKey"
 
 
@@ -36,7 +35,6 @@
 
 @interface WCTransferCell : NSCell {
 	NSCell								*_nameCell;
-	NSCell								*_imageCell;
 	NSCell								*_statusCell;
 	
 	BOOL								_drawsProgressIndicator;

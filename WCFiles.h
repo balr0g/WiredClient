@@ -77,6 +77,7 @@
 	NSMutableArray						*_servers;
 	NSMutableArray						*_places;
 	NSMutableArray						*_selectFiles;
+	BOOL								_selectFilesWhenOpening;
 	
 	WCFile								*_currentDirectory;
 	

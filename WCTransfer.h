@@ -33,6 +33,7 @@ enum _WCTransferState {
 	WCTransferLocallyQueued,
 	WCTransferQueued,
 	WCTransferListing,
+	WCTransferCreatingDirectories,
 	WCTransferRunning,
 	WCTransferPausing,
 	WCTransferPaused,
@@ -68,18 +69,19 @@ typedef enum _WCTransferState		WCTransferState;
 	NSTimeInterval					_accumulatedTime;
 	NSUInteger						_speedLimit;
 	
-	NSMutableArray					*_files;
-	NSMutableArray					*_directories;
+	NSMutableArray					*_untransferredFilesList, *_transferredFilesList;
+	NSMutableSet					*_untransferredFilesSet, *_transferredFilesSet;
+	NSMutableArray					*_uncreatedDirectoriesList, *_createdDirectoriesList;
+	NSMutableSet					*_uncreatedDirectoriesSet, *_createdDirectoriesSet;
 	
 	NSConditionLock					*_terminationLock;
 	
 @public
 	double							_speed;
-	WIFileOffset					_transferred;
+	WIFileOffset					_dataTransferred;
+	WIFileOffset					_rsrcTransferred;
 	WIFileOffset					_actualTransferred;
 	WIFileOffset					_size;
-	NSUInteger						_totalFiles;
-	NSUInteger						_transferredFiles;
 }
 
 + (id)transferWithConnection:(WCServerConnection *)connection;
@@ -95,19 +97,15 @@ typedef enum _WCTransferState		WCTransferState;
 - (double)speed;
 - (void)setSize:(WIFileOffset)size;
 - (WIFileOffset)size;
-- (void)setTransferred:(WIFileOffset)transferred;
-- (WIFileOffset)transferred;
+- (void)setDataTransferred:(WIFileOffset)transferred;
+- (WIFileOffset)dataTransferred;
+- (void)setRsrcTransferred:(WIFileOffset)transferred;
+- (WIFileOffset)rsrcTransferred;
 - (void)setActualTransferred:(WIFileOffset)actualTransferred;
 - (WIFileOffset)actualTransferred;
-- (void)setTotalFiles:(NSUInteger)files;
-- (NSUInteger)totalFiles;
-- (void)setTransferredFiles:(NSUInteger)files;
-- (NSUInteger)transferredFiles;
 
 - (void)setFolder:(BOOL)value;
 - (BOOL)isFolder;
-- (void)setSecure:(BOOL)value;
-- (BOOL)isSecure;
 
 - (void)setTransferConnection:(WCTransferConnection *)transferConnection;
 - (WCTransferConnection *)transferConnection;
@@ -132,17 +130,26 @@ typedef enum _WCTransferState		WCTransferState;
 - (NSImage *)icon;
 - (void)refreshSpeedLimit;
 
-- (BOOL)containsPath:(NSString *)path;
-- (BOOL)containsFile:(WCFile *)file;
-- (void)removeFile:(WCFile *)file;
-- (NSUInteger)numberOfFiles;
-- (void)addFile:(WCFile *)file;
-- (void)removeFirstFile;
-- (WCFile *)firstFile;
-- (void)addDirectory:(WCFile *)directory;
-- (void)removeDirectory:(WCFile *)file;
-- (void)removeAllDirectories;
-- (NSArray *)directories;
+- (BOOL)containsUntransferredFile:(WCFile *)file;
+- (BOOL)containsTransferredFile:(WCFile *)file;
+- (BOOL)containsUncreatedDirectory:(WCFile *)directory;
+- (BOOL)containsCreatedDirectory:(WCFile *)directory;
+
+- (NSUInteger)numberOfUntransferredFiles;
+- (NSUInteger)numberOfTransferredFiles;
+- (WCFile *)firstUntransferredFile;
+- (void)addUntransferredFile:(WCFile *)file;
+- (void)removeUntransferredFile:(WCFile *)file;
+- (void)addTransferredFile:(WCFile *)file;
+- (void)removeTransferredFile:(WCFile *)file;
+
+- (void)addUncreatedDirectory:(WCFile *)directory;
+- (void)removeUncreatedDirectory:(WCFile *)directory;
+- (void)removeAllUncreatedDirectories;
+- (void)addCreatedDirectory:(WCFile *)directory;
+- (void)removeCreatedDirectory:(WCFile *)directory;
+- (NSArray *)uncreatedDirectories;
+- (NSArray *)createdDirectories;
 
 @end
 

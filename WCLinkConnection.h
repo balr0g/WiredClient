@@ -47,18 +47,17 @@
 @interface WCLinkConnection : WCConnection {
 	WCLink													*_link;
 	NSNotificationCenter									*_notificationCenter;
-	WCNotificationCenter									*_linkNotificationCenter;
+	WIP7NotificationCenter									*_linkNotificationCenter;
 	WIP7UInt32												_transaction;
 	
 	WCError													*_error;
 	
-	BOOL													_sentLogin;
 	BOOL													_disconnecting;
 }
 
 - (void)linkConnectionDidTerminate:(NSNotification *)notification;
 - (void)linkConnectionDidClose:(NSNotification *)notification;
-- (void)wiredServerInfo:(WIP7Message *)message;
+- (void)wiredClientInfoReply:(WIP7Message *)message;
 - (void)wiredLoginReply:(WIP7Message *)message;
 
 - (void)addObserver:(id)observer selector:(SEL)action name:(NSString *)name;
@@ -74,7 +73,7 @@
 - (void)connect;
 - (void)terminate;
 
-- (void)sendMessage:(WIP7Message *)message;
+- (NSUInteger)sendMessage:(WIP7Message *)message;
 - (NSUInteger)sendMessage:(WIP7Message *)message fromObserver:(id)observer selector:(SEL)selector;
 - (void)replyMessage:(WIP7Message *)message toMessage:(WIP7Message *)message;
 

@@ -100,7 +100,7 @@
 	[[_consoleTextView textStorage] appendAttributedString:attributedString];
 	
 	if(position == 1.0)
-		[_consoleTextView performSelectorOnce:@selector(scrollToBottom) withObject:NULL afterDelay:0.05];
+		[_consoleTextView performSelectorOnce:@selector(scrollToBottom) withObject:NULL afterDelay:0.1];
 }
 
 @end

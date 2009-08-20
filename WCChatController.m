@@ -1324,10 +1324,9 @@ typedef enum _WCChatFormat					WCChatFormat;
 	WCUser			*killer, *victim;
 	WIP7UInt32		cid;
 	
-	if(![message getUInt32:&cid forName:@"wired.chat.id"])
-		cid = WCPublicChatID;
+	[message getUInt32:&cid forName:@"wired.chat.id"];
 	
-	if(cid != WCPublicChatID && cid != [self chatID])
+	if(cid != [self chatID])
 		return;
 	
 	[message getUInt32:&killerUserID forName:@"wired.user.id"];
@@ -1356,13 +1355,18 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 
 
-- (void)wiredUserStatus:(WIP7Message *)message {
+- (void)wiredChatUserStatus:(WIP7Message *)message {
 	NSString		*nick, *status;
 	WCUser			*user;
-	WIP7UInt32		uid;
+	WIP7UInt32		cid, uid;
 	WIP7Bool		idle, admin;
 	BOOL			nickChanged = NO;
 	
+	[message getUInt32:&cid forName:@"wired.chat.id"];
+	
+	if(cid != [self chatID])
+		return;
+
 	[message getUInt32:&uid forName:@"wired.user.id"];
 	
 	user = [self userWithUserID:uid];
@@ -1404,10 +1408,15 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 
 
-- (void)wiredUserIcon:(WIP7Message *)message {
+- (void)wiredChatUserIcon:(WIP7Message *)message {
 	NSImage			*image;
 	WCUser			*user;
-	WIP7UInt32		uid;
+	WIP7UInt32		cid, uid;
+	
+	[message getUInt32:&cid forName:@"wired.chat.id"];
+	
+	if(cid != [self chatID])
+		return;
 	
 	[message getUInt32:&uid forName:@"wired.user.id"];
 	
@@ -1421,6 +1430,11 @@ typedef enum _WCChatFormat					WCChatFormat;
 	[image release];
 	
 	[_userListTableView setNeedsDisplay:YES];
+}
+
+
+
+- (void)wiredUserUserDisconnect:(WIP7Message *)message {
 }
 
 
@@ -1741,8 +1755,9 @@ typedef enum _WCChatFormat					WCChatFormat;
 	[_connection addObserver:self selector:@selector(wiredChatSayOrMe:) messageName:@"wired.chat.say"];
 	[_connection addObserver:self selector:@selector(wiredChatSayOrMe:) messageName:@"wired.chat.me"];
 	[_connection addObserver:self selector:@selector(wiredChatUserKick:) messageName:@"wired.chat.user_kick"];
-	[_connection addObserver:self selector:@selector(wiredUserStatus:) messageName:@"wired.user.status"];
-	[_connection addObserver:self selector:@selector(wiredUserIcon:) messageName:@"wired.user.icon"];
+	[_connection addObserver:self selector:@selector(wiredChatUserStatus:) messageName:@"wired.chat.user_status"];
+	[_connection addObserver:self selector:@selector(wiredChatUserIcon:) messageName:@"wired.chat.user_icon"];
+	[_connection addObserver:self selector:@selector(wiredUserUserDisconnect:) messageName:@"wired.user.user_disconnect"];
 	[_connection addObserver:self selector:@selector(wiredUserUserBan:) messageName:@"wired.user.user_ban"];
 	
 	[self themeDidChange:[_connection theme]];

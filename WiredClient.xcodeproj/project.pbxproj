@@ -161,7 +161,6 @@
 		A51B50110F42282F00EAB0E1 /* FilterButtonLeft.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A51B500E0F42282F00EAB0E1 /* FilterButtonLeft.tiff */; };
 		A51B50120F42282F00EAB0E1 /* FilterButtonMiddle.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A51B500F0F42282F00EAB0E1 /* FilterButtonMiddle.tiff */; };
 		A51B5A5E0F44D63F00EAB0E1 /* MessageStatus.html in Resources */ = {isa = PBXBuildFile; fileRef = A51B5A5D0F44D63F00EAB0E1 /* MessageStatus.html */; };
-		A526D7D80D5F00B200F30E6F /* WCNotificationCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A526D7D70D5F00B200F30E6F /* WCNotificationCenter.m */; };
 		A52B301C05E6F0A300C651A4 /* WCServerInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A52B301A05E6F0A300C651A4 /* WCServerInfo.m */; };
 		A5326A8F0F37981C004180AA /* PostHeader.html in Resources */ = {isa = PBXBuildFile; fileRef = A5326A8C0F37981C004180AA /* PostHeader.html */; };
 		A5326A900F37981C004180AA /* PostFooter.html in Resources */ = {isa = PBXBuildFile; fileRef = A5326A8D0F37981C004180AA /* PostFooter.html */; };
@@ -184,7 +183,6 @@
 		A54AF93A0F13AEBB00AFD50E /* Banlist.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF8EE0F13AEBA00AFD50E /* Banlist.tiff */; };
 		A54AF93B0F13AEBB00AFD50E /* Ban.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF8EF0F13AEBA00AFD50E /* Ban.tiff */; };
 		A54AF93C0F13AEBB00AFD50E /* Back.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF8F00F13AEBA00AFD50E /* Back.tiff */; };
-		A54AF93D0F13AEBB00AFD50E /* Locked.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF8F10F13AEBA00AFD50E /* Locked.tiff */; };
 		A54AF93E0F13AEBB00AFD50E /* ListView.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF8F20F13AEBA00AFD50E /* ListView.tiff */; };
 		A54AF93F0F13AEBB00AFD50E /* Kick.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF8F30F13AEBA00AFD50E /* Kick.tiff */; };
 		A54AF9400F13AEBB00AFD50E /* Group.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF8F40F13AEBA00AFD50E /* Group.tiff */; };
@@ -239,7 +237,6 @@
 		A54AF9710F13AEBB00AFD50E /* LogDebug.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF9250F13AEBB00AFD50E /* LogDebug.tiff */; };
 		A54AF9720F13AEBB00AFD50E /* Log.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF9260F13AEBB00AFD50E /* Log.tiff */; };
 		A54AF9730F13AEBB00AFD50E /* Upload.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF9270F13AEBB00AFD50E /* Upload.tiff */; };
-		A54AF9740F13AEBB00AFD50E /* Unlocked.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF9280F13AEBB00AFD50E /* Unlocked.tiff */; };
 		A54AF9750F13AEBB00AFD50E /* Transfers.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF9290F13AEBB00AFD50E /* Transfers.tiff */; };
 		A54AF9760F13AEBB00AFD50E /* Trackers.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF92A0F13AEBB00AFD50E /* Trackers.tiff */; };
 		A54AF9770F13AEBB00AFD50E /* Themes.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF92B0F13AEBB00AFD50E /* Themes.tiff */; };
@@ -588,8 +585,6 @@
 		A51B500E0F42282F00EAB0E1 /* FilterButtonLeft.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = FilterButtonLeft.tiff; sourceTree = "<group>"; };
 		A51B500F0F42282F00EAB0E1 /* FilterButtonMiddle.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = FilterButtonMiddle.tiff; sourceTree = "<group>"; };
 		A51B5A5D0F44D63F00EAB0E1 /* MessageStatus.html */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.html; path = MessageStatus.html; sourceTree = "<group>"; };
-		A526D7D60D5F00B200F30E6F /* WCNotificationCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCNotificationCenter.h; sourceTree = "<group>"; };
-		A526D7D70D5F00B200F30E6F /* WCNotificationCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCNotificationCenter.m; sourceTree = "<group>"; };
 		A52B301905E6F0A300C651A4 /* WCServerInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCServerInfo.h; sourceTree = "<group>"; };
 		A52B301A05E6F0A300C651A4 /* WCServerInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCServerInfo.m; sourceTree = "<group>"; };
 		A5326A8C0F37981C004180AA /* PostHeader.html */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.html; path = PostHeader.html; sourceTree = "<group>"; };
@@ -621,7 +616,6 @@
 		A54AF8EE0F13AEBA00AFD50E /* Banlist.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Banlist.tiff; sourceTree = "<group>"; };
 		A54AF8EF0F13AEBA00AFD50E /* Ban.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Ban.tiff; sourceTree = "<group>"; };
 		A54AF8F00F13AEBA00AFD50E /* Back.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Back.tiff; sourceTree = "<group>"; };
-		A54AF8F10F13AEBA00AFD50E /* Locked.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Locked.tiff; sourceTree = "<group>"; };
 		A54AF8F20F13AEBA00AFD50E /* ListView.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = ListView.tiff; sourceTree = "<group>"; };
 		A54AF8F30F13AEBA00AFD50E /* Kick.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Kick.tiff; sourceTree = "<group>"; };
 		A54AF8F40F13AEBA00AFD50E /* Group.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Group.tiff; sourceTree = "<group>"; };
@@ -676,7 +670,6 @@
 		A54AF9250F13AEBB00AFD50E /* LogDebug.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = LogDebug.tiff; sourceTree = "<group>"; };
 		A54AF9260F13AEBB00AFD50E /* Log.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Log.tiff; sourceTree = "<group>"; };
 		A54AF9270F13AEBB00AFD50E /* Upload.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Upload.tiff; sourceTree = "<group>"; };
-		A54AF9280F13AEBB00AFD50E /* Unlocked.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Unlocked.tiff; sourceTree = "<group>"; };
 		A54AF9290F13AEBB00AFD50E /* Transfers.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Transfers.tiff; sourceTree = "<group>"; };
 		A54AF92A0F13AEBB00AFD50E /* Trackers.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Trackers.tiff; sourceTree = "<group>"; };
 		A54AF92B0F13AEBB00AFD50E /* Themes.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Themes.tiff; sourceTree = "<group>"; };
@@ -771,7 +764,7 @@
 		A5DC7ED4057AAF2900736BBF /* WCConsole.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCConsole.h; sourceTree = "<group>"; };
 		A5DC7ED5057AAF2900736BBF /* WCConsole.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCConsole.m; sourceTree = "<group>"; };
 		A5DC7ED7057AAF2900736BBF /* WCMessages.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCMessages.h; sourceTree = "<group>"; };
-		A5DC7ED8057AAF2900736BBF /* WCTransfers.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCTransfers.m; sourceTree = "<group>"; };
+		A5DC7ED8057AAF2900736BBF /* WCTransfers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCTransfers.m; sourceTree = "<group>"; };
 		A5DC7EDB057AAF2900736BBF /* WCMessages.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCMessages.m; sourceTree = "<group>"; };
 		A5DC7EDE057AAF2900736BBF /* WCTransfers.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCTransfers.h; sourceTree = "<group>"; };
 		A5DC7EF6057AAF6C00736BBF /* WCPrivateChat.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCPrivateChat.h; sourceTree = "<group>"; };
@@ -1398,7 +1391,6 @@
 				A5D080040F54B1FB00053320 /* LabelRed.tiff */,
 				778943840F5579280017C511 /* LabelYellow.tiff */,
 				A54AF8F20F13AEBA00AFD50E /* ListView.tiff */,
-				A54AF8F10F13AEBA00AFD50E /* Locked.tiff */,
 				A54AF9260F13AEBB00AFD50E /* Log.tiff */,
 				A54AF9250F13AEBB00AFD50E /* LogDebug.tiff */,
 				A54AF9240F13AEBB00AFD50E /* LogError.tiff */,
@@ -1450,7 +1442,6 @@
 				A54AF92B0F13AEBB00AFD50E /* Themes.tiff */,
 				A54AF92A0F13AEBB00AFD50E /* Trackers.tiff */,
 				A54AF9290F13AEBB00AFD50E /* Transfers.tiff */,
-				A54AF9280F13AEBB00AFD50E /* Unlocked.tiff */,
 				7712242B0F27421D00984433 /* UnreadThread.tiff */,
 				7712242C0F27421D00984433 /* UnreadHeader.tiff */,
 				A54AF9270F13AEBB00AFD50E /* Upload.tiff */,
@@ -1516,8 +1507,6 @@
 				A57D216E07C950BD002C306E /* WCLink.h */,
 				A5492EC40D8F790E002D37D7 /* WCLinkConnection.m */,
 				A5492EC50D8F790E002D37D7 /* WCLinkConnection.h */,
-				A526D7D70D5F00B200F30E6F /* WCNotificationCenter.m */,
-				A526D7D60D5F00B200F30E6F /* WCNotificationCenter.h */,
 				A5DC7F99057AB0A600736BBF /* WCServer.m */,
 				A5DC7F98057AB0A600736BBF /* WCServer.h */,
 				A57D216B07C95094002C306E /* WCServerConnection.m */,
@@ -1650,6 +1639,7 @@
 				8D11072E0486CEB800E47090 /* Frameworks */,
 				A5DC7E2A057AA99B00736BBF /* Run Script (Version) */,
 				773202500F3091D700A85BAE /* Run Script (Codesign) */,
+				770FF23110342F39009D0F58 /* Run Script (Schema) */,
 			);
 			buildRules = (
 			);
@@ -1873,7 +1863,6 @@
 				A5D0800B0F54B1FB00053320 /* LabelRed.tiff in Resources */,
 				778943850F5579280017C511 /* LabelYellow.tiff in Resources */,
 				A54AF93E0F13AEBB00AFD50E /* ListView.tiff in Resources */,
-				A54AF93D0F13AEBB00AFD50E /* Locked.tiff in Resources */,
 				A54AF9720F13AEBB00AFD50E /* Log.tiff in Resources */,
 				A54AF9710F13AEBB00AFD50E /* LogDebug.tiff in Resources */,
 				A54AF9700F13AEBB00AFD50E /* LogError.tiff in Resources */,
@@ -1930,7 +1919,6 @@
 				7712242E0F27421D00984433 /* UnreadHeader.tiff in Resources */,
 				A54AF95D0F13AEBB00AFD50E /* User.tiff in Resources */,
 				A54AF9730F13AEBB00AFD50E /* Upload.tiff in Resources */,
-				A54AF9740F13AEBB00AFD50E /* Unlocked.tiff in Resources */,
 				A54AF95B0F13AEBB00AFD50E /* VolumeLoud.tiff in Resources */,
 				A54AF95A0F13AEBB00AFD50E /* VolumeQuiet.tiff in Resources */,
 				A54AF9590F13AEBB00AFD50E /* YellowDrop.tiff in Resources */,
@@ -1956,6 +1944,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		770FF23110342F39009D0F58 /* Run Script (Schema) */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script (Schema)";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp \"$SRCROOT/WiredAdditions/libwired/p7/p7-specification.xsd\" \"$BUILT_PRODUCTS_DIR/\"";
+			showEnvVarsInLog = 0;
+		};
 		773202500F3091D700A85BAE /* Run Script (Codesign) */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 12;
@@ -2085,7 +2088,6 @@
 				778E8616096D27B500258FE6 /* WCMessagesWindow.m in Sources */,
 				A5F802980D8E378300A84685 /* WCMonitorCell.m in Sources */,
 				A5AAD1480D86F15C0072FFA1 /* WCMonitorController.m in Sources */,
-				A526D7D80D5F00B200F30E6F /* WCNotificationCenter.m in Sources */,
 				A5DC7ECA057AAEAD00736BBF /* WCPreferences.m in Sources */,
 				A5DC7F0A057AAF6C00736BBF /* WCPrivateChat.m in Sources */,
 				A541A7830F115AC500D1EE94 /* WCPrivateChatController.m in Sources */,
@@ -2442,6 +2444,7 @@
 				DEBUG_INFORMATION_FORMAT = stabs;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PREPROCESSOR_DEFINITIONS = WCConfigurationTest;
+				GCC_VERSION = 4.0;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				IBC_FLATTEN_NIBS = NO;
 				IBC_NOTICES = NO;
@@ -2527,6 +2530,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = WCConfigurationDebug;
+				GCC_VERSION = 4.0;
 				IBC_FLATTEN_NIBS = NO;
 				IBC_NOTICES = NO;
 				"MACOSX_DEPLOYMENT_TARGET[arch=i386]" = 10.4;
@@ -2549,6 +2553,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = WCConfigurationRelease;
+				GCC_VERSION = 4.0;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				IBC_NOTICES = NO;
 				"MACOSX_DEPLOYMENT_TARGET[arch=i386]" = 10.4;

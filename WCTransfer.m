@@ -47,8 +47,15 @@
 
 	[self setState:WCTransferWaiting];
 
-	_files = [[NSMutableArray alloc] init];
-	_directories = [[NSMutableArray alloc] init];
+	_untransferredFilesList		= [[NSMutableArray alloc] init];
+	_transferredFilesList		= [[NSMutableArray alloc] init];
+	_untransferredFilesSet		= [[NSMutableSet alloc] init];
+	_transferredFilesSet		= [[NSMutableSet alloc] init];
+
+	_uncreatedDirectoriesList	= [[NSMutableArray alloc] init];
+	_createdDirectoriesList		= [[NSMutableArray alloc] init];
+	_uncreatedDirectoriesSet	= [[NSMutableSet alloc] init];
+	_createdDirectoriesSet		= [[NSMutableSet alloc] init];
 	
 	[self refreshSpeedLimit];
 	
@@ -58,31 +65,32 @@
 
 
 - (id)_initWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection {
-	WIP7UInt64		size, transferred;
+	WIP7UInt64		dataSize, rsrcSize, transferred;
 	WIP7UInt32		queuePosition, speed;
 	
 	self = [self initWithConnection:connection];
 	
 	_remotePath		= [[message stringForName:@"wired.file.path"] retain];
 	
-	[message getUInt64:&size forName:@"wired.file.size"];
+	[message getUInt64:&dataSize forName:@"wired.transfer.data_size"];
+	[message getUInt64:&rsrcSize forName:@"wired.transfer.rsrc_size"];
 	[message getUInt64:&transferred forName:@"wired.transfer.transferred"];
 	[message getUInt32:&queuePosition forName:@"wired.transfer.queue_position"];
 	[message getUInt32:&speed forName:@"wired.transfer.speed"];
 	
-	_size			= size;
-	_transferred	= transferred;
-	_speed			= speed;
-	_queuePosition	= queuePosition;
+	_size				= dataSize + rsrcSize;
+	_dataTransferred	= transferred;
+	_speed				= speed;
+	_queuePosition		= queuePosition;
 	
 	if(_queuePosition == 0)
-		_state		= WCTransferRunning;
+		_state			= WCTransferRunning;
 	else
-		_state		= WCTransferQueued;
+		_state			= WCTransferQueued;
 	
 	if(_state == WCTransferRunning) {
 		[_progressIndicator setIndeterminate:NO];
-		[_progressIndicator setDoubleValue:(double) _transferred / (double) _size];
+		[_progressIndicator setDoubleValue:(double) _dataTransferred / (double) _size];
 	}
 
 	return self;
@@ -159,25 +167,30 @@
         return NULL;
     }
 	
-	_state				= [coder decodeIntForKey:@"WCTransferState"];
-	_folder				= [coder decodeBoolForKey:@"WCTransferFolder"];
-	_name				= [[coder decodeObjectForKey:@"WCTransferName"] retain];
-	_localPath			= [[coder decodeObjectForKey:@"WCTransferLocalPath"] retain];
-	_remotePath			= [[coder decodeObjectForKey:@"WCTransferRemotePath"] retain];
-	_destinationPath	= [[coder decodeObjectForKey:@"WCTransferDestinationPath"] retain];
-	_file				= [[coder decodeObjectForKey:@"WCTransferFile"] retain];
-	_files				= [[coder decodeObjectForKey:@"WCTransferFiles"] retain];
-	_directories		= [[coder decodeObjectForKey:@"WCTransferDirectories"] retain];
-	_transferred		= [coder decodeInt64ForKey:@"WCTransferTransferred"];
-	_actualTransferred	= [coder decodeInt64ForKey:@"WCTransferActualTransferred"];
-	_size				= [coder decodeInt64ForKey:@"WCTransferSize"];
-	_accumulatedTime	= [coder decodeDoubleForKey:@"WCTransferAccumulatedTime"];
-	_totalFiles			= [coder decodeIntForKey:@"WCTransferTotalFiles"];
-	_transferredFiles	= [coder decodeIntForKey:@"WCTransferTransferredFiles"];
+	_state						= [coder decodeIntForKey:@"WCTransferState"];
+	_folder						= [coder decodeBoolForKey:@"WCTransferFolder"];
+	_name						= [[coder decodeObjectForKey:@"WCTransferName"] retain];
+	_localPath					= [[coder decodeObjectForKey:@"WCTransferLocalPath"] retain];
+	_remotePath					= [[coder decodeObjectForKey:@"WCTransferRemotePath"] retain];
+	_destinationPath			= [[coder decodeObjectForKey:@"WCTransferDestinationPath"] retain];
+	_file						= [[coder decodeObjectForKey:@"WCTransferFile"] retain];
+	_untransferredFilesList		= [[coder decodeObjectForKey:@"WCTransferUntransferredFilesList"] retain];
+	_transferredFilesList		= [[coder decodeObjectForKey:@"WCTransferTransferredFilesList"] retain];
+	_untransferredFilesSet		= [[coder decodeObjectForKey:@"WCTransferUntransferredFilesSet"] retain];
+	_transferredFilesSet		= [[coder decodeObjectForKey:@"WCTransferTransferredFilesSet"] retain];
+	_uncreatedDirectoriesList	= [[coder decodeObjectForKey:@"WCTransferUncreatedDirectoriesList"] retain];
+	_createdDirectoriesList		= [[coder decodeObjectForKey:@"WCTransferCreatedDirectoriesList"] retain];
+	_uncreatedDirectoriesSet	= [[coder decodeObjectForKey:@"WCTransferUncreatedDirectoriesSet"] retain];
+	_createdDirectoriesSet		= [[coder decodeObjectForKey:@"WCTransferCreatedDirectoriesSet"] retain];
+	_dataTransferred			= [coder decodeInt64ForKey:@"WCTransferDataTransferred"];
+	_rsrcTransferred			= [coder decodeInt64ForKey:@"WCTransferRsrcTransferred"];
+	_actualTransferred			= [coder decodeInt64ForKey:@"WCTransferActualTransferred"];
+	_size						= [coder decodeInt64ForKey:@"WCTransferSize"];
+	_accumulatedTime			= [coder decodeDoubleForKey:@"WCTransferAccumulatedTime"];
 	
-	if(_transferred > 0) {
+	if(_dataTransferred > 0 || _rsrcTransferred > 0) {
 		[_progressIndicator setIndeterminate:NO];
-		[_progressIndicator setDoubleValue:(double) _transferred / (double) _size];
+		[_progressIndicator setDoubleValue:(double) (_dataTransferred + _rsrcTransferred)  / (double) _size];
 	} else {
 		[_progressIndicator setIndeterminate:YES];
 	}
@@ -197,15 +210,20 @@
 	[coder encodeObject:_remotePath forKey:@"WCTransferRemotePath"];
 	[coder encodeObject:_destinationPath forKey:@"WCTransferDestinationPath"];
 	[coder encodeObject:_file forKey:@"WCTransferFile"];
-	[coder encodeObject:_files forKey:@"WCTransferFiles"];
-	[coder encodeObject:_directories forKey:@"WCTransferDirectories"];
-	[coder encodeInt64:_transferred forKey:@"WCTransferTransferred"];
+	[coder encodeObject:_untransferredFilesList forKey:@"WCTransferUntransferredFilesList"];
+	[coder encodeObject:_transferredFilesList forKey:@"WCTransferTransferredFilesList"];
+	[coder encodeObject:_untransferredFilesSet forKey:@"WCTransferUntransferredFilesSet"];
+	[coder encodeObject:_transferredFilesSet forKey:@"WCTransferTransferredFilesSet"];
+	[coder encodeObject:_uncreatedDirectoriesList forKey:@"WCTransferUncreatedDirectoriesList"];
+	[coder encodeObject:_createdDirectoriesList forKey:@"WCTransferCreatedDirectoriesList"];
+	[coder encodeObject:_uncreatedDirectoriesSet forKey:@"WCTransferUncreatedDirectoriesSet"];
+	[coder encodeObject:_createdDirectoriesSet forKey:@"WCTransferCreatedDirectoriesSet"];
+	[coder encodeInt64:_dataTransferred forKey:@"WCTransferDataTransferred"];
+	[coder encodeInt64:_rsrcTransferred forKey:@"WCTransferRsrcTransferred"];
 	[coder encodeInt64:_actualTransferred forKey:@"WCTransferActualTransferred"];
 	[coder encodeInt64:_size forKey:@"WCTransferSize"];
 	[coder encodeDouble:_accumulatedTime forKey:@"WCTransferAccumulatedTime"];
-	[coder encodeInt:_totalFiles forKey:@"WCTransferTotalFiles"];
-	[coder encodeInt:_transferredFiles forKey:@"WCTransferTransferredFiles"];
-	
+
 	[super encodeWithCoder:coder];
 }
 
@@ -224,8 +242,15 @@
 	[_progressIndicator removeFromSuperview];
 	[_progressIndicator release];
 
-	[_files release];
-	[_directories release];
+	[_untransferredFilesList release];
+	[_transferredFilesList release];
+	[_untransferredFilesSet release];
+	[_transferredFilesSet release];
+
+	[_uncreatedDirectoriesList release];
+	[_createdDirectoriesList release];
+	[_uncreatedDirectoriesSet release];
+	[_createdDirectoriesSet release];
 	
 	[_terminationLock release];
 
@@ -238,6 +263,9 @@
 
 - (void)setState:(WCTransferState)state {
 	_state = state;
+	
+	if(_state == WCTransferStopping)
+		NSLog(@"hai");
 	
 	if(_state < WCTransferRunning && [_progressIndicator doubleValue] == 0.0)
 		[_progressIndicator setIndeterminate:YES];
@@ -312,14 +340,26 @@
 
 
 
-- (void)setTransferred:(WIFileOffset)transferred {
-	_transferred = transferred;
+- (void)setDataTransferred:(WIFileOffset)transferred {
+	_dataTransferred = transferred;
 }
 
 
 
-- (WIFileOffset)transferred {
-	return _transferred;
+- (WIFileOffset)dataTransferred {
+	return _dataTransferred;
+}
+
+
+
+- (void)setRsrcTransferred:(WIFileOffset)transferred {
+	_rsrcTransferred = transferred;
+}
+
+
+
+- (WIFileOffset)rsrcTransferred {
+	return _rsrcTransferred;
 }
 
 
@@ -332,30 +372,6 @@
 
 - (WIFileOffset)actualTransferred {
 	return _actualTransferred;
-}
-
-
-
-- (void)setTotalFiles:(NSUInteger)files {
-	_totalFiles = files;
-}
-
-
-
-- (NSUInteger)totalFiles {
-	return _totalFiles;
-}
-
-
-
-- (void)setTransferredFiles:(NSUInteger)files {
-	_transferredFiles = files;
-}
-
-
-
-- (NSUInteger)transferredFiles {
-	return _transferredFiles;
 }
 
 
@@ -509,7 +525,8 @@
 
 - (BOOL)isWorking {
 	return (_state == WCTransferWaiting || _state == WCTransferQueued ||
-			_state == WCTransferListing || _state == WCTransferRunning);
+			_state == WCTransferListing || _state == WCTransferCreatingDirectories ||
+			_state == WCTransferRunning);
 }
 
 
@@ -543,9 +560,15 @@
 - (NSString *)status {
 	NSString			*format, *speed;
 	NSTimeInterval		interval;
-	WIFileOffset		remainingBytes;
+	WIFileOffset		transferred, remaining;
+	WCTransferState		state;
 	
-	switch([self state]) {
+	state = [self state];
+	
+	if(state == WCTransferWaiting && [self numberOfTransferredFiles] > 1)
+		state = WCTransferRunning;
+	
+	switch(state) {
 		case WCTransferLocallyQueued:
 			return NSLS(@"Queued", @"Transfer locally queued");
 			break;
@@ -561,33 +584,39 @@
 		
 		case WCTransferListing:
 			return [NSSWF:NSLS(@"Listing directory... %lu %@", @"Transfer listing (files, 'file(s)'"),
-				[self totalFiles],
-				[self totalFiles] == 1
+				[self numberOfUntransferredFiles] + [self numberOfTransferredFiles],
+				[self numberOfUntransferredFiles] + [self numberOfTransferredFiles] == 1
 					? NSLS(@"file", @"File singular")
 					: NSLS(@"files", @"File plural")];
 			break;
 			
+		case WCTransferCreatingDirectories:
+			return [NSSWF:NSLS(@"Creating directories... %lu", @"Transfer directories (directories"),
+				[[self createdDirectories] count]];
+			break;
+			
 		case WCTransferRunning:
-			remainingBytes = ([self transferred] < [self size]) ? [self size] - [self transferred] : 0;
-			interval = ([self speed] > 0) ? (double) remainingBytes / (double) [self speed] : 0;
-			speed = [NSSWF:@"%@/s", [NSString humanReadableStringForSizeInBytes:[self speed]]];
+			transferred		= [self dataTransferred] + [self rsrcTransferred];
+			remaining		= (transferred < [self size]) ? [self size] - transferred : 0;
+			interval		= ([self speed] > 0) ? (double) remaining / (double) [self speed] : 0;
+			speed			= [NSSWF:@"%@/s", [NSString humanReadableStringForSizeInBytes:[self speed]]];
 			
 			if(_speedLimit > 0) {
 				speed = [speed stringByAppendingFormat:@" (%@/s limit)",
 					[NSString humanReadableStringForSizeInBytes:_speedLimit]];
 			}
 			
-			if([self isFolder] && [self totalFiles] > 1) {
+			if([self isFolder] && [self numberOfUntransferredFiles] + [self numberOfTransferredFiles] > 1) {
 				return [NSSWF:NSLS(@"%lu of %lu files, %@ of %@, %@, %@", @"Transfer status (files, transferred, size, speed, time)"),
-					[self transferredFiles],
-					[self totalFiles],
-					[NSString humanReadableStringForSizeInBytes:[self transferred]],
+					[self numberOfTransferredFiles],
+					[self numberOfUntransferredFiles] + [self numberOfTransferredFiles],
+					[NSString humanReadableStringForSizeInBytes:transferred],
 					[NSString humanReadableStringForSizeInBytes:[self size]],
 					speed,
 					[NSString humanReadableStringForTimeInterval:interval]];
 			} else {
 				return [NSSWF:NSLS(@"%@ of %@, %@, %@", @"Transfer status (transferred, size, speed, time)"),
-					[NSString humanReadableStringForSizeInBytes:[self transferred]],
+					[NSString humanReadableStringForSizeInBytes:transferred],
 					[NSString humanReadableStringForSizeInBytes:[self size]],
 					speed,
 					[NSString humanReadableStringForTimeInterval:interval]];
@@ -613,7 +642,9 @@
 		case WCTransferPaused:
 		case WCTransferStopped:
 		case WCTransferDisconnected:
-			if([self isFolder] && [self totalFiles] > 1) {
+			transferred = [self dataTransferred] + [self rsrcTransferred];
+			
+			if([self isFolder] && [self numberOfUntransferredFiles] + [self numberOfTransferredFiles] > 1) {
 				if([self state] == WCTransferPaused)
 					format = NSLS(@"Paused at %lu of %lu files, %@ of %@", @"Transfer paused (files, transferred, size)");
 				else if([self state] == WCTransferStopped)
@@ -622,9 +653,9 @@
 					format = NSLS(@"Disconnected at %lu of %lu files, %@ of %@", @"Transfer disconnected (files, transferred, size)");
 
 				return [NSSWF:format,
-					[self transferredFiles],
-					[self totalFiles],
-					[NSString humanReadableStringForSizeInBytes:[self transferred]],
+					[self numberOfTransferredFiles],
+					[self numberOfUntransferredFiles] + [self numberOfTransferredFiles],
+					[NSString humanReadableStringForSizeInBytes:transferred],
 					[NSString humanReadableStringForSizeInBytes:[self size]]];
 			} else {
 				if([self state] == WCTransferPaused)
@@ -635,33 +666,34 @@
 					format = NSLS(@"Disconnected at %@ of %@", @"Transfer disconnected (transferred, size)");
 
 				return [NSSWF:format,
-					[NSString humanReadableStringForSizeInBytes:[self transferred]],
+					[NSString humanReadableStringForSizeInBytes:transferred],
 					[NSString humanReadableStringForSizeInBytes:[self size]]];
 			}
 			break;
 			
 		case WCTransferFinished:
-			interval = _accumulatedTime;
+			transferred		= [self dataTransferred] + [self rsrcTransferred];
+			interval		= _accumulatedTime;
 			
 			if(interval > 0.0)
-				speed = [NSSWF:@"%@/s", [NSString humanReadableStringForSizeInBytes:[self actualTransferred] / interval]];
+				speed		= [NSSWF:@"%@/s", [NSString humanReadableStringForSizeInBytes:[self actualTransferred] / interval]];
 			else
-				speed = [NSSWF:@"%@/s", [NSString humanReadableStringForSizeInBytes:0]];
+				speed		= [NSSWF:@"%@/s", [NSString humanReadableStringForSizeInBytes:0]];
 			
 			if(_speedLimit > 0) {
-				speed = [speed stringByAppendingFormat:@" (%@/s limit)",
+				speed		= [speed stringByAppendingFormat:@" (%@/s limit)",
 					[NSString humanReadableStringForSizeInBytes:_speedLimit]];
 			}
 
-			if([self isFolder] && [self totalFiles] > 1) {
+			if([self isFolder] && [self numberOfUntransferredFiles] + [self numberOfTransferredFiles] > 1) {
 				return [NSSWF:NSLS(@"Finished %lu files, %@, average %@, took %@", @"Transfer finished (files, transferred, speed, time)"),
-					[self transferredFiles],
-					[NSString humanReadableStringForSizeInBytes:[self transferred]],
+					[self numberOfTransferredFiles],
+					[NSString humanReadableStringForSizeInBytes:transferred],
 					speed,
 					[NSString humanReadableStringForTimeInterval:_accumulatedTime]];
 			} else {
 				return [NSSWF:NSLS(@"Finished %@, average %@, took %@", @"Transfer finished (files, transferred, speed, time)"),
-					[NSString humanReadableStringForSizeInBytes:[self transferred]],
+					[NSString humanReadableStringForSizeInBytes:transferred],
 					speed,
 					[NSString humanReadableStringForTimeInterval:_accumulatedTime]];
 			}
@@ -694,81 +726,126 @@
 
 #pragma mark -
 
-- (BOOL)containsPath:(NSString *)path {
-	NSUInteger		i, count;
-	
-	count = [_files count];
-	
-	for(i = 0; i < count; i++) {
-		if([[[_files objectAtIndex:i] localPath] isEqualToString:path])
-			return YES;
-	}
-	
-	return NO;
+- (BOOL)containsUntransferredFile:(WCFile *)file {
+	return [_untransferredFilesSet containsObject:file];
 }
 
 
 
-- (BOOL)containsFile:(WCFile *)file {
-	return [_files containsObject:file];
+- (BOOL)containsTransferredFile:(WCFile *)file {
+	return [_transferredFilesSet containsObject:file];
 }
 
 
 
-- (void)removeFile:(WCFile *)file {
-	[_files removeObject:file];
+- (BOOL)containsUncreatedDirectory:(WCFile *)directory {
+	return [_uncreatedDirectoriesSet containsObject:directory];
 }
 
 
 
-- (NSUInteger)numberOfFiles {
-	return [_files count];
+- (BOOL)containsCreatedDirectory:(WCFile *)directory {
+	return [_createdDirectoriesSet containsObject:directory];
 }
 
 
 
-- (void)addFile:(WCFile *)file {
-	[_files addObject:file];
+#pragma mark -
+
+- (NSUInteger)numberOfUntransferredFiles {
+	return [_untransferredFilesList count];
 }
 
 
 
-- (void)removeFirstFile {
-	if([_files count] > 0)
-		[_files removeObjectAtIndex:0];
+- (NSUInteger)numberOfTransferredFiles {
+	return [_transferredFilesList count];
 }
 
 
 
-- (WCFile *)firstFile {
-	if([_files count] == 0)
+- (WCFile *)firstUntransferredFile {
+	if([_untransferredFilesList count] == 0)
 		return NULL;
 	
-	return [_files objectAtIndex:0];
+	return [_untransferredFilesList objectAtIndex:0];
 }
 
 
 
-- (void)addDirectory:(WCFile *)directory {
-	[_directories addObject:directory];
+- (void)addUntransferredFile:(WCFile *)file {
+	[_untransferredFilesList addObject:file];
+	[_untransferredFilesSet addObject:file];
 }
 
 
 
-- (void)removeDirectory:(WCFile *)directory {
-	[_directories removeObject:directory];
+- (void)removeUntransferredFile:(WCFile *)file {
+	[_untransferredFilesList removeObject:file];
+	[_untransferredFilesSet removeObject:file];
 }
 
 
 
-- (void)removeAllDirectories {
-	[_directories removeAllObjects];
+- (void)addTransferredFile:(WCFile *)file {
+	[_transferredFilesList addObject:file];
+	[_transferredFilesSet addObject:file];
 }
 
 
 
-- (NSArray *)directories {
-	return _directories;
+- (void)removeTransferredFile:(WCFile *)file {
+	[_transferredFilesList removeObject:file];
+	[_transferredFilesSet removeObject:file];
+}
+
+
+
+#pragma mark -
+
+- (void)addUncreatedDirectory:(WCFile *)directory {
+	[_uncreatedDirectoriesList addObject:directory];
+	[_uncreatedDirectoriesSet addObject:directory];
+}
+
+
+
+- (void)removeUncreatedDirectory:(WCFile *)directory {
+	[_uncreatedDirectoriesList removeObject:directory];
+	[_uncreatedDirectoriesSet removeObject:directory];
+}
+
+
+
+- (void)removeAllUncreatedDirectories {
+	[_uncreatedDirectoriesList removeAllObjects];
+	[_uncreatedDirectoriesSet removeAllObjects];
+}
+
+
+
+- (void)addCreatedDirectory:(WCFile *)directory {
+	[_createdDirectoriesList addObject:directory];
+	[_createdDirectoriesSet addObject:directory];
+}
+
+
+
+- (void)removeCreatedDirectory:(WCFile *)directory {
+	[_createdDirectoriesList removeObject:directory];
+	[_createdDirectoriesSet removeObject:directory];
+}
+
+
+
+- (NSArray *)uncreatedDirectories {
+	return _uncreatedDirectoriesList;
+}
+
+
+
+- (NSArray *)createdDirectories {
+	return _createdDirectoriesList;
 }
 
 @end

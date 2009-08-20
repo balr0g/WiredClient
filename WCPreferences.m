@@ -58,7 +58,19 @@
 @implementation WCPreferences(Private)
 
 - (void)_validate {
-	[_deleteThemeButton setEnabled:([[WCSettings objectForKey:WCThemes] count] > 1)];
+	NSDictionary		*theme;
+	NSInteger			row;
+	
+	row = [_themesTableView selectedRow];
+	
+	if(row < 0) {
+		[_deleteThemeButton setEnabled:NO];
+	} else {
+		theme = [[WCSettings objectForKey:WCThemes] objectAtIndex:row];
+		
+		[_deleteThemeButton setEnabled:![theme objectForKey:WCThemesBuiltinName]];
+	}
+	
 	[_deleteBookmarkButton setEnabled:([_bookmarksTableView selectedRow] >= 0)];
 	[_deleteHighlightButton setEnabled:([_highlightsTableView selectedRow] >= 0)];
 	[_deleteIgnoreButton setEnabled:([_ignoresTableView selectedRow] >= 0)];
@@ -610,7 +622,6 @@
 
 	[_filesOpenFoldersInNewWindowsButton setState:[WCSettings boolForKey:WCOpenFoldersInNewWindows]];
 	[_filesQueueTransfersButton setState:[WCSettings boolForKey:WCQueueTransfers]];
-	[_filesEncryptTransfersButton setState:[WCSettings boolForKey:WCEncryptTransfers]];
 	[_filesCheckForResourceForksButton setState:[WCSettings boolForKey:WCCheckForResourceForks]];
 	[_filesRemoveTransfersButton setState:[WCSettings boolForKey:WCRemoveTransfers]];
 
@@ -725,7 +736,6 @@
 
 	[WCSettings setBool:[_filesOpenFoldersInNewWindowsButton state] forKey:WCOpenFoldersInNewWindows];
 	[WCSettings setBool:[_filesQueueTransfersButton state] forKey:WCQueueTransfers];
-	[WCSettings setBool:[_filesEncryptTransfersButton state] forKey:WCEncryptTransfers];
 	[WCSettings setBool:[_filesCheckForResourceForksButton state] forKey:WCCheckForResourceForks];
 	[WCSettings setBool:[_filesRemoveTransfersButton state] forKey:WCRemoveTransfers];
 
@@ -784,7 +794,7 @@
 	
 	row = [_themesTableView selectedRow];
 	
-	if(row < 0 || [[WCSettings objectForKey:WCThemes] count] <= 1)
+	if(row < 0)
 		return;
 	
 	name = [[[WCSettings objectForKey:WCThemes] objectAtIndex:row] objectForKey:WCThemesName];
@@ -831,6 +841,8 @@
 	theme = [[[[WCSettings objectForKey:WCThemes] objectAtIndex:row] mutableCopy] autorelease];
 	
 	[theme setObject:[NSString UUIDString] forKey:WCThemesIdentifier];
+	[theme removeObjectForKey:WCThemesBuiltinName];
+	[theme removeObjectForKey:WCThemesBuiltinVersion];
 	
 	[WCSettings addObject:theme toArrayForKey:WCThemes];
 	
@@ -891,6 +903,8 @@
 	
 	theme = [[[[WCSettings objectForKey:WCThemes] objectAtIndex:row] mutableCopy] autorelease];
 	[theme removeObjectForKey:WCThemesIdentifier];
+	[theme removeObjectForKey:WCThemesBuiltinName];
+	[theme removeObjectForKey:WCThemesBuiltinVersion];
 
 	savePanel = [NSSavePanel savePanel];
 	[savePanel setRequiredFileType:@"WiredTheme"];

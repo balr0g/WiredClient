@@ -36,9 +36,8 @@
 	WCErrorQueue							*_errorQueue;
 
 	NSMutableArray							*_transfers;
-	NSUInteger								_running;
 
-	NSImage									*_folderImage, *_lockedImage, *_unlockedImage;
+	NSImage									*_folderImage;
 	NSTimer									*_timer;
 	NSLock									*_lock;
 }

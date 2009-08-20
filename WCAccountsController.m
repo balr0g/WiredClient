@@ -43,7 +43,7 @@
 - (NSDictionary *)_settingForRow:(NSInteger)row;
 
 - (BOOL)_verifyUnsavedAndSelectRow:(NSInteger)row;
-- (void)_saveAndClear:(BOOL)clear;
+- (void)_save;
 - (BOOL)_canEditAccounts;
 
 - (void)_readAccount:(WCAccount *)account;
@@ -103,7 +103,31 @@
 		message = [WIP7Message messageWithName:@"wired.account.list_groups" spec:WCP7Spec];
 		[[_administration connection] sendMessage:message fromObserver:self selector:@selector(wiredAccountListAccountsReply:)];
 		
+		message = [WIP7Message messageWithName:@"wired.account.subscribe_accounts" spec:WCP7Spec];
+		[[_administration connection] sendMessage:message fromObserver:self selector:@selector(wiredAccountSubscribeAccountsReply:)];
+		
 		_requested = YES;
+	}
+}
+
+
+
+- (void)_reloadAccounts {
+	WIP7Message		*message;
+	
+	if([[_administration connection] isConnected] && [[[_administration connection] account] accountListAccounts]) {
+		[_progressIndicator startAnimation:self];
+		
+		[_allAccounts removeAllObjects];
+		[_shownAccounts removeAllObjects];
+		
+		[_accountsTableView reloadData];
+		
+		message = [WIP7Message messageWithName:@"wired.account.list_users" spec:WCP7Spec];
+		[[_administration connection] sendMessage:message fromObserver:self selector:@selector(wiredAccountListAccountsReply:)];
+		
+		message = [WIP7Message messageWithName:@"wired.account.list_groups" spec:WCP7Spec];
+		[[_administration connection] sendMessage:message fromObserver:self selector:@selector(wiredAccountListAccountsReply:)];
 	}
 }
 
@@ -148,9 +172,10 @@
 
 
 
-- (void)_saveAndClear:(BOOL)clear {
+- (void)_save {
 	NSEnumerator		*enumerator;
 	WCAccount			*account;
+	BOOL				reload = YES;
 	
 	if(_creating) {
 		if([_typePopUpButton selectedItem] == _userMenuItem)
@@ -168,6 +193,8 @@
 
 		[_selectAccounts removeAllObjects];
 		[_selectAccounts addObject:account];
+		
+		reload = NO;
 	} else {
 		if([_accounts count] == 1) {
 			account = [_accounts lastObject];
@@ -177,6 +204,9 @@
 			[[_administration connection] sendMessage:[account editAccountMessage]
 										 fromObserver:self
 											 selector:@selector(wiredAccountChangeAccountReply:)];
+			
+			if(![[account newName] isEqualToString:[account name]])
+				reload = NO;
 		} else {
 			enumerator = [_accounts objectEnumerator];
 		
@@ -191,15 +221,16 @@
 	}
 	
 	[_accounts removeAllObjects];
-		
+	
 	_creating = NO;
 	_editing = NO;
 	_touched = NO;
-	_requested = NO;
 
 	[self _validateForAccounts];
 	[self _readFromAccounts];
-	[self _requestAccounts];
+	
+	if(reload)
+		[self _reloadAccounts];
 	
 	[[_administration window] setDocumentEdited:NO];
 
@@ -828,6 +859,10 @@
 #pragma mark -
 
 - (void)windowDidLoad {
+	[[_administration connection] addObserver:self
+									 selector:@selector(wiredAccountAccountsChanged:)
+								  messageName:@"wired.account.accounts_changed"];
+	
 	[_accountsTableView setTarget:self];
 	[_accountsTableView setDeleteAction:@selector(delete:)];
 	
@@ -862,6 +897,12 @@
 	[self _requestAccounts];
 	[self _validate];
 	[self _validateForAccounts];
+}
+
+
+
+- (void)wiredAccountAccountsChanged:(WIP7Message *)message {
+	[self _reloadAccounts];
 }
 
 
@@ -902,6 +943,19 @@
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
 		[_administration showError:[WCError errorWithWiredMessage:message]];
+	}
+}
+
+
+
+- (void)wiredAccountSubscribeAccountsReply:(WIP7Message *)message {
+	if([[message name] isEqualToString:@"wired.okay"]) {
+		[[_administration connection] removeObserver:self message:message];
+	}
+	else if([[message name] isEqualToString:@"wired.error"]) {
+		[_administration showError:[WCError errorWithWiredMessage:message]];
+		
+		[[_administration connection] removeObserver:self message:message];
 	}
 }
 
@@ -1002,12 +1056,6 @@
 
 #pragma mark -
 
-- (void)controllerWindowDidBecomeKey {
-	[self _requestAccounts];
-}
-
-
-
 - (BOOL)controllerWindowShouldClose {
 	return [self _verifyUnsavedAndSelectRow:-2];
 }
@@ -1027,8 +1075,6 @@
 
 
 - (void)controllerDidSelect {
-	[self _requestAccounts];
-
 	[[_administration window] makeFirstResponder:_accountsTableView];
 }
 
@@ -1276,19 +1322,13 @@
 			[message setString:[account name] forName:@"wired.account.name"];
 			[[_administration connection] sendMessage:message fromObserver:self selector:@selector(wiredAccountDeleteAccountReply:)];
 		}
-		
-		_requested = NO;
-
-		[self _requestAccounts];
 	}
 }
 
 
 
 - (IBAction)reload:(id)sender {
-	_requested = NO;
-	
-	[self _requestAccounts];
+	[self _reloadAccounts];
 }
 
 
@@ -1467,7 +1507,7 @@
 
 
 - (IBAction)save:(id)sender {
-	[self _saveAndClear:NO];
+	[self _save];
 }
 
 
@@ -1478,7 +1518,7 @@
 
 	if(row != -2 || returnCode != NSAlertSecondButtonReturn) {
 		if(returnCode == NSAlertFirstButtonReturn) {
-			[self _saveAndClear:YES];
+			[self _save];
 		} else {
 			[_accounts removeAllObjects];
 			

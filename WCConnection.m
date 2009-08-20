@@ -124,6 +124,7 @@ WIP7Spec							*WCP7Spec;
 	[message setString:osName forName:@"wired.info.os.name"];
 	[message setString:osVersion forName:@"wired.info.os.version"];
 	[message setString:arch forName:@"wired.info.arch"];
+	[message setBool:YES forName:@"wired.info.supports_rsrc"];
 	
 	return message;
 }

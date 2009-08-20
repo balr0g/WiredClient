@@ -196,6 +196,9 @@
 			@"wired.account.file.list_files", NSLS(@"List Files", @"Account field name"),
 			@"TBD"),
 		WCAccountFieldBooleanDictionary(WCAccountFieldFiles,
+			@"wired.account.file.search_files", NSLS(@"Search Files", @"Account field name"),
+			@"TBD"),
+		WCAccountFieldBooleanDictionary(WCAccountFieldFiles,
 			@"wired.account.file.get_info", NSLS(@"Get File Info", @"Account field name"),
 			@"TBD"),
 		WCAccountFieldBooleanDictionary(WCAccountFieldFiles,
@@ -295,7 +298,10 @@
 			@"TBD"),
 
 		WCAccountFieldBooleanDictionary(WCAccountFieldUsers,
-			@"wired.account.user.kick_users", NSLS(@"Kick Users", @"Account field name"),
+			@"wired.account.chat.kick_users", NSLS(@"Kick Users", @"Account field name"),
+			@"TBD"),
+		WCAccountFieldBooleanDictionary(WCAccountFieldUsers,
+			@"wired.account.user.disconnect_users", NSLS(@"Disconnect Users", @"Account field name"),
 			@"TBD"),
 		WCAccountFieldBooleanDictionary(WCAccountFieldUsers,
 			@"wired.account.user.ban_users", NSLS(@"Ban Users", @"Account field name"),
@@ -426,7 +432,7 @@
 #pragma mark -
 
 - (NSUInteger)hash {
-	return [[self name] hash];
+	return [[self newName] hash] + [[self name] hash];
 }
 
 
@@ -434,6 +440,9 @@
 - (BOOL)isEqual:(id)object {
 	if(![object isKindOfClass:[self class]])
 		return NO;
+	
+	if([[self name] isEqualToString:[object newName]])
+		return YES;
 	
 	return [[self name] isEqualToString:[object name]];
 }

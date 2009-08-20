@@ -44,8 +44,6 @@
 	_nameCell = [[NSCell alloc] init];
 	[_nameCell setFont:[NSFont systemFontOfSize:12.0]];
 	
-	_imageCell = [[NSCell alloc] init];
-
 	_statusCell = [[NSCell alloc] init];
 	[_statusCell setFont:[NSFont systemFontOfSize:10.0]];
 	
@@ -91,7 +89,6 @@
 
 - (void)dealloc {
 	[_nameCell release];
-	[_imageCell release];
 	[_statusCell release];
 
 	[_nameAttributes release];
@@ -108,12 +105,11 @@
 	WCTransferCell	*cell;
 	
 	cell = [super copyWithZone:zone];
-	cell->_nameCell = [_nameCell retain];
-	cell->_imageCell = [_imageCell retain];
-	cell->_statusCell = [_statusCell retain];
-	
-	cell->_nameAttributes = [_nameAttributes retain];
-	cell->_statusAttributes = [_statusAttributes retain];
+
+	cell->_nameCell				= [_nameCell retain];
+	cell->_statusCell			= [_statusCell retain];
+	cell->_nameAttributes		= [_nameAttributes retain];
+	cell->_statusAttributes		= [_statusAttributes retain];
 	
 	return cell;
 }
@@ -140,18 +136,15 @@
 	NSProgressIndicator			*progressIndicator;
 	NSMutableAttributedString	*string;
 	NSString					*name, *status;
-	NSImage						*icon;
 	NSRect						rect;
-	NSSize						size;
 	CGFloat						offset;
 	
-	name = [(NSDictionary *) [self objectValue] objectForKey:WCTransferCellNameKey];
-	status = [(NSDictionary *) [self objectValue] objectForKey:WCTransferCellStatusKey];
-	icon = [(NSDictionary *) [self objectValue] objectForKey:WCTransferCellIconKey];
-	progressIndicator = [(NSDictionary *) [self objectValue] objectForKey:WCTransferCellProgressKey];
+	name				= [(NSDictionary *) [self objectValue] objectForKey:WCTransferCellNameKey];
+	status				= [(NSDictionary *) [self objectValue] objectForKey:WCTransferCellStatusKey];
+	progressIndicator	= [(NSDictionary *) [self objectValue] objectForKey:WCTransferCellProgressKey];
 	
-	rect = NSMakeRect(frame.origin.x - 2.0, frame.origin.y, frame.size.width, 16.0);
-	string = [NSMutableAttributedString attributedStringWithString:name attributes:_nameAttributes];
+	rect				= NSMakeRect(frame.origin.x - 2.0, frame.origin.y, frame.size.width, 16.0);
+	string				= [NSMutableAttributedString attributedStringWithString:name attributes:_nameAttributes];
 	
 	if([self isHighlighted] && [_nameCell highlightColorWithFrame:rect inView:view] == [NSColor alternateSelectedControlColor]) {
 		[string addAttribute:NSForegroundColorAttributeName
@@ -162,14 +155,6 @@
 	[_nameCell setAttributedStringValue:string];
 	[_nameCell drawWithFrame:rect inView:view];
 
-	if(icon) {
-		offset = [string size].width;
-		size = [icon size];
-		rect = NSMakeRect(frame.origin.x + offset + 8.0, frame.origin.y + 2.0, size.width, size.height);
-		[_imageCell setImage:icon];
-		[_imageCell drawWithFrame:rect inView:view];
-	}
-	
 	if([self drawsProgressIndicator]) {
 		if(![progressIndicator superview])
 			[view addSubview:progressIndicator];

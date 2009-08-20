@@ -30,7 +30,7 @@
 #define WCWiredProtocolErrorDomain			@"WCWiredProtocolErrorDomain"
 
 
-enum _WCWiredClientErrors {
+enum _WCWiredClientError {
 	WCWiredClientServerDisconnected,
 	WCWiredClientNotConnected,
 	WCWiredClientBanned,
@@ -43,27 +43,36 @@ enum _WCWiredClientErrors {
 	WCWiredClientTransferFailed,
 	WCWiredClientClientNotFound,
 };
+typedef enum _WCWiredClientError				WCWiredClientError;
 
-enum _WCWiredProtocolErrors {
-	WCWiredProtocolInternalError			= 0,
-	WCWiredProtocolInvalidMessage			= 1,
-	WCWiredProtocolUnrecognizedMessage		= 2,
-	WCWiredProtocolMessageOutOfSequence		= 3,
-	WCWiredProtocolLoginFailed				= 4,
-	WCWiredProtocolPermissionDenied			= 5,
-	WCWiredProtocolChatNotFound				= 6,
-	WCWiredProtocolUserNotFound				= 7,
-	WCWiredProtocolUserCannotBeDisconnected	= 8,
-	WCWiredProtocolFileNotFound				= 9,
-	WCWiredProtocolFileExists				= 10,
-	WCWiredProtocolAccountNotFound			= 11,
-	WCWiredProtocolAccountExists			= 12,
-	WCWiredProtocolTrackerNotEnabled		= 13,
-	WCWiredProtocolBanNotFound				= 14,
-	WCWiredProtocolBanExists				= 15,
-	WCWiredProtocolBoardNotFound			= 16,
-	WCWiredProtocolBoardExists				= 17
+enum _WCWiredProtocolError {
+	WCWiredProtocolInternalError				= 0,
+	WCWiredProtocolInvalidMessage				= 1,
+	WCWiredProtocolUnrecognizedMessage			= 2,
+	WCWiredProtocolMessageOutOfSequence			= 3,
+	WCWiredProtocolLoginFailed					= 4,
+	WCWiredProtocolPermissionDenied				= 5,
+	WCWiredProtocolNotSubscribed				= 6,
+	WCWiredProtocolAlreadySubscribed			= 7,
+	WCWiredProtocolChatNotFound					= 8,
+	WCWiredProtocolAlreadyOnChat				= 9,
+	WCWiredProtocolNotOnChat					= 10,
+	WCWiredProtocolNotInvitedToChat				= 11,
+	WCWiredProtocolUserNotFound					= 12,
+	WCWiredProtocolUserCannotBeDisconnected		= 13,
+	WCWiredProtocolFileNotFound					= 14,
+	WCWiredProtocolFileExists					= 15,
+	WCWiredProtocolAccountNotFound				= 16,
+	WCWiredProtocolAccountExists				= 17,
+	WCWiredProtocolTrackerNotEnabled			= 18,
+	WCWiredProtocolNotRegistered				= 19,
+	WCWiredProtocolBanNotFound					= 20,
+	WCWiredProtocolBanExists					= 21,
+	WCWiredProtocolBoardNotFound				= 22,
+	WCWiredProtocolBoardExists					= 23,
+	WCWiredProtocolRsrcNotSupported				= 24
 };
+typedef enum _WCWiredProtocolError				WCWiredProtocolError;
 
 
 @interface WCError : WIError

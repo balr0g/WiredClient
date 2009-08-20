@@ -42,6 +42,8 @@
 
 #define WCThemes								@"WCThemes"
 #define WCThemesName								@"WCThemesName"
+#define WCThemesBuiltinName							@"WCThemesBuiltinName"
+#define WCThemesBuiltinVersion						@"WCThemesBuiltinVersion"
 #define WCThemesIdentifier							@"WCThemesIdentifier"
 #define WCThemesShowSmileys							@"WCThemesShowSmileys"
 #define WCThemesChatFont							@"WCThemesChatFont"
@@ -127,7 +129,6 @@
 #define WCDownloadFolder						@"WCDownloadFolder"
 #define WCOpenFoldersInNewWindows				@"WCOpenFoldersInNewWindows"
 #define WCQueueTransfers						@"WCQueueTransfers"
-#define WCEncryptTransfers						@"WCEncryptTransfers"
 #define WCCheckForResourceForks					@"WCCheckForResourceForks"
 #define WCRemoveTransfers						@"WCRemoveTransfers"
 #define WCFilesStyle							@"WCFilesStyle"

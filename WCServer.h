@@ -41,6 +41,8 @@
 	NSUInteger				_downloadSpeed;
 	NSUInteger				_uploadSpeed;
 	
+	BOOL					_supportsResourceForks;
+	
 	WCUserAccount			*_userAccount;
 }
 
@@ -60,5 +62,7 @@
 
 - (void)setAccount:(WCUserAccount *)account;
 - (WCUserAccount *)account;
+
+- (BOOL)supportsResourceForks;
 
 @end

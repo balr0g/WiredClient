@@ -28,7 +28,6 @@
 
 #import "WCLink.h"
 #import "WCLinkConnection.h"
-#import "WCNotificationCenter.h"
 
 @implementation WCLinkConnection
 
@@ -36,7 +35,9 @@
 	self = [super init];
 	
 	_notificationCenter = [[NSNotificationCenter alloc] init];
-	_linkNotificationCenter = [[WCNotificationCenter alloc] init];
+	
+	_linkNotificationCenter = [[WIP7NotificationCenter alloc] init];
+	[_linkNotificationCenter setTransactionFieldName:@"wired.transaction"];
 	
 	[self addObserver:self
 			 selector:@selector(linkConnectionDidConnect:)
@@ -51,7 +52,6 @@
 				 name:WCLinkConnectionDidCloseNotification];
 
 	[self addObserver:self selector:@selector(wiredSendPing:) messageName:@"wired.send_ping"];
-	[self addObserver:self selector:@selector(wiredServerInfo:) messageName:@"wired.server_info"];
 	
 	[self retain];
 	
@@ -74,7 +74,7 @@
 #pragma mark -
 
 - (void)linkConnectionDidConnect:(NSNotification *)notification {
-	[self sendMessage:[self clientInfoMessage]];
+	[self sendMessage:[self clientInfoMessage] fromObserver:self selector:@selector(wiredClientInfoReply:)];
 }
 
 
@@ -103,15 +103,11 @@
 
 
 
-- (void)wiredServerInfo:(WIP7Message *)message {
-	if(!_sentLogin) {
-		[self sendMessage:[self setNickMessage]];
-		[self sendMessage:[self setStatusMessage]];
-		[self sendMessage:[self setIconMessage]];
-		[self sendMessage:[self loginMessage] fromObserver:self selector:@selector(wiredLoginReply:)];
-
-		_sentLogin = YES;
-	}
+- (void)wiredClientInfoReply:(WIP7Message *)message {
+	[self sendMessage:[self setNickMessage]];
+	[self sendMessage:[self setStatusMessage]];
+	[self sendMessage:[self setIconMessage]];
+	[self sendMessage:[self loginMessage] fromObserver:self selector:@selector(wiredLoginReply:)];
 }
 
 
@@ -157,10 +153,7 @@
 
 
 - (void)removeObserver:(id)observer message:(WIP7Message *)message {
-	WIP7UInt32		transaction;
-	
-	if([message getUInt32:&transaction forName:@"wired.transaction"])
-		[_linkNotificationCenter removeObserver:observer transaction:transaction];
+	[_linkNotificationCenter removeObserver:observer message:message];
 }
 
 
@@ -191,8 +184,16 @@
 
 #pragma mark -
 
-- (void)sendMessage:(WIP7Message *)message {
+- (NSUInteger)sendMessage:(WIP7Message *)message {
+	WIP7UInt32		transaction;
+	
+	transaction = ++_transaction;
+	
+	[message setUInt32:transaction forName:@"wired.transaction"];
+	
 	[_link sendMessage:message];
+	
+	return transaction;
 }
 
 
@@ -204,7 +205,7 @@
 	
 	[message setUInt32:transaction forName:@"wired.transaction"];
 	
-	[_linkNotificationCenter addObserver:observer selector:selector transaction:transaction];
+	[_linkNotificationCenter addObserver:observer selector:selector message:message];
 	[_link performSelector:@selector(sendMessage:) withObject:message afterDelay:0.0];
 	
 	return transaction;
@@ -254,7 +255,6 @@
 
 - (void)link:(WCLink *)link receivedMessage:(WIP7Message *)message {
 	WIError			*error;
-	WIP7UInt32		transaction;
 	
 	[message setContextInfo:self];
 	
@@ -264,10 +264,7 @@
 		else
 			[_notificationCenter postNotificationName:WCLinkConnectionReceivedMessageNotification object:message];
 
-		if([message getUInt32:&transaction forName:@"wired.transaction"])
-			[_linkNotificationCenter postTransaction:transaction message:message];
-		else
-			[_linkNotificationCenter postMessageName:[message name] message:message];
+		[_linkNotificationCenter postMessage:message];
 	} else {
 		[_notificationCenter postNotificationName:WCLinkConnectionReceivedInvalidMessageNotification
 										   object:message
@@ -280,8 +277,7 @@
 #pragma mark -
 
 - (void)connect {
-	_sentLogin			= NO;
-	_disconnecting		= NO;
+	_disconnecting = NO;
 	
 	[self postNotificationName:WCLinkConnectionWillConnectNotification object:self];
 	

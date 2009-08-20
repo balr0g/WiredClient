@@ -30,34 +30,13 @@
 
 + (id)errorWithWiredMessage:(WIP7Message *)message {
 	WIP7Enum		error;
-	NSUInteger		code;
 	
 	if(![[message name] isEqualToString:@"wired.error"])
 		return NULL;
 	
 	[message getEnum:&error forName:@"wired.error"];
 	
-	switch(error) {
-		case 0:		code = WCWiredProtocolInternalError;				break;
-		case 1:		code = WCWiredProtocolInvalidMessage;				break;
-		case 2:		code = WCWiredProtocolUnrecognizedMessage;			break;
-		case 3:		code = WCWiredProtocolMessageOutOfSequence;			break;
-		case 4:		code = WCWiredProtocolLoginFailed;					break;
-		case 5:		code = WCWiredProtocolPermissionDenied;				break;
-		case 6:		code = WCWiredProtocolChatNotFound;					break;
-		case 7:		code = WCWiredProtocolUserNotFound;					break;
-		case 8:		code = WCWiredProtocolUserCannotBeDisconnected;		break;
-		case 9:		code = WCWiredProtocolFileNotFound;					break;
-		case 10:	code = WCWiredProtocolFileExists;					break;
-		case 11:	code = WCWiredProtocolAccountNotFound;				break;
-		case 12:	code = WCWiredProtocolAccountExists;				break;
-		case 13:	code = WCWiredProtocolTrackerNotEnabled;			break;
-		case 14:	code = WCWiredProtocolBanNotFound;					break;
-		case 15:	code = WCWiredProtocolBanExists;					break;
-		default:	code = error;										break;
-	}
-	
-	return [self errorWithDomain:WCWiredProtocolErrorDomain code:code argument:[message stringForName:@"wired.error.string"]];
+	return [self errorWithDomain:WCWiredProtocolErrorDomain code:error argument:[message stringForName:@"wired.error.string"]];
 }
 
 
@@ -66,7 +45,7 @@
 
 - (NSString *)localizedDescription {
 	if([[self domain] isEqualToString:WCWiredClientErrorDomain]) {
-		switch([self code]) {
+		switch((WCWiredClientError) [self code]) {
 			case WCWiredClientServerDisconnected:
 				return NSLS(@"Server Disconnected", @"WCWiredClientServerDisconnected title");
 				break;
@@ -116,7 +95,7 @@
 		}
 	}
 	else if([[self domain] isEqualToString:WCWiredProtocolErrorDomain]) {
-		switch([self code]) {
+		switch((WCWiredProtocolError) [self code]) {
 			case WCWiredProtocolInternalError:
 				return NSLS(@"Internal Server Error", @"Wired protocol error title");
 				break;
@@ -141,10 +120,30 @@
 				return NSLS(@"Permission Denied", @"Wired protocol error title");
 				break;
 			
+			case WCWiredProtocolNotSubscribed:
+				return NSLS(@"Not Subscribed", @"Wired protocol error title");
+				break;
+			
+			case WCWiredProtocolAlreadySubscribed:
+				return NSLS(@"Already Subscribed", @"Wired protocol error title");
+				break;
+				
 			case WCWiredProtocolChatNotFound:
 				return NSLS(@"Chat Not Found", @"Wired protocol error title");
 				break;
 			
+			case WCWiredProtocolAlreadyOnChat:
+				return NSLS(@"Already On Chat", @"Wired protocol error title");
+				break;
+				
+			case WCWiredProtocolNotOnChat:
+				return NSLS(@"Not On Chat", @"Wired protocol error title");
+				break;
+				
+			case WCWiredProtocolNotInvitedToChat:
+				return NSLS(@"Not Invited To Chat", @"Wired protocol error title");
+				break;
+				
 			case WCWiredProtocolUserNotFound:
 				return NSLS(@"User Not Found", @"Wired protocol error title");
 				break;
@@ -154,11 +153,11 @@
 				break;
 		
 			case WCWiredProtocolFileNotFound:
-				return NSLS(@"File or Folder Not Found", @"Wired protocol error title");
+				return NSLS(@"File Or Folder Not Found", @"Wired protocol error title");
 				break;
 		
 			case WCWiredProtocolFileExists:
-				return NSLS(@"File or Folder Exists", @"Wired protocol error title");
+				return NSLS(@"File Or Folder Exists", @"Wired protocol error title");
 				break;
 				
 			case WCWiredProtocolAccountNotFound:
@@ -173,6 +172,10 @@
 				return NSLS(@"Tracker Not Enabled", @"Wired protocol error title");
 				break;
 
+			case WCWiredProtocolNotRegistered:
+				return NSLS(@"Not Registered", @"Wired protocol error title");
+				break;
+				
 			case WCWiredProtocolBanNotFound:
 				return NSLS(@"Ban Not Found", @"Wired protocol error title");
 				break;
@@ -189,6 +192,10 @@
 				return NSLS(@"Board Exists", @"Wired protocol error title");
 				break;
 			
+			case WCWiredProtocolRsrcNotSupported:
+				return NSLS(@"Resource Fork Not Supported.", @"Wired protocol error title");
+				break;
+				
 			default:
 				return NSLS(@"Unknown Error", @"Wired protocol error title");
 				break;
@@ -206,7 +213,7 @@
 	argument = [[self userInfo] objectForKey:WIArgumentErrorKey];
 
 	if([[self domain] isEqualToString:WCWiredClientErrorDomain]) {
-		switch([self code]) {
+		switch((WCWiredClientError) [self code]) {
 			case WCWiredClientServerDisconnected:
 				return NSLS(@"The server has unexpectedly disconnected.", @"WCWiredClientServerDisconnected description");
 				break;
@@ -247,11 +254,11 @@
 				
 			case WCWiredClientTransferWithResourceFork:
 				if([argument isKindOfClass:[NSString class]]) {
-					return [NSSWF:NSLS(@"The file \u201c%@\u201d has a resource fork, which is not handled by Wired. Only the data part will be uploaded, possibly resulting in a corrupted file. Please use an archiver to ensure the file will be uploaded correctly.", @"WCWiredClientTransferWithResourceFork description (path)"),
+					return [NSSWF:NSLS(@"The file \u201c%@\u201d has a resource fork, which is not handled by this server.\n\nOnly the data part will be uploaded, possibly resulting in a corrupted file. Please use an archiver to ensure the file will be uploaded correctly.", @"WCWiredClientTransferWithResourceFork description (path)"),
 						argument];
 				}
 				else if([argument isKindOfClass:[NSNumber class]]) {
-					return [NSSWF:NSLS(@"The folder contains %lu files with resource forks, which are not handled by Wired. Only the data parts will be uploaded, possibly resulting in corrupted files. Please use an archiver to ensure the files will be uploaded correctly.", @"WCWiredClientTransferWithResourceFork description (number)"),
+					return [NSSWF:NSLS(@"The folder contains %lu files with resource forks, which are not handled by this server.\n\nOnly the data parts will be uploaded, possibly resulting in corrupted files. Please use an archiver to ensure the files will be uploaded correctly.", @"WCWiredClientTransferWithResourceFork description (number)"),
 						[argument unsignedIntegerValue]];
 				}
 				break;
@@ -270,7 +277,7 @@
 		}
 	}
 	else if([[self domain] isEqualToString:WCWiredProtocolErrorDomain]) {
-		switch([self code]) {
+		switch((WCWiredProtocolError) [self code]) {
 			case WCWiredProtocolInternalError:
 				if(argument) {
 					return [NSSWF:NSLS(@"The server failed to process a command. The server administrator can check the log for more information.\n\nThe message from the server was \u201c%@\u201d.", @"Wired protocol error description (internal error string)"),
@@ -300,10 +307,30 @@
 				return NSLS(@"The command could not be completed due to insufficient privileges.", @"Wired protocol error description");
 				break;
 			
+			case WCWiredProtocolNotSubscribed:
+				return NSLS(@"Could not unsubscribe because you have not subscribed.", @"Wired protocol error description");
+				break;
+				
+			case WCWiredProtocolAlreadySubscribed:
+				return NSLS(@"Could not subscribe because you are already subscribed.", @"Wired protocol error description");
+				break;
+				
 			case WCWiredProtocolChatNotFound:
 				return NSLS(@"Could not find the chat you referred to. Perhaps the chat has been removed.", @"Wired protocol error description");
 				break;
 			
+			case WCWiredProtocolAlreadyOnChat:
+				return NSLS(@"Could not join the chat because you have already joined it.", @"Wired protocol error description");
+				break;
+				
+			case WCWiredProtocolNotOnChat:
+				return NSLS(@"Could not send message to the chat because you have not joined it.", @"Wired protocol error description");
+				break;
+				
+			case WCWiredProtocolNotInvitedToChat:
+				return NSLS(@"Could not join the chat because you have not been invited.", @"Wired protocol error description");
+				break;
+				
 			case WCWiredProtocolUserNotFound:
 				return NSLS(@"Could not find the user you referred to. Perhaps that user left before the command could be completed.", @"Wired protocol error description");
 				break;
@@ -332,6 +359,10 @@
 				return NSLS(@"This server does not function as a tracker.", @"Wired protocol error description");
 				break;
 
+			case WCWiredProtocolNotRegistered:
+				return NSLS(@"Could not update with tracker because you are not registered.", @"Wired protocol error description");
+				break;
+				
 			case WCWiredProtocolBanNotFound:
 				return NSLS(@"Could not find the ban you referred to. Perhaps someone deleted it.", @"Wired protocol error description");
 				break;
@@ -345,7 +376,11 @@
 				break;
 			
 			case WCWiredProtocolBoardExists:
-				return NSLS(@"The board you tried to create already exists on the server", @"Wired protocol error description");
+				return NSLS(@"The board you tried to create already exists on the server.", @"Wired protocol error description");
+				break;
+			
+			case WCWiredProtocolRsrcNotSupported:
+				return NSLS(@"This server does not support resource fork transfers.", @"Wired protocol error description");
 				break;
 			
 			default:

@@ -51,6 +51,7 @@ typedef enum _WCLogLevel				WCLogLevel;
 	
 	NSMutableArray						*_allEntries;
 	NSMutableArray						*_listedEntries;
+	NSMutableArray						*_receivedEntries;
 	NSMutableArray						*_shownEntries;
 	WIDateFormatter						*_dateFormatter;
 	

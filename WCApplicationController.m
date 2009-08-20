@@ -393,6 +393,7 @@ static WCApplicationController		*sharedController;
 - (void)awakeFromNib {
 	NSEnumerator		*enumerator;
 	NSDictionary		*bookmark;
+	NSString			*path;
 	WIError				*error;
 	
 #ifdef WCConfigurationRelease
@@ -413,9 +414,17 @@ static WCApplicationController		*sharedController;
 	[_updater setFeedURL:[NSURL URLWithString:@"http://www.zankasoftware.com/sparkle/sparkle.pl?file=wiredclientp7-nightly.xml"]];
 #endif
 	
-	WCP7Spec = [[WIP7Spec alloc] initWithPath:[[NSBundle mainBundle] pathForResource:@"wired" ofType:@"xml"]
-								   originator:WIP7Client
-										error:&error];
+	path = [[NSBundle mainBundle] pathForResource:@"wired" ofType:@"xml"];
+	
+#ifdef WCConfigurationDebug
+	if(![[[NSXMLDocument alloc] initWithContentsOfURL:[NSURL fileURLWithPath:path] options:NSXMLDocumentValidate error:(NSError **) &error] autorelease]) {
+		[[error alert] runModal];
+		
+		[NSApp terminate:self];
+	}
+#endif
+	
+	WCP7Spec = [[WIP7Spec alloc] initWithPath:path originator:WIP7Client error:&error];
 	
 	if(!WCP7Spec) {
 		[[error alert] runModal];

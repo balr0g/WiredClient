@@ -102,8 +102,11 @@
 	_places			= [[NSMutableArray alloc] init];
 	_selectFiles	= [[NSMutableArray alloc] init];
 	
-	if(selectFile)
+	if(selectFile) {
 		[_selectFiles addObject:selectFile];
+		
+		_selectFilesWhenOpening = YES;
+	}
 	
 	[_files setObject:[NSDictionary dictionaryWithObjectsAndKeys:
 							[NSMutableDictionary dictionary],
@@ -160,7 +163,7 @@
 	i = [_servers indexOfObject:connection];
 	
 	if(i != NSNotFound)
-		[_sourceOutlineView selectRow:i + 1 byExtendingSelection:NO];
+		[_sourceOutlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:i + 1] byExtendingSelection:NO];
 	
 	[_filesTreeView setRootPath:[file path]];
 	
@@ -544,7 +547,8 @@
 	
 	[_filesTreeView selectPath:[_currentDirectory path]];
 
-	[self _loadFilesAtDirectory:file reselectFiles:reselectFiles];
+	[self _loadFilesAtDirectory:file
+				  reselectFiles:_selectFilesWhenOpening ? _selectFilesWhenOpening : reselectFiles];
 	[self _subscribeToDirectory:_currentDirectory];
 	
 	[self _validate];
@@ -575,6 +579,8 @@
 	} else {
 		[self _reloadFilesAtDirectory:file reselectFiles:reselectFiles];
 	}
+	
+	_selectFilesWhenOpening = NO;
 }
 
 
@@ -593,7 +599,7 @@
 	
 	if([_selectFiles count] == 0)
 		[_selectFiles setArray:[self _selectedFiles]];
-		
+	
 	connection		= [file connection];
 	directory		= [[self _directoriesForConnection:connection] objectForKey:[file path]];
 	
@@ -651,7 +657,7 @@
 	
 	message = [WIP7Message messageWithName:@"wired.file.unsubscribe_directory" spec:WCP7Spec];
 	[message setString:[file path] forName:@"wired.file.path"];
-	[[file connection] sendMessage:message fromObserver:self selector:@selector(wiredFileUnssbscribeDirectoryReply:)];
+	[[file connection] sendMessage:message fromObserver:self selector:@selector(wiredFileUnsubscribeDirectoryReply:)];
 }
 
 
@@ -693,7 +699,7 @@
 
 	while((file = [enumerator nextObject]))
 		if([file type] == WCFileFile)
-			size += [file size];
+			size += [file dataSize] + [file rsrcSize];
 
 	[_statusTextField setStringValue:[NSSWF:
 		NSLS(@"%lu %@, %@ total, %@ available", @"Files info (count, 'item(s)', size, available)"),
@@ -702,7 +708,7 @@
 			? NSLS(@"item", @"Item singular")
 			: NSLS(@"items", @"Item plural"),
 		[NSString humanReadableStringForSizeInBytes:size],
-		[NSString humanReadableStringForSizeInBytes:[_currentDirectory free]]]];
+		[NSString humanReadableStringForSizeInBytes:[_currentDirectory freeSpace]]]];
 }
 
 
@@ -959,13 +965,13 @@
 	
 	connection = [message contextInfo];
 
-	if([[message name] isEqualToString:@"wired.file.list"]) {
+	if([[message name] isEqualToString:@"wired.file.file_list"]) {
 		file			= [WCFile fileWithMessage:message connection:connection];
 		receivedFiles	= [self _receivedFilesForConnection:connection message:message];
 		
 		[receivedFiles addObject:file];
 	}
-	else if([[message name] isEqualToString:@"wired.file.list.done"]) {
+	else if([[message name] isEqualToString:@"wired.file.file_list.done"]) {
 		[_progressIndicator stopAnimation:self];
 		
 		path			= [message stringForName:@"wired.file.path"];
@@ -994,7 +1000,7 @@
 		
 		[message getUInt64:&free forName:@"wired.file.available"];
 		
-		[file setFree:free];
+		[file setFreeSpace:free];
 		
 		[self _reloadStatus];
 		[self _reselectFiles];
@@ -1009,11 +1015,39 @@
 
 
 - (void)wiredFileSubscribeDirectoryReply:(WIP7Message *)message {
+	WCServerConnection		*connection;
+	WCError					*error;
+	
+	connection = [message contextInfo];
+	
+	if([[message name] isEqualToString:@"wired.okay"]) {
+		[connection removeObserver:self message:message];
+	}
+	else if([[message name] isEqualToString:@"wired.error"]) {
+		error = [WCError errorWithWiredMessage:message];
+		
+		if([error code] != WCWiredProtocolAlreadySubscribed)
+			[_errorQueue showError:error];
+		
+		[connection removeObserver:self message:message];
+	}
 }
 
 
 
 - (void)wiredFileUnsubscribeDirectoryReply:(WIP7Message *)message {
+	WCServerConnection		*connection;
+	
+	connection = [message contextInfo];
+	
+	if([[message name] isEqualToString:@"wired.okay"]) {
+		[connection removeObserver:self message:message];
+	}
+	else if([[message name] isEqualToString:@"wired.error"]) {
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
+		
+		[connection removeObserver:self message:message];
+	}
 }
 
 
@@ -1786,7 +1820,7 @@
 	NSEnumerator		*enumerator;
 	NSEvent				*event;
 	NSArray				*types, *sources;
-	NSString			*destinationPath;
+	NSString			*destinationPath, *sourcePath;
 	WIP7Message			*message;
 	WCFile				*sourceFile, *destinationFile, *parentFile;
 	NSUInteger			oldIndex;
@@ -1869,11 +1903,12 @@
 		}
 	}
 	else if(outlineView == _filesOutlineView) {
+		destinationFile = item ? item : _currentDirectory;
+		destinationPath = [destinationFile path];
+
 		if([types containsObject:WCFilePboardType]) {
-			destinationFile		= item ? item : _currentDirectory;
-			destinationPath		= [destinationFile path];
-			sources				= [NSKeyedUnarchiver unarchiveObjectWithData:[pasteboard dataForType:WCFilePboardType]];
-			enumerator			= [sources reverseObjectEnumerator];
+			sources			= [NSKeyedUnarchiver unarchiveObjectWithData:[pasteboard dataForType:WCFilePboardType]];
+			enumerator		= [sources reverseObjectEnumerator];
 			
 			[self _revalidateFiles:sources];
 
@@ -1899,7 +1934,15 @@
 			return YES;
 		}
 		else if([types containsObject:NSFilenamesPboardType]) {
-			return NO;
+			sources			= [pasteboard propertyListForType:NSFilenamesPboardType];
+			enumerator		= [[sources sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)] objectEnumerator];
+			
+			while((sourcePath = [enumerator nextObject])) {
+				if(![[WCTransfers transfers] uploadPath:sourcePath toFolder:destinationFile])
+					return NO;
+			}
+			
+			return YES;
 		}
 	}
 	
@@ -1991,7 +2034,8 @@
 
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 		[file iconWithWidth:128.0],							WIFileIcon,
-		[NSNumber numberWithUnsignedLongLong:[file size]],	WIFileSize,
+		[NSNumber numberWithUnsignedLongLong:
+			[file dataSize] + [file rsrcSize]],				WIFileSize,
 		[file kind],										WIFileKind,
 		[file creationDate],								WIFileCreationDate,
 		[file modificationDate],							WIFileModificationDate,
@@ -2127,7 +2171,7 @@
 	NSEnumerator		*enumerator;
 	NSEvent				*event;
 	NSArray				*types, *sources;
-	NSString			*destinationPath;
+	NSString			*destinationPath, *sourcePath;
 	WIP7Message			*message;
 	WCFile				*sourceFile, *destinationFile, *parentFile;
 	BOOL				link;
@@ -2136,12 +2180,12 @@
 	types				= [pasteboard types];
 	event				= [NSApp currentEvent];
 	destinationPath		= path;
+	destinationFile		= [[self _filesForConnection:[self _selectedConnection]] objectForKey:destinationPath];
 	link				= ([event alternateKeyModifier] && [event commandKeyModifier]);
 
 	if([types containsObject:WCFilePboardType]) {
-		destinationFile		= [[self _filesForConnection:[self _selectedConnection]] objectForKey:destinationPath];
-		sources				= [NSKeyedUnarchiver unarchiveObjectWithData:[pasteboard dataForType:WCFilePboardType]];
-		enumerator			= [sources reverseObjectEnumerator];
+		sources			= [NSKeyedUnarchiver unarchiveObjectWithData:[pasteboard dataForType:WCFilePboardType]];
+		enumerator		= [sources reverseObjectEnumerator];
 		
 		if(!destinationFile)
 			return NO;
@@ -2170,7 +2214,15 @@
 		return YES;
 	}
 	else if([types containsObject:NSFilenamesPboardType]) {
-		return NO;
+		sources			= [pasteboard propertyListForType:NSFilenamesPboardType];
+		enumerator		= [[sources sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)] objectEnumerator];
+		
+		while((sourcePath = [enumerator nextObject])) {
+			if(![[WCTransfers transfers] uploadPath:sourcePath toFolder:destinationFile])
+				return NO;
+		}
+		
+		return YES;
 	}
 	
 	return NO;

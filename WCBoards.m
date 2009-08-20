@@ -138,6 +138,9 @@
 
 		message = [WIP7Message messageWithName:@"wired.board.get_posts" spec:WCP7Spec];
 		[connection sendMessage:message fromObserver:self selector:@selector(wiredBoardGetPostsReply:)];
+		
+		message = [WIP7Message messageWithName:@"wired.board.subscribe_boards" spec:WCP7Spec];
+		[connection sendMessage:message fromObserver:self selector:@selector(wiredBoardSubscribeBoardsReply:)];
 	}
 }
 
@@ -1251,6 +1254,23 @@
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
 		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
+	}
+}
+
+
+
+- (void)wiredBoardSubscribeBoardsReply:(WIP7Message *)message {
+	WCServerConnection		*connection;
+	
+	connection = [message contextInfo];
+	
+	if([[message name] isEqualToString:@"wired.okay"]) {
+		[connection removeObserver:self message:message];
+	}
+	else if([[message name] isEqualToString:@"wired.error"]) {
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
+		
+		[connection removeObserver:self message:message];
 	}
 }
 

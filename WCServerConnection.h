@@ -102,6 +102,8 @@
 - (WCConsole *)console;
 - (WCServerInfo *)serverInfo;
 
+- (BOOL)supportsResourceForks;
+
 - (void)log:(NSString *)format, ...;
 
 - (void)addConnectionController:(WCConnectionController *)connectionController;

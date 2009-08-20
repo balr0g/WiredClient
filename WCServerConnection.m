@@ -34,7 +34,6 @@
 #import "WCConsole.h"
 #import "WCLink.h"
 #import "WCMessages.h"
-#import "WCNotificationCenter.h"
 #import "WCPreferences.h"
 #import "WCPublicChat.h"
 #import "WCPublicChatController.h"
@@ -130,6 +129,7 @@
 			 selector:@selector(chatSelfWasBanned:)
 				 name:WCChatSelfWasBannedNotification];
 
+	[self addObserver:self selector:@selector(wiredServerInfo:) messageName:@"wired.server_info"];
 	[self addObserver:self selector:@selector(wiredAccountPrivileges:) messageName:@"wired.account.privileges"];
 	
 	return self;
@@ -286,8 +286,6 @@
 
 
 - (void)wiredServerInfo:(WIP7Message *)message {
-	[super wiredServerInfo:message];
-
 	[_server setWithMessage:message];
 	
 	if([self isReconnecting]) {
@@ -296,6 +294,13 @@
 	}
 
 	[self postNotificationName:WCServerConnectionServerInfoDidChangeNotification object:self];
+}
+
+
+
+- (void)wiredClientInfoReply:(WIP7Message *)message {
+	[self wiredServerInfo:message];
+	[super wiredClientInfoReply:message];
 }
 
 
@@ -536,6 +541,14 @@
 
 - (WCServerInfo *)serverInfo {
 	return _serverInfo;
+}
+
+
+
+#pragma mark -
+
+- (BOOL)supportsResourceForks {
+	return [[self server] supportsResourceForks];
 }
 
 

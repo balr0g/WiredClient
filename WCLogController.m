@@ -59,6 +59,7 @@
 - (WCLogEntry *)_entryAtIndex:(NSUInteger)index;
 - (BOOL)_filterIncludesEntry:(WCLogEntry *)entry;
 - (void)_reloadFilter;
+- (void)_refreshReceivedEntries;
 
 @end
 
@@ -120,6 +121,27 @@
 	[_logTableView reloadData];
 }
 
+
+
+- (void)_refreshReceivedEntries {
+	WCLogEntry		*entry;
+	NSUInteger		i, count;
+	
+	count = [_receivedEntries count];
+	
+	for(i = 0; i < count; i++) {
+		entry = [_allEntries objectAtIndex:i];
+
+		if([self _filterIncludesEntry:entry])
+			[_shownEntries addObject:entry];
+	}
+	
+	[_receivedEntries removeAllObjects];
+
+	[_logTableView reloadData];
+	[_logTableView scrollRowToVisible:[_shownEntries count] - 1];
+}
+
 @end
 
 
@@ -131,6 +153,7 @@
 	
 	_allEntries			= [[NSMutableArray alloc] init];
 	_listedEntries		= [[NSMutableArray alloc] init];
+	_receivedEntries	= [[NSMutableArray alloc] init];
 	_shownEntries		= [[NSMutableArray alloc] init];
 	
 	_dateFormatter = [[WIDateFormatter alloc] init];
@@ -145,6 +168,7 @@
 - (void)dealloc {
 	[_allEntries release];
 	[_listedEntries release];
+	[_receivedEntries release];
 	[_shownEntries release];
 	[_dateFormatter release];
 	[_messageFilter release];
@@ -157,6 +181,8 @@
 #pragma mark -
 
 - (void)windowDidLoad {
+	[[_administration connection] addObserver:self selector:@selector(wiredLogMessage:) messageName:@"wired.log.message"];
+	
 	[_logTableView setHighlightedTableColumn:_timeTableColumn sortOrder:WISortAscending];
 }
 
@@ -204,7 +230,7 @@
 	WCLogEntry		*entry;
 	NSUInteger		i, count;
 	
-	if([[message name] isEqualToString:@"wired.log.log_list"]) {
+	if([[message name] isEqualToString:@"wired.log.list"]) {
 		entry = [[WCLogEntry alloc] init];
 
 		[message getEnum:&entry->_level forName:@"wired.log.level"];
@@ -214,7 +240,7 @@
 		[_listedEntries addObject:entry];
 		[entry release];
 	}
-	else if([[message name] isEqualToString:@"wired.log.log_list.done"]) {
+	else if([[message name] isEqualToString:@"wired.log.list.done"]) {
 		[_allEntries addObjectsFromArray:_listedEntries];
 		
 		count = [_listedEntries count];
@@ -230,37 +256,48 @@
 		
 		[_logTableView reloadData];
 		[_logTableView scrollRowToVisible:[_shownEntries count] - 1];
+		
+		[[_administration connection] removeObserver:self message:message];
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
 		[_administration showError:[WCError errorWithWiredMessage:message]];
+		
+		[[_administration connection] removeObserver:self message:message];
 	}
 }
 
 
 
 - (void)wiredLogSubscribeReply:(WIP7Message *)message {
-	WCLogEntry		*entry;
-	
-	if([[message name] isEqualToString:@"wired.log.message"]) {
-		entry = [[WCLogEntry alloc] init];
-
-		[message getEnum:&entry->_level forName:@"wired.log.level"];
-		entry->_message = [[message stringForName:@"wired.log.message"] retain];
-		entry->_time = [[_dateFormatter stringFromDate:[message dateForName:@"wired.log.time"]] retain];
-		
-		[_allEntries addObject:entry];
-		[entry release];
-		
-		if([self _filterIncludesEntry:entry]) {
-			[_shownEntries addObject:entry];
-
-			[_logTableView reloadData];
-			[_logTableView scrollRowToVisible:[_shownEntries count] - 1];
-		}
+	if([[message name] isEqualToString:@"wired.error"]) {
+		[[_administration connection] removeObserver:self message:message];
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
 		[_administration showError:[WCError errorWithWiredMessage:message]];
+		
+		[[_administration connection] removeObserver:self message:message];
 	}
+}
+
+
+
+- (void)wiredLogMessage:(WIP7Message *)message {
+	WCLogEntry		*entry;
+	
+	entry = [[WCLogEntry alloc] init];
+	
+	[message getEnum:&entry->_level forName:@"wired.log.level"];
+	entry->_message = [[message stringForName:@"wired.log.message"] retain];
+	entry->_time = [[_dateFormatter stringFromDate:[message dateForName:@"wired.log.time"]] retain];
+	
+	[_allEntries addObject:entry];
+	[_receivedEntries addObject:entry];
+	[entry release];
+	
+	if([_receivedEntries count] > 20)
+		[self _refreshReceivedEntries];
+	else
+		[self performSelectorOnce:@selector(_refreshReceivedEntries) afterDelay:0.1];
 }
 
 

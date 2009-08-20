@@ -134,7 +134,6 @@
 	IBOutlet NSMenuItem								*_filesDownloadFolderMenuItem;
 	IBOutlet NSButton								*_filesOpenFoldersInNewWindowsButton;
 	IBOutlet NSButton								*_filesQueueTransfersButton;
-	IBOutlet NSButton								*_filesEncryptTransfersButton;
 	IBOutlet NSButton								*_filesCheckForResourceForksButton;
 	IBOutlet NSButton								*_filesRemoveTransfersButton;
 

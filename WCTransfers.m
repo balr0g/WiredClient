@@ -42,10 +42,7 @@
 #import "WCTransferConnection.h"
 #import "WCTransfers.h"
 
-#define WCTransfersChecksumLength				1048576
-
 #define WCTransfersFileExtension				@"WiredTransfer"
-#define WCTransferConnectionKey					@"WCTransferConnectionKey"
 #define WCTransferPboardType					@"WCTransferPboardType"
 
 #define WCTransfersTextEditExtensionsString		@"c cc cgi conf css diff h in java log m patch pem php pl plist pod rb rtf s sh status strings tcl text txt xml"
@@ -85,7 +82,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 - (void)_requestNextTransferForConnection:(WCServerConnection *)connection;
 - (void)_requestTransfer:(WCTransfer *)transfer;
 - (void)_startTransfer:(WCTransfer *)transfer first:(BOOL)first;
-- (void)_queueTransfer:(WCTransfer *)transfer; 
+- (void)_queueTransfer:(WCTransfer *)transfer;
 - (void)_createRemainingDirectoriesForTransfer:(WCTransfer *)transfer;
 - (void)_invalidateTransfersForConnection:(WCServerConnection *)connection;
 - (void)_saveTransfers;
@@ -95,6 +92,13 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 - (BOOL)_downloadFile:(WCFile *)file toFolder:(NSString *)destination preview:(BOOL)preview;
 - (BOOL)_uploadPath:(NSString *)path toFolder:(WCFile *)destination;
 
+- (WCTransferConnection *)_transferConnectionForTransfer:(WCTransfer *)transfer;
+- (BOOL)_sendDownloadFileMessageOnConnection:(WCTransferConnection *)connection forFile:(WCFile *)file error:(WCError **)error;
+- (BOOL)_sendUploadFileMessageOnConnection:(WCTransferConnection *)connection forFile:(WCFile *)file error:(WCError **)error;
+- (BOOL)_sendUploadMessageOnConnection:(WCTransferConnection *)connection forFile:(WCFile *)file dataLength:(WIFileOffset)dataLength rsrcLength:(WIFileOffset)rsrcLength error:(WCError **)error;
+- (BOOL)_createRemainingDirectoriesOnConnection:(WCTransferConnection *)connection forTransfer:(WCTransfer *)transfer error:(WCError **)error;
+- (BOOL)_connectConnection:(WCTransferConnection *)connection forTransfer:(WCTransfer *)transfer error:(WCError **)error;
+- (WIP7Message *)_runConnection:(WCTransferConnection *)connection forTransfer:(WCTransfer *)transfer untilReceivingMessageName:(NSString *)messageName error:(WCError **)error;
 - (void)_runDownload:(WCTransfer *)transfer;
 - (void)_runUpload:(WCTransfer *)transfer;
 
@@ -175,7 +179,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 				   [path hasPrefix:[[transfer remotePath] stringByAppendingString:@"/"]])
 					return transfer;
 			} else {
-				if([transfer containsFile:[WCFile fileWithFile:path connection:NULL]])
+				if([transfer containsUntransferredFile:[WCFile fileWithFile:path connection:NULL]])
 					return transfer;
 			}
 		}
@@ -276,7 +280,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		if(!(isDirectory && [file isFolder])) {
 			alert = [[[NSAlert alloc] init] autorelease];
 			[alert setMessageText:NSLS(@"File Exists", @"Transfers overwrite alert title")];
-			[alert setInformativeText:[NSSWF:NSLS(@"The file \u201c%@\u201d already exists. Overwrite?", @"Transfers overwrite alert title"), path]];
+			[alert setInformativeText:[NSSWF:NSLS(@"The file \u201c%@\u201d already exists. Overwrite?",
+												  @"Transfers overwrite alert title"), path]];
 			[alert addButtonWithTitle:NSLS(@"Cancel", @"Transfers overwrite alert button")];
 			[alert addButtonWithTitle:NSLS(@"Overwrite", @"Transfers overwrite alert button")];
 			
@@ -300,18 +305,23 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		if(![path hasSuffix:WCTransfersFileExtension])
 			path = [path stringByAppendingPathExtension:WCTransfersFileExtension];
 
-		[file setTransferred:[[NSFileManager defaultManager] fileSizeAtPath:path]];
-		[file setLocalPath:path];
+		[file setDataTransferred:[[NSFileManager defaultManager] fileSizeAtPath:path]];
 		
-		[transfer setSize:[file size]];
+		if([[file connection] supportsResourceForks])
+			[file setRsrcTransferred:[[NSFileManager defaultManager] resourceForkSizeAtPath:path]];
+		
+		[file setTransferLocalPath:path];
+		
+		[transfer setSize:[file dataSize] + [file rsrcSize]];
 		[transfer setFile:file];
-		[transfer addFile:file];
-		[transfer setTransferred:[[transfer firstFile] transferred]];
+		[transfer addUntransferredFile:file];
+		[transfer setDataTransferred:[[transfer firstUntransferredFile] dataTransferred]];
+		[transfer setRsrcTransferred:[[transfer firstUntransferredFile] rsrcTransferred]];
 		[transfer setLocalPath:path];
 	} else {
-		[file setLocalPath:path];
+		[file setTransferLocalPath:path];
 		
-		[transfer addDirectory:file];
+		[transfer addUncreatedDirectory:file];
 		[transfer setFolder:YES];
 		[transfer setLocalPath:path];
 	}
@@ -339,12 +349,13 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 - (BOOL)_uploadPath:(NSString *)path toFolder:(WCFile *)destination {
 	NSDirectoryEnumerator	*enumerator;
-	NSString				*eachPath, *remotePath, *localPath, *serverPath, *resourceForkPath = NULL;
+	NSString				*eachPath, *remotePath, *localPath, *serverPath, *resourceForkPath;
 	WCTransfer				*transfer;
 	WCFile					*file;
 	WCError					*error;
-	NSUInteger				count;
-	BOOL					isDirectory, hasResourceFork;
+	WIFileOffset			size;
+	NSUInteger				count, resourceForks;
+	BOOL					isDirectory;
 	
 	remotePath = [[destination path] stringByAppendingPathComponent:[path lastPathComponent]];
 
@@ -366,8 +377,9 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		[transfer setState:WCTransferListing];
 	}
 	
-	enumerator = [[NSFileManager defaultManager] enumeratorWithFileAtPath:path];
-	count = 0;
+	enumerator			= [[NSFileManager defaultManager] enumeratorWithFileAtPath:path];
+	resourceForks		= 0;
+	resourceForkPath	= NULL;
 
 	while((eachPath = [enumerator nextObject])) {
 		if([[eachPath lastPathComponent] hasPrefix:@"."]) {
@@ -384,36 +396,37 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 			serverPath	= remotePath;
 		}
 
-		if([[NSFileManager defaultManager] fileExistsAtPath:localPath isDirectory:&isDirectory hasResourceFork:&hasResourceFork]) {
+		if([[NSFileManager defaultManager] fileExistsAtPath:localPath isDirectory:&isDirectory]) {
 			if(isDirectory) {
-				[transfer addDirectory:[WCFile fileWithDirectory:serverPath connection:[destination connection]]];
+				[transfer addUncreatedDirectory:[WCFile fileWithDirectory:serverPath connection:[destination connection]]];
 			} else {
 				file = [WCFile fileWithFile:serverPath connection:[destination connection]];
-				[file setSize:[[NSFileManager defaultManager] fileSizeAtPath:localPath]];
-				[file setLocalPath:localPath];
+				[file setUploadDataSize:[[NSFileManager defaultManager] fileSizeAtPath:localPath]];
 				
-				[transfer setSize:[transfer size] + [file size]];
-				[transfer addFile:file];
-				[transfer setTotalFiles:[transfer totalFiles] + 1];
+				size = [[NSFileManager defaultManager] resourceForkSizeAtPath:localPath];
+				
+				if(size > 0) {
+					if([[destination connection] supportsResourceForks]) {
+						[file setUploadRsrcSize:size];
+					} else {
+						resourceForkPath = localPath;
+						resourceForks++;
+					}
+				}
+				
+				[file setTransferLocalPath:localPath];
+				
+				[transfer setSize:[transfer size] + [file uploadDataSize]];
+				
+				if([[destination connection] supportsResourceForks])
+					[transfer setSize:[transfer size] + [file uploadRsrcSize]];
+				
+				[transfer addUntransferredFile:file];
 				
 				if(![transfer isFolder])
 					[transfer setFile:file];
 			}
-			
-			if(hasResourceFork) {
-				resourceForkPath = localPath;
-				count++;
-			}
 		}
-	}
-	
-	if(count > 0 && [WCSettings boolForKey:WCCheckForResourceForks]) {
-		if(count == 1)
-			error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientTransferWithResourceFork argument:resourceForkPath];
-		else
-			error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientTransferWithResourceFork argument:[NSNumber numberWithInt:count]];
-		
-		[self _presentError:error forConnection:[destination connection]];
 	}
 	
 	[_transfers addObject:transfer];
@@ -431,6 +444,20 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		[self _requestTransfer:transfer];
 	
 	[_transfersTableView reloadData];
+	
+	if(resourceForks > 0 && [WCSettings boolForKey:WCCheckForResourceForks]) {
+		if(resourceForks == 1) {
+			error = [WCError errorWithDomain:WCWiredClientErrorDomain
+										code:WCWiredClientTransferWithResourceFork
+									argument:resourceForkPath];
+		} else {
+			error = [WCError errorWithDomain:WCWiredClientErrorDomain
+										code:WCWiredClientTransferWithResourceFork
+									argument:[NSNumber numberWithInt:resourceForks]];
+		}
+		
+		[self _presentError:error forConnection:[destination connection]];
+	}
 	
 	return YES;
 }
@@ -486,7 +513,9 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		message = [WIP7Message messageWithName:@"wired.file.list_directory" spec:WCP7Spec];
 		[message setString:path forName:@"wired.file.path"];
 		[message setBool:YES forName:@"wired.file.recursive"];
+		
 		transaction = [[transfer connection] sendMessage:message fromObserver:self selector:@selector(wiredFileListPathReply:)];
+		
 		[transfer setTransaction:transaction];
 	} else {
 		[self _startTransfer:transfer first:YES];
@@ -512,29 +541,42 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	[transfer setState:WCTransferQueued]; 
 	
 	[_transfersTableView setNeedsDisplay:YES]; 
-} 
+}
 
 
 
 - (void)_createRemainingDirectoriesForTransfer:(WCTransfer *)transfer {
 	NSArray			*directories;
 	WIP7Message		*message;
+	WCFile			*directory;
 	NSUInteger		i, count;
 	
-	directories = [transfer directories];
+	directories = [transfer uncreatedDirectories];
 	count = [directories count];
-			
+	
+	if(count > 0 && ![transfer isTerminating]) {
+		[transfer setState:WCTransferCreatingDirectories];
+		
+		[self _validate];
+	}
+	
 	for(i = 0; i < count; i++) {
+		directory = [directories objectAtIndex:i];
+		
 		if([transfer isKindOfClass:[WCDownloadTransfer class]]) {
-			[[NSFileManager defaultManager] createDirectoryAtPath:[[directories objectAtIndex:i] localPath]];
+			[[NSFileManager defaultManager] createDirectoryAtPath:[directory transferLocalPath]];
+			
+			[transfer addCreatedDirectory:directory];
 		} else {
 			message = [WIP7Message messageWithName:@"wired.transfer.upload_directory" spec:WCP7Spec];
-			[message setString:[[directories objectAtIndex:i] path] forName:@"wired.file.path"];
+			[message setString:[directory path] forName:@"wired.file.path"];
 			[[transfer connection] sendMessage:message fromObserver:self selector:@selector(wiredTransferUploadDirectoryReply:)];
+			
+			[transfer addCreatedDirectory:directory];
 		}
 	}
 	
-	[transfer removeAllDirectories];
+	[transfer removeAllUncreatedDirectories];
 }
 
 
@@ -580,12 +622,14 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	NSDictionary		*dictionary;
 	WCFile				*file;
 	WCTransferState		state;
-	BOOL				next = YES;
+	BOOL				download, next = YES;
 	
-	file = [[transfer firstFile] retain];
-	path = [file localPath];
+	file		= [[transfer firstUntransferredFile] retain];
+	path		= [file transferLocalPath];
+	download	= [transfer isKindOfClass:[WCDownloadTransfer class]];
 	
-	if([file transferred] >= [file size]) {
+	if((download && [file dataTransferred] + [file rsrcTransferred] >= [file dataSize] + [file rsrcSize]) ||
+	   (!download && [file dataTransferred] + [file rsrcTransferred] >= [file uploadDataSize] + [file uploadRsrcSize])) {
 		if([transfer isKindOfClass:[WCDownloadTransfer class]]) {
 			newPath = [path stringByDeletingPathExtension];
 			
@@ -600,10 +644,12 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 			}
 		}
 		
-		[transfer setTransferredFiles:[transfer transferredFiles] + 1];
-		[transfer removeFirstFile];
+		if(file) {
+			[transfer addTransferredFile:file];
+			[transfer removeUntransferredFile:file];
+		}
 		
-		if([transfer numberOfFiles] == 0) {
+		if([transfer numberOfUntransferredFiles] == 0) {
 			[[transfer transferConnection] disconnect];
 			[transfer setTransferConnection:NULL];
 			[transfer setState:WCTransferFinished];
@@ -670,6 +716,13 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 
 
+- (void)_finishTransfer:(WCTransfer *)transfer withError:(WCError *)error {
+	[self _presentError:error forConnection:[transfer connection]];
+	[self _finishTransfer:transfer];
+}
+
+
+
 - (void)_removeTransfer:(WCTransfer *)transfer {
 	[[transfer progressIndicator] removeFromSuperview];
 
@@ -682,7 +735,124 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 #pragma mark -
 
+- (WCTransferConnection *)_transferConnectionForTransfer:(WCTransfer *)transfer {
+	WCTransferConnection		*connection;
+	
+	connection = [WCTransferConnection connectionWithTransfer:transfer];
+	[connection setURL:[[transfer connection] URL]];
+	[connection setBookmark:[[transfer connection] bookmark]];
+	
+	return connection;
+}
+
+
+
+- (BOOL)_sendDownloadFileMessageOnConnection:(WCTransferConnection *)connection forFile:(WCFile *)file error:(WCError **)error {
+	WIP7Message		*message;
+	
+	message = [WIP7Message messageWithName:@"wired.transfer.download_file" spec:WCP7Spec];
+	[message setString:[file path] forName:@"wired.file.path"];
+	[message setUInt64:[file dataTransferred] forName:@"wired.transfer.data_offset"];
+	[message setUInt64:[file rsrcTransferred] forName:@"wired.transfer.rsrc_offset"];
+
+	return [connection writeMessage:message timeout:30.0 error:error];
+}
+
+
+
+- (BOOL)_sendUploadFileMessageOnConnection:(WCTransferConnection *)connection forFile:(WCFile *)file error:(WCError **)error {
+	WIP7Message		*message;
+	
+	message = [WIP7Message messageWithName:@"wired.transfer.upload_file" spec:WCP7Spec];
+	[message setString:[file path] forName:@"wired.file.path"];
+	[message setUInt64:[file uploadDataSize] forName:@"wired.transfer.data_size"];
+	[message setUInt64:[file uploadRsrcSize] forName:@"wired.transfer.rsrc_size"];
+	
+	if([[[NSFileManager defaultManager] fileAttributesAtPath:[file transferLocalPath] traverseLink:YES] filePosixPermissions] & 0111)
+		[message setBool:YES forName:@"wired.file.executable"];
+	
+	return [connection writeMessage:message timeout:30.0 error:error];
+}
+
+
+
+- (BOOL)_sendUploadMessageOnConnection:(WCTransferConnection *)connection forFile:(WCFile *)file dataLength:(WIFileOffset)dataLength rsrcLength:(WIFileOffset)rsrcLength error:(WCError **)error {
+	NSData			*finderInfo;
+	WIP7Message		*message;
+	
+	message = [WIP7Message messageWithName:@"wired.transfer.upload" spec:WCP7Spec];
+	[message setString:[file path] forName:@"wired.file.path"];
+	[message setUInt64:dataLength forName:@"wired.transfer.data"];
+	[message setUInt64:rsrcLength forName:@"wired.transfer.rsrc"];
+	
+	finderInfo = [[NSFileManager defaultManager] finderInfoAtPath:[file transferLocalPath]];
+	
+	[message setData:finderInfo ? finderInfo : [NSData data] forName:@"wired.transfer.finderinfo"];
+	
+	return [connection writeMessage:message timeout:30.0 error:error];
+}
+
+
+
+- (BOOL)_createRemainingDirectoriesOnConnection:(WCTransferConnection *)connection forTransfer:(WCTransfer *)transfer error:(WCError **)error {
+	NSArray			*directories;
+	WIP7Message		*message;
+	WCFile			*directory;
+	NSUInteger		i, count;
+	
+	directories = [transfer uncreatedDirectories];
+	count = [directories count];
+	
+	if(count > 0 && ![transfer isTerminating]) {
+		[transfer setState:WCTransferCreatingDirectories];
+		
+		[self performSelectorOnMainThread:@selector(_validate)];
+	}
+	
+	for(i = 0; i < count; i++) {
+		directory = [directories objectAtIndex:i];
+		
+		if([transfer isKindOfClass:[WCDownloadTransfer class]]) {
+			[[NSFileManager defaultManager] createDirectoryAtPath:[[directories objectAtIndex:i] transferLocalPath]];
+			
+			[transfer addCreatedDirectory:directory];
+			[transfer removeUncreatedDirectory:directory];
+			
+			count--;
+			i--;
+		} else {
+			message = [WIP7Message messageWithName:@"wired.transfer.upload_directory" spec:WCP7Spec];
+			[message setString:[directory path] forName:@"wired.file.path"];
+
+			if(![connection writeMessage:message timeout:30.0 error:error])
+				return NO;
+			
+			message = [self _runConnection:connection
+							   forTransfer:transfer
+				 untilReceivingMessageName:@"wired.okay"
+									 error:error];
+			
+			if(!message)
+				return NO;
+			
+			[transfer addCreatedDirectory:directory];
+			[transfer removeUncreatedDirectory:directory];
+			
+			count--;
+			i--;
+		}
+	}
+	
+	[transfer removeAllUncreatedDirectories];
+	
+	return YES;
+}
+
+
+
 - (BOOL)_connectConnection:(WCTransferConnection *)connection forTransfer:(WCTransfer *)transfer error:(WCError **)error {
+	WIP7Message		*message;
+	
 	if(![connection connectWithTimeout:30.0 error:error])
 		return NO;
 	
@@ -691,6 +861,14 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	   ![connection writeMessage:[connection setStatusMessage] timeout:30.0 error:error] ||
 	   ![connection writeMessage:[connection setIconMessage] timeout:30.0 error:error] ||
 	   ![connection writeMessage:[connection loginMessage] timeout:30.0 error:error])
+		return NO;
+	
+	message = [self _runConnection:connection
+					   forTransfer:transfer
+		 untilReceivingMessageName:@"wired.account.privileges"
+							 error:error];
+	
+	if(!message)
 		return NO;
 	
 	return YES;
@@ -757,53 +935,84 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 
 - (void)_runDownload:(WCTransfer *)transfer {
-	NSAutoreleasePool			*pool = NULL;
+	NSAutoreleasePool			*pool;
 	NSProgressIndicator			*progressIndicator;
-	NSString					*path;
-	NSFileHandle				*fileHandle;
+	NSString					*dataPath, *rsrcPath;
+	NSFileHandle				*dataFileHandle, *rsrcFileHandle;
+	NSData						*finderInfo;
 	WIP7Socket					*socket;
 	WIP7Message					*message;
 	WCTransferConnection		*connection;
 	WCFile						*file;
-	WCError						*error = NULL;
+	WCError						*error;
 	void						*buffer;
 	NSTimeInterval				time, speedTime, statsTime;
 	NSUInteger					i, speedBytes, statsBytes;
 	NSInteger					readBytes;
-	WIP7UInt64					dataLength;
+	WIP7UInt64					dataLength, rsrcLength;
 	double						percent, speed, maxSpeed;
-	int							fd, writtenBytes;
+	int							dataFD, rsrcFD, writtenBytes;
+	BOOL						data;
 	
-	file = [transfer firstFile];
-	path = [file localPath];
-	speedBytes = statsBytes = maxSpeed = 0;
-	i = 0;
+	error = NULL;
 	connection = [transfer transferConnection];
 	
 	if(!connection) {
-		connection = [WCTransferConnection connectionWithTransfer:transfer];
-		[connection setURL:[[transfer connection] URL]];
-		[connection setBookmark:[[transfer connection] bookmark]];
+		connection = [self _transferConnectionForTransfer:transfer];
 		
 		if(![self _connectConnection:connection forTransfer:transfer error:&error]) {
 			[transfer setState:WCTransferStopping];
+			[transfer signalTerminated];
+			
+			[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
+								   withObject:transfer
+								   withObject:error];
 
-			goto end;
+			return;
 		}
 		
 		[transfer setTransferConnection:connection];
 	}
 	
-	[self _createRemainingDirectoriesForTransfer:transfer];
+	file				= [transfer firstUntransferredFile];
+	dataPath			= [file transferLocalPath];
+	rsrcPath			= [NSFileManager resourceForkPathForPath:dataPath];
+	speedBytes			= 0;
+	statsBytes			= 0;
+	maxSpeed			= 0;
+	i					= 0;
+	socket				= [connection socket];
+	speedTime			= _WCTransfersTimeInterval();
+	statsTime			= speedTime;
+	progressIndicator	= [transfer progressIndicator];
+	data				= YES;
 	
-	message = [WIP7Message messageWithName:@"wired.transfer.download_file" spec:WCP7Spec];
-	[message setString:[file path] forName:@"wired.file.path"];
-	[message setUInt64:[file transferred] forName:@"wired.transfer.offset"];
+	[[socket socket] setInteractive:NO];
 	
-	if(![connection writeMessage:message timeout:30.0 error:&error]) {
-		[transfer setState:WCTransferStopping];
+	if(![self _createRemainingDirectoriesOnConnection:connection forTransfer:transfer error:&error]) {
+		if(![transfer isTerminating])
+			[transfer setState:WCTransferStopping];
+
+		[transfer signalTerminated];
 		
-		goto end;
+		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
+							   withObject:transfer
+							   withObject:error];
+		
+		return;
+	}
+	
+	if(![self _sendDownloadFileMessageOnConnection:connection forFile:file error:&error]) {
+		if(![transfer isTerminating])
+			[transfer setState:WCTransferStopping];
+
+		[transfer signalTerminated];
+		
+		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
+							   withObject:transfer
+							   withObject:error];
+		
+		return;
 	}
 	
 	message = [self _runConnection:connection
@@ -812,32 +1021,60 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 							 error:&error];
 	
 	if(!message) {
-		[transfer setState:WCTransferStopping];
+		if(![transfer isTerminating])
+			[transfer setState:WCTransferStopping];
 		
-		goto end;
+		[transfer signalTerminated];
+		
+		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
+							   withObject:transfer
+							   withObject:error];
+		
+		return;
 	}
 	
-	if(![[NSFileManager defaultManager] fileExistsAtPath:path]) {
-		if(![[NSFileManager defaultManager] createFileAtPath:path]) {
-			error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientCreateFailed argument:path];
-			
+	[message getUInt64:&dataLength forName:@"wired.transfer.data"];
+	[message getUInt64:&rsrcLength forName:@"wired.transfer.rsrc"];
+	
+	if((![[NSFileManager defaultManager] fileExistsAtPath:dataPath] &&
+		![[NSFileManager defaultManager] createFileAtPath:dataPath]) ||
+	   (![[NSFileManager defaultManager] fileExistsAtPath:rsrcPath] &&
+		![[NSFileManager defaultManager] createFileAtPath:rsrcPath])) {
+		error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientCreateFailed argument:dataPath];
+		
+		if(![transfer isTerminating])
 			[transfer setState:WCTransferStopping];
 
-			goto end;
-		}
-	}
-	
-	fileHandle = [NSFileHandle fileHandleForUpdatingAtPath:path];
-	
-	if(!fileHandle) {
-		error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientOpenFailed argument:path];
-		
-		[transfer setState:WCTransferStopping];
+		[transfer signalTerminated];
 
-		goto end;
+		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
+							   withObject:transfer
+							   withObject:error];
 	}
 	
-	[fileHandle seekToFileOffset:[file transferred]];
+	finderInfo = [message dataForName:@"wired.transfer.finderinfo"];
+	
+	if([finderInfo length] > 0)
+		[[NSFileManager defaultManager] setFinderInfo:finderInfo atPath:dataPath];
+	
+	dataFileHandle = [NSFileHandle fileHandleForUpdatingAtPath:dataPath];
+	rsrcFileHandle = [NSFileHandle fileHandleForUpdatingAtPath:rsrcPath];
+	
+	if(!dataFileHandle || !rsrcFileHandle) {
+		error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientOpenFailed argument:dataPath];
+		
+		if(![transfer isTerminating])
+			[transfer setState:WCTransferStopping];
+		
+		[transfer signalTerminated];
+
+		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
+							   withObject:transfer
+							   withObject:error];
+	}
+	
+	[dataFileHandle seekToFileOffset:[file dataTransferred]];
+	[rsrcFileHandle seekToFileOffset:[file rsrcTransferred]];
 	
 	if(![transfer isTerminating]) {
 		[transfer setState:WCTransferRunning];
@@ -845,24 +1082,18 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		[self performSelectorOnMainThread:@selector(_validate)];
 	}
 	
-	socket = [connection socket];
-	fd = [fileHandle fileDescriptor];
-	speedTime = statsTime = _WCTransfersTimeInterval();
-	progressIndicator = [transfer progressIndicator];
-	
-	[[socket socket] setInteractive:NO];
-	[transfer setSecure:[socket usesEncryption]];
-
-	[message getUInt64:&dataLength forName:@"wired.transfer.data"];
+	dataFD = [dataFileHandle fileDescriptor];
+	rsrcFD = [rsrcFileHandle fileDescriptor];
 	
 	pool = [[NSAutoreleasePool alloc] init];
 	
-	_running++;
-
-	while(dataLength > 0) {
-		if([transfer isTerminating])
+	while(![transfer isTerminating]) {
+		if(data && dataLength == 0)
+			data = NO;
+		
+		if(!data && rsrcLength == 0)
 			break;
-
+		
 		readBytes = [socket readOOBData:&buffer timeout:30.0 error:&error];
 		
 		if(readBytes <= 0) {
@@ -871,18 +1102,13 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 			break;
 		}
 		
-		if([transfer isTerminating])
-			break;
-
-		dataLength -= readBytes;
-		
-		if((NSInteger) dataLength < 0) {
+		if((data && dataLength < (NSUInteger) readBytes) || (!data && rsrcLength < (NSUInteger) readBytes)) {
 			error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientTransferFailed argument:[transfer name]];
 			
 			break;
 		}
 		
-		writtenBytes = write(fd, buffer, readBytes);
+		writtenBytes = write(data ? dataFD : rsrcFD, buffer, readBytes);
 		
 		if(writtenBytes <= 0) {
 			if(writtenBytes < 0)
@@ -891,22 +1117,27 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 			break;
 		}
 		
-		transfer->_actualTransferred += readBytes;
-		transfer->_transferred += readBytes;
-		file->_transferred += readBytes;
+		if(data) {
+			dataLength					-= readBytes;
+			transfer->_dataTransferred	+= readBytes;
+			file->_dataTransferred		+= readBytes;
+		} else {
+			rsrcLength					-= readBytes;
+			transfer->_rsrcTransferred	+= readBytes;
+			file->_rsrcTransferred		+= readBytes;
+		}
+			
+		transfer->_actualTransferred	+= readBytes;
+		speedBytes						+= readBytes;
+		statsBytes						+= readBytes;
+		percent							= (transfer->_dataTransferred + transfer->_rsrcTransferred) / (double) transfer->_size;
+		time							= _WCTransfersTimeInterval();
+		speed							= speedBytes / (time - speedTime);
+		transfer->_speed				= speed;
 		
-		speedBytes += readBytes;
-		statsBytes += readBytes;
-		percent = transfer->_transferred / (double) transfer->_size;
-	
 		if(percent == 1.00 || percent - [progressIndicator doubleValue] >= 0.001)
 			[progressIndicator setDoubleValue:percent];
 	
-		time = _WCTransfersTimeInterval();
-
-		speed = speedBytes / (time - speedTime);
-		transfer->_speed = speed;
-
 		if(time - speedTime > 30.0) {
 			if(speed > maxSpeed)
 				maxSpeed = speed;
@@ -928,17 +1159,6 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		}
 	}
 	
-	_running--;
-
-end:
-	if(error) {
-		[self performSelectorOnMainThread:@selector(_presentError:forConnection:)
-							   withObject:error
-							   withObject:[transfer connection]];
-	}
-
-	[pool release];
-	
 	if(statsBytes > 0)
 		[[WCStats stats] addUnsignedLongLong:statsBytes forKey:WCStatsDownloaded];
 
@@ -947,62 +1167,100 @@ end:
 	
 	[transfer signalTerminated];
 	
-	[self performSelectorOnMainThread:@selector(_finishTransfer:) withObject:transfer];
+	if(error) {
+		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
+							   withObject:transfer
+							   withObject:error];
+	} else {
+		[self performSelectorOnMainThread:@selector(_finishTransfer:) withObject:transfer];
+	}
+	
+	[pool release];
 }
 
 
 
 - (void)_runUpload:(WCTransfer *)transfer {
-	NSAutoreleasePool			*pool = NULL;
+	NSAutoreleasePool			*pool;
 	NSProgressIndicator			*progressIndicator;
-	NSString					*path;
-	NSFileHandle				*fileHandle;
+	NSString					*dataPath, *rsrcPath;
+	NSFileHandle				*dataFileHandle, *rsrcFileHandle;
 	WIP7Socket					*socket;
 	WIP7Message					*message;
 	WCTransferConnection		*connection;
 	WCFile						*file;
-	WCError						*error = NULL;
+	WCError						*error;
 	char						buffer[8192];
 	NSTimeInterval				time, speedTime, statsTime;
 	NSUInteger					i, sendBytes, speedBytes, statsBytes;
-	WIP7UInt64					dataLength, offset;
+	WIP7UInt64					dataLength, rsrcLength;
+	WIP7UInt64					dataOffset, rsrcOffset;
 	double						percent, speed, maxSpeed;
 	ssize_t						readBytes;
-	int							fd;
+	int							dataFD, rsrcFD;
+	BOOL						data;
 	
-	file = [transfer firstFile];
-	path = [file localPath];
-	speedBytes = statsBytes = maxSpeed = 0;
-	i = 0;
+	error = NULL;
 	connection = [transfer transferConnection];
 	
 	if(!connection) {
-		connection = [WCTransferConnection connectionWithTransfer:transfer];
-		[connection setURL:[[transfer connection] URL]];
-		[connection setBookmark:[[transfer connection] bookmark]];
+		connection = [self _transferConnectionForTransfer:transfer];
 		
 		if(![self _connectConnection:connection forTransfer:transfer error:&error]) {
-			[transfer setState:WCTransferStopping];
-
-			goto end;
+			if(![transfer isTerminating])
+				[transfer setState:WCTransferStopping];
+			
+			[transfer signalTerminated];
+			
+			[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
+								   withObject:transfer
+								   withObject:error];
+			
+			return;
 		}
 		
 		[transfer setTransferConnection:connection];
 	}
 	
-	[self _createRemainingDirectoriesForTransfer:transfer];
-
-	message = [WIP7Message messageWithName:@"wired.transfer.upload_file" spec:WCP7Spec];
-	[message setString:[file path] forName:@"wired.file.path"];
-	[message setUInt64:[file size] forName:@"wired.file.size"];
+	file				= [transfer firstUntransferredFile];
+	dataPath			= [file transferLocalPath];
+	rsrcPath			= [NSFileManager resourceForkPathForPath:dataPath];
+	speedBytes			= 0;
+	statsBytes			= 0;
+	maxSpeed			= 0;
+	i					= 0;
+	socket				= [connection socket];
+	speedTime			= _WCTransfersTimeInterval();
+	statsTime			= _WCTransfersTimeInterval();
+	progressIndicator	= [transfer progressIndicator];
+	data				= YES;
 	
-	if([[[NSFileManager defaultManager] fileAttributesAtPath:path traverseLink:YES] filePosixPermissions] & 0111)
-		[message setBool:YES forName:@"wired.file.executable"];
+	[[socket socket] setInteractive:NO];
 	
-	if(![connection writeMessage:message timeout:30.0 error:&error]) {
-		[transfer setState:WCTransferStopping];
+	if(![self _createRemainingDirectoriesOnConnection:connection forTransfer:transfer error:&error]) {
+		if(![transfer isTerminating])
+			[transfer setState:WCTransferStopping];
 
-		goto end;
+		[transfer signalTerminated];
+		
+		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
+							   withObject:transfer
+							   withObject:error];
+		
+		return;
+	}
+
+	if(![self _sendUploadFileMessageOnConnection:connection forFile:file error:&error]) {
+		if(![transfer isTerminating])
+			[transfer setState:WCTransferStopping];
+		
+		[transfer signalTerminated];
+		
+		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
+							   withObject:transfer
+							   withObject:error];
+		
+		return;
 	}
 	
 	message = [self _runConnection:connection
@@ -1011,73 +1269,92 @@ end:
 							 error:&error];
 	
 	if(!message) {
-		[transfer setState:WCTransferStopping];
-
-		goto end;
-	}
-	
-	[message getUInt64:&offset forName:@"wired.transfer.offset"];
-	
-	dataLength = [file size] - offset;
-	[file setTransferred:[file transferred] + offset];
-	[transfer setTransferred:[transfer transferred] + offset];
-	
-	message = [WIP7Message messageWithName:@"wired.transfer.upload" spec:WCP7Spec];
-	[message setString:[[transfer firstFile] path] forName:@"wired.file.path"];
-	[message setUInt64:dataLength forName:@"wired.transfer.data"];
-	
-	if(![connection writeMessage:message timeout:30.0 error:&error]) {
-		[transfer setState:WCTransferStopping];
+		if(![transfer isTerminating])
+			[transfer setState:WCTransferStopping];
 		
-		goto end;
-	}
-
-	fileHandle = [NSFileHandle fileHandleForReadingAtPath:path];
-	
-	if(!fileHandle) {
-		error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientOpenFailed argument:path];
+		[transfer signalTerminated];
 		
-		[transfer setState:WCTransferStopping];
-
-		goto end;
+		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
+							   withObject:transfer
+							   withObject:error];
+		
+		return;
+	}
+	
+	[message getUInt64:&dataOffset forName:@"wired.transfer.data_offset"];
+	[message getUInt64:&rsrcOffset forName:@"wired.transfer.rsrc_offset"];
+	
+	dataLength = [file uploadDataSize] - dataOffset;
+	rsrcLength = [file uploadRsrcSize] - rsrcOffset;
+	
+	if(![self _sendUploadMessageOnConnection:connection forFile:file dataLength:dataLength rsrcLength:rsrcLength error:&error]) {
+		if(![transfer isTerminating])
+			[transfer setState:WCTransferStopping];
+		
+		[transfer signalTerminated];
+		
+		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
+							   withObject:transfer
+							   withObject:error];
+		
+		return;
+	}
+	
+	dataFileHandle = [NSFileHandle fileHandleForReadingAtPath:dataPath];
+	rsrcFileHandle = [NSFileHandle fileHandleForReadingAtPath:rsrcPath];
+	
+	if(!dataFileHandle || !rsrcFileHandle) {
+		error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientOpenFailed argument:dataPath];
+		
+		if(![transfer isTerminating])
+			[transfer setState:WCTransferStopping];
+		
+		[transfer signalTerminated];
+		
+		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
+							   withObject:transfer
+							   withObject:error];
+		
+		return;
 	}
 
-	[fileHandle seekToFileOffset:[file transferred]];
-
+	[dataFileHandle seekToFileOffset:dataOffset];
+	[rsrcFileHandle seekToFileOffset:rsrcOffset];
+	
 	if(![transfer isTerminating]) {
 		[transfer setState:WCTransferRunning];
 		
 		[self performSelectorOnMainThread:@selector(_validate)];
 	}
-
-	socket = [connection socket];
-	fd = [fileHandle fileDescriptor];
-	speedTime = statsTime = _WCTransfersTimeInterval();
-	progressIndicator = [transfer progressIndicator];
 	
-	[[socket socket] setInteractive:NO];
-	[transfer setSecure:[socket usesEncryption]];
+	dataFD = [dataFileHandle fileDescriptor];
+	rsrcFD = [rsrcFileHandle fileDescriptor];
 
 	pool = [[NSAutoreleasePool alloc] init];
 
-	_running++;
-
-	while(dataLength > 0) {
-		if([transfer isTerminating])
+	while(![transfer isTerminating]) {
+		if(data && dataLength == 0)
+			data = NO;
+		
+		if(!data && rsrcLength == 0)
 			break;
-
-		readBytes = read(fd, buffer, sizeof(buffer));
+		
+		readBytes = read(data ? dataFD : rsrcFD, buffer, sizeof(buffer));
 
 		if(readBytes <= 0) {
 			if(readBytes < 0)
 				error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientTransferFailed argument:[transfer name]];
 
-			[transfer setState:WCTransferStopping];
+			if(![transfer isTerminating])
+				[transfer setState:WCTransferStopping];
 			
 			break;
 		}
 		
-		sendBytes = (dataLength < (NSUInteger) readBytes) ? dataLength : (NSUInteger) readBytes;
+		if(data)
+			sendBytes = (dataLength < (NSUInteger) readBytes) ? dataLength : (NSUInteger) readBytes;
+		else
+			sendBytes = (rsrcLength < (NSUInteger) readBytes) ? rsrcLength : (NSUInteger) readBytes;
 		
 		if(![socket writeOOBData:buffer length:sendBytes timeout:30.0 error:&error]) {
 			[transfer setState:WCTransferDisconnecting];
@@ -1085,23 +1362,27 @@ end:
 			break;
 		}
 
-		transfer->_actualTransferred += readBytes;
-		transfer->_transferred += sendBytes;
-		file->_transferred += sendBytes;
+		if(data) {
+			dataLength					-= sendBytes;
+			transfer->_dataTransferred	+= sendBytes;
+			file->_dataTransferred		+= sendBytes;
+		} else {
+			rsrcLength					-= sendBytes;
+			transfer->_rsrcTransferred	+= sendBytes;
+			file->_rsrcTransferred		+= sendBytes;
+		}
 		
-		speedBytes += sendBytes;
-		statsBytes += sendBytes;
-		dataLength -= sendBytes;
-		percent = transfer->_transferred / (double) transfer->_size;
+		transfer->_actualTransferred	+= readBytes;
+		speedBytes						+= sendBytes;
+		statsBytes						+= sendBytes;
+		percent							= (transfer->_dataTransferred + transfer->_rsrcTransferred) / (double) transfer->_size;
+		time							= _WCTransfersTimeInterval();
+		speed							= speedBytes / (time - speedTime);
+		transfer->_speed				= speed;
 		
 		if(percent == 1.00 || percent - [progressIndicator doubleValue] >= 0.001)
 			[progressIndicator setDoubleValue:percent];
 		
-		time = _WCTransfersTimeInterval();
-
-		speed = speedBytes / (time - speedTime);
-		transfer->_speed = speed;
-
 		if(time - speedTime > 30.0) {
 			if(speed > maxSpeed)
 				maxSpeed = speed;
@@ -1123,17 +1404,6 @@ end:
 		}
 	}
 	
-	_running--;
-	
-end:
-	if(error) {
-		[self performSelectorOnMainThread:@selector(_presentError:forConnection:)
-							   withObject:error
-							   withObject:[transfer connection]];
-	}
-
-	[pool release];
-	
 	if(statsBytes > 0)
 		[[WCStats stats] addUnsignedLongLong:statsBytes forKey:WCStatsDownloaded];
 
@@ -1142,7 +1412,15 @@ end:
 	
 	[transfer signalTerminated];
 
-	[self performSelectorOnMainThread:@selector(_finishTransfer:) withObject:transfer];
+	if(error) {
+		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
+							   withObject:transfer
+							   withObject:error];
+	} else {
+		[self performSelectorOnMainThread:@selector(_finishTransfer:) withObject:transfer];
+	}
+	
+	[pool release];
 }
 
 @end
@@ -1195,9 +1473,7 @@ end:
 - (id)init {
 	self = [super initWithWindowNibName:@"Transfers"];
 
-	_folderImage	= [[NSImage imageNamed:@"Folder"] retain];
-	_lockedImage	= [[NSImage imageNamed:@"Locked"] retain];
-	_unlockedImage	= [[NSImage imageNamed:@"Unlocked"] retain];
+	_folderImage = [[NSImage imageNamed:@"Folder"] retain];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
@@ -1252,13 +1528,8 @@ end:
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
 	[_errorQueue release];
-	
 	[_timer release];
-
 	[_folderImage release];
-	[_lockedImage release];
-	[_unlockedImage release];
-
 	[_transfers release];
 
 	[super dealloc];
@@ -1531,7 +1802,7 @@ end:
 	if(!transfer)
 		return;
 
-	if([[message name] isEqualToString:@"wired.file.list"]) {
+	if([[message name] isEqualToString:@"wired.file.file_list"]) {
 		file = [WCFile fileWithMessage:message connection:[transfer connection]];
 		
 		if([transfer isKindOfClass:[WCDownloadTransfer class]]) {
@@ -1539,65 +1810,96 @@ end:
 			localPath = [[transfer destinationPath] stringByAppendingPathComponent:
 				[[file path] substringFromIndex:[rootPath length]]];
 			
+			[file setTransferLocalPath:localPath];
+			
 			if([file type] == WCFileFile) {
-				[transfer setSize:[transfer size] + [file size]];
-				[transfer setTotalFiles:[transfer totalFiles] + 1];
-				
-				if([[NSFileManager defaultManager] fileExistsAtPath:localPath]) {
-					[transfer setTransferred:[transfer transferred] + [file size]];
-					[transfer setTransferredFiles:[transfer transferredFiles] + 1];
-				} else {
-					if(![localPath hasSuffix:WCTransfersFileExtension])
-						localPath = [localPath stringByAppendingPathExtension:WCTransfersFileExtension];
-
-					[file setTransferred:[[NSFileManager defaultManager] fileSizeAtPath:localPath]];
-					[file setLocalPath:localPath];
-					
-					[transfer addFile:file];
-					[transfer setTransferred:[transfer transferred] + [file transferred]];
+				if(![transfer containsTransferredFile:file] && ![transfer containsUntransferredFile:file]) {
+					if([[NSFileManager defaultManager] fileExistsAtPath:localPath]) {
+						[transfer setDataTransferred:[transfer dataTransferred] + [file dataSize]];
+						[transfer setRsrcTransferred:[transfer rsrcTransferred] + [file rsrcSize]];
+					} else {
+						[transfer setSize:[transfer size] + [file dataSize] + [file rsrcSize]];
+						
+						if(![localPath hasSuffix:WCTransfersFileExtension])
+							localPath = [localPath stringByAppendingPathExtension:WCTransfersFileExtension];
+						
+						[file setDataTransferred:[[NSFileManager defaultManager] fileSizeAtPath:localPath]];
+						
+						if([[file connection] supportsResourceForks])
+							[file setRsrcTransferred:[[NSFileManager defaultManager] resourceForkSizeAtPath:localPath]];
+						
+						[file setTransferLocalPath:localPath];
+						
+						[transfer addUntransferredFile:file];
+						[transfer setDataTransferred:[transfer dataTransferred] + [file dataTransferred]];
+						[transfer setRsrcTransferred:[transfer rsrcTransferred] + [file rsrcTransferred]];
+					}
 				}
 			} else {
-				if(![[NSFileManager defaultManager] directoryExistsAtPath:localPath]) {
-					[file setLocalPath:localPath];
-					[transfer addDirectory:file];
-				}
+				if(![transfer containsUncreatedDirectory:file] && ![transfer containsCreatedDirectory:file])
+					[transfer addUncreatedDirectory:file];
 			}
 		} else {
 			if([file type] == WCFileFile) {
-				if([transfer containsFile:file]) {
-					[transfer setTransferred:[transfer transferred] + [file size]];
-					[transfer setTransferredFiles:[transfer transferredFiles] + 1];
-					[transfer removeFile:file];
+				if([transfer containsUntransferredFile:file])
+					[transfer removeUntransferredFile:file];
+				
+				if(![transfer containsTransferredFile:file]) {
+					[transfer setDataTransferred:[transfer dataTransferred] + [file dataSize] + [file rsrcSize]];
+					[transfer removeUntransferredFile:file];
 				}
 			} else {
-				[transfer removeDirectory:file];
+				if([transfer containsUncreatedDirectory:file])
+					[transfer removeUncreatedDirectory:file];
+				
+				if(![transfer containsCreatedDirectory:file])
+					[transfer addCreatedDirectory:file];
 			}
 		}
 		
-		if([transfer totalFiles] % 10 == 0) {
+		if([[transfer uncreatedDirectories] count] + [[transfer createdDirectories] count] % 10 == 0 ||
+		   [transfer numberOfUntransferredFiles] + [transfer numberOfTransferredFiles] % 10 == 0) {
 			rect = [_transfersTableView frameOfCellAtColumn:1 row:[_transfers indexOfObject:transfer]];
 
 			[_transfersTableView setNeedsDisplayInRect:rect];
 		}
 	}
-	else if([[message name] isEqualToString:@"wired.file.list.done"]) {
-		if([transfer numberOfFiles] > 0) {
+	else if([[message name] isEqualToString:@"wired.file.file_list.done"]) {
+		if([transfer numberOfUntransferredFiles] > 0) {
 			[self _startTransfer:transfer first:YES];
 		} else {
 			[self _createRemainingDirectoriesForTransfer:transfer];
 			[self _finishTransfer:transfer];
 		}
+		
+		[[transfer connection] removeObserver:self message:message];
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
 		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
+		
+		[[transfer connection] removeObserver:self message:message];
 	}
 }
 
 
 
 - (void)wiredTransferUploadDirectoryReply:(WIP7Message *)message {
-	if([[message name] isEqualToString:@"wired.error"])
-		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
+	WCServerConnection		*connection;
+	WCError					*error;
+	
+	connection = [message contextInfo];
+	
+	if([[message name] isEqualToString:@"wired.okay"]) {
+		[connection removeObserver:self message:message];
+	}
+	else if([[message name] isEqualToString:@"wired.error"]) {
+		error = [WCError errorWithWiredMessage:message];
+		
+		if([error code] != WCWiredProtocolFileExists)
+			[_errorQueue showError:error];
+		
+		[connection removeObserver:self message:message];
+	}
 }
 
 
@@ -1676,21 +1978,16 @@ end:
 
 
 - (void)updateTimer:(NSTimer *)timer {
-	NSRect				rect;
-	WCTransferState		state;
-	NSUInteger			i, count;
+	NSRect			rect;
+	NSUInteger		i, count;
 	
-	if(_running > 0) {
-		count = [_transfers count];
-		
-		for(i = 0; i < count; i++) {
-			state = [(WCTransfer *) [_transfers objectAtIndex:i] state];
+	count = [_transfers count];
+	
+	for(i = 0; i < count; i++) {
+		if([[_transfers objectAtIndex:i] isWorking]) {
+			rect = [_transfersTableView frameOfCellAtColumn:1 row:i];
 
-			if(state == WCTransferRunning) {
-				rect = [_transfersTableView frameOfCellAtColumn:1 row:i];
-
-				[_transfersTableView setNeedsDisplayInRect:rect];
-			}
+			[_transfersTableView setNeedsDisplayInRect:rect];
 		}
 	}
 }
@@ -1814,11 +2111,17 @@ end:
 
 
 - (IBAction)revealInFinder:(id)sender {
+	NSString		*path;
 	WCTransfer		*transfer;
 	
 	transfer = [self _selectedTransfer];
 	
-	[[NSWorkspace sharedWorkspace] selectFile:[transfer localPath] inFileViewerRootedAtPath:NULL];
+	if([transfer isFolder])
+		path = [[transfer destinationPath] stringByAppendingPathComponent:[transfer name]];
+	else
+		path = [transfer localPath];
+	
+	[[NSWorkspace sharedWorkspace] selectFile:path inFileViewerRootedAtPath:NULL];
 }
 
 
@@ -1846,7 +2149,6 @@ end:
 
 
 - (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
-	NSImage			*icon;
 	WCTransfer		*transfer;
 
 	transfer = [_transfers objectAtIndex:row];
@@ -1855,12 +2157,9 @@ end:
 		return [transfer icon];
 	}
 	else if(tableColumn == _infoTableColumn) {
-		icon = [transfer isSecure] ? _lockedImage : _unlockedImage;
-	
 		return [NSDictionary dictionaryWithObjectsAndKeys:
 			[transfer name],				WCTransferCellNameKey,
 			[transfer status],				WCTransferCellStatusKey,
-			icon,							WCTransferCellIconKey,
 			[transfer progressIndicator],	WCTransferCellProgressKey,
 			NULL];
 	}

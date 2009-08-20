@@ -51,13 +51,15 @@
 - (void)setWithMessage:(WIP7Message *)message {
 	WIP7UInt64		files, size;
 	WIP7UInt32		downloads, uploads, downloadSpeed, uploadSpeed;
+	WIP7Bool		supportsResourceForks;
 	
 	[_name release];
 	[_serverDescription release];
 	[_serverVersion release];
 	[_startupDate release];
 	[_banner release];
-
+	
+	[message getBool:&supportsResourceForks forName:@"wired.info.supports_rsrc"];
 	[message getUInt64:&files forName:@"wired.info.files.count"];
 	[message getUInt64:&size forName:@"wired.info.files.size"];
 	[message getUInt32:&downloads forName:@"wired.info.downloads"];
@@ -65,17 +67,18 @@
 	[message getUInt32:&downloadSpeed forName:@"wired.info.download_speed"];
 	[message getUInt32:&uploadSpeed forName:@"wired.info.upload_speed"];
 	
-	_name				= [[message stringForName:@"wired.info.name"] retain];
-	_serverDescription	= [[message stringForName:@"wired.info.description"] retain];
-	_serverVersion		= [[WCServerConnection versionStringForMessage:message] retain];
-	_startupDate		= [[message dateForName:@"wired.info.start_time"] retain];
-	_banner				= [[NSImage alloc] initWithData:[message dataForName:@"wired.info.banner"]];
-	_files				= files;
-	_size				= size;
-	_downloads			= downloads;
-	_uploads			= uploads;
-	_downloadSpeed		= downloadSpeed;
-	_uploadSpeed		= uploadSpeed;
+	_name					= [[message stringForName:@"wired.info.name"] retain];
+	_serverDescription		= [[message stringForName:@"wired.info.description"] retain];
+	_serverVersion			= [[WCServerConnection versionStringForMessage:message] retain];
+	_startupDate			= [[message dateForName:@"wired.info.start_time"] retain];
+	_banner					= [[NSImage alloc] initWithData:[message dataForName:@"wired.info.banner"]];
+	_files					= files;
+	_size					= size;
+	_downloads				= downloads;
+	_uploads				= uploads;
+	_downloadSpeed			= downloadSpeed;
+	_uploadSpeed			= uploadSpeed;
+	_supportsResourceForks	= supportsResourceForks;
 }
 
 
@@ -161,6 +164,14 @@
 
 - (WCUserAccount *)account {
 	return _userAccount;
+}
+
+
+
+#pragma mark -
+
+- (BOOL)supportsResourceForks {
+	return _supportsResourceForks;
 }
 
 @end
