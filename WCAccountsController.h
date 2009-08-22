@@ -53,14 +53,16 @@
 
 	IBOutlet NSTextField				*_nameTextField;
 	IBOutlet NSTextField				*_fullNameTextField;
-	IBOutlet NSTextField				*_creationTimeTextField;
-	IBOutlet NSTextField				*_modificationTimeTextField;
-	IBOutlet NSTextField				*_loginTimeTextField;
-	IBOutlet NSTextField				*_editedByTextField;
 	IBOutlet NSSecureTextField			*_passwordTextField;
 	IBOutlet NSPopUpButton				*_groupPopUpButton;
 	IBOutlet NSMenuItem					*_noneMenuItem;
 	IBOutlet NSTokenField				*_groupsTokenField;
+	IBOutlet NSTextField				*_creationTimeTextField;
+	IBOutlet NSTextField				*_modificationTimeTextField;
+	IBOutlet NSTextField				*_loginTimeTextField;
+	IBOutlet NSTextField				*_editedByTextField;
+	IBOutlet NSTextField				*_downloadsTextField;
+	IBOutlet NSTextField				*_uploadsTextField;
 	
 	IBOutlet NSPopUpButton				*_showPopUpButton;
 	IBOutlet NSMenuItem					*_allSettingsMenuItem;

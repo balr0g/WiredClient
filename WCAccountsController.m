@@ -347,6 +347,14 @@
 					[_loginTimeTextField setStringValue:[_dateFormatter stringFromDate:[(WCUserAccount *) account loginDate]]];
 				else
 					[_loginTimeTextField setStringValue:@""];
+				
+				[_downloadsTextField setStringValue:[NSSWF:NSLS(@"%u completed, %@ transferred", @"Account transfer stats (count, transferred"),
+					[(WCUserAccount *) account downloads],
+					[NSString humanReadableStringForSizeInBytes:[(WCUserAccount *) account downloadTransferred]]]];
+				
+				[_uploadsTextField setStringValue:[NSSWF:NSLS(@"%u completed, %@ transferred", @"Account transfer stats (count, transferred"),
+					[(WCUserAccount *) account uploads],
+					[NSString humanReadableStringForSizeInBytes:[(WCUserAccount *) account uploadTransferred]]]];
 			}
 			else if([account isKindOfClass:[WCGroupAccount class]]) {
 				[_typePopUpButton selectItem:_groupMenuItem];
@@ -354,6 +362,8 @@
 				[_passwordTextField setStringValue:@""];
 				[_groupPopUpButton selectItem:_noneMenuItem];
 				[_loginTimeTextField setStringValue:@""];
+				[_downloadsTextField setStringValue:@""];
+				[_uploadsTextField setStringValue:@""];
 			}
 			
 			[_nameTextField setStringValue:[account name]];
@@ -373,8 +383,7 @@
 			else
 				[_editedByTextField setStringValue:@""];
 		}
-	}
-	else if([_accounts count] == 0) {
+	} else {
 		[_typePopUpButton selectItem:_userMenuItem];
 		[_nameTextField setStringValue:@""];
 		[_fullNameTextField setStringValue:@""];
@@ -385,18 +394,8 @@
 		[_modificationTimeTextField setStringValue:@""];
 		[_loginTimeTextField setStringValue:@""];
 		[_editedByTextField setStringValue:@""];
-	}
-	else {
-		[_typePopUpButton selectItem:_userMenuItem];
-		[_nameTextField setStringValue:@""];
-		[_fullNameTextField setStringValue:@""];
-		[_passwordTextField setStringValue:@""];
-		[_groupPopUpButton selectItem:_noneMenuItem];
-		[_groupsTokenField setStringValue:@""];
-		[_creationTimeTextField setStringValue:@""];
-		[_modificationTimeTextField setStringValue:@""];
-		[_loginTimeTextField setStringValue:@""];
-		[_editedByTextField setStringValue:@""];
+		[_downloadsTextField setStringValue:@""];
+		[_uploadsTextField setStringValue:@""];
 	}
 	
 	[self _reloadSettings];
@@ -1340,6 +1339,7 @@
 	[self _reloadFilter];
 
 	[_accountsTableView reloadData];
+	[_accountsTableView deselectAll:self];
 }
 
 
@@ -1351,6 +1351,7 @@
 	[self _reloadFilter];
 	
 	[_accountsTableView reloadData];
+	[_accountsTableView deselectAll:self];
 }
 
 
@@ -1362,6 +1363,7 @@
 	[self _reloadFilter];
 	
 	[_accountsTableView reloadData];
+	[_accountsTableView deselectAll:self];
 }
 
 

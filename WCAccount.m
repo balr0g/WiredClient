@@ -164,6 +164,14 @@
 		WCAccountFieldDictionary(WCAccountFieldNone,
 			@"wired.account.edited_by", @"", WCAccountFieldString, YES, @""),
 		WCAccountFieldDictionary(WCAccountFieldNone,
+			@"wired.account.downloads", @"", WCAccountFieldNumber, YES, @""),
+		WCAccountFieldDictionary(WCAccountFieldNone,
+			@"wired.account.download_transferred", @"", WCAccountFieldNumber, YES, @""),
+		WCAccountFieldDictionary(WCAccountFieldNone,
+			@"wired.account.uploads", @"", WCAccountFieldNumber, YES, @""),
+		WCAccountFieldDictionary(WCAccountFieldNone,
+			@"wired.account.upload_transferred", @"", WCAccountFieldNumber, YES, @""),
+		WCAccountFieldDictionary(WCAccountFieldNone,
 			@"wired.account.group", @"", WCAccountFieldString, NO, @""),
 		WCAccountFieldDictionary(WCAccountFieldNone,
 			@"wired.account.groups", @"", WCAccountFieldList, NO, @""),
@@ -1018,6 +1026,30 @@
 
 - (NSDate *)loginDate {
 	return [self valueForKey:@"wired.account.login_time"];
+}
+
+
+
+- (NSUInteger)downloads {
+	return [[self valueForKey:@"wired.account.downloads"] unsignedIntegerValue];
+}
+
+
+
+- (WIFileOffset)downloadTransferred {
+	return [[self valueForKey:@"wired.account.download_transferred"] unsignedLongLongValue];
+}
+
+
+
+- (NSUInteger)uploads {
+	return [[self valueForKey:@"wired.account.uploads"] unsignedIntegerValue];
+}
+
+
+
+- (WIFileOffset)uploadTransferred {
+	return [[self valueForKey:@"wired.account.upload_transferred"] unsignedLongLongValue];
 }
 
 

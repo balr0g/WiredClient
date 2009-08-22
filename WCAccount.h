@@ -155,6 +155,10 @@
 - (WCGroupAccount *)groupAccount;
 
 - (NSDate *)loginDate;
+- (NSUInteger)downloads;
+- (WIFileOffset)downloadTransferred;
+- (NSUInteger)uploads;
+- (WIFileOffset)uploadTransferred;
 - (void)setFullName:(NSString *)fullName;
 - (NSString *)fullName;
 - (void)setGroup:(NSString *)group;
