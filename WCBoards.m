@@ -448,7 +448,7 @@
 			changedUnread = YES;
 		}
 		
-		string = [_replyTemplate mutableCopy];
+		string = [[_replyTemplate mutableCopy] autorelease];
 
 		if([[[thread connection] account] boardAddPosts] && writable)
 			[string replaceOccurrencesOfString:@"<? replydisabled ?>" withString:@""];
@@ -1848,13 +1848,11 @@
 - (BOOL)validateMenuItem:(NSMenuItem *)item {
 	WCAccount		*account;
 	WCBoard			*board;
-	WCBoardThread	*thread;
 	SEL				selector;
 	BOOL			connected;
 	
 	selector	= [item action];
 	board		= [self _selectedBoard];
-	thread		= [self _selectedThread];
 	account		= [[board connection] account];
 	connected	= [[board connection] isConnected];
 	

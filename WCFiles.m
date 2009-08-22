@@ -312,7 +312,7 @@
 - (NSArray *)_selectedFiles {
 	NSEnumerator			*enumerator;
 	NSMutableDictionary		*files;
-	NSMutableArray			*selectedFiles, *directory;
+	NSMutableArray			*selectedFiles;
 	NSIndexSet				*indexes;
 	NSString				*path;
 	NSUInteger				index;
@@ -320,9 +320,8 @@
 	selectedFiles = [NSMutableArray array];
 	
 	if([self _selectedStyle] == WCFilesStyleList) {
-		directory		= [[self _directoriesForConnection:[self _selectedConnection]] objectForKey:[_currentDirectory path]];
-		indexes			= [_filesOutlineView selectedRowIndexes];
-		index			= [indexes firstIndex];
+		indexes		= [_filesOutlineView selectedRowIndexes];
+		index		= [indexes firstIndex];
 		
 		while(index != NSNotFound) {
 			[selectedFiles addObject:[_filesOutlineView itemAtRow:index]];
@@ -330,8 +329,8 @@
 			index = [indexes indexGreaterThanIndex:index];
 		}
 	} else {
-		files			= [self _filesForConnection:[self _selectedConnection]];
-		enumerator		= [[_filesTreeView selectedPaths] objectEnumerator];
+		files		= [self _filesForConnection:[self _selectedConnection]];
+		enumerator	= [[_filesTreeView selectedPaths] objectEnumerator];
 		
 		while((path = [enumerator nextObject]))
 			[selectedFiles addObject:[files objectForKey:path]];

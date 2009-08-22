@@ -86,13 +86,13 @@
 @implementation WCConnect
 
 + (id)connect {
-	return [[self alloc] _initConnectWithURL:NULL bookmark:NULL];
+	return [[[self alloc] _initConnectWithURL:NULL bookmark:NULL] autorelease];
 }
 
 
 
 + (id)connectWithURL:(WIURL *)url bookmark:(NSDictionary *)bookmark {
-	return [[self alloc] _initConnectWithURL:url bookmark:bookmark];
+	return [[[self alloc] _initConnectWithURL:url bookmark:bookmark] autorelease];
 }
 
 
@@ -126,6 +126,8 @@
 	
 	if([_url password])
 		[_passwordTextField setStringValue:[_url password]];
+	
+	[self retain];
 }
 
 

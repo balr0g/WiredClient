@@ -195,7 +195,6 @@
 	NSCalendar				*calendar;
 	NSDateComponents		*components;
 	NSString				*icon;
-	NSDictionary			*theme;
 	WCConversation			*conversation;
 	WCMessage				*message;
 	NSInteger				day;
@@ -215,7 +214,6 @@
 		calendar		= [NSCalendar currentCalendar];
 		day				= -1;
 		icons			= [NSMutableDictionary dictionary];
-		theme			= [conversation theme];
 		enumerator		= [[conversation messages] objectEnumerator];
 		
 		if([conversation numberOfMessages] == 0) {
