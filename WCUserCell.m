@@ -44,7 +44,7 @@
 	_statusCell = [[NSCell alloc] init];
 	
 	style = [[[NSMutableParagraphStyle alloc] init] autorelease];
-	[style setLineBreakMode:NSLineBreakByTruncatingMiddle];
+	[style setLineBreakMode:NSLineBreakByTruncatingTail];
 
 	_nickAttributes = [[NSMutableDictionary alloc] init];
 	[_nickAttributes setObject:style forKey:NSParagraphStyleAttributeName];
@@ -178,6 +178,11 @@
 		[string addAttribute:NSForegroundColorAttributeName
 					   value:[NSColor whiteColor]
 					   range:NSMakeRange(0, [string length])];
+	}
+	
+	if([self controlSize] == NSSmallControlSize && [status length] > 0) {
+		[string appendAttributedString:
+			[NSAttributedString attributedStringWithString:[NSSWF:@" %@", status] attributes:_statusAttributes]];
 	}
 		
 	[_nickCell setAttributedStringValue:string];

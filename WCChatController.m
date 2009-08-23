@@ -1081,16 +1081,19 @@ typedef enum _WCChatFormat					WCChatFormat;
 		case WCThemesUserListIconSizeLarge:
 			[_userListTableView setRowHeight:35.0];
 			
+			[_iconTableColumn setWidth:[_iconTableColumn maxWidth]];
 			[[_nickTableColumn dataCell] setControlSize:NSRegularControlSize];
 			break;
 
 		case WCThemesUserListIconSizeSmall:
 			[_userListTableView setRowHeight:17.0];
 
+			[_iconTableColumn setWidth:[_iconTableColumn minWidth]];
 			[[_nickTableColumn dataCell] setControlSize:NSSmallControlSize];
 			break;
 	}
 	
+	[_userListTableView sizeLastColumnToFit];
 	[_userListTableView setNeedsDisplay:YES];
 }
 
