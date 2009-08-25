@@ -592,7 +592,7 @@
 				
 			[NSDictionary dictionary],
 				WCWindowProperties,
-				
+			
 			[NSArray array],
 				WCReadBoardPosts,
 			

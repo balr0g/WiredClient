@@ -49,6 +49,7 @@
 - (void)_themeDidChange;
 
 - (void)_getBoardsForConnection:(WCServerConnection *)connection;
+- (void)_saveBoards;
 
 - (WCBoardThread *)_threadAtIndex:(NSUInteger)index;
 - (WCBoard *)_selectedBoard;
@@ -142,6 +143,16 @@
 		message = [WIP7Message messageWithName:@"wired.board.subscribe_boards" spec:WCP7Spec];
 		[connection sendMessage:message fromObserver:self selector:@selector(wiredBoardSubscribeBoardsReply:)];
 	}
+}
+
+
+
+- (void)_saveBoards {
+	NSArray		*boards;
+	
+	boards = [_boards boardsWithExpansionStatus:NO];
+	
+	[WCSettings setObject:[NSKeyedArchiver archivedDataWithRootObject:boards] forKey:WCCollapsedBoards];
 }
 
 
@@ -825,6 +836,11 @@
 
 	[_smartBoards setSorting:1];
 
+	data = [WCSettings objectForKey:WCCollapsedBoards];
+	
+	if(data)
+		_collapsedBoards = [[NSKeyedUnarchiver unarchiveObjectWithData:data] retain];
+	
 	data = [WCSettings objectForKey:WCBoardFilters];
 	
 	if(data) {
@@ -840,7 +856,7 @@
 				[_boards addBoard:_smartBoards];
 		}
 	}
-
+	
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(selectedThemeDidChange:)
@@ -891,6 +907,8 @@
 	[_boards release];
 	[_selectedBoard release];
 	[_searchBoard release];
+	
+	[_collapsedBoards release];
 	
 	[_threadFont release];
 	[_threadColor release];
@@ -1189,25 +1207,47 @@
 
 
 - (void)wiredBoardGetBoardsReply:(WIP7Message *)message {
+	NSEnumerator		*enumerator;
 	WCServerConnection	*connection;
-	WCBoard				*board, *parent;
+	WCBoard				*board, *parent, *collapsedBoard, *childBoard;
 	
+	connection = [message contextInfo];
+
 	if([[message name] isEqualToString:@"wired.board.board_list"]) {
-		connection	= [message contextInfo];
 		board		= [WCBoard boardWithMessage:message connection:connection];
 		parent		= [[_boards boardForConnection:connection] boardForPath:[board path]];
 		
 		[parent addBoard:board];
 	}
 	else if([[message name] isEqualToString:@"wired.board.board_list.done"]) {
+		_expandingBoards = YES;
+		
+		board = [_boards boardForConnection:connection];
+		
 		[_boardsOutlineView reloadData];
-		[_boardsOutlineView expandItem:[_boards boardForConnection:[message contextInfo]] expandChildren:YES];
+		[_boardsOutlineView expandItem:board expandChildren:YES];
+		
+		enumerator = [_collapsedBoards reverseObjectEnumerator];
+		
+		while((collapsedBoard = [enumerator nextObject])) {
+			if([collapsedBoard belongsToConnection:connection]) {
+				childBoard = [board boardForPath:[collapsedBoard path]];
+				
+				[_boardsOutlineView collapseItem:childBoard];
+			}
+		}
+		
+		_expandingBoards = NO;
 	
 		[self _reloadBoardListsSelectingBoard:NULL];
 		[self _validate];
+		
+		[connection removeObserver:self message:message];
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
 		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
+		
+		[connection removeObserver:self message:message];
 	}
 }
 
@@ -1251,9 +1291,13 @@
 		[_threadsTableView reloadData];
 
 		[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
+		
+		[connection removeObserver:self message:message];
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
 		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
+		
+		[connection removeObserver:self message:message];
 	}
 }
 
@@ -2842,6 +2886,9 @@
 	item = [[notification userInfo] objectForKey:@"NSObject"];
 	
 	[item setExpanded:YES];
+	
+	if(!_expandingBoards)
+		[self _saveBoards];
 }
 
 
@@ -2852,6 +2899,9 @@
 	item = [[notification userInfo] objectForKey:@"NSObject"];
 	
 	[item setExpanded:NO];
+	
+	if(!_expandingBoards)
+		[self _saveBoards];
 }
 
 

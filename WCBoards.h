@@ -97,6 +97,9 @@
 	NSColor											*_backgroundColor;
 	WIDateFormatter									*_dateFormatter;
 	
+	NSArray											*_collapsedBoards;
+	BOOL											_expandingBoards;
+	
 	NSMutableSet									*_receivedBoards;
 	NSMutableSet									*_readPosts;
 	

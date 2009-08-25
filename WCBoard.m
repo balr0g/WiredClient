@@ -117,6 +117,14 @@
 
 @implementation WCBoard
 
++ (NSUInteger)version {
+	return 1;
+}
+
+
+
+#pragma mark -
+
 + (WCBoard *)rootBoard {
 	return [[[self alloc] _initWithPath:@"/" name:@"<root>" connection:NULL] autorelease];
 }
@@ -171,6 +179,35 @@
 	[board setPermissions:permissions];
 	
 	return [board autorelease];
+}
+
+
+
+- (id)initWithCoder:(NSCoder *)coder {
+    self = [super initWithCoder:coder];
+	
+	if(!self)
+		return NULL;
+	
+	if([coder decodeIntForKey:@"WCBoardVersion"] != [[self class] version]) {
+		[self release];
+		
+		return NULL;
+	}
+	
+	_path = [[coder decodeObjectForKey:@"WCBoardPath"] retain];
+	
+	return self;
+}
+
+
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+	[coder encodeInt:[[self class] version] forKey:@"WCBoardVersion"];
+	
+	[coder encodeObject:_path forKey:@"WCBoardPath"];
+	
+	[super encodeWithCoder:coder];
 }
 
 
@@ -334,6 +371,28 @@
 
 - (NSArray *)boards {
 	return _boards;
+}
+
+
+
+- (NSArray *)boardsWithExpansionStatus:(BOOL)expansionStatus {
+	NSMutableArray		*array;
+	WCBoard				*board;
+	NSUInteger			i, count;
+	
+	array = [NSMutableArray array];
+	count = [_boards count];
+	
+	for(i = 0; i < count; i++) {
+		board = [_boards objectAtIndex:i];
+		
+		if([board isExpanded] == expansionStatus && [board numberOfBoards] > 0)
+			[array addObject:board];
+		
+		[array addObjectsFromArray:[board boardsWithExpansionStatus:expansionStatus]];
+	}
+	
+	return array;
 }
 
 

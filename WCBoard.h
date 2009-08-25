@@ -82,6 +82,7 @@ typedef enum _WCBoardPermissions		WCBoardPermissions;
 
 - (NSUInteger)numberOfBoards;
 - (NSArray *)boards;
+- (NSArray *)boardsWithExpansionStatus:(BOOL)expansionStatus;
 - (WCBoard *)boardAtIndex:(NSUInteger)index;
 - (WCBoard *)boardForConnection:(WCServerConnection *)connection;
 - (WCBoard *)boardForPath:(NSString *)path;

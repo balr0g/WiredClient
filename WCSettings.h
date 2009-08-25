@@ -143,6 +143,7 @@
 
 #define WCWindowProperties						@"WCWindowProperties"
 
+#define WCCollapsedBoards						@"WCCollapsedBoards"
 #define WCReadBoardPosts						@"WCReadBoardPosts"
 #define WCBoardFilters							@"WCBoardFilters"
 
