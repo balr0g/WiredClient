@@ -28,24 +28,24 @@
 
 #import "WCLinkConnection.h"
 
-#define WCServerConnectionWillReconnectNotification				@"WCServerConnectionWillReconnectNotification"
+extern NSString * const WCServerConnectionWillReconnectNotification;
 
-#define WCServerConnectionTriggeredEventNotification			@"WCServerConnectionTriggeredEventNotification"
+extern NSString * const WCServerConnectionTriggeredEventNotification;
 
-#define WCServerConnectionThemeDidChangeNotification			@"WCServerConnectionThemeDidChangeNotification"
+extern NSString * const WCServerConnectionThemeDidChangeNotification;
 
-#define WCServerConnectionServerInfoDidChangeNotification		@"WCServerConnectionServerInfoDidChangeNotification"
-#define WCServerConnectionPrivilegesDidChangeNotification		@"WCServerConnectionPrivilegesDidChangeNotification"
+extern NSString * const WCServerConnectionServerInfoDidChangeNotification;
+extern NSString * const WCServerConnectionPrivilegesDidChangeNotification;
 
-#define WCServerConnectionReceivedServerInfoNotification		@"WCServerConnectionReceivedServerInfoNotification"
-#define WCServerConnectionReceivedPingNotification				@"WCServerConnectionReceivedPingNotification"
-#define WCServerConnectionReceivedBannerNotification			@"WCServerConnectionReceivedBannerNotification"
+extern NSString * const WCServerConnectionReceivedServerInfoNotification;
+extern NSString * const WCServerConnectionReceivedPingNotification;
+extern NSString * const WCServerConnectionReceivedBannerNotification;
 
-#define WCServerConnectionReceivedLoginErrorNotification		@"WCServerConnectionReceivedLoginErrorNotification"
+extern NSString * const WCServerConnectionReceivedLoginErrorNotification;
 
-#define	WCServerConnectionEventConnectionKey					@"WCServerConnectionEventConnectionKey"
-#define WCServerConnectionEventInfo1Key							@"WCServerConnectionEventInfo1Key"
-#define WCServerConnectionEventInfo2Key							@"WCServerConnectionEventInfo2Key"
+extern NSString * const	WCServerConnectionEventConnectionKey;
+extern NSString * const WCServerConnectionEventInfo1Key;
+extern NSString * const WCServerConnectionEventInfo2Key;
 
 
 @class WCServer, WCCache, WCUserAccount;

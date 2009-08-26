@@ -38,9 +38,13 @@
 #import "WCPublicChatController.h"
 #import "WCTransfers.h"
 
-#define WCFilesFiles								@"WCFilesFiles"
-#define WCFilesDirectories							@"WCFilesDirectories"
-#define WCFilesReceivedFiles						@"WCFilesReceivedFiles"
+#define WCFilesFiles						@"WCFilesFiles"
+#define WCFilesDirectories					@"WCFilesDirectories"
+#define WCFilesReceivedFiles				@"WCFilesReceivedFiles"
+
+
+NSString * const							WCFilePboardType = @"WCFilePboardType";
+NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 @interface WCFiles(Private)
@@ -1974,6 +1978,29 @@
 
 
 
+- (void)outlineViewShouldCopyInfo:(NSOutlineView *)outlineView {
+	NSEnumerator		*enumerator;
+	NSMutableString		*string;
+	NSPasteboard		*pasteboard;
+	WCFile				*file;
+	
+	string			= [NSMutableString string];
+	enumerator		= [[self _selectedFiles] objectEnumerator];
+	
+	while((file = [enumerator nextObject])) {
+		if([string length] > 0)
+			[string appendString:@"\n"];
+		
+		[string appendString:[file name]];
+	}
+	
+	pasteboard = [NSPasteboard generalPasteboard];
+	[pasteboard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, WCFilePboardType, NULL] owner:NULL];
+	[pasteboard setString:string forType:NSStringPboardType];
+}
+
+
+
 - (NSArray *)outlineView:(NSOutlineView *)outlineView namesOfPromisedFilesDroppedAtDestination:(NSURL *)destination forDraggedItems:(NSArray *)items {
 	NSEnumerator		*enumerator;
 	NSMutableArray		*names;
@@ -2225,6 +2252,12 @@
 	}
 	
 	return NO;
+}
+
+
+
+- (void)treeViewShouldCopyInfo:(WITreeView *)treeView {
+	[self performSelector:@selector(outlineViewShouldCopyInfo:) withObject:NULL];
 }
 
 

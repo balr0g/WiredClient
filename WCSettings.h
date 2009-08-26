@@ -26,130 +26,143 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define WCNick									@"WCNick"
-#define WCStatus								@"WCStatus"
-#define WCIcon									@"WCCustomIcon"
+extern NSString * const						WCNick;
+extern NSString * const						WCStatus;
+extern NSString * const						WCIcon;
 
-#define WCCheckForUpdate						@"WCCheckForUpdate"
+extern NSString * const						WCCheckForUpdate;
 
-#define WCShowConnectAtStartup					@"WCShowConnectAtStartup"
-#define WCShowServersAtStartup					@"WCShowTrackersAtStartup"
+extern NSString * const						WCShowConnectAtStartup;
+extern NSString * const						WCShowServersAtStartup;
 
-#define WCConfirmDisconnect						@"WCConfirmDisconnect"
-#define WCAutoReconnect							@"WCAutoReconnect"
+extern NSString * const						WCConfirmDisconnect;
+extern NSString * const						WCAutoReconnect;
 
-#define WCTheme									@"WCTheme"
+extern NSString * const						WCTheme;
 
-#define WCThemes								@"WCThemes"
-#define WCThemesName								@"WCThemesName"
-#define WCThemesBuiltinName							@"WCThemesBuiltinName"
-#define WCThemesBuiltinVersion						@"WCThemesBuiltinVersion"
-#define WCThemesIdentifier							@"WCThemesIdentifier"
-#define WCThemesShowSmileys							@"WCThemesShowSmileys"
-#define WCThemesChatFont							@"WCThemesChatFont"
-#define WCThemesChatTextColor						@"WCThemesChatTextColor"
-#define WCThemesChatBackgroundColor					@"WCThemesChatBackgroundColor"
-#define WCThemesChatEventsColor						@"WCThemesChatEventsColor"
-#define WCThemesChatURLsColor						@"WCThemesChatURLsColor"
-#define WCThemesChatTimestampEveryLineColor			@"WCThemesChatTimestampEveryLineColor"
-#define WCThemesChatTimestampEveryLine				@"WCThemesChatTimestampEveryLine"
-#define WCThemesMessagesFont						@"WCThemesMessagesFont"
-#define WCThemesMessagesTextColor					@"WCThemesMessagesTextColor"
-#define WCThemesMessagesBackgroundColor				@"WCThemesMessagesBackgroundColor"
-#define WCThemesBoardsFont							@"WCThemesBoardsFont"
-#define WCThemesBoardsTextColor						@"WCThemesBoardsTextColor"
-#define WCThemesBoardsBackgroundColor				@"WCThemesBoardsBackgroundColor"
-#define WCThemesUserListIconSize					@"WCThemesUserListIconSize"
-#define WCThemesUserListIconSizeLarge					1
-#define WCThemesUserListIconSizeSmall					0
-#define WCThemesUserListAlternateRows				@"WCThemesUserListAlternateRows"
-#define WCThemesFileListAlternateRows				@"WCThemesFileListAlternateRows"
-#define WCThemesTransferListShowProgressBar			@"WCThemesTransferListShowProgressBar"
-#define WCThemesTransferListAlternateRows			@"WCThemesTransferListAlternateRows"
-#define WCThemesTrackerListAlternateRows			@"WCThemesTrackerListAlternateRows"
+extern NSString * const						WCThemes;
+extern NSString * const						WCThemesName;
+extern NSString * const						WCThemesBuiltinName;
+extern NSString * const						WCThemesBuiltinVersion;
+extern NSString * const						WCThemesIdentifier;
+extern NSString * const						WCThemesShowSmileys;
+extern NSString * const						WCThemesChatFont;
+extern NSString * const						WCThemesChatTextColor;
+extern NSString * const						WCThemesChatBackgroundColor;
+extern NSString * const						WCThemesChatEventsColor;
+extern NSString * const						WCThemesChatURLsColor;
+extern NSString * const						WCThemesChatTimestampEveryLineColor;
+extern NSString * const						WCThemesChatTimestampEveryLine;
+extern NSString * const						WCThemesMessagesFont;
+extern NSString * const						WCThemesMessagesTextColor;
+extern NSString * const						WCThemesMessagesBackgroundColor;
+extern NSString * const						WCThemesBoardsFont;
+extern NSString * const						WCThemesBoardsTextColor;
+extern NSString * const						WCThemesBoardsBackgroundColor;
+extern NSString * const						WCThemesUserListIconSize;
 
-#define WCMessageConversations					@"WCMessageConversations"
-#define WCBroadcastConversations				@"WCBroadcastConversations"
+enum {
+	WCThemesUserListIconSizeLarge			= 1,
+	WCThemesUserListIconSizeSmall			= 0
+};
 
-#define WCBookmarks								@"WCBookmarks"
-#define WCBookmarksName								@"Name"
-#define WCBookmarksAddress							@"Address"
-#define WCBookmarksLogin							@"Login"
-#define WCBookmarksIdentifier						@"Identifier"
-#define WCBookmarksNick								@"Nick"
-#define WCBookmarksStatus							@"Status"
-#define WCBookmarksAutoConnect						@"AutoJoin"
-#define WCBookmarksAutoReconnect					@"AutoReconnect"
-#define WCBookmarksTheme							@"Theme"
+extern NSString * const						WCThemesUserListAlternateRows;
+extern NSString * const						WCThemesFileListAlternateRows;
+extern NSString * const						WCThemesTransferListShowProgressBar;
+extern NSString * const						WCThemesTransferListAlternateRows;
+extern NSString * const						WCThemesTrackerListAlternateRows;
 
-#define WCChatHistoryScrollback					@"WCHistoryScrollback"
-#define WCChatHistoryScrollbackModifier			@"WCHistoryScrollbackModifier"
-#define WCChatHistoryScrollbackModifierNone			0
-#define WCChatHistoryScrollbackModifierCommand		1
-#define WCChatHistoryScrollbackModifierOption		2
-#define WCChatHistoryScrollbackModifierControl		3
-#define WCChatTabCompleteNicks					@"WCTabCompleteNicks"
-#define WCChatTabCompleteNicksString			@"WCTabCompleteNicksString"
-#define WCChatTimestampChat						@"WCTimestampChat"
-#define WCChatTimestampChatInterval				@"WCTimestampChatInterval"
+extern NSString * const						WCMessageConversations;
+extern NSString * const						WCBroadcastConversations;
 
-#define WCHighlights							@"WCHighlights"
-#define WCHighlightsPattern							@"WCHighlightsPattern"
-#define WCHighlightsColor							@"WCHighlightsColor"
+extern NSString * const						WCBookmarks;
+extern NSString * const						WCBookmarksName;
+extern NSString * const						WCBookmarksAddress;
+extern NSString * const						WCBookmarksLogin;
+extern NSString * const						WCBookmarksIdentifier;
+extern NSString * const						WCBookmarksNick;
+extern NSString * const						WCBookmarksStatus;
+extern NSString * const						WCBookmarksAutoConnect;
+extern NSString * const						WCBookmarksAutoReconnect;
+extern NSString * const						WCBookmarksTheme;
 
-#define WCIgnores								@"WCIgnores"
-#define WCIgnoresNick								@"Nick"
+extern NSString * const						WCChatHistoryScrollback;
+extern NSString * const						WCChatHistoryScrollbackModifier;
 
-#define WCEvents								@"WCEvents"
-#define WCEventsEvent								@"WCEventsEvent"
-#define WCEventsServerConnected							1
-#define WCEventsServerDisconnected						2
-#define WCEventsError									3
-#define WCEventsUserJoined								4
-#define WCEventsUserChangedNick							5
-#define WCEventsUserLeft								6
-#define WCEventsChatReceived							7
-#define WCEventsMessageReceived							8
-#define WCEventsBoardPostReceived						9
-#define WCEventsBroadcastReceived						10
-#define WCEventsTransferStarted							11
-#define WCEventsTransferFinished						12
-#define WCEventsUserChangedStatus						13
-#define WCEventsHighlightedChatReceived					14
-#define WCEventsChatInvitationReceived					15
-#define WCEventsPlaySound							@"WCEventsPlaySound"
-#define WCEventsSound								@"WCEventsSound"
-#define WCEventsBounceInDock						@"WCEventsBounceInDock"
-#define WCEventsPostInChat							@"WCEventsPostInChat"
-#define WCEventsShowDialog							@"WCEventsShowDialog"
+enum {
+	WCChatHistoryScrollbackModifierNone		= 0,
+	WCChatHistoryScrollbackModifierCommand	= 1,
+	WCChatHistoryScrollbackModifierOption	= 2,
+	WCChatHistoryScrollbackModifierControl	= 3
+};
 
-#define WCEventsVolume							@"WCEventsVolume"
+extern NSString * const						WCChatTabCompleteNicks;
+extern NSString * const						WCChatTabCompleteNicksString;
+extern NSString * const						WCChatTimestampChat;
+extern NSString * const						WCChatTimestampChatInterval;
 
-#define WCTransferList							@"WCTransferList"
-#define WCDownloadFolder						@"WCDownloadFolder"
-#define WCOpenFoldersInNewWindows				@"WCOpenFoldersInNewWindows"
-#define WCQueueTransfers						@"WCQueueTransfers"
-#define WCCheckForResourceForks					@"WCCheckForResourceForks"
-#define WCRemoveTransfers						@"WCRemoveTransfers"
-#define WCFilesStyle							@"WCFilesStyle"
-#define WCFilesStyleList							0
-#define WCFilesStyleTree							1
+extern NSString * const						WCHighlights;
+extern NSString * const						WCHighlightsPattern;
+extern NSString * const						WCHighlightsColor;
 
-#define WCTrackerBookmarks						@"WCTrackerBookmarks"
-#define WCTrackerBookmarksName						@"Name"
-#define WCTrackerBookmarksAddress					@"Address"
-#define WCTrackerBookmarksLogin						@"Login"
-#define WCTrackerBookmarksIdentifier				@"Identifier"
+extern NSString * const						WCIgnores;
+extern NSString * const						WCIgnoresNick;
 
-#define WCWindowProperties						@"WCWindowProperties"
+extern NSString * const						WCEvents;
+extern NSString * const						WCEventsEvent;
+enum {
+	WCEventsServerConnected					= 1,
+	WCEventsServerDisconnected				= 2,
+	WCEventsError							= 3,
+	WCEventsUserJoined						= 4,
+	WCEventsUserChangedNick					= 5,
+	WCEventsUserLeft						= 6,
+	WCEventsChatReceived					= 7,
+	WCEventsMessageReceived					= 8,
+	WCEventsBoardPostReceived				= 9,
+	WCEventsBroadcastReceived				= 10,
+	WCEventsTransferStarted					= 11,
+	WCEventsTransferFinished				= 12,
+	WCEventsUserChangedStatus				= 13,
+	WCEventsHighlightedChatReceived			= 14,
+	WCEventsChatInvitationReceived			= 15
+};
+extern NSString * const						WCEventsPlaySound;
+extern NSString * const						WCEventsSound;
+extern NSString * const						WCEventsBounceInDock;
+extern NSString * const						WCEventsPostInChat;
+extern NSString * const						WCEventsShowDialog;
 
-#define WCCollapsedBoards						@"WCCollapsedBoards"
-#define WCReadBoardPosts						@"WCReadBoardPosts"
-#define WCBoardFilters							@"WCBoardFilters"
+extern NSString * const						WCEventsVolume;
 
-#define WCPlaces								@"WCPlaces"
+extern NSString * const						WCTransferList;
+extern NSString * const						WCDownloadFolder;
+extern NSString * const						WCOpenFoldersInNewWindows;
+extern NSString * const						WCQueueTransfers;
+extern NSString * const						WCCheckForResourceForks;
+extern NSString * const						WCRemoveTransfers;
+extern NSString * const						WCFilesStyle;
 
-#define WCDebug									@"WCDebug"
+enum {
+	WCFilesStyleList						= 0,
+	WCFilesStyleTree						= 1
+};
+
+extern NSString * const						WCTrackerBookmarks;
+extern NSString * const						WCTrackerBookmarksName;
+extern NSString * const						WCTrackerBookmarksAddress;
+extern NSString * const						WCTrackerBookmarksLogin;
+extern NSString * const						WCTrackerBookmarksIdentifier;
+
+extern NSString * const						WCWindowProperties;
+
+extern NSString * const						WCCollapsedBoards;
+extern NSString * const						WCReadBoardPosts;
+extern NSString * const						WCBoardFilters;
+
+extern NSString * const						WCPlaces;
+
+extern NSString * const						WCDebug;
 
 
 @interface WCSettings : WISettings

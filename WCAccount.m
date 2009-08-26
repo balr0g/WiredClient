@@ -29,6 +29,14 @@
 #import "WCAccount.h"
 #import "WCServerConnection.h"
 
+NSString * const WCAccountFieldName					= @"WCAccountFieldName";
+NSString * const WCAccountFieldLocalizedName		= @"WCAccountFieldLocalizedName";
+NSString * const WCAccountFieldType					= @"WCAccountFieldType";
+NSString * const WCAccountFieldSection				= @"WCAccountFieldSection";
+NSString * const WCAccountFieldReadOnly				= @"WCAccountFieldReadOnly";
+NSString * const WCAccountFieldToolTip				= @"WCAccountFieldToolTip";
+
+
 @interface WCAccount(Private)
 
 - (id)_initWithMessage:(WIP7Message *)message;

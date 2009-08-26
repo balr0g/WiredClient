@@ -29,6 +29,20 @@
 #import "WCLink.h"
 #import "WCLinkConnection.h"
 
+NSString * const WCLinkConnectionWillConnectNotification				= @"WCLinkConnectionWillConnectNotification";
+NSString * const WCLinkConnectionDidConnectNotification					= @"WCLinkConnectionDidConnectNotification";
+NSString * const WCLinkConnectionWillDisconnectNotification				= @"WCLinkConnectionWillDisconnectNotification";
+NSString * const WCLinkConnectionDidCloseNotification					= @"WCLinkConnectionDidCloseNotification";
+NSString * const WCLinkConnectionDidTerminateNotification				= @"WCLinkConnectionDidTerminateNotification";
+
+NSString * const WCLinkConnectionReceivedMessageNotification			= @"WCLinkConnectionReceivedMessageNotification";
+NSString * const WCLinkConnectionReceivedErrorMessageNotification		= @"WCLinkConnectionReceivedErrorMessageNotification";
+NSString * const WCLinkConnectionReceivedInvalidMessageNotification		= @"WCLinkConnectionReceivedInvalidMessageNotification";
+NSString * const WCLinkConnectionSentMessageNotification				= @"WCLinkConnectionSentMessageNotification";
+
+NSString * const WCLinkConnectionLoggedInNotification					= @"WCLinkConnectionLoggedInNotification";
+
+
 @implementation WCLinkConnection
 
 - (id)init {

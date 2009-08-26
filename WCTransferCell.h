@@ -26,9 +26,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define WCTransferCellNameKey			@"WCTransferCellNameKey"
-#define WCTransferCellStatusKey			@"WCTransferCellStatusKey"
-#define WCTransferCellProgressKey		@"WCTransferCellProgressKey"
+extern NSString * const					WCTransferCellNameKey;
+extern NSString * const					WCTransferCellStatusKey;
+extern NSString * const					WCTransferCellProgressKey;
 
 
 @class WCTransfer;

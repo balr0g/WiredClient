@@ -29,7 +29,17 @@
 #import "WCServerConnection.h"
 #import "WCStats.h"
 
-#define WCStatsPath				@"~/Library/Application Support/Wired Client/Stats.plist"
+#define WCStatsPath								@"~/Library/Application Support/Wired Client/Stats.plist"
+
+
+NSString * const WCStatsDownloaded				= @"Downloaded";
+NSString * const WCStatsUploaded				= @"Uploaded";
+NSString * const WCStatsChat					= @"Chat";
+NSString * const WCStatsOnline					= @"Online";
+NSString * const WCStatsMaxDownloadSpeed		= @"Max Download Speed";
+NSString * const WCStatsMaxUploadSpeed			= @"Max Upload Speed";
+NSString * const WCStatsMessagesSent			= @"Messages Sent";
+NSString * const WCStatsMessagesReceived		= @"Messages Received";
 
 
 static OSStatus _WCStatsEventSystemTimeDateChanged(EventHandlerCallRef, EventRef, void *);

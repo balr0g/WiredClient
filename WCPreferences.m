@@ -29,11 +29,24 @@
 #import "WCKeychain.h"
 #import "WCPreferences.h"
 
-#define WCThemePboardType				@"WCThemePboardType"
-#define WCBookmarkPboardType			@"WCBookmarkPboardType"
-#define WCHighlightPboardType			@"WCHighlightPboardType"
-#define WCIgnorePboardType				@"WCIgnorePboardType"
-#define WCTrackerBookmarkPboardType		@"WCTrackerBookmarkPboardType"
+#define WCThemePboardType									@"WCThemePboardType"
+#define WCBookmarkPboardType								@"WCBookmarkPboardType"
+#define WCHighlightPboardType								@"WCHighlightPboardType"
+#define WCIgnorePboardType									@"WCIgnorePboardType"
+#define WCTrackerBookmarkPboardType							@"WCTrackerBookmarkPboardType"
+
+
+NSString * const WCPreferencesDidChangeNotification			= @"WCPreferencesDidChangeNotification";
+NSString * const WCThemeDidChangeNotification				= @"WCThemeDidChangeNotification";
+NSString * const WCSelectedThemeDidChangeNotification		= @"WCSelectedThemeDidChangeNotification";
+NSString * const WCBookmarksDidChangeNotification			= @"WCBookmarksDidChangeNotification";
+NSString * const WCBookmarkDidChangeNotification			= @"WCBookmarkDidChangeNotification";
+NSString * const WCIgnoresDidChangeNotification				= @"WCIgnoresDidChangeNotification";
+NSString * const WCTrackerBookmarksDidChangeNotification	= @"WCTrackerBookmarksDidChangeNotification";
+NSString * const WCTrackerBookmarkDidChangeNotification		= @"WCTrackerBookmarkDidChangeNotification";
+NSString * const WCNickDidChangeNotification				= @"WCNickDidChangeNotification";
+NSString * const WCStatusDidChangeNotification				= @"WCStatusDidChangeNotification";
+NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification";
 
 
 @interface WCPreferences(Private)

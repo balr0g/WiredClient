@@ -26,25 +26,26 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define WCDateDidChangeNotification						@"WCDateDidChangeNotification"
-#define WCExceptionHandlerReceivedBacktraceNotification	@"WCExceptionHandlerReceivedBacktraceNotification"
+extern NSString * const						WCDateDidChangeNotification;
+extern NSString * const						WCExceptionHandlerReceivedBacktraceNotification;
+extern NSString * const						WCExceptionHandlerReceivedExceptionNotification;
 
 
 @interface WCApplicationController : WIObject <GrowlApplicationBridgeDelegate> {
-	IBOutlet NSMenu										*_bookmarksMenu;
-	IBOutlet NSMenu										*_insertSmileyMenu;
-	IBOutlet NSMenu										*_debugMenu;
-	IBOutlet NSMenu										*_windowMenu;
-	IBOutlet NSMenuItem									*_closeWindowMenuItem;
+	IBOutlet NSMenu							*_bookmarksMenu;
+	IBOutlet NSMenu							*_insertSmileyMenu;
+	IBOutlet NSMenu							*_debugMenu;
+	IBOutlet NSMenu							*_windowMenu;
+	IBOutlet NSMenuItem						*_closeWindowMenuItem;
 	
-	IBOutlet NSMenuItem									*_disconnectMenuItem;
+	IBOutlet NSMenuItem						*_disconnectMenuItem;
 	
-	IBOutlet SUUpdater									*_updater;
+	IBOutlet SUUpdater						*_updater;
 	
-	NSString											*_clientVersion;
-	NSMutableDictionary									*_smileys;
-	NSArray												*_sortedSmileys;
-	NSUInteger											_unread;
+	NSString								*_clientVersion;
+	NSMutableDictionary						*_smileys;
+	NSArray									*_sortedSmileys;
+	NSUInteger								_unread;
 }
 
 + (WCApplicationController *)sharedController;

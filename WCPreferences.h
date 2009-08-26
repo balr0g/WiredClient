@@ -26,17 +26,17 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define WCPreferencesDidChangeNotification			@"WCPreferencesDidChangeNotification"
-#define WCThemeDidChangeNotification				@"WCThemeDidChangeNotification"
-#define WCSelectedThemeDidChangeNotification		@"WCSelectedThemeDidChangeNotification"
-#define WCBookmarksDidChangeNotification			@"WCBookmarksDidChangeNotification"
-#define WCBookmarkDidChangeNotification				@"WCBookmarkDidChangeNotification"
-#define WCIgnoresDidChangeNotification				@"WCIgnoresDidChangeNotification"
-#define WCTrackerBookmarksDidChangeNotification		@"WCTrackerBookmarksDidChangeNotification"
-#define WCTrackerBookmarkDidChangeNotification		@"WCTrackerBookmarkDidChangeNotification"
-#define WCNickDidChangeNotification					@"WCNickDidChangeNotification"
-#define WCStatusDidChangeNotification				@"WCStatusDidChangeNotification"
-#define WCIconDidChangeNotification					@"WCIconDidChangeNotification"
+extern NSString * const								WCPreferencesDidChangeNotification;
+extern NSString * const								WCThemeDidChangeNotification;
+extern NSString * const								WCSelectedThemeDidChangeNotification;
+extern NSString * const								WCBookmarksDidChangeNotification;
+extern NSString * const								WCBookmarkDidChangeNotification;
+extern NSString * const								WCIgnoresDidChangeNotification;
+extern NSString * const								WCTrackerBookmarksDidChangeNotification;
+extern NSString * const								WCTrackerBookmarkDidChangeNotification;
+extern NSString * const								WCNickDidChangeNotification;
+extern NSString * const								WCStatusDidChangeNotification;
+extern NSString * const								WCIconDidChangeNotification;
 
 
 @interface WCPreferences : WIPreferencesController {

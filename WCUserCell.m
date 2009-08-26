@@ -28,6 +28,10 @@
 
 #import "WCUserCell.h"
 
+NSString * const WCUserCellNickKey			= @"WCUserCellNickKey";
+NSString * const WCUserCellStatusKey		= @"WCUserCellStatusKey";
+
+
 @interface WCUserCell(Private)
 
 - (void)_initUserCell;

@@ -28,9 +28,6 @@
 
 #import "WCConnectionController.h"
 
-#define WCFilePboardType			@"WCFilePboardType"
-
-
 @class WCFile;
 
 @interface WCFilesController : WIObject {

@@ -28,18 +28,18 @@
 
 #import "WCConnection.h"
 
-#define WCLinkConnectionWillConnectNotification				@"WCLinkConnectionWillConnectNotification"
-#define WCLinkConnectionDidConnectNotification				@"WCLinkConnectionDidConnectNotification"
-#define WCLinkConnectionWillDisconnectNotification			@"WCLinkConnectionWillDisconnectNotification"
-#define WCLinkConnectionDidCloseNotification				@"WCLinkConnectionDidCloseNotification"
-#define WCLinkConnectionDidTerminateNotification			@"WCLinkConnectionDidTerminateNotification"
+extern NSString * const WCLinkConnectionWillConnectNotification;
+extern NSString * const WCLinkConnectionDidConnectNotification;
+extern NSString * const WCLinkConnectionWillDisconnectNotification;
+extern NSString * const WCLinkConnectionDidCloseNotification;
+extern NSString * const WCLinkConnectionDidTerminateNotification;
 
-#define WCLinkConnectionReceivedMessageNotification			@"WCLinkConnectionReceivedMessageNotification"
-#define WCLinkConnectionReceivedErrorMessageNotification	@"WCLinkConnectionReceivedErrorMessageNotification"
-#define WCLinkConnectionReceivedInvalidMessageNotification	@"WCLinkConnectionReceivedInvalidMessageNotification"
-#define WCLinkConnectionSentMessageNotification				@"WCLinkConnectionSentMessageNotification"
+extern NSString * const WCLinkConnectionReceivedMessageNotification;
+extern NSString * const WCLinkConnectionReceivedErrorMessageNotification;
+extern NSString * const WCLinkConnectionReceivedInvalidMessageNotification;
+extern NSString * const WCLinkConnectionSentMessageNotification;
 
-#define WCLinkConnectionLoggedInNotification				@"WCLinkConnectionLoggedInNotification"
+extern NSString * const WCLinkConnectionLoggedInNotification;
 
 
 @class WCLink, WCNotificationCenter;

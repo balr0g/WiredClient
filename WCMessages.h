@@ -26,7 +26,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define WCMessagesDidChangeUnreadCountNotification	@"WCMessagesDidChangeUnreadCountNotification"
+extern NSString * const								WCMessagesDidChangeUnreadCountNotification;
 
 
 @class WCSourceSplitView;

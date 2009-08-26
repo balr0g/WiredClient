@@ -38,6 +38,9 @@
 #import "WCStats.h"
 #import "WCUser.h"
 
+NSString * const WCMessagesDidChangeUnreadCountNotification		= @"WCMessagesDidChangeUnreadCountNotification";
+
+
 @interface WCMessages(Private)
 
 - (void)_validate;

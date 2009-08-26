@@ -26,8 +26,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define WCUserCellNickKey		@"WCUserCellNickKey"
-#define WCUserCellStatusKey		@"WCUserCellStatusKey"
+extern NSString * const			WCUserCellNickKey;
+extern NSString * const			WCUserCellStatusKey;
 
 
 @interface WCUserCell : NSCell {

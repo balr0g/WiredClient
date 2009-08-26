@@ -43,6 +43,26 @@
 #import "WCServerInfo.h"
 #import "WCTransfers.h"
 
+NSString * const WCServerConnectionWillReconnectNotification			= @"WCServerConnectionWillReconnectNotification";
+
+NSString * const WCServerConnectionTriggeredEventNotification			= @"WCServerConnectionTriggeredEventNotification";
+
+NSString * const WCServerConnectionThemeDidChangeNotification			= @"WCServerConnectionThemeDidChangeNotification";
+
+NSString * const WCServerConnectionServerInfoDidChangeNotification		= @"WCServerConnectionServerInfoDidChangeNotification";
+NSString * const WCServerConnectionPrivilegesDidChangeNotification		= @"WCServerConnectionPrivilegesDidChangeNotification";
+
+NSString * const WCServerConnectionReceivedServerInfoNotification		= @"WCServerConnectionReceivedServerInfoNotification";
+NSString * const WCServerConnectionReceivedPingNotification				= @"WCServerConnectionReceivedPingNotification";
+NSString * const WCServerConnectionReceivedBannerNotification			= @"WCServerConnectionReceivedBannerNotification";
+
+NSString * const WCServerConnectionReceivedLoginErrorNotification		= @"WCServerConnectionReceivedLoginErrorNotification";
+
+NSString * const WCServerConnectionEventConnectionKey					= @"WCServerConnectionEventConnectionKey";
+NSString * const WCServerConnectionEventInfo1Key						= @"WCServerConnectionEventInfo1Key";
+NSString * const WCServerConnectionEventInfo2Key						= @"WCServerConnectionEventInfo2Key";
+
+
 @interface WCServerConnection(Private)
 
 - (void)_triggerAutoReconnect;

@@ -29,6 +29,11 @@
 #import "WCTransfer.h"
 #import "WCTransferCell.h"
 
+NSString * const WCTransferCellNameKey			= @"WCTransferCellNameKey";
+NSString * const WCTransferCellStatusKey		= @"WCTransferCellStatusKey";
+NSString * const WCTransferCellProgressKey		= @"WCTransferCellProgressKey";
+
+
 @interface WCTransferCell(Private)
 
 - (void)_initTransferCell;

@@ -68,6 +68,11 @@
 		   selector:@selector(exceptionHandlerReceivedBacktrace:)
 			   name:WCExceptionHandlerReceivedBacktraceNotification];
 	
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
+		   selector:@selector(exceptionHandlerReceivedException:)
+			   name:WCExceptionHandlerReceivedExceptionNotification];
+	
 	[self window];
 	
 	return self;
@@ -154,6 +159,12 @@
 
 - (void)exceptionHandlerReceivedBacktrace:(NSNotification *)notification {
 	[self _log:[notification object] color:[NSColor redColor]];
+}
+
+
+
+- (void)exceptionHandlerReceivedException:(NSNotification *)notification {
+	[self _log:[[notification object] description] color:[NSColor redColor]];
 }
 
 

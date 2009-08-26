@@ -29,43 +29,144 @@
 #import "WCKeychain.h"
 #import "WCPreferences.h"
 
-#define _WCAutoHideOnSwitch						@"WCAutoHideOnSwitch"
-#define _WCPreventMultipleConnections			@"WCPreventMultipleConnections"
+#define _WCAutoHideOnSwitch								@"WCAutoHideOnSwitch"
+#define _WCPreventMultipleConnections					@"WCPreventMultipleConnections"
 
-#define _WCChatTextColor						@"WCChatTextColor"
-#define _WCChatBackgroundColor					@"WCChatBackgroundColor"
-#define _WCChatEventsColor						@"WCChatEventsColor"
-#define _WCChatURLsColor						@"WCChatURLsColor"
-#define _WCChatFont								@"WCChatFont"
-#define _WCChatUserListAlternateRows			@"WCChatUserListAlternateRows"
-#define _WCChatUserListIconSize					@"WCChatUserListIconSize"
-#define _WCChatUserListIconSizeLarge				1
-#define _WCChatUserListIconSizeSmall				0
+#define _WCChatTextColor								@"WCChatTextColor"
+#define _WCChatBackgroundColor							@"WCChatBackgroundColor"
+#define _WCChatEventsColor								@"WCChatEventsColor"
+#define _WCChatURLsColor								@"WCChatURLsColor"
+#define _WCChatFont										@"WCChatFont"
+#define _WCChatUserListAlternateRows					@"WCChatUserListAlternateRows"
+#define _WCChatUserListIconSize							@"WCChatUserListIconSize"
 
-#define _WCShowSmileys							@"WCShowSmileys"
-#define _WCTimestampEveryLine					@"WCTimestampEveryLine"
-#define _WCTimestampEveryLineColor				@"WCTimestampEveryLineColor"
+#define _WCShowSmileys									@"WCShowSmileys"
+#define _WCTimestampEveryLine							@"WCTimestampEveryLine"
+#define _WCTimestampEveryLineColor						@"WCTimestampEveryLineColor"
 
-#define _WCMessagesTextColor					@"WCMessagesTextColor"
-#define _WCMessagesBackgroundColor				@"WCMessagesBackgroundColor"
-#define _WCMessagesFont							@"WCMessagesFont"
-#define _WCMessagesListAlternateRows			@"WCMessagesListAlternateRows"
+#define _WCMessagesTextColor							@"WCMessagesTextColor"
+#define _WCMessagesBackgroundColor						@"WCMessagesBackgroundColor"
+#define _WCMessagesFont									@"WCMessagesFont"
+#define _WCMessagesListAlternateRows					@"WCMessagesListAlternateRows"
 
-#define _WCNewsTextColor						@"WCNewsTextColor"
-#define _WCNewsBackgroundColor					@"WCNewsBackgroundColor"
-#define _WCNewsFont								@"WCNewsFont"
+#define _WCNewsTextColor								@"WCNewsTextColor"
+#define _WCNewsBackgroundColor							@"WCNewsBackgroundColor"
+#define _WCNewsFont										@"WCNewsFont"
 
-#define _WCFilesAlternateRows					@"WCFilesAlternateRows"
+#define _WCFilesAlternateRows							@"WCFilesAlternateRows"
 
-#define _WCTransfersShowProgressBar				@"WCTransfersShowProgressBar"
-#define _WCTransfersAlternateRows				@"WCTransfersAlternateRows"
+#define _WCTransfersShowProgressBar						@"WCTransfersShowProgressBar"
+#define _WCTransfersAlternateRows						@"WCTransfersAlternateRows"
 
-#define _WCTrackersAlternateRows				@"WCTrackersAlternateRows"
+#define _WCTrackersAlternateRows						@"WCTrackersAlternateRows"
 
-#define _WCBookmarksPassword						@"Password"
+#define _WCBookmarksPassword							@"Password"
 
-#define _WCWindowTemplates						@"WCWindowTemplates"
-#define _WCWindowTemplatesDefault					@"WCWindowTemplatesDefault"
+#define _WCWindowTemplates								@"WCWindowTemplates"
+#define _WCWindowTemplatesDefault						@"WCWindowTemplatesDefault"
+
+
+NSString * const WCNick									= @"WCNick";
+NSString * const WCStatus								= @"WCStatus";
+NSString * const WCIcon									= @"WCCustomIcon";
+
+NSString * const WCCheckForUpdate						= @"WCCheckForUpdate";
+
+NSString * const WCShowConnectAtStartup					= @"WCShowConnectAtStartup";
+NSString * const WCShowServersAtStartup					= @"WCShowTrackersAtStartup";
+
+NSString * const WCConfirmDisconnect					= @"WCConfirmDisconnect";
+NSString * const WCAutoReconnect						= @"WCAutoReconnect";
+
+NSString * const WCTheme								= @"WCTheme";
+
+NSString * const WCThemes								= @"WCThemes";
+NSString * const WCThemesName							= @"WCThemesName";
+NSString * const WCThemesBuiltinName					= @"WCThemesBuiltinName";
+NSString * const WCThemesBuiltinVersion					= @"WCThemesBuiltinVersion";
+NSString * const WCThemesIdentifier						= @"WCThemesIdentifier";
+NSString * const WCThemesShowSmileys					= @"WCThemesShowSmileys";
+NSString * const WCThemesChatFont						= @"WCThemesChatFont";
+NSString * const WCThemesChatTextColor					= @"WCThemesChatTextColor";
+NSString * const WCThemesChatBackgroundColor			= @"WCThemesChatBackgroundColor";
+NSString * const WCThemesChatEventsColor				= @"WCThemesChatEventsColor";
+NSString * const WCThemesChatURLsColor					= @"WCThemesChatURLsColor";
+NSString * const WCThemesChatTimestampEveryLineColor	= @"WCThemesChatTimestampEveryLineColor";
+NSString * const WCThemesChatTimestampEveryLine			= @"WCThemesChatTimestampEveryLine";
+NSString * const WCThemesMessagesFont					= @"WCThemesMessagesFont";
+NSString * const WCThemesMessagesTextColor				= @"WCThemesMessagesTextColor";
+NSString * const WCThemesMessagesBackgroundColor		= @"WCThemesMessagesBackgroundColor";
+NSString * const WCThemesBoardsFont						= @"WCThemesBoardsFont";
+NSString * const WCThemesBoardsTextColor				= @"WCThemesBoardsTextColor";
+NSString * const WCThemesBoardsBackgroundColor			= @"WCThemesBoardsBackgroundColor";
+NSString * const WCThemesUserListIconSize				= @"WCThemesUserListIconSize";
+NSString * const WCThemesUserListAlternateRows			= @"WCThemesUserListAlternateRows";
+NSString * const WCThemesFileListAlternateRows			= @"WCThemesFileListAlternateRows";
+NSString * const WCThemesTransferListShowProgressBar	= @"WCThemesTransferListShowProgressBar";
+NSString * const WCThemesTransferListAlternateRows		= @"WCThemesTransferListAlternateRows";
+NSString * const WCThemesTrackerListAlternateRows		= @"WCThemesTrackerListAlternateRows";
+
+NSString * const WCMessageConversations					= @"WCMessageConversations";
+NSString * const WCBroadcastConversations				= @"WCBroadcastConversations";
+
+NSString * const WCBookmarks							= @"WCBookmarks";
+NSString * const WCBookmarksName						= @"Name";
+NSString * const WCBookmarksAddress						= @"Address";
+NSString * const WCBookmarksLogin						= @"Login";
+NSString * const WCBookmarksIdentifier					= @"Identifier";
+NSString * const WCBookmarksNick						= @"Nick";
+NSString * const WCBookmarksStatus						= @"Status";
+NSString * const WCBookmarksAutoConnect					= @"AutoJoin";
+NSString * const WCBookmarksAutoReconnect				= @"AutoReconnect";
+NSString * const WCBookmarksTheme						= @"Theme";
+
+NSString * const WCChatHistoryScrollback				= @"WCHistoryScrollback";
+NSString * const WCChatHistoryScrollbackModifier		= @"WCHistoryScrollbackModifier";
+NSString * const WCChatTabCompleteNicks					= @"WCTabCompleteNicks";
+NSString * const WCChatTabCompleteNicksString			= @"WCTabCompleteNicksString";
+NSString * const WCChatTimestampChat					= @"WCTimestampChat";
+NSString * const WCChatTimestampChatInterval			= @"WCTimestampChatInterval";
+
+NSString * const WCHighlights							= @"WCHighlights";
+NSString * const WCHighlightsPattern					= @"WCHighlightsPattern";
+NSString * const WCHighlightsColor						= @"WCHighlightsColor";
+
+NSString * const WCIgnores								= @"WCIgnores";
+NSString * const WCIgnoresNick							= @"Nick";
+
+NSString * const WCEvents								= @"WCEvents";
+NSString * const WCEventsEvent							= @"WCEventsEvent";
+NSString * const WCEventsPlaySound						= @"WCEventsPlaySound";
+NSString * const WCEventsSound							= @"WCEventsSound";
+NSString * const WCEventsBounceInDock					= @"WCEventsBounceInDock";
+NSString * const WCEventsPostInChat						= @"WCEventsPostInChat";
+NSString * const WCEventsShowDialog						= @"WCEventsShowDialog";
+
+NSString * const WCEventsVolume							= @"WCEventsVolume";
+
+NSString * const WCTransferList							= @"WCTransferList";
+NSString * const WCDownloadFolder						= @"WCDownloadFolder";
+NSString * const WCOpenFoldersInNewWindows				= @"WCOpenFoldersInNewWindows";
+NSString * const WCQueueTransfers						= @"WCQueueTransfers";
+NSString * const WCCheckForResourceForks				= @"WCCheckForResourceForks";
+NSString * const WCRemoveTransfers						= @"WCRemoveTransfers";
+NSString * const WCFilesStyle							= @"WCFilesStyle";
+
+NSString * const WCTrackerBookmarks						= @"WCTrackerBookmarks";
+NSString * const WCTrackerBookmarksName					= @"Name";
+NSString * const WCTrackerBookmarksAddress				= @"Address";
+NSString * const WCTrackerBookmarksLogin				= @"Login";
+NSString * const WCTrackerBookmarksIdentifier			= @"Identifier";
+
+NSString * const WCWindowProperties						= @"WCWindowProperties";
+
+NSString * const WCCollapsedBoards						= @"WCCollapsedBoards";
+NSString * const WCReadBoardPosts						= @"WCReadBoardPosts";
+NSString * const WCBoardFilters							= @"WCBoardFilters";
+
+NSString * const WCPlaces								= @"WCPlaces";
+
+NSString * const WCDebug								= @"WCDebug";
 
 
 @interface WCSettings(Private)
@@ -115,14 +216,9 @@
 						 forKey:WCThemesChatEventsColor];
 		}
 		
-		if([self objectForKey:_WCTimestampEveryLineColor]) {
-			[newTheme setObject:WIStringFromColor([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCTimestampEveryLineColor]])
-						 forKey:WCThemesChatTimestampEveryLineColor];
-		}
-		
-		if([self objectForKey:_WCShowSmileys]) {
-			[newTheme setObject:[self objectForKey:_WCShowSmileys]
-						 forKey:WCThemesShowSmileys];
+		if([self objectForKey:_WCChatFont]) {
+			[newTheme setObject:WIStringFromFont([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCChatFont]])
+						 forKey:WCThemesChatFont];
 		}
 		
 		if([self objectForKey:_WCTimestampEveryLine]) {
@@ -133,11 +229,6 @@
 		if([self objectForKey:_WCTimestampEveryLineColor]) {
 			[newTheme setObject:WIStringFromColor([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCTimestampEveryLineColor]])
 						 forKey:WCThemesChatTimestampEveryLineColor];
-		}
-		
-		if([self objectForKey:_WCChatFont]) {
-			[newTheme setObject:WIStringFromFont([NSUnarchiver unarchiveObjectWithData:[self objectForKey:_WCChatFont]])
-						 forKey:WCThemesChatFont];
 		}
 		
 		if([self objectForKey:_WCMessagesTextColor]) {
@@ -190,6 +281,11 @@
 						 forKey:WCThemesTrackerListAlternateRows];
 		}
 		
+		if([self objectForKey:_WCShowSmileys]) {
+			[newTheme setObject:[self objectForKey:_WCShowSmileys]
+						 forKey:WCThemesShowSmileys];
+		}
+		
 		if(![newTheme isEqualToDictionary:defaultTheme]) {
 			[newTheme setObject:@"Wired Client 1.x" forKey:WCThemesName];
 			[newTheme setObject:[NSString UUIDString] forKey:WCThemesIdentifier];
@@ -197,12 +293,15 @@
 			[self addObject:newTheme toArrayForKey:WCThemes];
 		}
 
-/*		[self removeObjectForKey:_WCChatTextColor];
+		/*		
+		[self removeObjectForKey:_WCChatTextColor];
 		[self removeObjectForKey:_WCChatBackgroundColor];
 		[self removeObjectForKey:_WCChatEventsColor];
 		[self removeObjectForKey:_WCChatURLsColor];
-		[self removeObjectForKey:_WCTimestampEveryLineColor];
 		[self removeObjectForKey:_WCChatFont];
+		[self removeObjectForKey:_WCChatUserListAlternateRows];
+		[self removeObjectForKey:_WCChatUserListIconSize];
+		[self removeObjectForKey:_WCTimestampEveryLineColor];
 		[self removeObjectForKey:_WCMessagesTextColor];
 		[self removeObjectForKey:_WCMessagesBackgroundColor];
 		[self removeObjectForKey:_WCMessagesFont];
@@ -213,7 +312,9 @@
 		[self removeObjectForKey:_WCFilesAlternateRows];
 		[self removeObjectForKey:_WCTransfersShowProgressBar];
 		[self removeObjectForKey:_WCTransfersAlternateRows];
-		[self removeObjectForKey:_WCTrackersAlternateRows];*/
+		[self removeObjectForKey:_WCTrackersAlternateRows];
+		[self removeObjectForKey:_WCShowSmileys];
+		*/
 	}
 	
 	/* Convert themes */

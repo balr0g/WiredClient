@@ -40,13 +40,27 @@
 #import "WCUserCell.h"
 #import "WCUserInfo.h"
 
-#define WCPublicChatID						1
+#define WCPublicChatID											1
 
-#define WCLastChatFormat					@"WCLastChatFormat"
-#define WCLastChatEncoding					@"WCLastChatEncoding"
+#define WCLastChatFormat										@"WCLastChatFormat"
+#define WCLastChatEncoding										@"WCLastChatEncoding"
 
-#define WCChatPrepend						13
-#define WCChatLimit							4096
+#define WCChatPrepend											13
+#define WCChatLimit												4096
+
+
+NSString * const WCChatUserAppearedNotification					= @"WCChatUserAppearedNotification";
+NSString * const WCChatUserDisappearedNotification				= @"WCChatUserDisappearedNotification";
+NSString * const WCChatUserNickDidChangeNotification			= @"WCChatUserNickDidChangeNotification";
+NSString * const WCChatSelfWasKickedNotification				= @"WCChatSelfWasKickedNotification";
+NSString * const WCChatSelfWasBannedNotification				= @"WCChatSelfWasBannedNotification";
+NSString * const WCChatRegularChatDidAppearNotification			= @"WCChatRegularChatDidAppearNotification";
+NSString * const WCChatHighlightedChatDidAppearNotification		= @"WCChatHighlightedChatDidAppearNotification";
+NSString * const WCChatEventDidAppearNotification				= @"WCChatEventDidAppearNotification";
+
+NSString * const WCChatHighlightColorKey						= @"WCChatHighlightColorKey";
+
+NSString * const WCUserPboardType								= @"WCUserPboardType";
 
 
 enum _WCChatFormat {
@@ -1281,6 +1295,8 @@ typedef enum _WCChatFormat					WCChatFormat;
 	NSColor			*color;
 	WCUser			*user;
 	WIP7UInt32		cid, uid;
+	
+	[[NSArray array] objectAtIndex:0];
 	
 	[message getUInt32:&cid forName:@"wired.chat.id"];
 	[message getUInt32:&uid forName:@"wired.user.id"];

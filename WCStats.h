@@ -26,14 +26,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define WCStatsDownloaded				@"Downloaded"
-#define WCStatsUploaded					@"Uploaded"
-#define WCStatsChat						@"Chat"
-#define WCStatsOnline					@"Online"
-#define WCStatsMaxDownloadSpeed			@"Max Download Speed"
-#define WCStatsMaxUploadSpeed			@"Max Upload Speed"
-#define WCStatsMessagesSent				@"Messages Sent"
-#define WCStatsMessagesReceived			@"Messages Received"
+extern NSString * const WCStatsDownloaded;
+extern NSString * const WCStatsUploaded;
+extern NSString * const WCStatsChat;
+extern NSString * const WCStatsOnline;
+extern NSString * const WCStatsMaxDownloadSpeed;
+extern NSString * const WCStatsMaxUploadSpeed;
+extern NSString * const WCStatsMessagesSent;
+extern NSString * const WCStatsMessagesReceived;
 
 
 @interface WCStats : WIObject {

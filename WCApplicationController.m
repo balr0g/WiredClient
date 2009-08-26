@@ -44,26 +44,28 @@
 #import "WCTransfers.h"
 #import "WCUser.h"
 
-#import <Foundation/NSDebug.h>
+#define WCApplicationSupportPath									@"~/Library/Application Support/Wired Client"
 
-#define WCApplicationSupportPath		@"~/Library/Application Support/Wired Client"
+#define WCGrowlServerConnected										@"Connected to server"
+#define WCGrowlServerDisconnected									@"Disconnected from server"
+#define WCGrowlError												@"Error"
+#define WCGrowlUserJoined											@"User joined"
+#define WCGrowlUserChangedNick										@"User changed nick"
+#define WCGrowlUserChangedStatus									@"User changed status"
+#define WCGrowlUserLeft												@"User left"
+#define WCGrowlChatReceived											@"Chat received"
+#define WCGrowlHighlightedChatReceived								@"Highlighted chat received"
+#define WCGrowlChatInvitationReceived								@"Private chat invitation received"
+#define WCGrowlMessageReceived										@"Message received"
+#define WCGrowlBoardPostReceived									@"Board post added"
+#define WCGrowlBroadcastReceived									@"Broadcast received"
+#define WCGrowlTransferStarted										@"Transfer started"
+#define WCGrowlTransferFinished										@"Transfer finished"
 
-#define WCGrowlServerConnected			@"Connected to server"
-#define WCGrowlServerDisconnected		@"Disconnected from server"
-#define WCGrowlError					@"Error"
-#define WCGrowlUserJoined				@"User joined"
-#define WCGrowlUserChangedNick			@"User changed nick"
-#define WCGrowlUserChangedStatus		@"User changed status"
-#define WCGrowlUserJoined				@"User joined"
-#define WCGrowlUserLeft					@"User left"
-#define WCGrowlChatReceived				@"Chat received"
-#define WCGrowlHighlightedChatReceived	@"Highlighted chat received"
-#define WCGrowlChatInvitationReceived	@"Private chat invitation received"
-#define WCGrowlMessageReceived			@"Message received"
-#define WCGrowlBoardPostReceived		@"Board post added"
-#define WCGrowlBroadcastReceived		@"Broadcast received"
-#define WCGrowlTransferStarted			@"Transfer started"
-#define WCGrowlTransferFinished			@"Transfer finished"
+
+NSString * const WCDateDidChangeNotification						= @"WCDateDidChangeNotification";
+NSString * const WCExceptionHandlerReceivedBacktraceNotification	= @"WCExceptionHandlerReceivedBacktraceNotification";
+NSString * const WCExceptionHandlerReceivedExceptionNotification	= @"WCExceptionHandlerReceivedExceptionNotification";
 
 
 static NSInteger _WCCompareSmileyLength(id, id, void *);
@@ -752,26 +754,15 @@ static WCApplicationController		*sharedController;
 
 
 
-- (void)exceptionHandler:(WIExceptionHandler *)exceptionHandler receivedExceptionWithBacktrace:(NSString *)backtrace {
+- (void)exceptionHandler:(WIExceptionHandler *)exceptionHandler receivedException:(NSException *)exception withBacktrace:(NSString *)backtrace {
 	NSAlert		*alert;
 	
 	[[NSNotificationCenter defaultCenter] postNotificationName:WCExceptionHandlerReceivedBacktraceNotification object:backtrace];
+	[[NSNotificationCenter defaultCenter] postNotificationName:WCExceptionHandlerReceivedExceptionNotification object:exception];
 	
 	alert = [[NSAlert alloc] init];
 	[alert setMessageText:NSLS(@"Internal Client Error", @"Internal error dialog title")];
 	[alert setInformativeText:NSLS(@"Wired Client has encountered an exception. More information has been logged to the console.", @"Internal error dialog description")];
-	[alert runModal];
-	[alert release];
-}
-
-
-
-- (void)exceptionHandler:(WIExceptionHandler *)exceptionHandler receivedException:(NSException *)exception {
-	NSAlert		*alert;
-	
-	alert = [[NSAlert alloc] init];
-	[alert setMessageText:NSLS(@"Internal Client Error", @"Internal error dialog title")];
-	[alert setInformativeText:NSLS(@"Wired Client has encountered an exception.", @"Internal error dialog description")];
 	[alert runModal];
 	[alert release];
 }

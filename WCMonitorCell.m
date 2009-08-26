@@ -29,6 +29,10 @@
 #import "WCMonitorCell.h"
 #import "WCTransfer.h"
 
+NSString * const WCMonitorCellTransferKey		= @"WCMonitorCellTransferKey";
+NSString * const WCMonitorCellStatusKey			= @"WCMonitorCellStatusKey";
+
+
 @interface WCMonitorCell(Private)
 
 - (void)_initMonitorCell;

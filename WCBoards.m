@@ -39,8 +39,11 @@
 #import "WCServerConnection.h"
 #import "WCSourceSplitView.h"
 
-#define WCBoardPboardType				@"WCBoardPboardType"
-#define WCThreadPboardType				@"WCThreadPboardType"
+#define WCBoardPboardType									@"WCBoardPboardType"
+#define WCThreadPboardType									@"WCThreadPboardType"
+
+
+NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeUnreadCountNotification";
 
 
 @interface WCBoards(Private)

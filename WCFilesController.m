@@ -28,8 +28,9 @@
 
 #import "WCAccount.h"
 #import "WCFile.h"
-#import "WCFilesController.h"
 #import "WCFileInfo.h"
+#import "WCFiles.h"
+#import "WCFilesController.h"
 #import "WCPreferences.h"
 #import "WCServerConnection.h"
 #import "WCTransfers.h"

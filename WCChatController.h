@@ -26,18 +26,18 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define WCChatUserAppearedNotification				@"WCChatUserAppearedNotification"
-#define WCChatUserDisappearedNotification			@"WCChatUserDisappearedNotification"
-#define WCChatUserNickDidChangeNotification			@"WCChatUserNickDidChangeNotification"
-#define WCChatSelfWasKickedNotification				@"WCChatSelfWasKickedNotification"
-#define WCChatSelfWasBannedNotification				@"WCChatSelfWasBannedNotification"
-#define WCChatRegularChatDidAppearNotification		@"WCChatRegularChatDidAppearNotification"
-#define WCChatHighlightedChatDidAppearNotification	@"WCChatHighlightedChatDidAppearNotification"
-#define WCChatEventDidAppearNotification			@"WCChatEventDidAppearNotification"
+extern NSString * const WCChatUserAppearedNotification;
+extern NSString * const WCChatUserDisappearedNotification;
+extern NSString * const WCChatUserNickDidChangeNotification;
+extern NSString * const WCChatSelfWasKickedNotification;
+extern NSString * const WCChatSelfWasBannedNotification;
+extern NSString * const WCChatRegularChatDidAppearNotification;
+extern NSString * const WCChatHighlightedChatDidAppearNotification;
+extern NSString * const WCChatEventDidAppearNotification;
 
-#define WCChatHighlightColorKey						@"WCChatHighlightColorKey"
+extern NSString * const WCChatHighlightColorKey;
 
-#define WCUserPboardType							@"WCUserPboardType"
+extern NSString * const WCUserPboardType;
 
 
 @class WCChatTextView, WCChatWindow, WCServerConnection, WCErrorQueue, WCTopic, WCUser;

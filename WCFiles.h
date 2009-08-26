@@ -26,8 +26,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define WCFilePboardType				@"WCFilePboardType"
-#define WCPlacePboardType				@"WCPlacePboardType"
+extern NSString * const					WCFilePboardType;
+extern NSString * const					WCPlacePboardType;
 
 
 @class WCFile, WCErrorQueue;

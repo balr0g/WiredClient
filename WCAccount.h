@@ -26,26 +26,34 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define WCAccountFieldName					@"WCAccountFieldName"
-#define WCAccountFieldLocalizedName			@"WCAccountFieldLocalizedName"
-#define WCAccountFieldType					@"WCAccountFieldType"
-#define WCAccountFieldString					0
-#define WCAccountFieldDate						1
-#define WCAccountFieldNumber					2
-#define WCAccountFieldBoolean					3
-#define WCAccountFieldList						4
-#define WCAccountFieldSection				@"WCAccountFieldSection"
-#define WCAccountFieldNone						0
-#define WCAccountFieldBasics					1
-#define WCAccountFieldFiles						2
-#define WCAccountFieldBoards					3
-#define WCAccountFieldTracker					4
-#define WCAccountFieldUsers						5
-#define WCAccountFieldAccounts					6
-#define WCAccountFieldAdministration			7
-#define WCAccountFieldLimits					8
-#define WCAccountFieldReadOnly				@"WCAccountFieldReadOnly"
-#define WCAccountFieldToolTip				@"WCAccountFieldToolTip"
+extern NSString * const						WCAccountFieldName;
+extern NSString * const						WCAccountFieldLocalizedName;
+extern NSString * const						WCAccountFieldType;
+
+enum {
+	WCAccountFieldString					= 0,
+	WCAccountFieldDate						= 1,
+	WCAccountFieldNumber					= 2,
+	WCAccountFieldBoolean					= 3,
+	WCAccountFieldList						= 4
+};
+
+extern NSString * const						WCAccountFieldSection;
+
+enum {
+	WCAccountFieldNone						= 0,
+	WCAccountFieldBasics					= 1,
+	WCAccountFieldFiles						= 2,
+	WCAccountFieldBoards					= 3,
+	WCAccountFieldTracker					= 4,
+	WCAccountFieldUsers						= 5,
+	WCAccountFieldAccounts					= 6,
+	WCAccountFieldAdministration			= 7,
+	WCAccountFieldLimits					= 8
+};
+
+extern NSString * const						WCAccountFieldReadOnly;
+extern NSString * const						WCAccountFieldToolTip;
 
 
 @interface WCAccount : WIObject {

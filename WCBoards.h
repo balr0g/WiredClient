@@ -26,7 +26,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define WCBoardsDidChangeUnreadCountNotification	@"WCBoardsDidChangeUnreadCountNotification"
+extern NSString * const								WCBoardsDidChangeUnreadCountNotification;
 
 
 @class WCErrorQueue, WCSourceSplitView, WCBoard, WCSmartBoard;
