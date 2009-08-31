@@ -1296,8 +1296,6 @@ typedef enum _WCChatFormat					WCChatFormat;
 	WCUser			*user;
 	WIP7UInt32		cid, uid;
 	
-	[[NSArray array] objectAtIndex:0];
-	
 	[message getUInt32:&cid forName:@"wired.chat.id"];
 	[message getUInt32:&uid forName:@"wired.user.id"];
 	
