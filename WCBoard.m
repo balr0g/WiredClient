@@ -117,7 +117,7 @@
 
 @implementation WCBoard
 
-+ (NSUInteger)version {
++ (NSInteger)version {
 	return 1;
 }
 
