@@ -258,7 +258,6 @@
 		A54AF98F0F13AED000AFD50E /* DropBoxBadge.icns in Resources */ = {isa = PBXBuildFile; fileRef = A54AF98A0F13AED000AFD50E /* DropBoxBadge.icns */; };
 		A54AF9900F13AED000AFD50E /* UploadsBadge.icns in Resources */ = {isa = PBXBuildFile; fileRef = A54AF98B0F13AED000AFD50E /* UploadsBadge.icns */; };
 		A558A4EF0E8526F7004C724C /* WCBan.m in Sources */ = {isa = PBXBuildFile; fileRef = A558A4ED0E8526F7004C724C /* WCBan.m */; };
-		A55C733B0F26803B006E8568 /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = A55C733A0F26803B006E8568 /* RegexKitLite.m */; };
 		A55C73440F268087006E8568 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A55C73430F268087006E8568 /* libicucore.dylib */; };
 		A55C7C060F2E4F8A006E8568 /* PrivateChatInvitation.xib in Resources */ = {isa = PBXBuildFile; fileRef = A55C7C040F2E4F8A006E8568 /* PrivateChatInvitation.xib */; };
 		A55C7C0D0F2E500A006E8568 /* WCPrivateChatInvitation.m in Sources */ = {isa = PBXBuildFile; fileRef = A55C7C0C0F2E500A006E8568 /* WCPrivateChatInvitation.m */; };
@@ -692,8 +691,6 @@
 		A54AF98B0F13AED000AFD50E /* UploadsBadge.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = UploadsBadge.icns; sourceTree = "<group>"; };
 		A558A4ED0E8526F7004C724C /* WCBan.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCBan.m; sourceTree = "<group>"; };
 		A558A4EE0E8526F7004C724C /* WCBan.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCBan.h; sourceTree = "<group>"; };
-		A55C73390F26803B006E8568 /* RegexKitLite.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = RegexKitLite.h; sourceTree = "<group>"; };
-		A55C733A0F26803B006E8568 /* RegexKitLite.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = RegexKitLite.m; sourceTree = "<group>"; };
 		A55C73430F268087006E8568 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = /usr/lib/libicucore.dylib; sourceTree = "<absolute>"; };
 		A55C7C050F2E4F8A006E8568 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/PrivateChatInvitation.xib; sourceTree = "<group>"; };
 		A55C7C0B0F2E500A006E8568 /* WCPrivateChatInvitation.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCPrivateChatInvitation.h; sourceTree = "<group>"; };
@@ -888,7 +885,6 @@
 			isa = PBXGroup;
 			children = (
 				A52B1C4706C408210033D317 /* Wired Client */,
-				A55C73380F268022006E8568 /* RegexKitLite */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				A544C1C50758E107008446CF /* Subprojects */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
@@ -1472,15 +1468,6 @@
 			name = Classes;
 			sourceTree = "<group>";
 		};
-		A55C73380F268022006E8568 /* RegexKitLite */ = {
-			isa = PBXGroup;
-			children = (
-				A55C733A0F26803B006E8568 /* RegexKitLite.m */,
-				A55C73390F26803B006E8568 /* RegexKitLite.h */,
-			);
-			name = RegexKitLite;
-			sourceTree = "<group>";
-		};
 		A55C73450F268093006E8568 /* Linked Libraries */ = {
 			isa = PBXGroup;
 			children = (
@@ -2045,7 +2032,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
-				A55C733B0F26803B006E8568 /* RegexKitLite.m in Sources */,
 				A509ADAC05F7FF8400E6AE2D /* WCAboutWindow.m in Sources */,
 				A5DC7FA9057AB0A600736BBF /* WCAccount.m in Sources */,
 				77ACA8580F4AF26E00577FA1 /* WCAccountsController.m in Sources */,
