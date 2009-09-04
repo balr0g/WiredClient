@@ -68,6 +68,9 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 - (NSMutableArray *)_receivedFilesForConnection:(WCServerConnection *)connection message:(WIP7Message *)message;
 - (void)_removeReceivedFilesForConnection:(WCServerConnection *)connection message:(WIP7Message *)message;
 
+- (BOOL)_existingDirectoryTreeIsWritableForFile:(WCFile *)file;
+- (BOOL)_existingDirectoryTreeIsReadableForFile:(WCFile *)file;
+
 - (void)_addConnections;
 - (void)_addConnection:(WCServerConnection *)connection;
 - (void)_addPlaces;
@@ -198,12 +201,14 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	NSArray					*files;
 	WCServerConnection		*connection;
 	WCAccount				*account;
-	WCFile					*file, *parentFile;
-	BOOL					connected, preview;
+	WCFile					*file;
+	BOOL					connected, preview, writable, readable;
 	
 	connection	= [self _selectedConnection];
 	connected	= [connection isConnected];
 	account		= [connection account];
+	writable	= [self _existingDirectoryTreeIsWritableForFile:_currentDirectory];
+	readable	= [self _existingDirectoryTreeIsReadableForFile:_currentDirectory];
 	files		= [self _selectedFiles];
 
 	switch([files count]) {
@@ -215,11 +220,10 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 			break;
 
 		case 1:
-			file		= [files objectAtIndex:0];
-			parentFile	= [self _existingParentFileForFile:file];
+			file = [files objectAtIndex:0];
 
 			[_downloadButton setEnabled:([account transferDownloadFiles] && connected)];
-			[_deleteButton setEnabled:(([account fileDeleteFiles] || [parentFile isWritable]) && connected)];
+			[_deleteButton setEnabled:(([account fileDeleteFiles] || writable) && connected)];
 			[_infoButton setEnabled:([account fileGetInfo] && connected)];
 			[_previewButton setEnabled:([account transferDownloadFiles] &&
 										connected &&
@@ -245,8 +249,8 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 			}
 			
 			[_previewButton setEnabled:preview];
-			[_deleteButton setEnabled:([account fileDeleteFiles] && connected)];
-			[_infoButton setEnabled:([account fileGetInfo] && connected)];
+			[_deleteButton setEnabled:(([account fileDeleteFiles] || writable) && connected)];
+			[_infoButton setEnabled:(([account fileGetInfo] || readable) && connected)];
 			break;
 	}
 
@@ -257,7 +261,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 //	[_uploadButton setEnabled:([self _validateUpload] && connected)];
 	[_uploadButton setEnabled:YES];
-	[_createFolderButton setEnabled:([account fileCreateDirectories] && connected)];
+	[_createFolderButton setEnabled:(([account fileCreateDirectories] || writable) && connected)];
 	[_reloadButton setEnabled:connected];
 }
 
@@ -370,6 +374,9 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 - (WCFile *)_existingParentFileForFile:(WCFile *)file {
+	if(!file || [[file path] isEqualToString:@"/"])
+		return NULL;
+	
 	return [self _existingFileForFile:[WCFile fileWithDirectory:[[file path] stringByDeletingLastPathComponent]
 													 connection:[file connection]]];
 }
@@ -416,6 +423,38 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 #pragma mark -
 
+- (BOOL)_existingDirectoryTreeIsWritableForFile:(WCFile *)file {
+	WCFile		*parentFile;
+	
+	parentFile = file;
+	
+	do {
+		if([parentFile isWritable])
+			return YES;
+	} while((parentFile = [self _existingParentFileForFile:parentFile]));
+	
+	return NO;
+}
+
+
+
+- (BOOL)_existingDirectoryTreeIsReadableForFile:(WCFile *)file {
+	WCFile		*parentFile;
+	
+	parentFile = file;
+	
+	do {
+		if([parentFile isReadable])
+			return YES;
+	} while((parentFile = [self _existingParentFileForFile:parentFile]));
+	
+	return NO;
+}
+
+
+
+#pragma mark -
+
 - (void)_addConnections {
 	NSEnumerator				*enumerator;
 	WCPublicChatController		*chatController;
@@ -428,17 +467,17 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		
 		[self _addConnection:connection];
 		[self _revalidatePlacesForConnection:connection];
+		
+		[_servers addObject:connection];
 	}
+	
+	[_sourceOutlineView reloadData];
 }
 
 
 
 - (void)_addConnection:(WCServerConnection *)connection {
 	[connection addObserver:self selector:@selector(wiredFileDirectoryChanged:) messageName:@"wired.file.directory_changed"];
-
-	[_servers addObject:connection];
-	
-	[_sourceOutlineView reloadData];
 }
 
 
@@ -893,10 +932,15 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	
 	[self _revalidatePlacesForConnection:connection];
 	
-	if(![connection isReconnecting])
-		[self _addConnection:connection];
-	
+	if(![connection isReconnecting]) {
+		[_servers addObject:connection];
+		
+		[_sourceOutlineView reloadData];
+	}
+
+	[self _addConnection:connection];
 	[self _validate];
+	[self _subscribeToDirectory:_currentDirectory];
 }
 
 
