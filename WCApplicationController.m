@@ -757,7 +757,9 @@ static WCApplicationController		*sharedController;
 - (void)exceptionHandler:(WIExceptionHandler *)exceptionHandler receivedException:(NSException *)exception withBacktrace:(NSString *)backtrace {
 	NSAlert		*alert;
 	
-	[[NSNotificationCenter defaultCenter] postNotificationName:WCExceptionHandlerReceivedBacktraceNotification object:backtrace];
+	if(backtrace)
+		[[NSNotificationCenter defaultCenter] postNotificationName:WCExceptionHandlerReceivedBacktraceNotification object:backtrace];
+	
 	[[NSNotificationCenter defaultCenter] postNotificationName:WCExceptionHandlerReceivedExceptionNotification object:exception];
 	
 	alert = [[NSAlert alloc] init];
