@@ -264,9 +264,6 @@
 - (void)setState:(WCTransferState)state {
 	_state = state;
 	
-	if(_state == WCTransferStopping)
-		NSLog(@"hai");
-	
 	if(_state < WCTransferRunning && [_progressIndicator doubleValue] == 0.0)
 		[_progressIndicator setIndeterminate:YES];
 	else

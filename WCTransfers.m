@@ -708,6 +708,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		[self _validate];
 	}
 
+	[transfer signalTerminated];
+	
 	if(next)
 		[self _requestNextTransferForConnection:[transfer connection]];
 	
@@ -946,11 +948,12 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	WCFile						*file;
 	WCError						*error;
 	void						*buffer;
+	wi_speed_calculator_t		*speedCalculator;
 	NSTimeInterval				time, speedTime, statsTime;
 	NSUInteger					i, speedBytes, statsBytes;
 	NSInteger					readBytes;
 	WIP7UInt64					dataLength, rsrcLength;
-	double						percent, speed, maxSpeed;
+	double						percent, maxSpeed;
 	int							dataFD, rsrcFD, writtenBytes;
 	BOOL						data;
 	
@@ -962,7 +965,6 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		
 		if(![self _connectConnection:connection forTransfer:transfer error:&error]) {
 			[transfer setState:WCTransferStopping];
-			[transfer signalTerminated];
 			
 			[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 								   withObject:transfer
@@ -992,8 +994,6 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	if(![self _createRemainingDirectoriesOnConnection:connection forTransfer:transfer error:&error]) {
 		if(![transfer isTerminating])
 			[transfer setState:WCTransferStopping];
-
-		[transfer signalTerminated];
 		
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 							   withObject:transfer
@@ -1005,8 +1005,6 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	if(![self _sendDownloadFileMessageOnConnection:connection forFile:file error:&error]) {
 		if(![transfer isTerminating])
 			[transfer setState:WCTransferStopping];
-
-		[transfer signalTerminated];
 		
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 							   withObject:transfer
@@ -1023,8 +1021,6 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	if(!message) {
 		if(![transfer isTerminating])
 			[transfer setState:WCTransferStopping];
-		
-		[transfer signalTerminated];
 		
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 							   withObject:transfer
@@ -1045,11 +1041,11 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		if(![transfer isTerminating])
 			[transfer setState:WCTransferStopping];
 
-		[transfer signalTerminated];
-
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 							   withObject:transfer
 							   withObject:error];
+		   
+		return;
 	}
 	
 	finderInfo = [message dataForName:@"wired.transfer.finderinfo"];
@@ -1065,12 +1061,12 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		
 		if(![transfer isTerminating])
 			[transfer setState:WCTransferStopping];
-		
-		[transfer signalTerminated];
 
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 							   withObject:transfer
 							   withObject:error];
+		
+		return;
 	}
 	
 	[dataFileHandle seekToFileOffset:[file dataTransferred]];
@@ -1082,8 +1078,11 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		[self performSelectorOnMainThread:@selector(_validate)];
 	}
 	
-	dataFD = [dataFileHandle fileDescriptor];
-	rsrcFD = [rsrcFileHandle fileDescriptor];
+	dataFD				= [dataFileHandle fileDescriptor];
+	rsrcFD				= [rsrcFileHandle fileDescriptor];
+	speedCalculator		= wi_speed_calculator_init_with_capacity(wi_speed_calculator_alloc(), 50);
+	
+	wi_speed_calculator_add_bytes_at_time(speedCalculator, 0, speedTime);
 	
 	pool = [[NSAutoreleasePool alloc] init];
 	
@@ -1128,19 +1127,21 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		}
 			
 		transfer->_actualTransferred	+= readBytes;
-		speedBytes						+= readBytes;
 		statsBytes						+= readBytes;
+		speedBytes						+= readBytes;
 		percent							= (transfer->_dataTransferred + transfer->_rsrcTransferred) / (double) transfer->_size;
 		time							= _WCTransfersTimeInterval();
-		speed							= speedBytes / (time - speedTime);
-		transfer->_speed				= speed;
 		
 		if(percent == 1.00 || percent - [progressIndicator doubleValue] >= 0.001)
 			[progressIndicator setDoubleValue:percent];
 	
-		if(time - speedTime > 30.0) {
-			if(speed > maxSpeed)
-				maxSpeed = speed;
+		if(transfer->_speed == 0.0 || time - speedTime > 0.33) {
+			wi_speed_calculator_add_bytes_at_time(speedCalculator, speedBytes, speedTime);
+
+			transfer->_speed = wi_speed_calculator_speed(speedCalculator);
+			
+			if(transfer->_speed > maxSpeed)
+				maxSpeed = transfer->_speed;
 			
 			speedBytes = 0;
 			speedTime = time;
@@ -1159,13 +1160,12 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		}
 	}
 	
+	
 	if(statsBytes > 0)
 		[[WCStats stats] addUnsignedLongLong:statsBytes forKey:WCStatsDownloaded];
 
 	if([[WCStats stats] unsignedIntForKey:WCStatsMaxDownloadSpeed] < maxSpeed)
 		[[WCStats stats] setUnsignedInt:maxSpeed forKey:WCStatsMaxDownloadSpeed];
-	
-	[transfer signalTerminated];
 	
 	if(error) {
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
@@ -1176,6 +1176,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	}
 	
 	[pool release];
+	
+	wi_release(speedCalculator);
 }
 
 
@@ -1190,12 +1192,13 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	WCTransferConnection		*connection;
 	WCFile						*file;
 	WCError						*error;
+	wi_speed_calculator_t		*speedCalculator;
 	char						buffer[8192];
 	NSTimeInterval				time, speedTime, statsTime;
 	NSUInteger					i, sendBytes, speedBytes, statsBytes;
 	WIP7UInt64					dataLength, rsrcLength;
 	WIP7UInt64					dataOffset, rsrcOffset;
-	double						percent, speed, maxSpeed;
+	double						percent, maxSpeed;
 	ssize_t						readBytes;
 	int							dataFD, rsrcFD;
 	BOOL						data;
@@ -1209,8 +1212,6 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		if(![self _connectConnection:connection forTransfer:transfer error:&error]) {
 			if(![transfer isTerminating])
 				[transfer setState:WCTransferStopping];
-			
-			[transfer signalTerminated];
 			
 			[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 								   withObject:transfer
@@ -1241,8 +1242,6 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		if(![transfer isTerminating])
 			[transfer setState:WCTransferStopping];
 
-		[transfer signalTerminated];
-		
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 							   withObject:transfer
 							   withObject:error];
@@ -1253,8 +1252,6 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	if(![self _sendUploadFileMessageOnConnection:connection forFile:file error:&error]) {
 		if(![transfer isTerminating])
 			[transfer setState:WCTransferStopping];
-		
-		[transfer signalTerminated];
 		
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 							   withObject:transfer
@@ -1271,8 +1268,6 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	if(!message) {
 		if(![transfer isTerminating])
 			[transfer setState:WCTransferStopping];
-		
-		[transfer signalTerminated];
 		
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 							   withObject:transfer
@@ -1291,8 +1286,6 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		if(![transfer isTerminating])
 			[transfer setState:WCTransferStopping];
 		
-		[transfer signalTerminated];
-		
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 							   withObject:transfer
 							   withObject:error];
@@ -1308,8 +1301,6 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		
 		if(![transfer isTerminating])
 			[transfer setState:WCTransferStopping];
-		
-		[transfer signalTerminated];
 		
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 							   withObject:transfer
@@ -1327,8 +1318,11 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		[self performSelectorOnMainThread:@selector(_validate)];
 	}
 	
-	dataFD = [dataFileHandle fileDescriptor];
-	rsrcFD = [rsrcFileHandle fileDescriptor];
+	dataFD				= [dataFileHandle fileDescriptor];
+	rsrcFD				= [rsrcFileHandle fileDescriptor];
+	speedCalculator		= wi_speed_calculator_init_with_capacity(wi_speed_calculator_alloc(), 50);
+	
+	wi_speed_calculator_add_bytes_at_time(speedCalculator, 0, speedTime);
 
 	pool = [[NSAutoreleasePool alloc] init];
 
@@ -1377,15 +1371,17 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		statsBytes						+= sendBytes;
 		percent							= (transfer->_dataTransferred + transfer->_rsrcTransferred) / (double) transfer->_size;
 		time							= _WCTransfersTimeInterval();
-		speed							= speedBytes / (time - speedTime);
-		transfer->_speed				= speed;
 		
 		if(percent == 1.00 || percent - [progressIndicator doubleValue] >= 0.001)
 			[progressIndicator setDoubleValue:percent];
 		
-		if(time - speedTime > 30.0) {
-			if(speed > maxSpeed)
-				maxSpeed = speed;
+		if(transfer->_speed == 0.0 || time - speedTime > 0.33) {
+			wi_speed_calculator_add_bytes_at_time(speedCalculator, speedBytes, speedTime);
+			
+			transfer->_speed = wi_speed_calculator_speed(speedCalculator);
+			
+			if(transfer->_speed > maxSpeed)
+				maxSpeed = transfer->_speed;
 
 			speedBytes = 0;
 			speedTime = time;
@@ -1410,8 +1406,6 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	if([[WCStats stats] unsignedIntForKey:WCStatsMaxDownloadSpeed] < maxSpeed)
 		[[WCStats stats] setUnsignedInt:maxSpeed forKey:WCStatsMaxDownloadSpeed];
 	
-	[transfer signalTerminated];
-
 	if(error) {
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 							   withObject:transfer
@@ -1421,6 +1415,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	}
 	
 	[pool release];
+	
+	wi_release(speedCalculator);
 }
 
 @end
