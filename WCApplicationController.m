@@ -1086,7 +1086,9 @@ static WCApplicationController		*sharedController;
 	
 	path = [[self bundle] pathForResource:@"ReleaseNotes" ofType:@"rtf"];
 	
-	[[WIReleaseNotesController releaseNotesController] showWindow:self withReleaseNotesFile:path];
+	[[WIReleaseNotesController releaseNotesController]
+		setReleaseNotesWithRTF:[NSData dataWithContentsOfFile:path]];
+	[[WIReleaseNotesController releaseNotesController] showWindow:self];
 }
 
 
