@@ -1081,6 +1081,16 @@ static WCApplicationController		*sharedController;
 
 #pragma mark -
 
+- (IBAction)releaseNotes:(id)sender {
+	NSString		*path;
+	
+	path = [[self bundle] pathForResource:@"ReleaseNotes" ofType:@"rtf"];
+	
+	[[WIReleaseNotesController releaseNotesController] showWindow:self withReleaseNotesFile:path];
+}
+
+
+
 - (IBAction)manual:(id)sender {
     [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"http://www.zankasoftware.com/wired/manual/#2"]];
 }
