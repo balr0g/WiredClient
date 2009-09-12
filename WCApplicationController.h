@@ -79,6 +79,7 @@ extern NSString * const						WCExceptionHandlerReceivedExceptionNotification;
 - (IBAction)previousConnection:(id)sender;
 
 - (IBAction)releaseNotes:(id)sender;
+- (IBAction)crashReports:(id)sender;
 - (IBAction)manual:(id)sender;
 
 @end

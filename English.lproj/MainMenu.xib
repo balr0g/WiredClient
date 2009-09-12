@@ -939,6 +939,15 @@
 									<reference key="NSOnImage" ref="393497551"/>
 									<reference key="NSMixedImage" ref="410793182"/>
 								</object>
+								<object class="NSMenuItem" id="930827654">
+									<reference key="NSMenu" ref="764705616"/>
+									<string key="NSTitle">Crash Reports</string>
+									<string key="NSKeyEquiv"/>
+									<int key="NSKeyEquivModMask">1048576</int>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="393497551"/>
+									<reference key="NSMixedImage" ref="410793182"/>
+								</object>
 								<object class="NSMenuItem" id="73453655">
 									<reference key="NSMenu" ref="764705616"/>
 									<string key="NSTitle">Manual</string>
@@ -1540,6 +1549,14 @@
 					</object>
 					<int key="connectionID">872</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">crashReports:</string>
+						<reference key="source" ref="569324035"/>
+						<reference key="destination" ref="930827654"/>
+					</object>
+					<int key="connectionID">875</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -2019,6 +2036,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="427792182"/>
 							<reference ref="73453655"/>
+							<reference ref="930827654"/>
 						</object>
 						<reference key="parent" ref="106292789"/>
 					</object>
@@ -2263,6 +2281,11 @@
 						<reference key="object" ref="794038486"/>
 						<reference key="parent" ref="905514725"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">873</int>
+						<reference key="object" ref="930827654"/>
+						<reference key="parent" ref="764705616"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -2483,6 +2506,8 @@
 					<string>841.ImportedFromIB2</string>
 					<string>867.IBPluginDependency</string>
 					<string>867.ImportedFromIB2</string>
+					<string>873.IBPluginDependency</string>
+					<string>873.ImportedFromIB2</string>
 					<string>92.IBPluginDependency</string>
 					<string>92.ImportedFromIB2</string>
 				</object>
@@ -2665,7 +2690,7 @@
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
-					<string>{{772, 793}, {161, 43}}</string>
+					<string>{{772, 773}, {162, 63}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2682,6 +2707,8 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<string>{{663, 585}, {64, 6}}</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2722,7 +2749,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">872</int>
+			<int key="maxID">875</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -3013,6 +3040,7 @@
 							<string>chat:</string>
 							<string>connect:</string>
 							<string>console:</string>
+							<string>crashReports:</string>
 							<string>disconnect:</string>
 							<string>files:</string>
 							<string>manual:</string>
@@ -3029,6 +3057,7 @@
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>

@@ -1093,6 +1093,13 @@ static WCApplicationController		*sharedController;
 
 
 
+- (IBAction)crashReports:(id)sender {
+	[[WICrashReportsController crashReportsController] setApplicationName:[NSApp name]];
+	[[WICrashReportsController crashReportsController] showWindow:self];
+}
+
+
+
 - (IBAction)manual:(id)sender {
     [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"http://www.zankasoftware.com/wired/manual/#2"]];
 }
