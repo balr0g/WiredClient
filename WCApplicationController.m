@@ -728,14 +728,16 @@ static WCApplicationController		*sharedController;
 	WIURL			*url;
 	WCConnect		*connect;
 	
-	string = [[event descriptorForKeyword:keyDirectObject] stringValue];
-	url = [WIURL URLWithString:string];
+	string		= [[event descriptorForKeyword:keyDirectObject] stringValue];
+	url			= [WIURL URLWithString:string];
 	
 	if([[url scheme] isEqualToString:@"wired"]) {
-		if(![self _openConnectionWithURL:url]) {
-			connect = [WCConnect connectWithURL:url bookmark:NULL];
-			[connect showWindow:self];
-			[connect connect:self];
+		if([[url host] length] > 0) {
+			if(![self _openConnectionWithURL:url]) {
+				connect = [WCConnect connectWithURL:url bookmark:NULL];
+				[connect showWindow:self];
+				[connect connect:self];
+			}
 		}
 	}
 	else if([[url scheme] isEqualToString:@"wiredtracker"]) {

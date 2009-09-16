@@ -79,6 +79,7 @@ extern NSString * const					WCPlacePboardType;
 	NSMutableArray						*_selectFiles;
 	BOOL								_selectFilesWhenOpening;
 	
+	WCFile								*_initialDirectory;
 	WCFile								*_currentDirectory;
 	
 	WIDateFormatter						*_dateFormatter;

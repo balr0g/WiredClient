@@ -35,6 +35,8 @@
 #import "WCBoardThread.h"
 #import "WCChatController.h"
 #import "WCErrorQueue.h"
+#import "WCFile.h"
+#import "WCFiles.h"
 #import "WCPreferences.h"
 #import "WCServerConnection.h"
 #import "WCSourceSplitView.h"
@@ -1830,12 +1832,42 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 
 
 - (void)webView:(WebView *)webView decidePolicyForNavigationAction:(NSDictionary *)action request:(NSURLRequest *)request frame:(WebFrame *)frame decisionListener:(id <WebPolicyDecisionListener>)listener {
+	WIURL				*url;
+	WCServerConnection	*connection;
+	WCFile				*file;
+	BOOL				handled = NO;
+	
 	if([[action objectForKey:WebActionNavigationTypeKey] unsignedIntegerValue] == WebNavigationTypeOther) {
 		[listener use];
 	} else {
 		[listener ignore];
 		
-		[[NSWorkspace sharedWorkspace] openURL:[action objectForKey:WebActionOriginalURLKey]];
+		url = [WIURL URLWithURL:[action objectForKey:WebActionOriginalURLKey]];
+		
+		if([[url scheme] isEqualToString:@"wired"] || [[url scheme] isEqualToString:@"wiredp7"]) {
+			if([[url host] length] == 0) {
+				connection = [[self _selectedBoard] connection];
+				
+				if([connection isConnected]) {
+					if([[url path] hasSuffix:@"/"]) {
+						file = [WCFile fileWithDirectory:[url path] connection:connection];
+						
+						[WCFiles filesWithConnection:connection file:file];
+					} else {
+						file = [WCFile fileWithDirectory:[[url path] stringByDeletingLastPathComponent] connection:connection];
+						
+						[WCFiles filesWithConnection:connection
+												file:file
+										  selectFile:[WCFile fileWithFile:[url path] connection:connection]];
+					}
+				}
+				
+				handled = YES;
+			}
+		}
+		
+		if(!handled)
+			[[NSWorkspace sharedWorkspace] openURL:[url URL]];
 	}
 }
 

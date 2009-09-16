@@ -104,10 +104,11 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	
 	self = [super initWithWindowNibName:@"Files"];
 
-	_files			= [[NSMutableDictionary alloc] init];
-	_servers		= [[NSMutableArray alloc] init];
-	_places			= [[NSMutableArray alloc] init];
-	_selectFiles	= [[NSMutableArray alloc] init];
+	_files				= [[NSMutableDictionary alloc] init];
+	_servers			= [[NSMutableArray alloc] init];
+	_places				= [[NSMutableArray alloc] init];
+	_initialDirectory	= [file retain];
+	_selectFiles		= [[NSMutableArray alloc] init];
 	
 	if(selectFile) {
 		[_selectFiles addObject:selectFile];
@@ -173,7 +174,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		[_sourceOutlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:i + 1] byExtendingSelection:NO];
 	
 	[_filesTreeView setRootPath:[file path]];
-	
+
 	[self showWindow:self];
 	[self retain];
 
@@ -568,6 +569,13 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 #pragma mark -
 
 - (void)_changeCurrentDirectory:(WCFile *)file reselectFiles:(BOOL)reselectFiles {
+	if(_initialDirectory) {
+		file = [[_initialDirectory retain] autorelease];
+		
+		[_initialDirectory release];
+		_initialDirectory = NULL;
+	}
+	
 	file = [self _existingFileForFile:file];
 	
 	if(!file)
@@ -849,6 +857,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	[_servers release];
 	[_places release];
 	[_selectFiles release];
+	[_initialDirectory release];
 	
 	[_dateFormatter release];
 	

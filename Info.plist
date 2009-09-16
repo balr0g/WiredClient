@@ -43,6 +43,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>wired</string>
+				<string>wiredp7</string>
 			</array>
 		</dict>
 		<dict>
