@@ -708,8 +708,6 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		[self _validate];
 	}
 
-	[transfer signalTerminated];
-	
 	if(next)
 		[self _requestNextTransferForConnection:[transfer connection]];
 	
@@ -965,6 +963,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		
 		if(![self _connectConnection:connection forTransfer:transfer error:&error]) {
 			[transfer setState:WCTransferStopping];
+			[transfer signalTerminated];
 			
 			[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 								   withObject:transfer
@@ -992,8 +991,10 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	[[socket socket] setInteractive:NO];
 	
 	if(![self _createRemainingDirectoriesOnConnection:connection forTransfer:transfer error:&error]) {
-		if(![transfer isTerminating])
+		if(![transfer isTerminating]) {
 			[transfer setState:WCTransferStopping];
+			[transfer signalTerminated];
+		}
 		
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 							   withObject:transfer
@@ -1003,8 +1004,10 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	}
 	
 	if(![self _sendDownloadFileMessageOnConnection:connection forFile:file error:&error]) {
-		if(![transfer isTerminating])
+		if(![transfer isTerminating]) {
 			[transfer setState:WCTransferStopping];
+			[transfer signalTerminated];
+		}
 		
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 							   withObject:transfer
@@ -1019,8 +1022,10 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 							 error:&error];
 	
 	if(!message) {
-		if(![transfer isTerminating])
+		if(![transfer isTerminating]) {
 			[transfer setState:WCTransferStopping];
+			[transfer signalTerminated];
+		}
 		
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 							   withObject:transfer
@@ -1038,8 +1043,10 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		![[NSFileManager defaultManager] createFileAtPath:rsrcPath])) {
 		error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientCreateFailed argument:dataPath];
 		
-		if(![transfer isTerminating])
+		if(![transfer isTerminating]) {
 			[transfer setState:WCTransferStopping];
+			[transfer signalTerminated];
+		}
 
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 							   withObject:transfer
@@ -1059,8 +1066,10 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	if(!dataFileHandle || !rsrcFileHandle) {
 		error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientOpenFailed argument:dataPath];
 		
-		if(![transfer isTerminating])
+		if(![transfer isTerminating]) {
 			[transfer setState:WCTransferStopping];
+			[transfer signalTerminated];
+		}
 
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 							   withObject:transfer
@@ -1160,12 +1169,13 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		}
 	}
 	
-	
 	if(statsBytes > 0)
 		[[WCStats stats] addUnsignedLongLong:statsBytes forKey:WCStatsDownloaded];
 
 	if([[WCStats stats] unsignedIntForKey:WCStatsMaxDownloadSpeed] < maxSpeed)
 		[[WCStats stats] setUnsignedInt:maxSpeed forKey:WCStatsMaxDownloadSpeed];
+	
+	[transfer signalTerminated];
 	
 	if(error) {
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
@@ -1210,8 +1220,10 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		connection = [self _transferConnectionForTransfer:transfer];
 		
 		if(![self _connectConnection:connection forTransfer:transfer error:&error]) {
-			if(![transfer isTerminating])
+			if(![transfer isTerminating]) {
 				[transfer setState:WCTransferStopping];
+				[transfer signalTerminated];
+			}
 			
 			[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 								   withObject:transfer
@@ -1239,8 +1251,10 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	[[socket socket] setInteractive:NO];
 	
 	if(![self _createRemainingDirectoriesOnConnection:connection forTransfer:transfer error:&error]) {
-		if(![transfer isTerminating])
+		if(![transfer isTerminating]) {
 			[transfer setState:WCTransferStopping];
+			[transfer signalTerminated];
+		}
 
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 							   withObject:transfer
@@ -1250,8 +1264,10 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	}
 
 	if(![self _sendUploadFileMessageOnConnection:connection forFile:file error:&error]) {
-		if(![transfer isTerminating])
+		if(![transfer isTerminating]) {
 			[transfer setState:WCTransferStopping];
+			[transfer signalTerminated];
+		}
 		
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 							   withObject:transfer
@@ -1266,8 +1282,10 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 							 error:&error];
 	
 	if(!message) {
-		if(![transfer isTerminating])
+		if(![transfer isTerminating]) {
 			[transfer setState:WCTransferStopping];
+			[transfer signalTerminated];
+		}
 		
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 							   withObject:transfer
@@ -1283,8 +1301,10 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	rsrcLength = [file uploadRsrcSize] - rsrcOffset;
 	
 	if(![self _sendUploadMessageOnConnection:connection forFile:file dataLength:dataLength rsrcLength:rsrcLength error:&error]) {
-		if(![transfer isTerminating])
+		if(![transfer isTerminating]) {
 			[transfer setState:WCTransferStopping];
+			[transfer signalTerminated];
+		}
 		
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 							   withObject:transfer
@@ -1299,8 +1319,10 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	if(!dataFileHandle || !rsrcFileHandle) {
 		error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientOpenFailed argument:dataPath];
 		
-		if(![transfer isTerminating])
+		if(![transfer isTerminating]) {
 			[transfer setState:WCTransferStopping];
+			[transfer signalTerminated];
+		}
 		
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 							   withObject:transfer
@@ -1405,6 +1427,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 	if([[WCStats stats] unsignedIntForKey:WCStatsMaxDownloadSpeed] < maxSpeed)
 		[[WCStats stats] setUnsignedInt:maxSpeed forKey:WCStatsMaxDownloadSpeed];
+	
+	[transfer signalTerminated];
 	
 	if(error) {
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
@@ -1536,8 +1560,10 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 #pragma mark -
 
 - (void)windowDidLoad {
+	NSEnumerator	*enumerator;
 	NSToolbar		*toolbar;
 	NSData			*data;
+	WCTransfer		*transfer;
 	
 	_errorQueue = [[WCErrorQueue alloc] initWithWindow:[self window]];
 	
@@ -1561,6 +1587,13 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	
 	if(!_transfers)
 		_transfers = [[NSMutableArray alloc] init];
+	
+	enumerator = [_transfers objectEnumerator];
+	
+	while((transfer = [enumerator nextObject])) {
+		if([transfer state] == WCTransferDisconnecting)
+			[transfer setState:WCTransferDisconnected];
+	}
 	
 	[_transfersTableView reloadData];
 
@@ -1677,8 +1710,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		if([transfer isWorking]) {
 			[transfer setState:WCTransferDisconnecting];
 			
-			if([transfer waitUntilTerminatedBeforeDate:[NSDate dateWithTimeIntervalSinceNow:1.0]])
-				[transfer setState:WCTransferDisconnected];
+//			if([transfer waitUntilTerminatedBeforeDate:[NSDate dateWithTimeIntervalSinceNow:1.0]])
+//				[transfer setState:WCTransferDisconnected];
 		}
 	}
 
