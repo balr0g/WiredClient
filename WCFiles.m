@@ -324,6 +324,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	NSMutableArray			*selectedFiles;
 	NSIndexSet				*indexes;
 	NSString				*path;
+	WCFile					*file;
 	NSUInteger				index;
 	
 	selectedFiles = [NSMutableArray array];
@@ -341,8 +342,12 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		files		= [self _filesForConnection:[self _selectedConnection]];
 		enumerator	= [[_filesTreeView selectedPaths] objectEnumerator];
 		
-		while((path = [enumerator nextObject]))
-			[selectedFiles addObject:[files objectForKey:path]];
+		while((path = [enumerator nextObject])) {
+			file = [files objectForKey:path];
+			
+			if(file)
+				[selectedFiles addObject:file];
+		}
 	}
 	
 	return selectedFiles;
@@ -783,7 +788,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		}
 		
 		[_filesOutlineView selectRowIndexes:indexes byExtendingSelection:NO];
-		[_filesTreeView selectRowIndexes:indexes byExtendingSelection:NO];
+		[_filesTreeView selectPath:[[_selectFiles objectAtIndex:0] path]];
 		
 		[_selectFiles removeAllObjects];
 	}
@@ -2112,12 +2117,12 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	file = [[self _filesForConnection:[self _selectedConnection]] objectForKey:path];
 
 	return [NSDictionary dictionaryWithObjectsAndKeys:
-		[file iconWithWidth:128.0],							WIFileIcon,
+		[file iconWithWidth:128.0],						WIFileIcon,
 		[NSNumber numberWithUnsignedLongLong:
-			[file dataSize] + [file rsrcSize]],				WIFileSize,
-		[file kind],										WIFileKind,
-		[file creationDate],								WIFileCreationDate,
-		[file modificationDate],							WIFileModificationDate,
+			[file dataSize] + [file rsrcSize]],			WIFileSize,
+		[file kind],									WIFileKind,
+		[file creationDate],							WIFileCreationDate,
+		[file modificationDate],						WIFileModificationDate,
 		NULL];
 }
 

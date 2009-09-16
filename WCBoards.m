@@ -540,17 +540,39 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 		}
 	}
 	
-	[text replaceOccurrencesOfRegex:@"\\[b\\](.+?)\\[/b\\]" withString:@"<b>$1</b>" options:RKLCaseless | RKLDotAll];
-	[text replaceOccurrencesOfRegex:@"\\[u\\](.+?)\\[/u\\]" withString:@"<u>$1</u>" options:RKLCaseless | RKLDotAll];
-	[text replaceOccurrencesOfRegex:@"\\[i\\](.+?)\\[/i\\]" withString:@"<i>$1</i>" options:RKLCaseless | RKLDotAll];
-	[text replaceOccurrencesOfRegex:@"\\[color=(.+?)\\](.+?)\\[/color\\]" withString:@"<span style=\"color: $1\">$2</span>" options:RKLCaseless | RKLDotAll];
-	[text replaceOccurrencesOfRegex:@"\\[center\\](.+?)\\[/center\\]" withString:@"<div class=\"center\">$1</div>" options:RKLCaseless | RKLDotAll];
+	[text replaceOccurrencesOfRegex:@"\\[b\\](.+?)\\[/b\\]"
+						 withString:@"<b>$1</b>"
+							options:RKLCaseless | RKLDotAll];
+	[text replaceOccurrencesOfRegex:@"\\[u\\](.+?)\\[/u\\]"
+						 withString:@"<u>$1</u>"
+							options:RKLCaseless | RKLDotAll];
+	[text replaceOccurrencesOfRegex:@"\\[i\\](.+?)\\[/i\\]"
+						 withString:@"<i>$1</i>"
+							options:RKLCaseless | RKLDotAll];
+	[text replaceOccurrencesOfRegex:@"\\[color=(.+?)\\](.+?)\\[/color\\]"
+						 withString:@"<span style=\"color: $1\">$2</span>"
+							options:RKLCaseless | RKLDotAll];
+	[text replaceOccurrencesOfRegex:@"\\[center\\](.+?)\\[/center\\]"
+						 withString:@"<div class=\"center\">$1</div>"
+							options:RKLCaseless | RKLDotAll];
 	
-	[text replaceOccurrencesOfRegex:@"\\[url=(.+?)\\](.+?)\\[/url\\]" withString:@"<a href=\"$1\">$2</a>" options:RKLCaseless];
-	[text replaceOccurrencesOfRegex:@"\\[url](.+?)\\[/url\\]" withString:@"<a href=\"$1\">$1</a>" options:RKLCaseless];
-	[text replaceOccurrencesOfRegex:@"\\[email=(.+?)\\](.+?)\\[/email\\]" withString:@"<a href=\"mailto:$1\">$2</a>" options:RKLCaseless];
-	[text replaceOccurrencesOfRegex:@"\\[email](.+?)\\[/email\\]" withString:@"<a href=\"mailto:$1\">$1</a>" options:RKLCaseless];
-	[text replaceOccurrencesOfRegex:@"\\[img](.+?)\\[/img\\]" withString:@"<img src=\"$1\" alt=\"$1\" />" options:RKLCaseless];
+	[text replaceOccurrencesOfRegex:@"\\[url]wiredp7://(/.+?)\\[/url\\]"
+						 withString:@"<img src=\"FileLink.png\" /> <a href=\"wiredp7://$1\">$1</a>" options:RKLCaseless];
+	
+	[text replaceOccurrencesOfRegex:@"\\[url=(.+?)\\](.+?)\\[/url\\]"
+						 withString:@"<a href=\"$1\">$2</a>" options:RKLCaseless];
+	[text replaceOccurrencesOfRegex:@"\\[url](.+?)\\[/url\\]"
+						 withString:@"<a href=\"$1\">$1</a>" options:RKLCaseless];
+	
+	[text replaceOccurrencesOfRegex:@"\\[email=(.+?)\\](.+?)\\[/email\\]"
+						 withString:@"<a href=\"mailto:$1\">$2</a>"
+							options:RKLCaseless];
+	[text replaceOccurrencesOfRegex:@"\\[email](.+?)\\[/email\\]"
+						 withString:@"<a href=\"mailto:$1\">$1</a>"
+							options:RKLCaseless];
+	[text replaceOccurrencesOfRegex:@"\\[img](.+?)\\[/img\\]"
+						 withString:@"<img src=\"$1\" alt=\"$1\" />"
+							options:RKLCaseless];
 
 	[text replaceOccurrencesOfRegex:@"\\[quote=(.+?)\\](.+?)\\[/quote\\]"
 						 withString:[NSSWF:@"<blockquote><b>%@</b><br />$2</blockquote>", NSLS(@"$1 wrote:", @"Board quote (nick)")]
@@ -937,6 +959,8 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	NSInvocation		*invocation;
 	NSUInteger			style;
 	
+	[_postTextView registerForDraggedTypes:[NSArray arrayWithObject:WCFilePboardType]];
+
 	_errorQueue = [[WCErrorQueue alloc] initWithWindow:[self window]];
 	
 	toolbar = [[NSToolbar alloc] initWithIdentifier:@"Boards"];
@@ -1832,6 +1856,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 
 
 - (void)webView:(WebView *)webView decidePolicyForNavigationAction:(NSDictionary *)action request:(NSURLRequest *)request frame:(WebFrame *)frame decisionListener:(id <WebPolicyDecisionListener>)listener {
+	NSString			*path;
 	WIURL				*url;
 	WCServerConnection	*connection;
 	WCFile				*file;
@@ -1849,16 +1874,21 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 				connection = [[self _selectedBoard] connection];
 				
 				if([connection isConnected]) {
-					if([[url path] hasSuffix:@"/"]) {
-						file = [WCFile fileWithDirectory:[url path] connection:connection];
+					path = [[url path] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+					
+					if([path hasSuffix:@"/"]) {
+						while([path hasSuffix:@"/"] && [path length] > 1)
+							path = [path substringToIndex:[path length] - 1];
+						
+						file = [WCFile fileWithDirectory:path connection:connection];
 						
 						[WCFiles filesWithConnection:connection file:file];
 					} else {
-						file = [WCFile fileWithDirectory:[[url path] stringByDeletingLastPathComponent] connection:connection];
+						file = [WCFile fileWithDirectory:[path stringByDeletingLastPathComponent] connection:connection];
 						
 						[WCFiles filesWithConnection:connection
 												file:file
-										  selectFile:[WCFile fileWithFile:[url path] connection:connection]];
+										  selectFile:[WCFile fileWithFile:path connection:connection]];
 					}
 				}
 				
