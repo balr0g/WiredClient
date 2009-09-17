@@ -1154,7 +1154,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 - (void)wiredFilePreviewFileReply:(WIP7Message *)message {
 	NSEnumerator			*enumerator;
-	NSString				*path, *name;
+	NSString				*path;
 	NSURL					*url;
 	WCServerConnection		*connection;
 	WCFile					*file;
@@ -1168,9 +1168,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		
 		while((file = [enumerator nextObject])) {
 			if([[file path] isEqualToString:path]) {
-				name	= [path lastPathComponent];
-				url		= [NSURL fileURLWithPath:[NSFileManager temporaryPathWithPrefix:[name stringByDeletingPathExtension]
-																			  suffix:[name pathExtension]]];
+				url = [NSURL fileURLWithPath:[NSFileManager temporaryPathWithFilename:[path lastPathComponent]]];
 				
 				[[message dataForName:@"wired.file.preview"] writeToURL:url atomically:YES];
 				
@@ -1180,9 +1178,14 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 			}
 		}
 		
-		previewPanel = [NSClassFromString(@"QLPreviewPanel") performSelector:@selector(sharedPreviewPanel)];
-		
-		[previewPanel performSelector:@selector(refreshCurrentPreviewItem)];
+		if(file) {
+			previewPanel = [NSClassFromString(@"QLPreviewPanel") performSelector:@selector(sharedPreviewPanel)];
+			
+			if([previewPanel respondsToSelector:@selector(refreshCurrentPreviewItem)])
+				[previewPanel performSelector:@selector(refreshCurrentPreviewItem)];
+			else if([previewPanel respondsToSelector:@selector(setURLs:)])
+				[previewPanel performSelector:@selector(setURLs:) withObject:[NSArray arrayWithObject:[file previewItemURL]]];
+		}
 		
 		[connection removeObserver:self message:message];
 	}
@@ -1381,7 +1384,8 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		else
 			[previewPanel makeKeyAndOrderFront:self];
 
-		[previewPanel reloadData];
+		if([previewPanel respondsToSelector:@selector(reloadData)])
+			[previewPanel reloadData];
 	}
 }
 
@@ -2438,6 +2442,11 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 - (void)beginPreviewPanelControl:(id /* QLPreviewPanel **/)panel {
     [panel setDelegate:self];
     [panel setDataSource:self];
+}
+
+
+
+- (void) endPreviewPanelControl:(id /* QLPreviewPanel **/) panel {
 }
 
 
