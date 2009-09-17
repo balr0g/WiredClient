@@ -34,7 +34,6 @@
 #import "WCFileInfo.h"
 #import "WCFiles.h"
 #import "WCPreferences.h"
-#import "WCPreview.h"
 #import "WCPublicChat.h"
 #import "WCPublicChatController.h"
 #import "WCTransfers.h"
