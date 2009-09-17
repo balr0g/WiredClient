@@ -54,7 +54,6 @@ typedef enum _WCTransferState		WCTransferState;
 	NSUInteger						_queuePosition;
 	NSUInteger						_transaction;
 	BOOL							_folder;
-	BOOL							_preview;
 	BOOL							_secure;
 	WCTransferConnection			*_transferConnection;
 	NSString						*_name;
@@ -155,11 +154,6 @@ typedef enum _WCTransferState		WCTransferState;
 
 
 @interface WCDownloadTransfer : WCTransfer
-
-@end
-
-
-@interface WCPreviewTransfer : WCDownloadTransfer
 
 @end
 

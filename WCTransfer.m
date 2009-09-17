@@ -155,12 +155,6 @@
 	if(!self)
 		return NULL;
 	
-	if([self class] == [WCPreviewTransfer class]) {
-		[self release];
-		
-		return NULL;
-	}
-	
     if([coder decodeIntForKey:@"WCTransferVersion"] != [[self class] version]) {
         [self release];
 		
@@ -383,18 +377,6 @@
 
 - (BOOL)isFolder {
 	return _folder;
-}
-
-
-
-- (void)setPreview:(BOOL)preview {
-	_preview = preview;
-}
-
-
-
-- (BOOL)isPreview {
-	return _preview;
 }
 
 
@@ -859,12 +841,6 @@
 	
 	_speedLimit = WI_MIN(serverLimit, accountLimit);
 }
-
-@end
-
-
-
-@implementation WCPreviewTransfer
 
 @end
 

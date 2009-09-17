@@ -42,13 +42,10 @@
 	NSLock									*_lock;
 }
 
-+ (BOOL)canPreviewFileWithExtension:(NSString *)extension;
-
 + (id)transfers;
 
 - (BOOL)downloadFile:(WCFile *)file;
 - (BOOL)downloadFile:(WCFile *)file toFolder:(NSString *)destination;
-- (BOOL)previewFile:(WCFile *)file;
 - (BOOL)uploadPath:(NSString *)path toFolder:(WCFile *)destination;
 
 - (IBAction)start:(id)sender;

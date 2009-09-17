@@ -45,15 +45,6 @@
 #define WCTransfersFileExtension				@"WiredTransfer"
 #define WCTransferPboardType					@"WCTransferPboardType"
 
-#define WCTransfersTextEditExtensionsString		@"c cc cgi conf css diff h in java log m patch pem php pl plist pod rb rtf s sh status strings tcl text txt xml"
-#define WCTransfersSafariExtensionsString		@"htm html shtm shtml svg"
-#define WCTransfersPreviewExtensionsString		@"bmp eps jpg jpeg tif tiff gif pct pict pdf png"
-
-
-static NSMutableSet								*WCTransfersTextEditExtensions;
-static NSMutableSet								*WCTransfersSafariExtensions;
-static NSMutableSet								*WCTransfersPreviewExtensions;
-
 
 static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	struct timeval		tv;
@@ -89,7 +80,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 - (void)_finishTransfer:(WCTransfer *)transfer;
 - (void)_removeTransfer:(WCTransfer *)transfer;
 
-- (BOOL)_downloadFile:(WCFile *)file toFolder:(NSString *)destination preview:(BOOL)preview;
+- (BOOL)_downloadFile:(WCFile *)file toFolder:(NSString *)destination;
 - (BOOL)_uploadPath:(NSString *)path toFolder:(WCFile *)destination;
 
 - (WCTransferConnection *)_transferConnectionForTransfer:(WCTransfer *)transfer;
@@ -259,7 +250,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 #pragma mark -
 
-- (BOOL)_downloadFile:(WCFile *)file toFolder:(NSString *)destination preview:(BOOL)preview {
+- (BOOL)_downloadFile:(WCFile *)file toFolder:(NSString *)destination {
 	NSAlert					*alert;
 	NSString				*path;
 	WCDownloadTransfer		*transfer;
@@ -292,11 +283,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		}
 	}
 	
-	if(preview)
-		transfer = [WCPreviewTransfer transferWithConnection:[file connection]];
-	else
-		transfer = [WCDownloadTransfer transferWithConnection:[file connection]];
-
+	transfer = [WCDownloadTransfer transferWithConnection:[file connection]];
 	[transfer setDestinationPath:destination];
 	[transfer setRemotePath:[file path]];
 	[transfer setName:[file name]];
@@ -618,7 +605,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 
 - (void)_finishTransfer:(WCTransfer *)transfer {
-	NSString			*path, *newPath, *extension;
+	NSString			*path, *newPath;
 	NSDictionary		*dictionary;
 	WCFile				*file;
 	WCTransferState		state;
@@ -663,18 +650,6 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 			[self _validate];
 
 			[[transfer connection] triggerEvent:WCEventsTransferFinished info1:transfer];
-			
-			extension = [[path pathExtension] lowercaseString];
-
-			if([transfer isKindOfClass:[WCPreviewTransfer class]] && [[self class] canPreviewFileWithExtension:extension]) {
-				
-				if([WCTransfersTextEditExtensions containsObject:extension])
-					[[NSWorkspace sharedWorkspace] openFile:path withApplication:@"/Applications/TextEdit.app"];
-				else if([WCTransfersSafariExtensions containsObject:extension])
-					[[NSWorkspace sharedWorkspace] openFile:path withApplication:@"/Applications/Safari.app"];
-				else if([WCTransfersPreviewExtensions containsObject:extension])
-					[[NSWorkspace sharedWorkspace] openFile:path withApplication:@"/Applications/Preview.app"];
-			}
 		} else {
 			[self _startTransfer:transfer first:NO];
 
@@ -1448,35 +1423,6 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 @implementation WCTransfers
 
-+ (BOOL)canPreviewFileWithExtension:(NSString *)extension {
-	static NSMutableSet		*extensions;
-					
-	if(!WCTransfersTextEditExtensions) {
-		WCTransfersTextEditExtensions = [[NSSet alloc] initWithArray:
-			[WCTransfersTextEditExtensionsString componentsSeparatedByString:@" "]];
-
-		WCTransfersSafariExtensions = [[NSSet alloc] initWithArray:
-			[WCTransfersSafariExtensionsString componentsSeparatedByString:@" "]];
-
-		WCTransfersPreviewExtensions = [[NSSet alloc] initWithArray:
-			[WCTransfersPreviewExtensionsString componentsSeparatedByString:@" "]];
-	}
-	
-	if(!extensions) {
-		extensions = [[NSMutableSet alloc] init];
-		
-		[extensions unionSet:WCTransfersTextEditExtensions];
-		[extensions unionSet:WCTransfersSafariExtensions];
-		[extensions unionSet:WCTransfersPreviewExtensions];
-	}
-	
-	return [extensions containsObject:[extension lowercaseString]];
-}
-
-
-
-#pragma mark -
-
 + (id)transfers {
 	static WCTransfers   *sharedTransfers;
 	
@@ -1978,7 +1924,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	else if(selector == @selector(connect:))
 		return (transfer && [transfer state] == WCTransferDisconnected);
 	else if(selector == @selector(revealInFinder:))
-		return (transfer && ![transfer isKindOfClass:[WCPreviewTransfer class]]);
+		return (transfer != NULL);
 	else if(selector == @selector(revealInFiles:))
 		return (transfer != NULL && connected);
 	
@@ -2026,19 +1972,13 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 #pragma mark -
 
 - (BOOL)downloadFile:(WCFile *)file {
-	return [self _downloadFile:file toFolder:[[WCSettings objectForKey:WCDownloadFolder] stringByStandardizingPath] preview:NO];
+	return [self _downloadFile:file toFolder:[[WCSettings objectForKey:WCDownloadFolder] stringByStandardizingPath]];
 }
 
 
 
 - (BOOL)downloadFile:(WCFile *)file toFolder:(NSString *)destination {
-	return [self _downloadFile:file toFolder:destination preview:NO];
-}
-
-
-
-- (BOOL)previewFile:(WCFile *)file {
-	return [self _downloadFile:file toFolder:[[WCSettings objectForKey:WCDownloadFolder] stringByStandardizingPath] preview:YES];
+	return [self _downloadFile:file toFolder:destination];
 }
 
 

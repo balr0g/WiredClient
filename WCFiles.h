@@ -84,6 +84,8 @@ extern NSString * const					WCPlacePboardType;
 	WCFile								*_currentDirectory;
 	
 	WIDateFormatter						*_dateFormatter;
+	
+	Class								_previewPanelClass;
 }
 
 + (id)filesWithConnection:(WCServerConnection *)connection file:(WCFile *)file;

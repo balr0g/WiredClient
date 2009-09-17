@@ -42,6 +42,10 @@
 #define WCFilesDirectories					@"WCFilesDirectories"
 #define WCFilesReceivedFiles				@"WCFilesReceivedFiles"
 
+#define WCFilesPreviewTextExtensions		@"c cc cgi conf css diff h in java log m patch pem php pl plist pod rb rtf s sh status strings tcl text txt xml"
+#define WCFilesPreviewHTMLExtensions		@"htm html shtm shtml svg"
+#define WCFilesPreviewImageExtensions		@"bmp eps jpg jpeg tif tiff gif pct pict pdf png"
+
 
 NSString * const							WCFilePboardType = @"WCFilePboardType";
 NSString * const							WCPlacePboardType = @"WCPlacePboardType";
@@ -55,6 +59,8 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 - (void)_validate;
 - (void)_validatePermissions;
+
+- (BOOL)_canPreviewFile:(WCFile *)file;
 
 - (WCFile *)_selectedSource;
 - (WCServerConnection *)_selectedConnection;
@@ -131,6 +137,8 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	[_dateFormatter setTimeStyle:NSDateFormatterShortStyle];
 	[_dateFormatter setDateStyle:NSDateFormatterMediumStyle];
 	[_dateFormatter setNaturalLanguageStyle:WIDateFormatterCapitalizedNaturalLanguageStyle];
+	
+	_previewPanelClass = NSClassFromString(@"QLPreviewPanel");
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
@@ -229,8 +237,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 			[_infoButton setEnabled:([account fileGetInfo] && connected)];
 			[_previewButton setEnabled:([account transferDownloadFiles] &&
 										connected &&
-										![file isFolder] &&
-										[WCTransfers canPreviewFileWithExtension:[file extension]])];
+										[self _canPreviewFile:file])];
 			break;
 
 		default:
@@ -242,7 +249,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 				enumerator = [files objectEnumerator];
 				
 				while((file = [enumerator nextObject])) {
-					if([file isFolder] || ![WCTransfers canPreviewFileWithExtension:[file extension]]) {
+					if(![self _canPreviewFile:file]) {
 						preview = NO;
 						
 						break;
@@ -280,6 +287,23 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	[_groupPopUpButton setEnabled:(dropBox && setPermissions)];
 	[_groupPermissionsPopUpButton setEnabled:(dropBox && setPermissions)];
 	[_everyonePermissionsPopUpButton setEnabled:(dropBox && setPermissions)];
+}
+
+
+
+#pragma mark -
+
+- (BOOL)_canPreviewFile:(WCFile *)file {
+	if([file isFolder])
+		return NO;
+	
+	if(!_previewPanelClass)
+		return NO;
+	
+	if([file totalSize] > 250 * 1024)
+		return NO;
+	
+	return YES;
 }
 
 
@@ -1179,7 +1203,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		}
 		
 		if(file) {
-			previewPanel = [NSClassFromString(@"QLPreviewPanel") performSelector:@selector(sharedPreviewPanel)];
+			previewPanel = [_previewPanelClass performSelector:@selector(sharedPreviewPanel)];
 			
 			if([previewPanel respondsToSelector:@selector(refreshCurrentPreviewItem)])
 				[previewPanel performSelector:@selector(refreshCurrentPreviewItem)];
@@ -1351,42 +1375,34 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	NSEnumerator	*enumerator;
 	WIP7Message		*message;
 	WCFile			*file;
-	Class			previewPanelClass;
 	id				previewPanel;
 	
-	if(![_previewButton isEnabled])
+	if(![_previewButton isEnabled] || !_previewPanelClass)
 		return;
 	
 	[_previewFiles removeAllObjects];
 
-	previewPanelClass	= NSClassFromString(@"QLPreviewPanel");
-	enumerator			= [[self _selectedFiles] objectEnumerator];
+	enumerator = [[self _selectedFiles] objectEnumerator];
 
 	while((file = [enumerator nextObject])) {
-		if(previewPanelClass && [file totalSize] < 250 * 1024) {
-			if(![file previewItemURL]) {
-				message = [WIP7Message messageWithName:@"wired.file.preview_file" spec:WCP7Spec];
-				[message setString:[file path] forName:@"wired.file.path"];
-				[[file connection] sendMessage:message fromObserver:self selector:@selector(wiredFilePreviewFileReply:)];
-			}
-
-			[_previewFiles addObject:file];
-		} else {
-			[[WCTransfers transfers] previewFile:file];
+		if(![file previewItemURL]) {
+			message = [WIP7Message messageWithName:@"wired.file.preview_file" spec:WCP7Spec];
+			[message setString:[file path] forName:@"wired.file.path"];
+			[[file connection] sendMessage:message fromObserver:self selector:@selector(wiredFilePreviewFileReply:)];
 		}
+
+		[_previewFiles addObject:file];
 	}
 
-	if(previewPanelClass && [_previewFiles count] > 0) {
-		previewPanel = [previewPanelClass performSelector:@selector(sharedPreviewPanel)];
-		
-		if([previewPanel isVisible])
-			[previewPanel orderOut:self];
-		else
-			[previewPanel makeKeyAndOrderFront:self];
+	previewPanel = [_previewPanelClass performSelector:@selector(sharedPreviewPanel)];
+	
+	if([previewPanel isVisible])
+		[previewPanel orderOut:self];
+	else
+		[previewPanel makeKeyAndOrderFront:self];
 
-		if([previewPanel respondsToSelector:@selector(reloadData)])
-			[previewPanel reloadData];
-	}
+	if([previewPanel respondsToSelector:@selector(reloadData)])
+		[previewPanel reloadData];
 }
 
 
@@ -2464,7 +2480,9 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 - (NSRect)previewPanel:(id /*QLPreviewPanel **/)panel sourceFrameOnScreenForPreviewItem:(id /*id <QLPreviewItem>*/)item {
+	NSMutableArray	*directory;
 	NSRect			frame;
+	NSUInteger		index;
 	NSInteger		row;
 	
 	if([self _selectedStyle] == WCFilesStyleList) {
@@ -2475,6 +2493,20 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 			frame.origin	= [[self window] convertBaseToScreen:frame.origin];
 
 			return NSMakeRect(frame.origin.x, frame.origin.y, frame.size.height, frame.size.height);
+		}
+	} else {
+		directory			= [[self _directoriesForConnection:[(WCFile *) item connection]]
+			objectForKey:[[item path] stringByDeletingLastPathComponent]];
+		
+		if(directory) {
+			index			= [directory indexOfObject:item];
+			
+			if(index != NSNotFound) {
+				frame		= [_filesTreeView convertRect:[_filesTreeView frameOfRow:index inPath:[item path]] toView:NULL];
+				frame.origin	= [[self window] convertBaseToScreen:frame.origin];
+
+				return NSMakeRect(frame.origin.x, frame.origin.y, frame.size.height, frame.size.height);
+			}
 		}
 	}
 
