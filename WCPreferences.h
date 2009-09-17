@@ -146,6 +146,8 @@ extern NSString * const								WCIconDidChangeNotification;
 	IBOutlet NSTextField							*_trackerBookmarksLoginTextField;
 	IBOutlet NSSecureTextField						*_trackerBookmarksPasswordTextField;
 	
+	IBOutlet NSView									*_bookmarksExportView;
+	
 	NSString										*_bookmarksPassword;
 	NSString										*_trackerBookmarksPassword;
 }
@@ -157,8 +159,8 @@ extern NSString * const								WCIconDidChangeNotification;
 - (IBAction)addTheme:(id)sender;
 - (IBAction)deleteTheme:(id)sender;
 - (IBAction)duplicateTheme:(id)sender;
-- (IBAction)importTheme:(id)sender;
 - (IBAction)exportTheme:(id)sender;
+- (IBAction)importTheme:(id)sender;
 - (IBAction)selectTheme:(id)sender;
 - (IBAction)changeTheme:(id)sender;
 - (IBAction)changeThemeFont:(id)sender;
@@ -166,6 +168,8 @@ extern NSString * const								WCIconDidChangeNotification;
 - (IBAction)addBookmark:(id)sender;
 - (IBAction)deleteBookmark:(id)sender;
 - (IBAction)duplicateBookmark:(id)sender;
+- (IBAction)exportBookmarks:(id)sender;
+- (IBAction)importBookmarks:(id)sender;
 - (IBAction)changeBookmark:(id)sender;
 
 - (IBAction)addHighlight:(id)sender;
@@ -182,6 +186,8 @@ extern NSString * const								WCIconDidChangeNotification;
 - (IBAction)addTrackerBookmark:(id)sender;
 - (IBAction)deleteTrackerBookmark:(id)sender;
 - (IBAction)duplicateTrackerBookmark:(id)sender;
+- (IBAction)exportTrackerBookmarks:(id)sender;
+- (IBAction)importTrackerBookmarks:(id)sender;
 - (IBAction)changeTrackerBookmark:(id)sender;
 
 @end

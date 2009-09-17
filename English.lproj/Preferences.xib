@@ -12,11 +12,13 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="2266"/>
+			<integer value="2265"/>
 			<integer value="2929"/>
 			<integer value="2184"/>
-			<integer value="2265"/>
+			<integer value="2266"/>
+			<integer value="3292"/>
 			<integer value="2490"/>
+			<integer value="3141"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1516,9 +1518,9 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 										<string key="NSAction">_popUpItemAction:</string>
 										<reference key="NSTarget" ref="1014187575"/>
 									</object>
-									<object class="NSMenuItem" id="682163085">
+									<object class="NSMenuItem" id="988672433">
 										<reference key="NSMenu" ref="726554664"/>
-										<string key="NSTitle">Import…</string>
+										<string key="NSTitle">Export Theme…</string>
 										<string key="NSKeyEquiv"/>
 										<int key="NSKeyEquivModMask">1048576</int>
 										<int key="NSMnemonicLoc">2147483647</int>
@@ -1527,9 +1529,9 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 										<string key="NSAction">_popUpItemAction:</string>
 										<reference key="NSTarget" ref="1014187575"/>
 									</object>
-									<object class="NSMenuItem" id="988672433">
+									<object class="NSMenuItem" id="682163085">
 										<reference key="NSMenu" ref="726554664"/>
-										<string key="NSTitle">Export…</string>
+										<string key="NSTitle">Import Theme…</string>
 										<string key="NSKeyEquiv"/>
 										<int key="NSKeyEquivModMask">1048576</int>
 										<int key="NSMnemonicLoc">2147483647</int>
@@ -1540,6 +1542,7 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 									</object>
 								</object>
 							</object>
+							<int key="NSSelectedIndex">-1</int>
 							<bool key="NSPullDown">YES</bool>
 							<int key="NSPreferredEdge">1</int>
 							<bool key="NSUsesItemFromMenu">YES</bool>
@@ -1552,7 +1555,7 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 				<string key="NSClassName">NSView</string>
 			</object>
 			<object class="NSCustomView" id="1022735794">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">292</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -2103,6 +2106,38 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 										<reference key="NSMenu" ref="722670135"/>
 										<string key="NSTitle">Duplicate Bookmark</string>
 										<string key="NSKeyEquiv"/>
+										<int key="NSMnemonicLoc">2147483647</int>
+										<reference key="NSOnImage" ref="110064247"/>
+										<reference key="NSMixedImage" ref="728786444"/>
+										<string key="NSAction">_popUpItemAction:</string>
+										<reference key="NSTarget" ref="760951153"/>
+									</object>
+									<object class="NSMenuItem" id="233660524">
+										<reference key="NSMenu" ref="722670135"/>
+										<bool key="NSIsDisabled">YES</bool>
+										<bool key="NSIsSeparator">YES</bool>
+										<string key="NSTitle"/>
+										<string key="NSKeyEquiv"/>
+										<int key="NSMnemonicLoc">2147483647</int>
+										<reference key="NSOnImage" ref="110064247"/>
+										<reference key="NSMixedImage" ref="728786444"/>
+										<string key="NSAction">_popUpItemAction:</string>
+										<reference key="NSTarget" ref="760951153"/>
+									</object>
+									<object class="NSMenuItem" id="298892351">
+										<reference key="NSMenu" ref="722670135"/>
+										<string key="NSTitle">Export Bookmarks…</string>
+										<string key="NSKeyEquiv"/>
+										<int key="NSMnemonicLoc">2147483647</int>
+										<reference key="NSOnImage" ref="110064247"/>
+										<reference key="NSMixedImage" ref="728786444"/>
+										<string key="NSAction">_popUpItemAction:</string>
+										<reference key="NSTarget" ref="760951153"/>
+									</object>
+									<object class="NSMenuItem" id="276295638">
+										<reference key="NSMenu" ref="722670135"/>
+										<string key="NSTitle">Import Bookmarks…</string>
+										<string key="NSKeyEquiv"/>
 										<int key="NSKeyEquivModMask">1048576</int>
 										<int key="NSMnemonicLoc">2147483647</int>
 										<reference key="NSOnImage" ref="110064247"/>
@@ -2112,6 +2147,7 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 									</object>
 								</object>
 							</object>
+							<int key="NSSelectedIndex">3</int>
 							<bool key="NSPullDown">YES</bool>
 							<int key="NSPreferredEdge">1</int>
 							<bool key="NSUsesItemFromMenu">YES</bool>
@@ -2120,6 +2156,7 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 					</object>
 				</object>
 				<string key="NSFrameSize">{522, 342}</string>
+				<reference key="NSSuperview"/>
 				<string key="NSClassName">NSView</string>
 			</object>
 			<object class="NSCustomView" id="239399745">
@@ -3734,8 +3771,41 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 										<string key="NSAction">_popUpItemAction:</string>
 										<reference key="NSTarget" ref="92536585"/>
 									</object>
+									<object class="NSMenuItem" id="194933732">
+										<reference key="NSMenu" ref="239943596"/>
+										<bool key="NSIsDisabled">YES</bool>
+										<bool key="NSIsSeparator">YES</bool>
+										<string key="NSTitle"/>
+										<string key="NSKeyEquiv"/>
+										<int key="NSMnemonicLoc">2147483647</int>
+										<reference key="NSOnImage" ref="110064247"/>
+										<reference key="NSMixedImage" ref="728786444"/>
+										<string key="NSAction">_popUpItemAction:</string>
+										<reference key="NSTarget" ref="92536585"/>
+									</object>
+									<object class="NSMenuItem" id="146862407">
+										<reference key="NSMenu" ref="239943596"/>
+										<string key="NSTitle">Export Bookmarks…</string>
+										<string key="NSKeyEquiv"/>
+										<int key="NSMnemonicLoc">2147483647</int>
+										<reference key="NSOnImage" ref="110064247"/>
+										<reference key="NSMixedImage" ref="728786444"/>
+										<string key="NSAction">_popUpItemAction:</string>
+										<reference key="NSTarget" ref="92536585"/>
+									</object>
+									<object class="NSMenuItem" id="187932731">
+										<reference key="NSMenu" ref="239943596"/>
+										<string key="NSTitle">Import Bookmarks…</string>
+										<string key="NSKeyEquiv"/>
+										<int key="NSMnemonicLoc">2147483647</int>
+										<reference key="NSOnImage" ref="110064247"/>
+										<reference key="NSMixedImage" ref="728786444"/>
+										<string key="NSAction">_popUpItemAction:</string>
+										<reference key="NSTarget" ref="92536585"/>
+									</object>
 								</object>
 							</object>
+							<int key="NSSelectedIndex">-1</int>
 							<bool key="NSPullDown">YES</bool>
 							<int key="NSPreferredEdge">1</int>
 							<bool key="NSUsesItemFromMenu">YES</bool>
@@ -3745,6 +3815,67 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 				</object>
 				<string key="NSFrameSize">{522, 319}</string>
 				<string key="NSClassName">NSView</string>
+			</object>
+			<object class="NSCustomView" id="727122633">
+				<reference key="NSNextResponder"/>
+				<int key="NSvFlags">256</int>
+				<object class="NSMutableArray" key="NSSubviews">
+					<bool key="EncodedWithXMLCoder">YES</bool>
+					<object class="NSImageView" id="1026915484">
+						<reference key="NSNextResponder" ref="727122633"/>
+						<int key="NSvFlags">268</int>
+						<object class="NSMutableSet" key="NSDragTypes">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="NSArray" key="set.sortedObjects">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<string>Apple PDF pasteboard type</string>
+								<string>Apple PICT pasteboard type</string>
+								<string>Apple PNG pasteboard type</string>
+								<string>NSFilenamesPboardType</string>
+								<string>NeXT Encapsulated PostScript v1.2 pasteboard type</string>
+								<string>NeXT TIFF v4.0 pasteboard type</string>
+							</object>
+						</object>
+						<string key="NSFrame">{{20, 17}, {24, 24}}</string>
+						<reference key="NSSuperview" ref="727122633"/>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSImageCell" key="NSCell" id="707386792">
+							<int key="NSCellFlags">130560</int>
+							<int key="NSCellFlags2">33554432</int>
+							<object class="NSCustomResource" key="NSContents">
+								<string key="NSClassName">NSImage</string>
+								<string key="NSResourceName">Warning</string>
+							</object>
+							<int key="NSAlign">0</int>
+							<int key="NSScale">2</int>
+							<int key="NSStyle">0</int>
+							<bool key="NSAnimates">NO</bool>
+						</object>
+						<bool key="NSEditable">YES</bool>
+					</object>
+					<object class="NSTextField" id="746456880">
+						<reference key="NSNextResponder" ref="727122633"/>
+						<int key="NSvFlags">268</int>
+						<string key="NSFrame">{{49, 20}, {368, 17}}</string>
+						<reference key="NSSuperview" ref="727122633"/>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTextFieldCell" key="NSCell" id="457814433">
+							<int key="NSCellFlags">68288064</int>
+							<int key="NSCellFlags2">272630784</int>
+							<string key="NSContents">The file will contain your passwords in unencrypted form.</string>
+							<reference key="NSSupport" ref="297170613"/>
+							<reference key="NSControlView" ref="746456880"/>
+							<reference key="NSBackgroundColor" ref="794505676"/>
+							<reference key="NSTextColor" ref="230426346"/>
+						</object>
+					</object>
+				</object>
+				<string key="NSFrameSize">{434, 57}</string>
+				<reference key="NSSuperview"/>
+				<object class="NSMutableString" key="NSClassName">
+					<characters key="NS.bytes">NSView</characters>
+				</object>
+				<string key="NSExtension">NSResponder</string>
 			</object>
 		</object>
 		<object class="IBObjectContainer" key="IBDocument.Objects">
@@ -5293,6 +5424,46 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 						<reference key="destination" ref="97218294"/>
 					</object>
 					<int key="connectionID">3282</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">importBookmarks:</string>
+						<reference key="source" ref="97218294"/>
+						<reference key="destination" ref="276295638"/>
+					</object>
+					<int key="connectionID">3289</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">exportBookmarks:</string>
+						<reference key="source" ref="97218294"/>
+						<reference key="destination" ref="298892351"/>
+					</object>
+					<int key="connectionID">3290</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_bookmarksExportView</string>
+						<reference key="source" ref="97218294"/>
+						<reference key="destination" ref="727122633"/>
+					</object>
+					<int key="connectionID">3307</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">exportTrackerBookmarks:</string>
+						<reference key="source" ref="97218294"/>
+						<reference key="destination" ref="146862407"/>
+					</object>
+					<int key="connectionID">3315</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">importTrackerBookmarks:</string>
+						<reference key="source" ref="97218294"/>
+						<reference key="destination" ref="187932731"/>
+					</object>
+					<int key="connectionID">3316</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -7362,8 +7533,8 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 							<reference ref="616080339"/>
 							<reference ref="785113472"/>
 							<reference ref="682163085"/>
-							<reference ref="988672433"/>
 							<reference ref="278089860"/>
+							<reference ref="988672433"/>
 						</object>
 						<reference key="parent" ref="1014187575"/>
 					</object>
@@ -7417,6 +7588,9 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="869207587"/>
 							<reference ref="917080099"/>
+							<reference ref="146862407"/>
+							<reference ref="187932731"/>
+							<reference ref="194933732"/>
 						</object>
 						<reference key="parent" ref="92536585"/>
 					</object>
@@ -7455,6 +7629,9 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="1018047909"/>
 							<reference ref="913645635"/>
+							<reference ref="298892351"/>
+							<reference ref="276295638"/>
+							<reference ref="233660524"/>
 						</object>
 						<reference key="parent" ref="760951153"/>
 					</object>
@@ -7768,6 +7945,75 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 						<int key="objectID">3269</int>
 						<reference key="object" ref="957331885"/>
 						<reference key="parent" ref="1031440355"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">3283</int>
+						<reference key="object" ref="298892351"/>
+						<reference key="parent" ref="722670135"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">3285</int>
+						<reference key="object" ref="276295638"/>
+						<reference key="parent" ref="722670135"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">3287</int>
+						<reference key="object" ref="233660524"/>
+						<reference key="parent" ref="722670135"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">3292</int>
+						<reference key="object" ref="727122633"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="746456880"/>
+							<reference ref="1026915484"/>
+						</object>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Bookmarks Export Panel</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">3305</int>
+						<reference key="object" ref="746456880"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="457814433"/>
+						</object>
+						<reference key="parent" ref="727122633"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">3306</int>
+						<reference key="object" ref="457814433"/>
+						<reference key="parent" ref="746456880"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">3308</int>
+						<reference key="object" ref="1026915484"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="707386792"/>
+						</object>
+						<reference key="parent" ref="727122633"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">3309</int>
+						<reference key="object" ref="707386792"/>
+						<reference key="parent" ref="1026915484"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">3311</int>
+						<reference key="object" ref="187932731"/>
+						<reference key="parent" ref="239943596"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">3312</int>
+						<reference key="object" ref="146862407"/>
+						<reference key="parent" ref="239943596"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">3317</int>
+						<reference key="object" ref="194933732"/>
+						<reference key="parent" ref="239943596"/>
 					</object>
 				</object>
 			</object>
@@ -8257,6 +8503,19 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 					<string>3265.IBPluginDependency</string>
 					<string>3268.IBPluginDependency</string>
 					<string>3269.IBPluginDependency</string>
+					<string>3283.IBPluginDependency</string>
+					<string>3285.IBPluginDependency</string>
+					<string>3287.IBPluginDependency</string>
+					<string>3292.IBEditorWindowLastContentRect</string>
+					<string>3292.IBPluginDependency</string>
+					<string>3292.ImportedFromIB2</string>
+					<string>3305.IBPluginDependency</string>
+					<string>3306.IBPluginDependency</string>
+					<string>3308.IBPluginDependency</string>
+					<string>3309.IBPluginDependency</string>
+					<string>3311.IBPluginDependency</string>
+					<string>3312.IBPluginDependency</string>
+					<string>3317.IBPluginDependency</string>
 				</object>
 				<object class="NSMutableArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -8576,7 +8835,7 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
-					<string>{{684, 502}, {522, 354}}</string>
+					<string>{{448, 502}, {522, 354}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<object class="NSMutableArray">
 						<bool key="EncodedWithXMLCoder">YES</bool>
@@ -8695,7 +8954,7 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{118, 363}, {171, 37}}</string>
+					<string>{{118, 297}, {170, 81}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -8746,6 +9005,19 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>{{162, 483}, {434, 57}}</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<integer value="1"/>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -8764,7 +9036,7 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">3282</int>
+			<int key="maxID">3317</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -8873,14 +9145,22 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 							<string>duplicateBookmark:</string>
 							<string>duplicateTheme:</string>
 							<string>duplicateTrackerBookmark:</string>
+							<string>exportBookmarks:</string>
 							<string>exportTheme:</string>
+							<string>exportTrackerBookmarks:</string>
+							<string>importBookmarks:</string>
 							<string>importTheme:</string>
+							<string>importTrackerBookmarks:</string>
 							<string>otherDownloadFolder:</string>
 							<string>selectEvent:</string>
 							<string>selectTheme:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -8920,6 +9200,7 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 							<string>_bookmarksAddressTextField</string>
 							<string>_bookmarksAutoConnectButton</string>
 							<string>_bookmarksAutoReconnectButton</string>
+							<string>_bookmarksExportView</string>
 							<string>_bookmarksLoginTextField</string>
 							<string>_bookmarksNameTableColumn</string>
 							<string>_bookmarksNickTextField</string>
@@ -8954,7 +9235,6 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 							<string>_filesCheckForResourceForksButton</string>
 							<string>_filesDownloadFolderMenuItem</string>
 							<string>_filesDownloadFolderPopUpButton</string>
-							<string>_filesEncryptTransfersButton</string>
 							<string>_filesOpenFoldersInNewWindowsButton</string>
 							<string>_filesQueueTransfersButton</string>
 							<string>_filesRemoveTransfersButton</string>
@@ -9015,6 +9295,7 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 							<string>NSTextField</string>
 							<string>NSButton</string>
 							<string>NSButton</string>
+							<string>NSView</string>
 							<string>NSTextField</string>
 							<string>NSTableColumn</string>
 							<string>NSTextField</string>
@@ -9049,7 +9330,6 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 							<string>NSButton</string>
 							<string>NSMenuItem</string>
 							<string>NSPopUpButton</string>
-							<string>NSButton</string>
 							<string>NSButton</string>
 							<string>NSButton</string>
 							<string>NSButton</string>

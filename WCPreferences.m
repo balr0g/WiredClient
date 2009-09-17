@@ -701,6 +701,27 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 
 #pragma mark -
 
+- (BOOL)validateMenuItem:(NSMenuItem *)item {
+	SEL		selector;
+	
+	selector = [item action];
+	
+	if(selector == @selector(duplicateBookmark:))
+		return ([_bookmarksTableView selectedRow] >= 0);
+	else if(selector == @selector(exportBookmarks:) || selector == @selector(importBookmarks:))
+		return ([[WCSettings objectForKey:WCBookmarks] count] > 0);
+	else if(selector == @selector(duplicateTrackerBookmark:))
+		return ([_trackerBookmarksTableView selectedRow] >= 0);
+	else if(selector == @selector(exportTrackerBookmarks:) || selector == @selector(importTrackerBookmarks:))
+		return ([[WCSettings objectForKey:WCTrackerBookmarks] count] > 0);
+	
+	return YES;
+}
+
+
+
+#pragma mark -
+
 - (IBAction)changePreferences:(id)sender {
 	NSImage		*image;
 	NSString	*string;
@@ -866,44 +887,6 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 
 
 
-- (IBAction)importTheme:(id)sender {
-	NSOpenPanel			*openPanel;
-	
-	openPanel = [NSOpenPanel openPanel];
-	[openPanel setCanChooseFiles:YES];
-	[openPanel setCanChooseDirectories:NO];
-	[openPanel beginSheetForDirectory:NULL
-								 file:NULL
-								types:[NSArray arrayWithObject:@"WiredTheme"]
-					   modalForWindow:[self window]
-						modalDelegate:self
-					   didEndSelector:@selector(importThemePanelDidEnd:returnCode:contextInfo:)
-						  contextInfo:NULL];
-}
-
-
-
-- (void)importThemePanelDidEnd:(NSOpenPanel *)openPanel returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-	NSMutableDictionary		*theme;
-	
-	if(returnCode == NSOKButton) {
-		theme = [NSMutableDictionary dictionaryWithContentsOfFile:[openPanel filename]];
-		
-		if(!theme || ![theme objectForKey:WCThemesName])
-			return;
-		
-		[theme setObject:[NSString UUIDString] forKey:WCThemesIdentifier];
-		
-		[WCSettings addObject:theme toArrayForKey:WCThemes];
-		
-		[_themesTableView reloadData];
-		[_themesTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:[[WCSettings objectForKey:WCThemes] count] - 1]
-					  byExtendingSelection:NO];
-	}
-}
-
-
-
 - (IBAction)exportTheme:(id)sender {
 	NSSavePanel				*savePanel;
 	NSMutableDictionary		*theme;
@@ -939,6 +922,44 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 		[theme writeToFile:[savePanel filename] atomically:YES];
 	
 	[theme release];
+}
+
+
+
+- (IBAction)importTheme:(id)sender {
+	NSOpenPanel			*openPanel;
+	
+	openPanel = [NSOpenPanel openPanel];
+	[openPanel setCanChooseFiles:YES];
+	[openPanel setCanChooseDirectories:NO];
+	[openPanel beginSheetForDirectory:NULL
+								 file:NULL
+								types:[NSArray arrayWithObject:@"WiredTheme"]
+					   modalForWindow:[self window]
+						modalDelegate:self
+					   didEndSelector:@selector(importThemePanelDidEnd:returnCode:contextInfo:)
+						  contextInfo:NULL];
+}
+
+
+
+- (void)importThemePanelDidEnd:(NSOpenPanel *)openPanel returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+	NSMutableDictionary		*theme;
+	
+	if(returnCode == NSOKButton) {
+		theme = [NSMutableDictionary dictionaryWithContentsOfFile:[openPanel filename]];
+		
+		if(!theme || ![theme objectForKey:WCThemesName])
+			return;
+		
+		[theme setObject:[NSString UUIDString] forKey:WCThemesIdentifier];
+		
+		[WCSettings addObject:theme toArrayForKey:WCThemes];
+		
+		[_themesTableView reloadData];
+		[_themesTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:[[WCSettings objectForKey:WCThemes] count] - 1]
+					  byExtendingSelection:NO];
+	}
 }
 
 
@@ -1178,7 +1199,6 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 		return;
 	
 	bookmark = [[[[WCSettings objectForKey:WCBookmarks] objectAtIndex:row] mutableCopy] autorelease];
-	
 	password = [[WCKeychain keychain] passwordForBookmark:bookmark];
 	
 	[bookmark setObject:[NSString UUIDString] forKey:WCBookmarksIdentifier];
@@ -1192,6 +1212,110 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 					 byExtendingSelection:NO];
 
 	[[NSNotificationCenter defaultCenter] postNotificationName:WCBookmarksDidChangeNotification];
+}
+
+
+
+- (IBAction)exportBookmarks:(id)sender {
+	NSSavePanel				*savePanel;
+	
+	savePanel = [NSSavePanel savePanel];
+	[savePanel setRequiredFileType:@"WiredBookmarks"];
+	[savePanel setCanSelectHiddenExtension:YES];
+	[savePanel setAccessoryView:_bookmarksExportView];
+	[savePanel beginSheetForDirectory:NULL
+								 file:[NSLS(@"Bookmarks", @"Default export bookmarks name")
+										stringByAppendingPathExtension:@"WiredBookmarks"]
+					   modalForWindow:[self window]
+						modalDelegate:self
+					   didEndSelector:@selector(exportBookmarksPanelDidEnd:returnCode:contextInfo:)
+						  contextInfo:NULL];
+}
+
+
+
+- (void)exportBookmarksPanelDidEnd:(NSSavePanel *)savePanel returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+	NSEnumerator			*enumerator;
+	NSMutableArray			*bookmarks;
+	NSMutableDictionary		*bookmark;
+	NSDictionary			*dictionary;
+	NSString				*password;
+	
+	if(returnCode == NSOKButton) {
+		bookmarks	= [NSMutableArray array];
+		enumerator	= [[WCSettings objectForKey:WCBookmarks] objectEnumerator];
+		
+		while((dictionary = [enumerator nextObject])) {
+			bookmark = [[dictionary mutableCopy] autorelease];
+			password = [[WCKeychain keychain] passwordForBookmark:bookmark];
+			
+			if(password)
+				[bookmark setObject:password forKey:WCBookmarksPassword];
+			
+			[bookmark removeObjectForKey:WCBookmarksIdentifier];
+			
+			[bookmarks addObject:bookmark];
+		}
+		
+		[bookmarks writeToURL:[savePanel URL] atomically:YES];
+	}
+}
+
+
+
+- (IBAction)importBookmarks:(id)sender {
+	NSOpenPanel			*openPanel;
+	
+	openPanel = [NSOpenPanel openPanel];
+	[openPanel setCanChooseFiles:YES];
+	[openPanel setCanChooseDirectories:NO];
+	[openPanel beginSheetForDirectory:NULL
+								 file:NULL
+								types:[NSArray arrayWithObject:@"WiredBookmarks"]
+					   modalForWindow:[self window]
+						modalDelegate:self
+					   didEndSelector:@selector(importBookmarksPanelDidEnd:returnCode:contextInfo:)
+						  contextInfo:NULL];
+}
+
+
+
+- (void)importBookmarksPanelDidEnd:(NSOpenPanel *)openPanel returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+	NSEnumerator			*enumerator;
+	NSArray					*array;
+	NSMutableDictionary		*bookmark;
+	NSDictionary			*dictionary;
+	NSString				*password;
+	
+	if(returnCode == NSOKButton) {
+		array = [NSArray arrayWithContentsOfFile:[openPanel filename]];
+		
+		if(!array || [array count] == 0)
+			return;
+		
+		enumerator = [array objectEnumerator];
+		
+		while((dictionary = [enumerator nextObject])) {
+			bookmark = [[dictionary mutableCopy] autorelease];
+			
+			if(![bookmark objectForKey:WCBookmarksName])
+				continue;
+			
+			[bookmark setObject:[NSString UUIDString] forKey:WCBookmarksIdentifier];
+			
+			password = [bookmark objectForKey:WCBookmarksPassword];
+			
+			if(password) {
+				[[WCKeychain keychain] setPassword:password forBookmark:bookmark];
+				
+				[bookmark removeObjectForKey:WCBookmarksPassword];
+			}
+			
+			[WCSettings addObject:bookmark toArrayForKey:WCBookmarks];
+		}
+		
+		[_bookmarksTableView reloadData];
+	}
 }
 
 
@@ -1573,7 +1697,6 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 		return;
 	
 	bookmark = [[[[WCSettings objectForKey:WCTrackerBookmarks] objectAtIndex:row] mutableCopy] autorelease];
-	
 	password = [[WCKeychain keychain] passwordForTrackerBookmark:bookmark];
 	
 	[bookmark setObject:[NSString UUIDString] forKey:WCTrackerBookmarksIdentifier];
@@ -1587,6 +1710,110 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 							byExtendingSelection:NO];
 
 	[[NSNotificationCenter defaultCenter] postNotificationName:WCTrackerBookmarksDidChangeNotification];
+}
+
+
+
+- (IBAction)exportTrackerBookmarks:(id)sender {
+	NSSavePanel				*savePanel;
+	
+	savePanel = [NSSavePanel savePanel];
+	[savePanel setRequiredFileType:@"WiredTrackerBookmarks"];
+	[savePanel setCanSelectHiddenExtension:YES];
+	[savePanel setAccessoryView:_bookmarksExportView];
+	[savePanel beginSheetForDirectory:NULL
+								 file:[NSLS(@"Bookmarks", @"Default export bookmarks name")
+										stringByAppendingPathExtension:@"WiredTrackerBookmarks"]
+					   modalForWindow:[self window]
+						modalDelegate:self
+					   didEndSelector:@selector(exportTrackerBookmarksPanelDidEnd:returnCode:contextInfo:)
+						  contextInfo:NULL];
+}
+
+
+
+- (void)exportTrackerBookmarksPanelDidEnd:(NSSavePanel *)savePanel returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+	NSEnumerator			*enumerator;
+	NSMutableArray			*bookmarks;
+	NSMutableDictionary		*bookmark;
+	NSDictionary			*dictionary;
+	NSString				*password;
+	
+	if(returnCode == NSOKButton) {
+		bookmarks	= [NSMutableArray array];
+		enumerator	= [[WCSettings objectForKey:WCTrackerBookmarks] objectEnumerator];
+		
+		while((dictionary = [enumerator nextObject])) {
+			bookmark = [[dictionary mutableCopy] autorelease];
+			password = [[WCKeychain keychain] passwordForTrackerBookmark:bookmark];
+			
+			if(password)
+				[bookmark setObject:password forKey:WCTrackerBookmarksPassword];
+			
+			[bookmark removeObjectForKey:WCTrackerBookmarksIdentifier];
+			
+			[bookmarks addObject:bookmark];
+		}
+		
+		[bookmarks writeToURL:[savePanel URL] atomically:YES];
+	}
+}
+
+
+
+- (IBAction)importTrackerBookmarks:(id)sender {
+	NSOpenPanel			*openPanel;
+	
+	openPanel = [NSOpenPanel openPanel];
+	[openPanel setCanChooseFiles:YES];
+	[openPanel setCanChooseDirectories:NO];
+	[openPanel beginSheetForDirectory:NULL
+								 file:NULL
+								types:[NSArray arrayWithObject:@"WiredTrackerBookmarks"]
+					   modalForWindow:[self window]
+						modalDelegate:self
+					   didEndSelector:@selector(importTrackerBookmarksPanelDidEnd:returnCode:contextInfo:)
+						  contextInfo:NULL];
+}
+
+
+
+- (void)importTrackerBookmarksPanelDidEnd:(NSOpenPanel *)openPanel returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+	NSEnumerator			*enumerator;
+	NSArray					*array;
+	NSMutableDictionary		*bookmark;
+	NSDictionary			*dictionary;
+	NSString				*password;
+	
+	if(returnCode == NSOKButton) {
+		array = [NSArray arrayWithContentsOfFile:[openPanel filename]];
+		
+		if(!array || [array count] == 0)
+			return;
+		
+		enumerator = [array objectEnumerator];
+		
+		while((dictionary = [enumerator nextObject])) {
+			bookmark = [[dictionary mutableCopy] autorelease];
+			
+			if(![bookmark objectForKey:WCTrackerBookmarksName])
+				continue;
+			
+			[bookmark setObject:[NSString UUIDString] forKey:WCTrackerBookmarksIdentifier];
+			
+			password = [bookmark objectForKey:WCTrackerBookmarksPassword];
+			
+			if(password) {
+				[[WCKeychain keychain] setPassword:password forTrackerBookmark:bookmark];
+				
+				[bookmark removeObjectForKey:WCTrackerBookmarksPassword];
+			}
+			
+			[WCSettings addObject:bookmark toArrayForKey:WCTrackerBookmarks];
+		}
+		
+		[_trackerBookmarksTableView reloadData];
+	}
 }
 
 

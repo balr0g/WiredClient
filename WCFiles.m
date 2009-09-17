@@ -2489,20 +2489,20 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		row = [_filesOutlineView rowForItem:item];
 		
 		if(row >= 0) {
-			frame			= [_filesOutlineView convertRect:[_filesOutlineView frameOfCellAtColumn:0 row:row] toView:NULL];
-			frame.origin	= [[self window] convertBaseToScreen:frame.origin];
+			frame				= [_filesOutlineView convertRect:[_filesOutlineView frameOfCellAtColumn:0 row:row] toView:NULL];
+			frame.origin		= [[self window] convertBaseToScreen:frame.origin];
 
 			return NSMakeRect(frame.origin.x, frame.origin.y, frame.size.height, frame.size.height);
 		}
 	} else {
-		directory			= [[self _directoriesForConnection:[(WCFile *) item connection]]
+		directory = [[self _directoriesForConnection:[(WCFile *) item connection]]
 			objectForKey:[[item path] stringByDeletingLastPathComponent]];
 		
 		if(directory) {
-			index			= [directory indexOfObject:item];
+			index = [directory indexOfObject:item];
 			
 			if(index != NSNotFound) {
-				frame		= [_filesTreeView convertRect:[_filesTreeView frameOfRow:index inPath:[item path]] toView:NULL];
+				frame			= [_filesTreeView convertRect:[_filesTreeView frameOfRow:index inPath:[item path]] toView:NULL];
 				frame.origin	= [[self window] convertBaseToScreen:frame.origin];
 
 				return NSMakeRect(frame.origin.x, frame.origin.y, frame.size.height, frame.size.height);

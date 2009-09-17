@@ -79,6 +79,7 @@ extern NSString * const						WCBookmarks;
 extern NSString * const						WCBookmarksName;
 extern NSString * const						WCBookmarksAddress;
 extern NSString * const						WCBookmarksLogin;
+extern NSString * const						WCBookmarksPassword;
 extern NSString * const						WCBookmarksIdentifier;
 extern NSString * const						WCBookmarksNick;
 extern NSString * const						WCBookmarksStatus;
@@ -152,6 +153,7 @@ extern NSString * const						WCTrackerBookmarks;
 extern NSString * const						WCTrackerBookmarksName;
 extern NSString * const						WCTrackerBookmarksAddress;
 extern NSString * const						WCTrackerBookmarksLogin;
+extern NSString * const						WCTrackerBookmarksPassword;
 extern NSString * const						WCTrackerBookmarksIdentifier;
 
 extern NSString * const						WCWindowProperties;

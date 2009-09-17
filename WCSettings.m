@@ -60,8 +60,6 @@
 
 #define _WCTrackersAlternateRows						@"WCTrackersAlternateRows"
 
-#define _WCBookmarksPassword							@"Password"
-
 #define _WCWindowTemplates								@"WCWindowTemplates"
 #define _WCWindowTemplatesDefault						@"WCWindowTemplatesDefault"
 
@@ -113,6 +111,7 @@ NSString * const WCBookmarks							= @"WCBookmarks";
 NSString * const WCBookmarksName						= @"Name";
 NSString * const WCBookmarksAddress						= @"Address";
 NSString * const WCBookmarksLogin						= @"Login";
+NSString * const WCBookmarksPassword					= @"Password";
 NSString * const WCBookmarksIdentifier					= @"Identifier";
 NSString * const WCBookmarksNick						= @"Nick";
 NSString * const WCBookmarksStatus						= @"Status";
@@ -156,6 +155,7 @@ NSString * const WCTrackerBookmarks						= @"WCTrackerBookmarks";
 NSString * const WCTrackerBookmarksName					= @"Name";
 NSString * const WCTrackerBookmarksAddress				= @"Address";
 NSString * const WCTrackerBookmarksLogin				= @"Login";
+NSString * const WCTrackerBookmarksPassword				= @"Password";
 NSString * const WCTrackerBookmarksIdentifier			= @"Identifier";
 
 NSString * const WCWindowProperties						= @"WCWindowProperties";
@@ -382,13 +382,13 @@ NSString * const WCDebug								= @"WCDebug";
 		if(![newBookmark objectForKey:WCBookmarksStatus])
 			[newBookmark setObject:@"" forKey:WCBookmarksStatus];
 		
-		password = [newBookmark objectForKey:_WCBookmarksPassword];
+		password = [newBookmark objectForKey:WCBookmarksPassword];
 
 		if(password) {
 			if([password length] > 0)
 				[[WCKeychain keychain] setPassword:password forBookmark:newBookmark];
 			
-			[newBookmark removeObjectForKey:_WCBookmarksPassword];
+			[newBookmark removeObjectForKey:WCBookmarksPassword];
 		}
 	
 		[newBookmarks addObject:newBookmark];
