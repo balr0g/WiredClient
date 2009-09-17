@@ -861,12 +861,6 @@
 
 
 
-- (NSString *)previewItemTitle {
-	return _name;
-}
-
-
-
 #pragma mark -
 
 - (NSComparisonResult)compareName:(WCFile *)file {

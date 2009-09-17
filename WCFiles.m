@@ -2433,32 +2433,52 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 #pragma mark -
 
-- (BOOL)acceptsPreviewPanelControl:(id /* QLPreviewPanel **/)panel {
+- (BOOL)acceptsPreviewPanelControl:(id /*QLPreviewPanel **/)panel {
     return YES;
 }
 
 
 
-- (void)beginPreviewPanelControl:(id /* QLPreviewPanel **/)panel {
+- (void)beginPreviewPanelControl:(id /*QLPreviewPanel **/)panel {
     [panel setDelegate:self];
     [panel setDataSource:self];
 }
 
 
 
-- (void) endPreviewPanelControl:(id /* QLPreviewPanel **/) panel {
+- (void)endPreviewPanelControl:(id /*QLPreviewPanel **/) panel {
 }
 
 
 
-- (NSInteger)numberOfPreviewItemsInPreviewPanel:(id /* QLPreviewPanel **/)panel {
+- (NSInteger)numberOfPreviewItemsInPreviewPanel:(id /*QLPreviewPanel **/)panel {
 	return [_previewFiles count];
 }
 
 
 
-- (id /*id <QLPreviewItem>*/)previewPanel:(id /* QLPreviewPanel **/)panel previewItemAtIndex:(NSInteger)index {
+- (id /*id <QLPreviewItem>*/)previewPanel:(id /*QLPreviewPanel **/)panel previewItemAtIndex:(NSInteger)index {
 	return [_previewFiles objectAtIndex:index];
+}
+
+
+
+- (NSRect)previewPanel:(id /*QLPreviewPanel **/)panel sourceFrameOnScreenForPreviewItem:(id /*id <QLPreviewItem>*/)item {
+	NSRect			frame;
+	NSInteger		row;
+	
+	if([self _selectedStyle] == WCFilesStyleList) {
+		row = [_filesOutlineView rowForItem:item];
+		
+		if(row >= 0) {
+			frame			= [_filesOutlineView convertRect:[_filesOutlineView frameOfCellAtColumn:0 row:row] toView:NULL];
+			frame.origin	= [[self window] convertBaseToScreen:frame.origin];
+
+			return NSMakeRect(frame.origin.x, frame.origin.y, frame.size.height, frame.size.height);
+		}
+	}
+
+	return NSZeroRect;
 }
 
 @end
