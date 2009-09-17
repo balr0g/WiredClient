@@ -144,6 +144,8 @@
 	
 	_terminationLock = [[NSConditionLock alloc] initWithCondition:0];
 	
+	_speedCalculator = wi_speed_calculator_init_with_capacity(wi_speed_calculator_alloc(), 50);
+	
 	return self;
 }
 
@@ -247,6 +249,8 @@
 	[_createdDirectoriesSet release];
 	
 	[_terminationLock release];
+	
+	wi_release(_speedCalculator);
 
 	[super dealloc];
 }

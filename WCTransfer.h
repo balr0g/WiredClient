@@ -76,6 +76,7 @@ typedef enum _WCTransferState		WCTransferState;
 	NSConditionLock					*_terminationLock;
 	
 @public
+	wi_speed_calculator_t			*_speedCalculator;
 	double							_speed;
 	WIFileOffset					_dataTransferred;
 	WIFileOffset					_rsrcTransferred;

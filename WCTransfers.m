@@ -921,7 +921,6 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	WCFile						*file;
 	WCError						*error;
 	void						*buffer;
-	wi_speed_calculator_t		*speedCalculator;
 	NSTimeInterval				time, speedTime, statsTime;
 	NSUInteger					i, speedBytes, statsBytes;
 	NSInteger					readBytes;
@@ -1062,11 +1061,10 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		[self performSelectorOnMainThread:@selector(_validate)];
 	}
 	
-	dataFD				= [dataFileHandle fileDescriptor];
-	rsrcFD				= [rsrcFileHandle fileDescriptor];
-	speedCalculator		= wi_speed_calculator_init_with_capacity(wi_speed_calculator_alloc(), 50);
+	dataFD = [dataFileHandle fileDescriptor];
+	rsrcFD = [rsrcFileHandle fileDescriptor];
 	
-	wi_speed_calculator_add_bytes_at_time(speedCalculator, 0, speedTime);
+	wi_speed_calculator_add_bytes_at_time(transfer->_speedCalculator, 0, speedTime);
 	
 	pool = [[NSAutoreleasePool alloc] init];
 	
@@ -1120,9 +1118,9 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 			[progressIndicator setDoubleValue:percent];
 	
 		if(transfer->_speed == 0.0 || time - speedTime > 0.33) {
-			wi_speed_calculator_add_bytes_at_time(speedCalculator, speedBytes, speedTime);
+			wi_speed_calculator_add_bytes_at_time(transfer->_speedCalculator, speedBytes, speedTime);
 
-			transfer->_speed = wi_speed_calculator_speed(speedCalculator);
+			transfer->_speed = wi_speed_calculator_speed(transfer->_speedCalculator);
 			
 			if(transfer->_speed > maxSpeed)
 				maxSpeed = transfer->_speed;
@@ -1144,6 +1142,10 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		}
 	}
 	
+	wi_speed_calculator_add_bytes_at_time(transfer->_speedCalculator, speedBytes, speedTime);
+	
+	transfer->_speed = wi_speed_calculator_speed(transfer->_speedCalculator);
+	
 	if(statsBytes > 0)
 		[[WCStats stats] addUnsignedLongLong:statsBytes forKey:WCStatsDownloaded];
 
@@ -1161,8 +1163,6 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	}
 	
 	[pool release];
-	
-	wi_release(speedCalculator);
 }
 
 
@@ -1177,7 +1177,6 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	WCTransferConnection		*connection;
 	WCFile						*file;
 	WCError						*error;
-	wi_speed_calculator_t		*speedCalculator;
 	char						buffer[8192];
 	NSTimeInterval				time, speedTime, statsTime;
 	NSUInteger					i, sendBytes, speedBytes, statsBytes;
@@ -1315,11 +1314,10 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		[self performSelectorOnMainThread:@selector(_validate)];
 	}
 	
-	dataFD				= [dataFileHandle fileDescriptor];
-	rsrcFD				= [rsrcFileHandle fileDescriptor];
-	speedCalculator		= wi_speed_calculator_init_with_capacity(wi_speed_calculator_alloc(), 50);
+	dataFD = [dataFileHandle fileDescriptor];
+	rsrcFD = [rsrcFileHandle fileDescriptor];
 	
-	wi_speed_calculator_add_bytes_at_time(speedCalculator, 0, speedTime);
+	wi_speed_calculator_add_bytes_at_time(transfer->_speedCalculator, 0, speedTime);
 
 	pool = [[NSAutoreleasePool alloc] init];
 
@@ -1373,9 +1371,9 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 			[progressIndicator setDoubleValue:percent];
 		
 		if(transfer->_speed == 0.0 || time - speedTime > 0.33) {
-			wi_speed_calculator_add_bytes_at_time(speedCalculator, speedBytes, speedTime);
+			wi_speed_calculator_add_bytes_at_time(transfer->_speedCalculator, speedBytes, speedTime);
 			
-			transfer->_speed = wi_speed_calculator_speed(speedCalculator);
+			transfer->_speed = wi_speed_calculator_speed(transfer->_speedCalculator);
 			
 			if(transfer->_speed > maxSpeed)
 				maxSpeed = transfer->_speed;
@@ -1397,6 +1395,10 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		}
 	}
 	
+	wi_speed_calculator_add_bytes_at_time(transfer->_speedCalculator, speedBytes, speedTime);
+	
+	transfer->_speed = wi_speed_calculator_speed(transfer->_speedCalculator);
+	
 	if(statsBytes > 0)
 		[[WCStats stats] addUnsignedLongLong:statsBytes forKey:WCStatsDownloaded];
 
@@ -1414,8 +1416,6 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	}
 	
 	[pool release];
-	
-	wi_release(speedCalculator);
 }
 
 @end
