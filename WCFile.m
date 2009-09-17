@@ -356,6 +356,8 @@
 	[_kind release];
 	[_icons release];
 	
+	[_previewItemURL release];
+	
 	[super dealloc];
 }
 
@@ -709,7 +711,7 @@
 
 - (NSString *)humanReadableSize {
 	if([self type] == WCFileFile) {
-		return [NSString humanReadableStringForSizeInBytes:[self dataSize] + [self rsrcSize]];
+		return [NSString humanReadableStringForSizeInBytes:[self totalSize]];
 	} else {
 		return [NSSWF:NSLS(@"%u %@", @"Files folder size (count, 'item(s)'"),
 			[self directoryCount],
@@ -743,6 +745,12 @@
 
 - (WIFileOffset)rsrcSize {
 	return _rsrcSize;
+}
+
+
+
+- (WIFileOffset)totalSize {
+	return _dataSize + _rsrcSize;
 }
 
 
@@ -838,6 +846,29 @@
 
 #pragma mark -
 
+- (void)setPreviewItemURL:(NSURL *)previewItemURL {
+	[previewItemURL retain];
+	[_previewItemURL release];
+	
+	_previewItemURL = previewItemURL;
+}
+
+
+
+- (NSURL *)previewItemURL {
+	return _previewItemURL;
+}
+
+
+
+- (NSString *)previewItemTitle {
+	return _name;
+}
+
+
+
+#pragma mark -
+
 - (NSComparisonResult)compareName:(WCFile *)file {
 	return [[self name] compare:[file name] options:NSCaseInsensitiveSearch | NSNumericSearch];
 }
@@ -889,9 +920,9 @@
 	else if([self type] != WCFileFile && [file type] == WCFileFile)
 		return NSOrderedDescending;
 
-	if([self dataSize] + [self rsrcSize] > [file dataSize] + [file rsrcSize])
+	if([self totalSize] > [file totalSize])
 		return NSOrderedAscending;
-	else if([self dataSize] + [self rsrcSize] < [file dataSize] + [file rsrcSize])
+	else if([self totalSize] < [file totalSize])
 		return NSOrderedDescending;
 
 	return [self compareName:file];

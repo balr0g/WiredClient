@@ -97,7 +97,7 @@
 
 	while((file = [enumerator nextObject]))
 		if([file type] == WCFileFile)
-			size += [file dataSize] + [file rsrcSize];
+			size += [file totalSize];
 
 	if(free == (WIFileOffset) -1) {
 		[_statusTextField setStringValue:[NSSWF:
@@ -249,17 +249,8 @@
 		return [_dateFormatter stringFromDate:[file creationDate]];
 	else if(tableColumn == _modifiedTableColumn)
 		return [_dateFormatter stringFromDate:[file modificationDate]];
-	else if(tableColumn == _sizeTableColumn) {
-		if([file type] == WCFileFile) {
-			return [NSString humanReadableStringForSizeInBytes:[file dataSize] + [file rsrcSize]];
-		} else {
-			return [NSSWF:NSLS(@"%llu %@", @"Files folder size (count, 'item(s)'"),
-				[file directoryCount],
-				[file directoryCount] == 1
-					? NSLS(@"item", @"Item singular")
-					: NSLS(@"items", @"Item plural")];
-		}
-	}
+	else if(tableColumn == _sizeTableColumn)
+		return [file humanReadableSize];
 	else if(tableColumn == _serverTableColumn)
 		return [[file connection] name];
 	

@@ -88,6 +88,8 @@ typedef enum _WCFileLabel			WCFileLabel;
 	
 	WIFileOffset					_uploadDataSize;
 	WIFileOffset					_uploadRsrcSize;
+	
+	NSURL							*_previewItemURL;
 
 @public
 	WIFileOffset					_dataTransferred;
@@ -131,6 +133,7 @@ typedef enum _WCFileLabel			WCFileLabel;
 - (WIFileOffset)dataSize;
 - (void)setRsrcSize:(WIFileOffset)size;
 - (WIFileOffset)rsrcSize;
+- (WIFileOffset)totalSize;
 - (void)setDirectoryCount:(NSUInteger)directoryCount;
 - (NSUInteger)directoryCount;
 - (void)setFreeSpace:(WIFileOffset)free;
@@ -146,6 +149,9 @@ typedef enum _WCFileLabel			WCFileLabel;
 - (WIFileOffset)dataTransferred;
 - (void)setRsrcTransferred:(WIFileOffset)transferred;
 - (WIFileOffset)rsrcTransferred;
+
+- (void)setPreviewItemURL:(NSURL *)url;
+- (NSURL *)previewItemURL;
 
 - (NSComparisonResult)compareName:(WCFile *)file;
 - (NSComparisonResult)compareKind:(WCFile *)file;

@@ -34,6 +34,7 @@
 #import "WCFileInfo.h"
 #import "WCFiles.h"
 #import "WCPreferences.h"
+#import "WCPreview.h"
 #import "WCPublicChat.h"
 #import "WCPublicChatController.h"
 #import "WCTransfers.h"
@@ -108,6 +109,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	_servers			= [[NSMutableArray alloc] init];
 	_places				= [[NSMutableArray alloc] init];
 	_initialDirectory	= [file retain];
+	_previewFiles		= [[NSMutableArray alloc] init];
 	_selectFiles		= [[NSMutableArray alloc] init];
 	
 	if(selectFile) {
@@ -754,7 +756,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 	while((file = [enumerator nextObject]))
 		if([file type] == WCFileFile)
-			size += [file dataSize] + [file rsrcSize];
+			size += [file totalSize];
 
 	[_statusTextField setStringValue:[NSSWF:
 		NSLS(@"%lu %@, %@ total, %@ available", @"Files info (count, 'item(s)', size, available)"),
@@ -787,7 +789,11 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 				[indexes addIndex:index];
 		}
 		
-		[_filesOutlineView selectRowIndexes:indexes byExtendingSelection:NO];
+		if([indexes count] > 0) {
+			[_filesOutlineView selectRowIndexes:indexes byExtendingSelection:NO];
+			[_filesOutlineView scrollRowToVisible:[indexes firstIndex]];
+		}
+		
 		[_filesTreeView selectPath:[[_selectFiles objectAtIndex:0] path]];
 		
 		[_selectFiles removeAllObjects];
@@ -861,6 +867,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	[_files release];
 	[_servers release];
 	[_places release];
+	[_previewFiles release];
 	[_selectFiles release];
 	[_initialDirectory release];
 	
@@ -897,6 +904,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	[_filesOutlineView setTarget:self];
 	[_filesOutlineView setDoubleAction:@selector(open:)];
 	[_filesOutlineView setEscapeAction:@selector(deselectAll:)];
+	[_filesOutlineView setSpaceAction:@selector(preview:)];
 	[_filesOutlineView setAllowsUserCustomization:YES];
 	[_filesOutlineView setDefaultHighlightedTableColumnIdentifier:@"Name"];
 	[_filesOutlineView setDefaultTableColumnIdentifiers:
@@ -909,6 +917,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	
 	[_filesTreeView setTarget:self];
 	[_filesTreeView setDoubleAction:@selector(open:)];
+	[_filesTreeView setSpaceAction:@selector(preview:)];
 	[_filesTreeView registerForDraggedTypes:[NSArray arrayWithObjects:WCFilePboardType, NSFilenamesPboardType, NULL]];
 	[_filesTreeView setDraggingSourceOperationMask:NSDragOperationEvery forLocal:YES];
 	[_filesTreeView setDraggingSourceOperationMask:NSDragOperationEvery forLocal:NO];
@@ -1144,6 +1153,49 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 
+- (void)wiredFilePreviewFileReply:(WIP7Message *)message {
+	NSEnumerator			*enumerator;
+	NSString				*path, *name;
+	NSURL					*url;
+	WCServerConnection		*connection;
+	WCFile					*file;
+	id						previewPanel;
+	
+	connection = [message contextInfo];
+	
+	if([[message name] isEqualToString:@"wired.file.preview"]) {
+		path			= [message stringForName:@"wired.file.path"];
+		enumerator		= [_previewFiles objectEnumerator];
+		
+		while((file = [enumerator nextObject])) {
+			if([[file path] isEqualToString:path]) {
+				name	= [path lastPathComponent];
+				url		= [NSURL fileURLWithPath:[NSFileManager temporaryPathWithPrefix:[name stringByDeletingPathExtension]
+																			  suffix:[name pathExtension]]];
+				
+				[[message dataForName:@"wired.file.preview"] writeToURL:url atomically:YES];
+				
+				[file setPreviewItemURL:url];
+				
+				break;
+			}
+		}
+		
+		previewPanel = [NSClassFromString(@"QLPreviewPanel") performSelector:@selector(sharedPreviewPanel)];
+		
+		[previewPanel performSelector:@selector(refreshCurrentPreviewItem)];
+		
+		[connection removeObserver:self message:message];
+	}
+	else if([[message name] isEqualToString:@"wired.error"]) {
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
+		
+		[connection removeObserver:self message:message];
+	}
+}
+
+
+
 - (void)controlTextDidChange:(NSNotification *)notification {
 	NSControl		*control;
 	WCFileType		type;
@@ -1295,12 +1347,43 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 - (IBAction)preview:(id)sender {
 	NSEnumerator	*enumerator;
+	WIP7Message		*message;
 	WCFile			*file;
+	Class			previewPanelClass;
+	id				previewPanel;
+	
+	if(![_previewButton isEnabled])
+		return;
+	
+	[_previewFiles removeAllObjects];
 
-	enumerator = [[self _selectedFiles] objectEnumerator];
+	previewPanelClass	= NSClassFromString(@"QLPreviewPanel");
+	enumerator			= [[self _selectedFiles] objectEnumerator];
 
-	while((file = [enumerator nextObject]))
-		[[WCTransfers transfers] previewFile:file];
+	while((file = [enumerator nextObject])) {
+		if(previewPanelClass && [file totalSize] < 250 * 1024) {
+			if(![file previewItemURL]) {
+				message = [WIP7Message messageWithName:@"wired.file.preview_file" spec:WCP7Spec];
+				[message setString:[file path] forName:@"wired.file.path"];
+				[[file connection] sendMessage:message fromObserver:self selector:@selector(wiredFilePreviewFileReply:)];
+			}
+
+			[_previewFiles addObject:file];
+		} else {
+			[[WCTransfers transfers] previewFile:file];
+		}
+	}
+
+	if(previewPanelClass && [_previewFiles count] > 0) {
+		previewPanel = [previewPanelClass performSelector:@selector(sharedPreviewPanel)];
+		
+		if([previewPanel isVisible])
+			[previewPanel orderOut:self];
+		else
+			[previewPanel makeKeyAndOrderFront:self];
+
+		[previewPanel reloadData];
+	}
 }
 
 
@@ -2117,12 +2200,11 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	file = [[self _filesForConnection:[self _selectedConnection]] objectForKey:path];
 
 	return [NSDictionary dictionaryWithObjectsAndKeys:
-		[file iconWithWidth:128.0],						WIFileIcon,
-		[NSNumber numberWithUnsignedLongLong:
-			[file dataSize] + [file rsrcSize]],			WIFileSize,
-		[file kind],									WIFileKind,
-		[file creationDate],							WIFileCreationDate,
-		[file modificationDate],						WIFileModificationDate,
+		[file iconWithWidth:128.0],								WIFileIcon,
+		[NSNumber numberWithUnsignedLongLong:[file totalSize]],	WIFileSize,
+		[file kind],											WIFileKind,
+		[file creationDate],									WIFileCreationDate,
+		[file modificationDate],								WIFileModificationDate,
 		NULL];
 }
 
@@ -2342,6 +2424,33 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	}
 	
 	return names;
+}
+
+
+
+#pragma mark -
+
+- (BOOL)acceptsPreviewPanelControl:(id /* QLPreviewPanel **/)panel {
+    return YES;
+}
+
+
+
+- (void)beginPreviewPanelControl:(id /* QLPreviewPanel **/)panel {
+    [panel setDelegate:self];
+    [panel setDataSource:self];
+}
+
+
+
+- (NSInteger)numberOfPreviewItemsInPreviewPanel:(id /* QLPreviewPanel **/)panel {
+	return [_previewFiles count];
+}
+
+
+
+- (id /*id <QLPreviewItem>*/)previewPanel:(id /* QLPreviewPanel **/)panel previewItemAtIndex:(NSInteger)index {
+	return [_previewFiles objectAtIndex:index];
 }
 
 @end

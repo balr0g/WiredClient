@@ -76,6 +76,7 @@ extern NSString * const					WCPlacePboardType;
 	NSMutableDictionary					*_files;
 	NSMutableArray						*_servers;
 	NSMutableArray						*_places;
+	NSMutableArray						*_previewFiles;
 	NSMutableArray						*_selectFiles;
 	BOOL								_selectFilesWhenOpening;
 	
