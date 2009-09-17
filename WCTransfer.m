@@ -259,6 +259,24 @@
 
 #pragma mark -
 
+- (void)setConnection:(WCServerConnection *)connection {
+	[_untransferredFilesList makeObjectsPerformSelector:@selector(setConnection:) withObject:connection];
+	[_transferredFilesList makeObjectsPerformSelector:@selector(setConnection:) withObject:connection];
+	[_untransferredFilesSet makeObjectsPerformSelector:@selector(setConnection:) withObject:connection];
+	[_transferredFilesSet makeObjectsPerformSelector:@selector(setConnection:) withObject:connection];
+
+	[_uncreatedDirectoriesList makeObjectsPerformSelector:@selector(setConnection:) withObject:connection];
+	[_createdDirectoriesList makeObjectsPerformSelector:@selector(setConnection:) withObject:connection];
+	[_uncreatedDirectoriesSet makeObjectsPerformSelector:@selector(setConnection:) withObject:connection];
+	[_createdDirectoriesSet makeObjectsPerformSelector:@selector(setConnection:) withObject:connection];
+
+	[super setConnection:connection];
+}
+
+
+
+#pragma mark -
+
 - (void)setState:(WCTransferState)state {
 	_state = state;
 	
