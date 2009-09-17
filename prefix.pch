@@ -45,6 +45,7 @@
 #import <sys/time.h>
 #import <sys/utsname.h>
 #import <sys/socket.h>
+#import <sys/sysctl.h>
 #import <netinet/in.h>
 #import <arpa/inet.h>
 #import <netdb.h>

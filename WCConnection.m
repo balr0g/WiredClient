@@ -103,18 +103,25 @@ WIP7Spec							*WCP7Spec;
 	NSDictionary		*dictionary;
 	WIP7Message			*message;
 	const NXArchInfo	*archInfo;
+	cpu_type_t			cpuType;
+	size_t				cpuTypeSize;
 	
 	if(!applicationName) {
-		bundle = [NSBundle mainBundle];
-		dictionary = [NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"];
-		archInfo = NXGetArchInfoFromCpuType(NXGetLocalArchInfo()->cputype, CPU_SUBTYPE_MULTIPLE);
+		bundle				= [NSBundle mainBundle];
+		dictionary			= [NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"];
+		cpuTypeSize			= sizeof(cpuType);
 		
-		applicationName = [[bundle objectForInfoDictionaryKey:@"CFBundleExecutable"] retain];
-		applicationVersion = [[bundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"] retain];
-		applicationBuild = [[bundle objectForInfoDictionaryKey:@"CFBundleVersion"] unsignedIntValue];
-		osName = [[dictionary objectForKey:@"ProductName"] retain];
-		osVersion = [[dictionary objectForKey:@"ProductVersion"] retain];
-		arch = [[NSString alloc] initWithUTF8String:archInfo->name];
+		if(sysctlbyname("sysctl.proc_cputype", &cpuType, &cpuTypeSize, NULL, 0) < 0)
+			cpuType			= NXGetLocalArchInfo()->cputype;
+		
+		archInfo			= NXGetArchInfoFromCpuType(cpuType, CPU_SUBTYPE_MULTIPLE);
+		
+		applicationName		= [[bundle objectForInfoDictionaryKey:@"CFBundleExecutable"] retain];
+		applicationVersion	= [[bundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"] retain];
+		applicationBuild	= [[bundle objectForInfoDictionaryKey:@"CFBundleVersion"] unsignedIntValue];
+		osName				= [[dictionary objectForKey:@"ProductName"] retain];
+		osVersion			= [[dictionary objectForKey:@"ProductVersion"] retain];
+		arch				= [[NSString alloc] initWithUTF8String:archInfo->name];
 	}
 
 	message = [WIP7Message messageWithName:@"wired.client_info" spec:WCP7Spec];
