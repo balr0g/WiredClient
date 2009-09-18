@@ -154,6 +154,10 @@ extern NSString * const								WCIconDidChangeNotification;
 
 + (WCPreferences *)preferences;
 
+- (BOOL)importThemeFromFile:(NSString *)path;
+- (BOOL)importBookmarksFromFile:(NSString *)path;
+- (BOOL)importTrackerBookmarksFromFile:(NSString *)path;
+
 - (IBAction)changePreferences:(id)sender;
 
 - (IBAction)addTheme:(id)sender;

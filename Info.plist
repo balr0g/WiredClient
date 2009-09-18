@@ -18,6 +18,31 @@
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>WiredBookmarks</string>
+				<string>WiredTrackerBookmarks</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>WiredBookmarks</string>
+			<key>CFBundleTypeName</key>
+			<string>Wired Bookmarks</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>WiredTheme</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>WiredTheme</string>
+			<key>CFBundleTypeName</key>
+			<string>Wired Theme</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>Wired Client</string>

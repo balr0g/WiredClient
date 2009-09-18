@@ -419,10 +419,12 @@ static WCApplicationController		*sharedController;
 	path = [[NSBundle mainBundle] pathForResource:@"wired" ofType:@"xml"];
 	
 #ifdef WCConfigurationDebug
-	if(![[[NSXMLDocument alloc] initWithContentsOfURL:[NSURL fileURLWithPath:path] options:NSXMLDocumentValidate error:(NSError **) &error] autorelease]) {
-		[[error alert] runModal];
-		
-		[NSApp terminate:self];
+	if([[NSFileManager defaultManager] fileExistsAtPath:@"p7-specification.xsd"]) {
+		if(![[[NSXMLDocument alloc] initWithContentsOfURL:[NSURL fileURLWithPath:path] options:NSXMLDocumentValidate error:(NSError **) &error] autorelease]) {
+			[[error alert] runModal];
+			
+			[NSApp terminate:self];
+		}
 	}
 #endif
 	
@@ -482,6 +484,23 @@ static WCApplicationController		*sharedController;
 	_unread = 0;
 
 	[self _updateApplicationIcon];
+}
+
+
+
+- (BOOL)application:(NSApplication *)application openFile:(NSString *)filename {
+	NSString		*extension;
+	
+	extension = [filename pathExtension];
+	
+	if([extension isEqualToString:@"WiredTheme"])
+		return [[WCPreferences preferences] importThemeFromFile:filename];
+	else if([extension isEqualToString:@"WiredBookmarks"])
+		return [[WCPreferences preferences] importBookmarksFromFile:filename];
+	else if([extension isEqualToString:@"WiredTrackerBookmarks"])
+		return [[WCPreferences preferences] importTrackerBookmarksFromFile:filename];
+	
+	return NO;
 }
 
 
