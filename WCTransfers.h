@@ -33,6 +33,16 @@
 	IBOutlet NSTableColumn					*_iconTableColumn;
 	IBOutlet NSTableColumn					*_infoTableColumn;
 	
+	IBOutlet NSButton						*_startButton;
+	IBOutlet NSButton						*_pauseButton;
+	IBOutlet NSButton						*_stopButton;
+	IBOutlet NSButton						*_removeButton;
+	IBOutlet NSButton						*_clearButton;
+	IBOutlet NSButton						*_connectButton;
+	IBOutlet NSButton						*_quickLookButton;
+	IBOutlet NSButton						*_revealInFinderButton;
+	IBOutlet NSButton						*_revealInFilesButton;
+	
 	WCErrorQueue							*_errorQueue;
 
 	NSMutableArray							*_transfers;

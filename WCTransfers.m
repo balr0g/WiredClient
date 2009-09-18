@@ -100,6 +100,48 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 @implementation WCTransfers(Private)
 
 - (void)_validate {
+	WCTransfer		*transfer;
+	BOOL			connected;
+	
+	transfer = [self _selectedTransfer];
+	connected = [[transfer connection] isConnected];
+	
+	if(transfer && connected) {
+		switch([transfer state]) {
+			case WCTransferLocallyQueued:
+			case WCTransferPaused:
+			case WCTransferStopped:
+			case WCTransferDisconnected:
+				[_startButton setEnabled:YES];
+				[_pauseButton setEnabled:NO];
+				[_stopButton setEnabled:NO];
+				break;
+
+			case WCTransferRunning:
+				[_startButton setEnabled:NO];
+				[_pauseButton setEnabled:YES];
+				[_stopButton setEnabled:YES];
+
+			default:
+				[_startButton setEnabled:NO];
+				[_pauseButton setEnabled:NO];
+				[_stopButton setEnabled:NO];
+				break;
+		}
+	} else {
+		[_startButton setEnabled:NO];
+		[_pauseButton setEnabled:NO];
+		[_stopButton setEnabled:NO];
+	}
+	
+	[_removeButton setEnabled:(transfer != NULL)];
+	[_clearButton setEnabled:([self _transferWithState:WCTransferFinished] != NULL)];
+	
+	[_connectButton setEnabled:(transfer != NULL && [transfer state] == WCTransferDisconnected)];
+	[_quickLookButton setEnabled:(transfer != NULL && _quickLookPanelClass != NULL)];
+	[_revealInFinderButton setEnabled:(transfer != NULL)];
+	[_revealInFilesButton setEnabled:(transfer != NULL && connected)];
+
 	[[[self window] toolbar] validateVisibleItems];
 }
 
@@ -1564,63 +1606,63 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	if([identifier isEqualToString:@"Start"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
 												   name:NSLS(@"Start", @"Start transfer toolbar item")
-												content:[NSImage imageNamed:@"Start"]
+												content:_startButton
 												 target:self
 												 action:@selector(start:)];
 	}
 	else if([identifier isEqualToString:@"Pause"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
 												   name:NSLS(@"Pause", @"Pause transfer toolbar item")
-												content:[NSImage imageNamed:@"Pause"]
+												content:_pauseButton
 												 target:self
 												 action:@selector(pause:)];
 	}
 	else if([identifier isEqualToString:@"Stop"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
 												   name:NSLS(@"Stop", @"Stop transfer toolbar item")
-												content:[NSImage imageNamed:@"Stop"]
+												content:_stopButton
 												 target:self
 												 action:@selector(stop:)];
 	}
 	else if([identifier isEqualToString:@"Remove"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
 												   name:NSLS(@"Remove", @"Remove transfer toolbar item")
-												content:[NSImage imageNamed:@"Remove"]
+												content:_removeButton
 												 target:self
 												 action:@selector(remove:)];
 	}
 	else if([identifier isEqualToString:@"Clear"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
 												   name:NSLS(@"Clear", @"Clear transfers toolbar item")
-												content:[NSImage imageNamed:@"Remove"]
+												content:_clearButton
 												 target:self
 												 action:@selector(clear:)];
 	}
 	else if([identifier isEqualToString:@"Connect"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
 												   name:NSLS(@"Connect", @"Connect transfer toolbar item")
-												content:[NSImage imageNamed:@"Connect"]
+												content:_connectButton
 												 target:self
 												 action:@selector(connect:)];
 	}
 	else if([identifier isEqualToString:@"QuickLook"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
 												   name:NSLS(@"Quick Look", @"Quick look transfers toolbar item")
-												content:[NSImage imageNamed:@"QuickLook"]
+												content:_quickLookButton
 												 target:self
 												 action:@selector(quickLook:)];
 	}
 	else if([identifier isEqualToString:@"RevealInFinder"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
 												   name:NSLS(@"Reveal In Finder", @"Reveal transfer in Finder toolbar item")
-												content:[NSImage imageNamed:@"RevealInFinder"]
+												content:_revealInFinderButton
 												 target:self
 												 action:@selector(revealInFinder:)];
 	}
 	else if([identifier isEqualToString:@"RevealInFiles"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
 												   name:NSLS(@"Reveal In Files", @"Reveal transfer in files toolbar item")
-												content:[NSImage imageNamed:@"Folder"]
+												content:_revealInFilesButton
 												 target:self
 												 action:@selector(revealInFiles:)];
 	}
@@ -1923,63 +1965,6 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 #pragma mark -
 
-- (BOOL)validateToolbarItem:(NSToolbarItem *)item {
-	WCTransfer			*transfer;
-	SEL					selector;
-	BOOL				connected;
-	
-	selector = [item action];
-	transfer = [self _selectedTransfer];
-	connected = [[transfer connection] isConnected];
-	
-	if(selector == @selector(start:) || selector == @selector(pause:) || selector == @selector(stop:)) {
-		if(!transfer)
-			return NO;
-		
-		switch([transfer state]) {
-			case WCTransferLocallyQueued:
-			case WCTransferPaused:
-			case WCTransferStopped:
-			case WCTransferDisconnected:
-				if(selector == @selector(start:))
-					return YES;
-				else
-					return NO;
-				break;
-
-			case WCTransferRunning:
-				if(selector == @selector(start:))
-					return NO;
-				else
-					return YES;
-				break;
-
-			default:
-				return NO;
-				break;
-		}
-	}
-	else if(selector == @selector(remove:))
-		return (transfer != NULL);
-	else if(selector == @selector(clear:))
-		return ([self _transferWithState:WCTransferFinished] != NULL);
-	else if(selector == @selector(connect:))
-		return (transfer != NULL && [transfer state] == WCTransferDisconnected);
-	else if(selector == @selector(quickLook:))
-		return (transfer != NULL && _quickLookPanelClass != NULL);
-	else if(selector == @selector(revealInFinder:))
-		return (transfer != NULL);
-	else if(selector == @selector(revealInFiles:))
-		return (transfer != NULL && connected);
-	
-	
-	return YES;
-}
-
-
-
-#pragma mark -
-
 - (void)transferThread:(id)arg {
 	NSAutoreleasePool		*pool;
 	WCTransfer				*transfer = arg;
@@ -2152,10 +2137,10 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	WCTransfer		*transfer;
 	id				quickLookPanel;
 	
-	transfer = [self _selectedTransfer];
-	
-	if(![transfer isKindOfClass:[WCDownloadTransfer class]] || !_quickLookPanelClass)
+	if(![_quickLookButton isEnabled])
 		return;
+	
+	transfer = [self _selectedTransfer];
 	
 	[_quickLookTransfers setArray:[NSArray arrayWithObject:transfer]];
 	

@@ -1375,7 +1375,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	WCFile			*file;
 	id				quickLookPanel;
 	
-	if(![_quickLookButton isEnabled] || !_quickLookPanelClass)
+	if(![_quickLookButton isEnabled])
 		return;
 	
 	[_quickLookFiles removeAllObjects];
