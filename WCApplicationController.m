@@ -499,6 +499,8 @@ static WCApplicationController		*sharedController;
 		return [[WCPreferences preferences] importBookmarksFromFile:filename];
 	else if([extension isEqualToString:@"WiredTrackerBookmarks"])
 		return [[WCPreferences preferences] importTrackerBookmarksFromFile:filename];
+	else if([extension isEqualToString:@"WiredTransfer"])
+		return [[WCTransfers transfers] addTransferAtPath:filename];
 	
 	return NO;
 }

@@ -539,6 +539,13 @@
 
 
 
+- (BOOL)isStopped {
+	return (_state == WCTransferPaused || _state == WCTransferStopped ||
+			_state == WCTransferDisconnected || _state == WCTransferFinished);
+}
+
+
+
 - (void)signalTerminated {
 	[_terminationLock lock];
 	[_terminationLock unlockWithCondition:1];

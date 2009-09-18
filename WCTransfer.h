@@ -124,6 +124,7 @@ typedef enum _WCTransferState		WCTransferState;
 
 - (BOOL)isWorking;
 - (BOOL)isTerminating;
+- (BOOL)isStopped;
 - (void)signalTerminated;
 - (BOOL)waitUntilTerminatedBeforeDate:(NSDate *)date;
 - (NSString *)status;

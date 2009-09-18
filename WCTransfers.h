@@ -44,6 +44,7 @@
 
 + (id)transfers;
 
+- (BOOL)addTransferAtPath:(NSString *)path;
 - (BOOL)downloadFile:(WCFile *)file;
 - (BOOL)downloadFile:(WCFile *)file toFolder:(NSString *)destination;
 - (BOOL)uploadPath:(NSString *)path toFolder:(WCFile *)destination;

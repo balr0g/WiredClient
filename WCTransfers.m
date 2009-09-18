@@ -43,6 +43,7 @@
 #import "WCTransfers.h"
 
 #define WCTransfersFileExtension				@"WiredTransfer"
+#define WCTransfersFileExtendedAttributeName	@"com.zankasoftware.WiredTransfer"
 #define WCTransferPboardType					@"WCTransferPboardType"
 
 
@@ -622,7 +623,9 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		if([transfer isKindOfClass:[WCDownloadTransfer class]]) {
 			newPath = [path stringByDeletingPathExtension];
 			
+			[[NSFileManager defaultManager] removeExtendedAttributeForName:WCTransfersFileExtendedAttributeName atPath:path error:NULL];
 			[[NSFileManager defaultManager] movePath:path toPath:newPath handler:NULL];
+			
 			[transfer setLocalPath:newPath];
 			path = newPath;
 			
@@ -1651,7 +1654,10 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 - (void)applicationWillTerminate:(NSNotification *)notification {
 	NSEnumerator		*enumerator;
+	NSData				*data;
+	NSString			*path;
 	WCTransfer			*transfer;
+	WCFile				*file;
 
 	enumerator = [_transfers objectEnumerator];
 
@@ -1659,8 +1665,26 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		if([transfer isWorking]) {
 			[transfer setState:WCTransferDisconnecting];
 			
-//			if([transfer waitUntilTerminatedBeforeDate:[NSDate dateWithTimeIntervalSinceNow:1.0]])
-//				[transfer setState:WCTransferDisconnected];
+			if([transfer waitUntilTerminatedBeforeDate:[NSDate dateWithTimeIntervalSinceNow:1.0]])
+				[transfer setState:WCTransferDisconnected];
+		}
+	}
+
+	enumerator = [_transfers objectEnumerator];
+
+	while((transfer = [enumerator nextObject])) {
+		if(![transfer isFolder] && [transfer isStopped] && [transfer state] != WCTransferDisconnected) {
+			file = [transfer firstUntransferredFile];
+			
+			if(file) {
+				path = [file transferLocalPath];
+				data = [NSKeyedArchiver archivedDataWithRootObject:transfer];
+				
+				[[NSFileManager defaultManager] setExtendedAttribute:data
+															 forName:WCTransfersFileExtendedAttributeName
+															  atPath:path
+															   error:NULL];
+			}
 		}
 	}
 
@@ -1973,6 +1997,44 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 
 #pragma mark -
+
+- (BOOL)addTransferAtPath:(NSString *)path {
+	NSData			*data;
+	WCTransfer		*transfer, *existingTransfer;
+	NSUInteger		index;
+	
+	[self showWindow:self];
+	
+	data = [[NSFileManager defaultManager] extendedAttributeForName:WCTransfersFileExtendedAttributeName atPath:path error:NULL];
+	
+	if(!data)
+		return NO;
+	
+	transfer = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+	
+	if(!transfer || ![transfer isKindOfClass:[WCTransfer class]])
+		return NO;
+	
+	existingTransfer = [self _unfinishedTransferWithPath:[[transfer firstUntransferredFile] path]];
+	
+	if(existingTransfer) {
+		index = [_transfers indexOfObject:existingTransfer];
+	} else {
+		[transfer setState:WCTransferDisconnected];
+		
+		[_transfers addObject:transfer];
+		[_transfersTableView reloadData];
+		
+		index = [_transfers count] - 1;
+	}
+	
+	if(index != NSNotFound)
+		[_transfersTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
+	
+	return YES;
+}
+
+
 
 - (BOOL)downloadFile:(WCFile *)file {
 	return [self _downloadFile:file toFolder:[[WCSettings objectForKey:WCDownloadFolder] stringByStandardizingPath]];
