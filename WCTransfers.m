@@ -611,6 +611,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	WCTransferState		state;
 	BOOL				download, next = YES;
 	
+	[transfer retain];
+	
 	file		= [[transfer firstUntransferredFile] retain];
 	path		= [file transferLocalPath];
 	download	= [transfer isKindOfClass:[WCDownloadTransfer class]];
@@ -687,6 +689,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		[self _requestNextTransferForConnection:[transfer connection]];
 	
 	[file release];
+	[transfer release];
 }
 
 
