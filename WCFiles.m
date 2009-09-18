@@ -1928,27 +1928,27 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		}
 	}
 	else if(outlineView == _filesOutlineView) {
-		if([types containsObject:WCFilePboardType]) {
-			destinationFile		= item ? item : _currentDirectory;
-			sources				= [NSKeyedUnarchiver unarchiveObjectWithData:[pasteboard dataForType:WCFilePboardType]];
-			enumerator			= [sources reverseObjectEnumerator];
+		destinationFile = item ? item : _currentDirectory;
+		
+		if(index >= 0) {
+			destinationFile = _currentDirectory;
 			
-			if(index >= 0) {
-				destinationFile = _currentDirectory;
-
+			[_filesOutlineView setDropItem:NULL dropChildIndex:NSOutlineViewDropOnItemIndex];
+		}
+		
+		if(![destinationFile isFolder]) {
+			destinationFile = [self _existingParentFileForFile:destinationFile];
+			
+			if(destinationFile == _currentDirectory)
 				[_filesOutlineView setDropItem:NULL dropChildIndex:NSOutlineViewDropOnItemIndex];
-			}
-			
-			if(![destinationFile isFolder]) {
-				destinationFile = [self _existingParentFileForFile:destinationFile];
-				
-				if(destinationFile == _currentDirectory)
-					[_filesOutlineView setDropItem:NULL dropChildIndex:NSOutlineViewDropOnItemIndex];
-				else
-					[_filesOutlineView setDropItem:destinationFile dropChildIndex:NSOutlineViewDropOnItemIndex];
-			}
-			
-			copy = NO;
+			else
+				[_filesOutlineView setDropItem:destinationFile dropChildIndex:NSOutlineViewDropOnItemIndex];
+		}
+		
+		if([types containsObject:WCFilePboardType]) {
+			sources		= [NSKeyedUnarchiver unarchiveObjectWithData:[pasteboard dataForType:WCFilePboardType]];
+			enumerator	= [sources reverseObjectEnumerator];
+			copy		= NO;
 			
 			while((sourceFile = [enumerator nextObject])) {
 				if([sourceFile connection] == [destinationFile connection])
