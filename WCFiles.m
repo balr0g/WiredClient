@@ -42,9 +42,9 @@
 #define WCFilesDirectories					@"WCFilesDirectories"
 #define WCFilesReceivedFiles				@"WCFilesReceivedFiles"
 
-#define WCFilesPreviewTextExtensions		@"c cc cgi conf css diff h in java log m patch pem php pl plist pod rb rtf s sh status strings tcl text txt xml"
-#define WCFilesPreviewHTMLExtensions		@"htm html shtm shtml svg"
-#define WCFilesPreviewImageExtensions		@"bmp eps jpg jpeg tif tiff gif pct pict pdf png"
+#define WCFilesQuickLookTextExtensions		@"c cc cgi conf css diff h in java log m patch pem php pl plist pod rb rtf s sh status strings tcl text txt xml"
+#define WCFilesQuickLookHTMLExtensions		@"htm html shtm shtml svg"
+#define WCFilesQuickLookImageExtensions		@"bmp eps jpg jpeg tif tiff gif pct pict pdf png"
 
 
 NSString * const							WCFilePboardType = @"WCFilePboardType";
@@ -114,7 +114,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	_servers			= [[NSMutableArray alloc] init];
 	_places				= [[NSMutableArray alloc] init];
 	_initialDirectory	= [file retain];
-	_previewFiles		= [[NSMutableArray alloc] init];
+	_quickLookFiles		= [[NSMutableArray alloc] init];
 	_selectFiles		= [[NSMutableArray alloc] init];
 	
 	if(selectFile) {
@@ -138,7 +138,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	[_dateFormatter setDateStyle:NSDateFormatterMediumStyle];
 	[_dateFormatter setNaturalLanguageStyle:WIDateFormatterCapitalizedNaturalLanguageStyle];
 	
-	_previewPanelClass = NSClassFromString(@"QLPreviewPanel");
+	_quickLookPanelClass = NSClassFromString(@"QLPreviewPanel");
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
@@ -212,7 +212,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	WCServerConnection		*connection;
 	WCAccount				*account;
 	WCFile					*file;
-	BOOL					connected, preview, writable, readable;
+	BOOL					connected, quickLook, writable, readable;
 	
 	connection	= [self _selectedConnection];
 	connected	= [connection isConnected];
@@ -224,7 +224,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	switch([files count]) {
 		case 0:
 			[_downloadButton setEnabled:NO];
-			[_previewButton setEnabled:NO];
+			[_quickLookButton setEnabled:NO];
 			[_infoButton setEnabled:NO];
 			[_deleteButton setEnabled:NO];
 			break;
@@ -235,29 +235,29 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 			[_downloadButton setEnabled:([account transferDownloadFiles] && connected)];
 			[_deleteButton setEnabled:(([account fileDeleteFiles] || writable) && connected)];
 			[_infoButton setEnabled:([account fileGetInfo] && connected)];
-			[_previewButton setEnabled:([account transferDownloadFiles] &&
-										connected &&
-										[self _canPreviewFile:file])];
+			[_quickLookButton setEnabled:([account transferDownloadFiles] &&
+										  connected &&
+										  [self _canPreviewFile:file])];
 			break;
 
 		default:
 			[_downloadButton setEnabled:([account transferDownloadFiles] && connected)];
 			
-			preview = ([account transferDownloadFiles] && connected);
+			quickLook = ([account transferDownloadFiles] && connected);
 			
-			if(preview) {
+			if(quickLook) {
 				enumerator = [files objectEnumerator];
 				
 				while((file = [enumerator nextObject])) {
 					if(![self _canPreviewFile:file]) {
-						preview = NO;
+						quickLook = NO;
 						
 						break;
 					}
 				}
 			}
 			
-			[_previewButton setEnabled:preview];
+			[_quickLookButton setEnabled:quickLook];
 			[_deleteButton setEnabled:(([account fileDeleteFiles] || writable) && connected)];
 			[_infoButton setEnabled:(([account fileGetInfo] || readable) && connected)];
 			break;
@@ -297,7 +297,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	if([file isFolder])
 		return NO;
 	
-	if(!_previewPanelClass)
+	if(!_quickLookPanelClass)
 		return NO;
 	
 	if([file totalSize] > 250 * 1024)
@@ -890,7 +890,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	[_files release];
 	[_servers release];
 	[_places release];
-	[_previewFiles release];
+	[_quickLookFiles release];
 	[_selectFiles release];
 	[_initialDirectory release];
 	
@@ -927,7 +927,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	[_filesOutlineView setTarget:self];
 	[_filesOutlineView setDoubleAction:@selector(open:)];
 	[_filesOutlineView setEscapeAction:@selector(deselectAll:)];
-	[_filesOutlineView setSpaceAction:@selector(preview:)];
+	[_filesOutlineView setSpaceAction:@selector(quickLook:)];
 	[_filesOutlineView setAllowsUserCustomization:YES];
 	[_filesOutlineView setDefaultHighlightedTableColumnIdentifier:@"Name"];
 	[_filesOutlineView setDefaultTableColumnIdentifiers:
@@ -940,7 +940,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	
 	[_filesTreeView setTarget:self];
 	[_filesTreeView setDoubleAction:@selector(open:)];
-	[_filesTreeView setSpaceAction:@selector(preview:)];
+	[_filesTreeView setSpaceAction:@selector(quickLook:)];
 	[_filesTreeView registerForDraggedTypes:[NSArray arrayWithObjects:WCFilePboardType, NSFilenamesPboardType, NULL]];
 	[_filesTreeView setDraggingSourceOperationMask:NSDragOperationEvery forLocal:YES];
 	[_filesTreeView setDraggingSourceOperationMask:NSDragOperationEvery forLocal:NO];
@@ -1182,13 +1182,13 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	NSURL					*url;
 	WCServerConnection		*connection;
 	WCFile					*file;
-	id						previewPanel;
+	id						quickLookPanel;
 	
 	connection = [message contextInfo];
 	
 	if([[message name] isEqualToString:@"wired.file.preview"]) {
 		path			= [message stringForName:@"wired.file.path"];
-		enumerator		= [_previewFiles objectEnumerator];
+		enumerator		= [_quickLookFiles objectEnumerator];
 		
 		while((file = [enumerator nextObject])) {
 			if([[file path] isEqualToString:path]) {
@@ -1203,12 +1203,10 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		}
 		
 		if(file) {
-			previewPanel = [_previewPanelClass performSelector:@selector(sharedPreviewPanel)];
+			quickLookPanel = [_quickLookPanelClass performSelector:@selector(sharedPreviewPanel)];
 			
-			if([previewPanel respondsToSelector:@selector(refreshCurrentPreviewItem)])
-				[previewPanel performSelector:@selector(refreshCurrentPreviewItem)];
-			else if([previewPanel respondsToSelector:@selector(setURLs:)])
-				[previewPanel performSelector:@selector(setURLs:) withObject:[NSArray arrayWithObject:[file previewItemURL]]];
+			if([quickLookPanel respondsToSelector:@selector(refreshCurrentPreviewItem)])
+				[quickLookPanel performSelector:@selector(refreshCurrentPreviewItem)];
 		}
 		
 		[connection removeObserver:self message:message];
@@ -1371,16 +1369,16 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 
-- (IBAction)preview:(id)sender {
+- (IBAction)quickLook:(id)sender {
 	NSEnumerator	*enumerator;
 	WIP7Message		*message;
 	WCFile			*file;
-	id				previewPanel;
+	id				quickLookPanel;
 	
-	if(![_previewButton isEnabled] || !_previewPanelClass)
+	if(![_quickLookButton isEnabled] || !_quickLookPanelClass)
 		return;
 	
-	[_previewFiles removeAllObjects];
+	[_quickLookFiles removeAllObjects];
 
 	enumerator = [[self _selectedFiles] objectEnumerator];
 
@@ -1391,18 +1389,18 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 			[[file connection] sendMessage:message fromObserver:self selector:@selector(wiredFilePreviewFileReply:)];
 		}
 
-		[_previewFiles addObject:file];
+		[_quickLookFiles addObject:file];
 	}
 
-	previewPanel = [_previewPanelClass performSelector:@selector(sharedPreviewPanel)];
+	quickLookPanel = [_quickLookPanelClass performSelector:@selector(sharedPreviewPanel)];
 	
-	if([previewPanel isVisible])
-		[previewPanel orderOut:self];
+	if([quickLookPanel isVisible])
+		[quickLookPanel orderOut:self];
 	else
-		[previewPanel makeKeyAndOrderFront:self];
+		[quickLookPanel makeKeyAndOrderFront:self];
 
-	if([previewPanel respondsToSelector:@selector(reloadData)])
-		[previewPanel reloadData];
+	if([quickLookPanel respondsToSelector:@selector(reloadData)])
+		[quickLookPanel reloadData];
 }
 
 
@@ -2468,13 +2466,13 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 - (NSInteger)numberOfPreviewItemsInPreviewPanel:(id /*QLPreviewPanel **/)panel {
-	return [_previewFiles count];
+	return [_quickLookFiles count];
 }
 
 
 
 - (id /*id <QLPreviewItem>*/)previewPanel:(id /*QLPreviewPanel **/)panel previewItemAtIndex:(NSInteger)index {
-	return [_previewFiles objectAtIndex:index];
+	return [_quickLookFiles objectAtIndex:index];
 }
 
 

@@ -1445,7 +1445,10 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 - (id)init {
 	self = [super initWithWindowNibName:@"Transfers"];
 
-	_folderImage = [[NSImage imageNamed:@"Folder"] retain];
+	_folderImage			= [[NSImage imageNamed:@"Folder"] retain];
+
+	_quickLookTransfers		= [[NSMutableArray alloc] init];
+	_quickLookPanelClass	= NSClassFromString(@"QLPreviewPanel");
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
@@ -1503,6 +1506,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	[_timer release];
 	[_folderImage release];
 	[_transfers release];
+	[_quickLookTransfers release];
 
 	[super dealloc];
 }
@@ -1529,6 +1533,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	[self setShouldCascadeWindows:NO];
 	[self setWindowFrameAutosaveName:@"Transfers"];
 
+	[_transfersTableView setTarget:self];
+	[_transfersTableView setSpaceAction:@selector(quickLook:)];
 	[_transfersTableView registerForDraggedTypes:
 		[NSArray arrayWithObjects:NSStringPboardType, WCTransferPboardType, NULL]];
 
@@ -1597,6 +1603,13 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 												 target:self
 												 action:@selector(connect:)];
 	}
+	else if([identifier isEqualToString:@"QuickLook"]) {
+		return [NSToolbarItem toolbarItemWithIdentifier:identifier
+												   name:NSLS(@"Quick Look", @"Quick look transfers toolbar item")
+												content:[NSImage imageNamed:@"QuickLook"]
+												 target:self
+												 action:@selector(quickLook:)];
+	}
 	else if([identifier isEqualToString:@"RevealInFinder"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
 												   name:NSLS(@"Reveal In Finder", @"Reveal transfer in Finder toolbar item")
@@ -1626,6 +1639,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		@"Clear",
 		NSToolbarFlexibleSpaceItemIdentifier,
 		@"Connect",
+		@"QuickLook",
 		@"RevealInFinder",
 		@"RevealInFiles",
 		NULL];
@@ -1641,6 +1655,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		@"Remove",
 		@"Clear",
 		@"Connect",
+		@"QuickLook",
 		@"RevealInFinder",
 		@"RevealInFiles",
 		NSToolbarSeparatorItemIdentifier,
@@ -1949,7 +1964,9 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	else if(selector == @selector(clear:))
 		return ([self _transferWithState:WCTransferFinished] != NULL);
 	else if(selector == @selector(connect:))
-		return (transfer && [transfer state] == WCTransferDisconnected);
+		return (transfer != NULL && [transfer state] == WCTransferDisconnected);
+	else if(selector == @selector(quickLook:))
+		return (transfer != NULL && _quickLookPanelClass != NULL);
 	else if(selector == @selector(revealInFinder:))
 		return (transfer != NULL);
 	else if(selector == @selector(revealInFiles:))
@@ -2131,6 +2148,30 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 
 
+- (IBAction)quickLook:(id)sender {
+	WCTransfer		*transfer;
+	id				quickLookPanel;
+	
+	transfer = [self _selectedTransfer];
+	
+	if(![transfer isKindOfClass:[WCDownloadTransfer class]] || !_quickLookPanelClass)
+		return;
+	
+	[_quickLookTransfers setArray:[NSArray arrayWithObject:transfer]];
+	
+	quickLookPanel = [_quickLookPanelClass performSelector:@selector(sharedPreviewPanel)];
+	
+	if([quickLookPanel isVisible])
+		[quickLookPanel orderOut:self];
+	else
+		[quickLookPanel makeKeyAndOrderFront:self];
+
+	if([quickLookPanel respondsToSelector:@selector(reloadData)])
+		[quickLookPanel performSelector:@selector(reloadData)];
+}
+
+
+
 - (IBAction)connect:(id)sender {
 	WCConnect		*connect;
 	WCTransfer		*transfer;
@@ -2278,6 +2319,56 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	}
 
 	return NO;
+}
+
+
+
+#pragma mark -
+
+- (BOOL)acceptsPreviewPanelControl:(id /*QLPreviewPanel **/)panel {
+    return YES;
+}
+
+
+
+- (void)beginPreviewPanelControl:(id /*QLPreviewPanel **/)panel {
+    [panel setDelegate:self];
+    [panel setDataSource:self];
+}
+
+
+
+- (void)endPreviewPanelControl:(id /*QLPreviewPanel **/) panel {
+}
+
+
+
+- (NSInteger)numberOfPreviewItemsInPreviewPanel:(id /*QLPreviewPanel **/)panel {
+	return [_quickLookTransfers count];
+}
+
+
+
+- (id /*id <QLPreviewItem>*/)previewPanel:(id /*QLPreviewPanel **/)panel previewItemAtIndex:(NSInteger)index {
+	return [_quickLookTransfers objectAtIndex:index];
+}
+
+
+
+- (NSRect)previewPanel:(id /*QLPreviewPanel **/)panel sourceFrameOnScreenForPreviewItem:(id /*id <QLPreviewItem>*/)item {
+	NSRect			frame;
+	NSUInteger		index;
+	
+	index = [_transfers indexOfObject:item];
+	
+	if(index != NSNotFound) {
+		frame				= [_transfersTableView convertRect:[_transfersTableView frameOfCellAtColumn:0 row:index] toView:NULL];
+		frame.origin		= [[self window] convertBaseToScreen:frame.origin];
+
+		return NSMakeRect(frame.origin.x, frame.origin.y, frame.size.height, frame.size.height);
+	}
+
+	return NSZeroRect;
 }
 
 @end

@@ -38,7 +38,7 @@ extern NSString * const					WCPlacePboardType;
 	IBOutlet NSButton					*_downloadButton;
 	IBOutlet NSButton					*_uploadButton;
 	IBOutlet NSButton					*_infoButton;
-	IBOutlet NSButton					*_previewButton;
+	IBOutlet NSButton					*_quickLookButton;
 	IBOutlet NSButton					*_createFolderButton;
 	IBOutlet NSButton					*_reloadButton;
 	IBOutlet NSButton					*_deleteButton;
@@ -76,7 +76,7 @@ extern NSString * const					WCPlacePboardType;
 	NSMutableDictionary					*_files;
 	NSMutableArray						*_servers;
 	NSMutableArray						*_places;
-	NSMutableArray						*_previewFiles;
+	NSMutableArray						*_quickLookFiles;
 	NSMutableArray						*_selectFiles;
 	BOOL								_selectFilesWhenOpening;
 	
@@ -85,7 +85,7 @@ extern NSString * const					WCPlacePboardType;
 	
 	WIDateFormatter						*_dateFormatter;
 	
-	Class								_previewPanelClass;
+	Class								_quickLookPanelClass;
 }
 
 + (id)filesWithConnection:(WCServerConnection *)connection file:(WCFile *)file;
@@ -99,7 +99,7 @@ extern NSString * const					WCPlacePboardType;
 - (IBAction)download:(id)sender;
 - (IBAction)upload:(id)sender;
 - (IBAction)getInfo:(id)sender;
-- (IBAction)preview:(id)sender;
+- (IBAction)quickLook:(id)sender;
 - (IBAction)createFolder:(id)sender;
 - (IBAction)type:(id)sender;
 - (IBAction)reloadFiles:(id)sender;

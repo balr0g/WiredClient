@@ -122,6 +122,8 @@ typedef enum _WCTransferState		WCTransferState;
 - (void)setProgressIndicator:(NSProgressIndicator *)progressIndicator;
 - (NSProgressIndicator *)progressIndicator;
 
+- (NSURL *)previewItemURL;
+
 - (BOOL)isWorking;
 - (BOOL)isTerminating;
 - (BOOL)isStopped;

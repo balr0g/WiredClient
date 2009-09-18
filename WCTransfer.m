@@ -524,6 +524,14 @@
 
 #pragma mark -
 
+- (NSURL *)previewItemURL {
+	return [NSURL fileURLWithPath:[self localPath]];
+}
+
+
+
+#pragma mark -
+
 - (BOOL)isWorking {
 	return (_state == WCTransferWaiting || _state == WCTransferQueued ||
 			_state == WCTransferListing || _state == WCTransferCreatingDirectories ||

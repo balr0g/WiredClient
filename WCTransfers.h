@@ -36,10 +36,13 @@
 	WCErrorQueue							*_errorQueue;
 
 	NSMutableArray							*_transfers;
+	NSMutableArray							*_quickLookTransfers;
 
 	NSImage									*_folderImage;
 	NSTimer									*_timer;
 	NSLock									*_lock;
+	
+	Class									_quickLookPanelClass;
 }
 
 + (id)transfers;
@@ -55,6 +58,7 @@
 - (IBAction)remove:(id)sender;
 - (IBAction)clear:(id)sender;
 - (IBAction)connect:(id)sender;
+- (IBAction)quickLook:(id)sender;
 - (IBAction)revealInFinder:(id)sender;
 - (IBAction)revealInFiles:(id)sender;
 
