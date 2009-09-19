@@ -307,7 +307,7 @@
 	NSEnumerator	*enumerator;
 	NSDictionary	*ignore;
 
-	enumerator = [[WCSettings objectForKey:WCIgnores] objectEnumerator];
+	enumerator = [[[WCSettings settings] objectForKey:WCIgnores] objectEnumerator];
 
 	while((ignore = [enumerator nextObject])) {
 		if([[ignore objectForKey:WCIgnoresNick] isEqualToString:[self nick]])

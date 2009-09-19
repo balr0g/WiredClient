@@ -118,7 +118,7 @@
 - (void)_themeDidChange {
 	NSDictionary		*theme;
 	
-	theme = [WCSettings themeWithIdentifier:[WCSettings objectForKey:WCTheme]];
+	theme = [[WCSettings settings] themeWithIdentifier:[[WCSettings settings] objectForKey:WCTheme]];
 	
 	[_serversOutlineView setUsesAlternatingRowBackgroundColors:[theme boolForKey:WCThemesTrackerListAlternateRows]];
 }
@@ -187,7 +187,7 @@
 	[_servers removeAllItems];
 	[_servers addItem:_bonjour];
 	
-	enumerator = [[WCSettings objectForKey:WCTrackerBookmarks] objectEnumerator];
+	enumerator = [[[WCSettings settings] objectForKey:WCTrackerBookmarks] objectEnumerator];
 	
 	while((bookmark = [enumerator nextObject]))
 		[_servers addItem:[WCServerTracker itemWithBookmark:bookmark]];
@@ -680,7 +680,7 @@
 			[NSString UUIDString],				WCTrackerBookmarksIdentifier,
 			NULL];
 		
-		[WCSettings addObject:bookmark toArrayForKey:WCTrackerBookmarks];
+		[[WCSettings settings] addObject:bookmark toArrayForKey:WCTrackerBookmarks];
 		
 		[self _reloadTrackers];
 	}
@@ -698,7 +698,7 @@
 	
 	if([item isKindOfClass:[WCServerTracker class]]) {
 		identifier = [[item bookmark] objectForKey:WCTrackerBookmarksIdentifier];
-		bookmarks = [WCSettings objectForKey:WCTrackerBookmarks];
+		bookmarks = [[WCSettings settings] objectForKey:WCTrackerBookmarks];
 		count = [bookmarks count];
 		index = NSNotFound;
 		
@@ -711,7 +711,7 @@
 		}
 		
 		if(index != NSNotFound) {
-			[WCSettings removeObjectAtIndex:index fromArrayForKey:WCTrackerBookmarks];
+			[[WCSettings settings] removeObjectAtIndex:index fromArrayForKey:WCTrackerBookmarks];
 
 			[self _reloadTrackers];
 		}

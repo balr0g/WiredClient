@@ -171,15 +171,16 @@ NSString * const WCDebug								= @"WCDebug";
 
 @interface WCSettings(Private)
 
-+ (void)_upgrade;
-+ (NSDictionary *)_themeWithBuiltinName:(NSString *)builtinName;
+- (void)_upgrade;
+
+- (NSDictionary *)_themeWithBuiltinName:(NSString *)builtinName;
 
 @end
 
 
 @implementation WCSettings(Private)
 
-+ (void)_upgrade {
+- (void)_upgrade {
 	NSEnumerator			*enumerator, *keyEnumerator;
 	NSDictionary			*defaults, *defaultTheme;
 	NSArray					*themes, *bookmarks;
@@ -418,7 +419,9 @@ NSString * const WCDebug								= @"WCDebug";
 
 
 
-+ (NSDictionary *)_themeWithBuiltinName:(NSString *)builtinName {
+#pragma mark -
+
+- (NSDictionary *)_themeWithBuiltinName:(NSString *)builtinName {
 	NSEnumerator	*enumerator;
 	NSDictionary	*theme;
 	
@@ -437,11 +440,14 @@ NSString * const WCDebug								= @"WCDebug";
 
 @implementation WCSettings
 
-+ (void)setIdentifier:(NSString *)identifier {
++ (id)settings {
 #ifndef WCConfigurationRelease
 	NSUserDefaults	*defaults;
 	NSDictionary	*persistentDomain;
+#endif
+	id				settings;
 	
+#ifndef WCConfigurationRelease
 	defaults = [NSUserDefaults standardUserDefaults];
 	persistentDomain = [defaults persistentDomainForName:@"com.zanka.WiredClientDebugP7"];
 		
@@ -455,16 +461,18 @@ NSString * const WCDebug								= @"WCDebug";
 	[defaults synchronize];
 #endif
 	
-	[super setIdentifier:identifier];
+	settings = [super settings];
 	
-	[self _upgrade];
+	[settings _upgrade];
+	
+	return settings;
 }
 
 
 
 #pragma mark -
 
-+ (NSDictionary *)defaults {
+- (NSDictionary *)defaults {
 	static NSDictionary		*defaults;
 	NSString				*basicThemeIdentifier;
 	
@@ -709,7 +717,7 @@ NSString * const WCDebug								= @"WCDebug";
 
 #pragma mark -
 
-+ (NSDictionary *)themeWithIdentifier:(NSString *)identifier {
+- (NSDictionary *)themeWithIdentifier:(NSString *)identifier {
 	NSEnumerator	*enumerator;
 	NSDictionary	*theme;
 	
@@ -727,7 +735,7 @@ NSString * const WCDebug								= @"WCDebug";
 
 #pragma mark -
 
-+ (NSDictionary *)eventWithTag:(NSUInteger)tag {
+- (NSDictionary *)eventWithTag:(NSUInteger)tag {
 	NSEnumerator	*enumerator;
 	NSDictionary	*event;
 	

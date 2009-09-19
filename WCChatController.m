@@ -111,7 +111,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 	highlightPatterns	= [NSMutableArray array];
 	highlightColors		= [NSMutableArray array];
 	
-	enumerator = [[WCSettings objectForKey:WCHighlights] objectEnumerator];
+	enumerator = [[[WCSettings settings] objectForKey:WCHighlights] objectEnumerator];
 	
 	while((highlight = [enumerator nextObject])) {
 		[highlightPatterns addObject:[highlight objectForKey:WCHighlightsPattern]];
@@ -212,7 +212,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 	if(!_timestamp)
 		_timestamp = [[NSDate date] retain];
 	
-	interval = [[WCSettings objectForKey:WCChatTimestampChatInterval] doubleValue];
+	interval = [[[WCSettings settings] objectForKey:WCChatTimestampChatInterval] doubleValue];
 	date = [NSDate dateWithTimeIntervalSinceNow:-interval];
 	
 	if([date compare:_timestamp] == NSOrderedDescending) {
@@ -489,7 +489,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 	
 	if(matches == 1) {
 		if(matchingSet == nicks)
-			return [prefix stringByAppendingString:[WCSettings objectForKey:WCChatTabCompleteNicksString]];
+			return [prefix stringByAppendingString:[[WCSettings settings] objectForKey:WCChatTabCompleteNicksString]];
 		else if(matchingSet == commands)
 			return [prefix stringByAppendingString:@" "];
 	}
@@ -1234,7 +1234,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 	
 	[_userListTableView reloadData];
 
-	if([[WCSettings eventWithTag:WCEventsUserJoined] boolForKey:WCEventsPostInChat])
+	if([[[WCSettings settings] eventWithTag:WCEventsUserJoined] boolForKey:WCEventsPostInChat])
 		[self _printUserJoin:user];
 	
 	[[self connection] postNotificationName:WCChatUserAppearedNotification object:user];
@@ -1260,7 +1260,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 	if(!user)
 		return;
 	
-	if([[WCSettings eventWithTag:WCEventsUserLeft] boolForKey:WCEventsPostInChat])
+	if([[[WCSettings settings] eventWithTag:WCEventsUserLeft] boolForKey:WCEventsPostInChat])
 		[self _printUserLeave:user];
 	
 	[[self connection] triggerEvent:WCEventsUserLeft info1:user];
@@ -1307,7 +1307,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 	if(!user || [user isIgnored])
 		return;
 	
-	if([WCSettings boolForKey:WCChatTimestampChat])
+	if([[WCSettings settings] boolForKey:WCChatTimestampChat])
 		[self _printTimestamp];
 	
 	name = [message name];
@@ -1397,7 +1397,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 	status = [message stringForName:@"wired.user.status"];
 	
 	if(![nick isEqualToString:[user nick]]) {
-		if([[WCSettings eventWithTag:WCEventsUserChangedNick] boolForKey:WCEventsPostInChat])
+		if([[[WCSettings settings] eventWithTag:WCEventsUserChangedNick] boolForKey:WCEventsPostInChat])
 			[self _printUserChange:user nick:nick];
 		
 		[[self connection] triggerEvent:WCEventsUserChangedNick info1:user info2:nick];
@@ -1406,7 +1406,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 	}
 	
 	if(![status isEqualToString:[user status]]) {
-		if([[WCSettings eventWithTag:WCEventsUserChangedStatus] boolForKey:WCEventsPostInChat])
+		if([[[WCSettings settings] eventWithTag:WCEventsUserChangedStatus] boolForKey:WCEventsPostInChat])
 			[self _printUserChange:user status:status];
 		
 		[[self connection] triggerEvent:WCEventsUserChangedStatus info1:user info2:status];
@@ -1572,8 +1572,8 @@ typedef enum _WCChatFormat					WCChatFormat;
 	optionKey	= [[NSApp currentEvent] alternateKeyModifier];
 	controlKey	= [[NSApp currentEvent] controlKeyModifier];
 	
-	historyScrollback = [WCSettings boolForKey:WCChatHistoryScrollback];
-	historyModifier = [WCSettings integerForKey:WCChatHistoryScrollbackModifier];
+	historyScrollback = [[WCSettings settings] boolForKey:WCChatHistoryScrollback];
+	historyModifier = [[WCSettings settings] integerForKey:WCChatHistoryScrollbackModifier];
 	
 	if(selector == @selector(insertNewline:) ||
 	   selector == @selector(insertNewlineIgnoringFieldEditor:)) {
@@ -1613,7 +1613,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 		return YES;
 	}
 	else if(selector == @selector(insertTab:)) {
-		if([WCSettings boolForKey:WCChatTabCompleteNicks]) {
+		if([[WCSettings settings] boolForKey:WCChatTabCompleteNicks]) {
 			[_chatInputTextView setString:[self _stringByCompletingString:[_chatInputTextView string]]];
 			
 			return YES;
@@ -1805,20 +1805,20 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 - (void)loadWindowProperties {
 	[_userListSplitView setPropertiesFromDictionary:
-		[[WCSettings objectForKey:WCWindowProperties] objectForKey:@"WCChatControllerUserListSplitView"]];
+		[[[WCSettings settings] objectForKey:WCWindowProperties] objectForKey:@"WCChatControllerUserListSplitView"]];
 	[_chatSplitView setPropertiesFromDictionary:
-		[[WCSettings objectForKey:WCWindowProperties] objectForKey:@"WCChatControllerChatSplitView"]];
+		[[[WCSettings settings] objectForKey:WCWindowProperties] objectForKey:@"WCChatControllerChatSplitView"]];
 }
 
 
 
 - (void)saveWindowProperties {
-	[WCSettings setObject:[_userListSplitView propertiesDictionary]
-				   forKey:@"WCChatControllerUserListSplitView"
-	   inDictionaryForKey:WCWindowProperties];
-	[WCSettings setObject:[_chatSplitView propertiesDictionary]
-				   forKey:@"WCChatControllerChatSplitView"
-	   inDictionaryForKey:WCWindowProperties];
+	[[WCSettings settings] setObject:[_userListSplitView propertiesDictionary]
+							  forKey:@"WCChatControllerUserListSplitView"
+				  inDictionaryForKey:WCWindowProperties];
+	[[WCSettings settings] setObject:[_chatSplitView propertiesDictionary]
+							  forKey:@"WCChatControllerChatSplitView"
+				  inDictionaryForKey:WCWindowProperties];
 }
 
 
@@ -1943,8 +1943,8 @@ typedef enum _WCChatFormat					WCChatFormat;
 	NSStringEncoding		encoding;
 	NSUInteger				i = 0;
 	
-	format		= [WCSettings intForKey:WCLastChatFormat];
-	encoding	= [WCSettings intForKey:WCLastChatEncoding];
+	format		= [[WCSettings settings] intForKey:WCLastChatFormat];
+	encoding	= [[WCSettings settings] intForKey:WCLastChatEncoding];
 	
 	if(encoding == 0)
 		encoding = NSUTF8StringEncoding;
@@ -2005,7 +2005,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 	
 	[self _updateSaveChatForPanel:savePanel];
 	
-	if([savePanel runModalForDirectory:[WCSettings objectForKey:WCDownloadFolder] file:name] == NSFileHandlingPanelOKButton) {
+	if([savePanel runModalForDirectory:[[WCSettings settings] objectForKey:WCDownloadFolder] file:name] == NSFileHandlingPanelOKButton) {
 		path		= [savePanel filename];
 		format		= [_saveChatFileFormatPopUpButton tagOfSelectedItem];
 		encoding	= [_saveChatPlainTextEncodingPopUpButton tagOfSelectedItem];
@@ -2034,8 +2034,8 @@ typedef enum _WCChatFormat					WCChatFormat;
 		}
 	}
 	
-	[WCSettings setInt:[_saveChatFileFormatPopUpButton tagOfSelectedItem] forKey:WCLastChatFormat];
-	[WCSettings setInt:[_saveChatPlainTextEncodingPopUpButton tagOfSelectedItem] forKey:WCLastChatEncoding];
+	[[WCSettings settings] setInt:[_saveChatFileFormatPopUpButton tagOfSelectedItem] forKey:WCLastChatFormat];
+	[[WCSettings settings] setInt:[_saveChatPlainTextEncodingPopUpButton tagOfSelectedItem] forKey:WCLastChatEncoding];
 }
 
 
@@ -2138,7 +2138,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 	
 	ignore = [NSDictionary dictionaryWithObject:[user nick] forKey:WCIgnoresNick];
 	
-	[WCSettings addObject:ignore toArrayForKey:WCIgnores];
+	[[WCSettings settings] addObject:ignore toArrayForKey:WCIgnores];
 	[[NSNotificationCenter defaultCenter] postNotificationName:WCIgnoresDidChangeNotification];
 	
 	[_userListTableView setNeedsDisplay:YES];
@@ -2158,14 +2158,14 @@ typedef enum _WCChatFormat					WCChatFormat;
 		return;
 	
 	array		= [NSMutableArray array];
-	enumerator	= [[WCSettings objectForKey:WCIgnores] objectEnumerator];
+	enumerator	= [[[WCSettings settings] objectForKey:WCIgnores] objectEnumerator];
 	
 	while((ignore = [enumerator nextObject])) {
 		if(![[ignore objectForKey:WCIgnoresNick] isEqualToString:[user nick]])
 			[array addObject:ignore];
 	}
 	
-	[WCSettings setObject:array forKey:WCIgnores];
+	[[WCSettings settings] setObject:array forKey:WCIgnores];
 	[[NSNotificationCenter defaultCenter] postNotificationName:WCIgnoresDidChangeNotification];
 	
 	[_userListTableView setNeedsDisplay:YES];

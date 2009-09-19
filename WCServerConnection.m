@@ -74,7 +74,7 @@ NSString * const WCServerConnectionEventInfo2Key						= @"WCServerConnectionEven
 @implementation WCServerConnection(Private)
 
 - (void)_triggerAutoReconnect {
-	if(_shouldAutoReconnect && ([WCSettings boolForKey:WCAutoReconnect] || [[self bookmark] boolForKey:WCBookmarksAutoReconnect])) {
+	if(_shouldAutoReconnect && ([[WCSettings settings] boolForKey:WCAutoReconnect] || [[self bookmark] boolForKey:WCBookmarksAutoReconnect])) {
 		_autoReconnectAttempts++;
 	
 		if(_autoReconnectAttempts <= 30) {
@@ -202,7 +202,7 @@ NSString * const WCServerConnectionEventInfo2Key						= @"WCServerConnectionEven
 	identifier	= [theme objectForKey:WCThemesIdentifier];
 	
 	if([identifier isEqualToString:[[self theme] objectForKey:WCThemesIdentifier]] ||
-	   (![[self bookmark] objectForKey:WCBookmarksTheme] && [identifier isEqualToString:[WCSettings objectForKey:WCTheme]])) {
+	   (![[self bookmark] objectForKey:WCBookmarksTheme] && [identifier isEqualToString:[[WCSettings settings] objectForKey:WCTheme]])) {
 		[self setTheme:theme];
 		
 		[self postNotificationName:WCServerConnectionThemeDidChangeNotification object:self];
@@ -219,10 +219,10 @@ NSString * const WCServerConnectionEventInfo2Key						= @"WCServerConnectionEven
 	identifier	= [bookmark objectForKey:WCBookmarksIdentifier];
 	
 	if([identifier isEqualToString:[[self bookmark] objectForKey:WCBookmarksIdentifier]]) {
-		theme = [WCSettings themeWithIdentifier:[bookmark objectForKey:WCBookmarksTheme]];
+		theme = [[WCSettings settings] themeWithIdentifier:[bookmark objectForKey:WCBookmarksTheme]];
 		
 		if(!theme)
-			theme = [WCSettings themeWithIdentifier:[WCSettings objectForKey:WCTheme]];
+			theme = [[WCSettings settings] themeWithIdentifier:[[WCSettings settings] objectForKey:WCTheme]];
 		
 		if(![[[self theme] objectForKey:WCThemesIdentifier] isEqualToString:[theme objectForKey:WCThemesIdentifier]]) {
 			[self setTheme:theme];
@@ -439,7 +439,7 @@ NSString * const WCServerConnectionEventInfo2Key						= @"WCServerConnectionEven
 	NSMutableDictionary	*userInfo;
 	NSDictionary		*event;
 	
-	event = [WCSettings eventWithTag:tag];
+	event = [[WCSettings settings] eventWithTag:tag];
 	userInfo = [NSMutableDictionary dictionaryWithObject:self forKey:WCServerConnectionEventConnectionKey];
 	
 	if(info1)

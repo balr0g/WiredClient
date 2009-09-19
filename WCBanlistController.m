@@ -184,7 +184,7 @@
 	[_dateFormatter setNaturalLanguageStyle:WIDateFormatterCapitalizedNaturalLanguageStyle];
 	
 	[_banlistTableView setPropertiesFromDictionary:
-		[[WCSettings objectForKey:WCWindowProperties] objectForKey:@"WCBanlistTableView"]];
+		[[[WCSettings settings] objectForKey:WCWindowProperties] objectForKey:@"WCBanlistTableView"]];
 	
 	[self _validate];
 }
@@ -239,9 +239,9 @@
 
 
 - (void)controllerWindowWillClose {
-	[WCSettings setObject:[_banlistTableView propertiesDictionary]
-				   forKey:@"WCBanlistTableView"
-	   inDictionaryForKey:WCWindowProperties];
+	[[WCSettings settings] setObject:[_banlistTableView propertiesDictionary]
+							  forKey:@"WCBanlistTableView"
+				  inDictionaryForKey:WCWindowProperties];
 }
 
 

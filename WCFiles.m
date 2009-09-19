@@ -197,7 +197,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 - (void)_themeDidChange {
 	NSDictionary		*theme;
 	
-	theme = [WCSettings themeWithIdentifier:[WCSettings objectForKey:WCTheme]];
+	theme = [[WCSettings settings] themeWithIdentifier:[[WCSettings settings] objectForKey:WCTheme]];
 	
 	[_filesOutlineView setUsesAlternatingRowBackgroundColors:[theme boolForKey:WCThemesFileListAlternateRows]];
 }
@@ -516,7 +516,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 - (void)_addPlaces {
 	NSData		*data;
 	
-	data = [WCSettings objectForKey:WCPlaces];
+	data = [[WCSettings settings] objectForKey:WCPlaces];
 	
 	if(data)
 		[_places addObjectsFromArray:[NSKeyedUnarchiver unarchiveObjectWithData:data]];
@@ -748,7 +748,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	BOOL	optionKey, newWindows;
 
 	optionKey = (([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask) != 0);
-	newWindows = [WCSettings boolForKey:WCOpenFoldersInNewWindows];
+	newWindows = [[WCSettings settings] boolForKey:WCOpenFoldersInNewWindows];
 
 	switch([file type]) {
 		case WCFileDirectory:
@@ -945,7 +945,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	[_filesTreeView setDraggingSourceOperationMask:NSDragOperationEvery forLocal:YES];
 	[_filesTreeView setDraggingSourceOperationMask:NSDragOperationEvery forLocal:NO];
 
-	[_styleControl selectSegmentWithTag:[WCSettings integerForKey:WCFilesStyle]];
+	[_styleControl selectSegmentWithTag:[[WCSettings settings] integerForKey:WCFilesStyle]];
 	
 	[self _selectStyle:[self _selectedStyle]];
 	[self _reloadStatus];
@@ -1295,7 +1295,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	[self _selectStyle:style];
 	[self _loadFilesAtDirectory:_currentDirectory reselectFiles:NO];
 	
-	[WCSettings setInteger:style forKey:WCFilesStyle];
+	[[WCSettings settings] setInteger:style forKey:WCFilesStyle];
 }
 
 
@@ -2005,7 +2005,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 						[_places insertObject:sourceFile atIndex:index];
 				}
 				
-				[WCSettings setObject:[NSKeyedArchiver archivedDataWithRootObject:_places] forKey:WCPlaces];
+				[[WCSettings settings] setObject:[NSKeyedArchiver archivedDataWithRootObject:_places] forKey:WCPlaces];
 			}
 			else if([item isKindOfClass:[NSString class]] || [item isKindOfClass:[WCFile class]]) {
 				if([item isKindOfClass:[NSString class]]) {
@@ -2128,7 +2128,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 				[_places removeObjectAtIndex:index];
 		}
 		
-		[WCSettings setObject:[NSKeyedArchiver archivedDataWithRootObject:_places] forKey:WCPlaces];
+		[[WCSettings settings] setObject:[NSKeyedArchiver archivedDataWithRootObject:_places] forKey:WCPlaces];
 
 		[_sourceOutlineView reloadData];
 	}

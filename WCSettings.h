@@ -169,8 +169,8 @@ extern NSString * const						WCDebug;
 
 @interface WCSettings : WISettings
 
-+ (NSDictionary *)themeWithIdentifier:(NSString *)identifier;
+- (NSDictionary *)themeWithIdentifier:(NSString *)identifier;
 
-+ (NSDictionary *)eventWithTag:(NSUInteger)tag;
+- (NSDictionary *)eventWithTag:(NSUInteger)tag;
 
 @end

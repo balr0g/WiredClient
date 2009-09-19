@@ -81,7 +81,7 @@ NSString * const WCMessagesDidChangeUnreadCountNotification		= @"WCMessagesDidCh
 - (void)_themeDidChange {
 	NSDictionary		*theme;
 	
-	theme = [WCSettings themeWithIdentifier:[WCSettings objectForKey:WCTheme]];
+	theme = [[WCSettings settings] themeWithIdentifier:[[WCSettings settings] objectForKey:WCTheme]];
 	
 	[_messageFont release];
 	_messageFont = [WIFontFromString([theme objectForKey:WCThemesMessagesFont]) retain];
@@ -167,11 +167,11 @@ NSString * const WCMessagesDidChangeUnreadCountNotification		= @"WCMessagesDidCh
 
 
 - (void)_saveMessages {
-	[WCSettings setObject:[NSKeyedArchiver archivedDataWithRootObject:[_messageConversations conversations]]
-				   forKey:WCMessageConversations];
+	[[WCSettings settings] setObject:[NSKeyedArchiver archivedDataWithRootObject:[_messageConversations conversations]]
+							  forKey:WCMessageConversations];
 	
-	[WCSettings setObject:[NSKeyedArchiver archivedDataWithRootObject:[_broadcastConversations conversations]]
-				   forKey:WCBroadcastConversations];
+	[[WCSettings settings] setObject:[NSKeyedArchiver archivedDataWithRootObject:[_broadcastConversations conversations]]
+							  forKey:WCBroadcastConversations];
 }
 
 
@@ -500,7 +500,7 @@ NSString * const WCMessagesDidChangeUnreadCountNotification		= @"WCMessagesDidCh
 	_messageConversations	= [[WCMessageConversation rootConversation] retain];
 	_broadcastConversations	= [[WCBroadcastConversation rootConversation] retain];
 	
-	data = [WCSettings objectForKey:WCMessageConversations];
+	data = [[WCSettings settings] objectForKey:WCMessageConversations];
 	
 	if(data) {
 		array = [NSKeyedUnarchiver unarchiveObjectWithData:data];
@@ -508,7 +508,7 @@ NSString * const WCMessagesDidChangeUnreadCountNotification		= @"WCMessagesDidCh
 		[_messageConversations addConversations:array];
 	}
 	
-	data = [WCSettings objectForKey:WCBroadcastConversations];
+	data = [[WCSettings settings] objectForKey:WCBroadcastConversations];
 	
 	if(data) {
 		array = [NSKeyedUnarchiver unarchiveObjectWithData:data];
@@ -765,7 +765,7 @@ NSString * const WCMessagesDidChangeUnreadCountNotification		= @"WCMessagesDidCh
 	[self _reloadConversation];
 	[self _selectConversation:selectedConversation];
 
-	if([[WCSettings eventWithTag:WCEventsMessageReceived] boolForKey:WCEventsShowDialog])
+	if([[[WCSettings settings] eventWithTag:WCEventsMessageReceived] boolForKey:WCEventsShowDialog])
 		[self _showDialogForMessage:message];
 
 	[[WCStats stats] addUnsignedInt:1 forKey:WCStatsMessagesReceived];
@@ -815,7 +815,7 @@ NSString * const WCMessagesDidChangeUnreadCountNotification		= @"WCMessagesDidCh
 	[self _reloadConversation];
 	[self _selectConversation:selectedConversation];
 
-	if([[WCSettings eventWithTag:WCEventsBroadcastReceived] boolForKey:WCEventsShowDialog])
+	if([[[WCSettings settings] eventWithTag:WCEventsBroadcastReceived] boolForKey:WCEventsShowDialog])
 		[self _showDialogForMessage:message];
 
 	[[NSNotificationCenter defaultCenter] postNotificationName:WCMessagesDidChangeUnreadCountNotification];

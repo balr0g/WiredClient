@@ -116,7 +116,7 @@
 - (void)_themeDidChange {
 	NSDictionary		*theme;
 	
-	theme = [WCSettings themeWithIdentifier:[WCSettings objectForKey:WCTheme]];
+	theme = [[WCSettings settings] themeWithIdentifier:[[WCSettings settings] objectForKey:WCTheme]];
 	
 	[_filesController themeDidChange:theme];
 }

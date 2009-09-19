@@ -118,7 +118,7 @@ typedef enum _WCChatActivity				WCChatActivity;
 - (BOOL)_beginConfirmDisconnectSheetModalForWindow:(NSWindow *)window connection:(WCServerConnection *)connection modalDelegate:(id)delegate didEndSelector:(SEL)selector contextInfo:(void *)contextInfo {
 	NSAlert		*alert;
 	
-	if([WCSettings boolForKey:WCConfirmDisconnect] && [connection isConnected]) {
+	if([[WCSettings settings] boolForKey:WCConfirmDisconnect] && [connection isConnected]) {
 		alert = [[NSAlert alloc] init];
 		[alert setMessageText:NSLS(@"Are you sure you want to disconnect?", @"Disconnect dialog title")];
 		[alert setInformativeText:NSLS(@"Disconnecting will close any ongoing file transfers.", @"Disconnect dialog description")];
@@ -724,7 +724,7 @@ typedef enum _WCChatActivity				WCChatActivity;
 		   [NSString UUIDString],		WCBookmarksIdentifier,
 		   NULL];
 		
-		[WCSettings addObject:bookmark toArrayForKey:WCBookmarks];
+		[[WCSettings settings] addObject:bookmark toArrayForKey:WCBookmarks];
 		
 		[[WCKeychain keychain] setPassword:password forBookmark:bookmark];
 		

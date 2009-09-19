@@ -142,7 +142,7 @@
 	theme = [_connection theme];
 	
 	if(!theme)
-		theme = [WCSettings themeWithIdentifier:[WCSettings objectForKey:WCTheme]];
+		theme = [[WCSettings settings] themeWithIdentifier:[[WCSettings settings] objectForKey:WCTheme]];
 	
 	return theme;
 }

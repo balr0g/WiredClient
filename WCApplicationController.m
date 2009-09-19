@@ -192,14 +192,14 @@ static NSInteger _WCCompareSmileyLength(id object1, id object2, void *context) {
 #pragma mark -
 
 - (void)_update {
-	if([WCSettings boolForKey:WCConfirmDisconnect]) {
+	if([[WCSettings settings] boolForKey:WCConfirmDisconnect]) {
 		[_disconnectMenuItem setTitle:[NSSWF:
 			@"%@%C", NSLS(@"Disconnect", @"Disconnect menu item"), 0x2026]];
 	} else {
 		[_disconnectMenuItem setTitle:NSLS(@"Disconnect", @"Disconnect menu item")];
 	}
 	
-	[_updater setAutomaticallyChecksForUpdates:[WCSettings boolForKey:WCCheckForUpdate]];
+	[_updater setAutomaticallyChecksForUpdates:[[WCSettings settings] boolForKey:WCCheckForUpdate]];
 }
 
 
@@ -221,7 +221,7 @@ static NSInteger _WCCompareSmileyLength(id object1, id object2, void *context) {
 	while((item = (NSMenuItem *) [_bookmarksMenu itemWithTag:0]))
 		[_bookmarksMenu removeItem:item];
 
-	bookmarks = [WCSettings objectForKey:WCBookmarks];
+	bookmarks = [[WCSettings settings] objectForKey:WCBookmarks];
 
 	if([bookmarks count] > 0)
 		[_bookmarksMenu addItem:[NSMenuItem separatorItem]];
@@ -399,7 +399,7 @@ static WCApplicationController		*sharedController;
 	WIError				*error;
 	
 #ifdef WCConfigurationRelease
-	if(![WCSettings boolForKey:WCDebug])
+	if(![[WCSettings settings] boolForKey:WCDebug])
 		[[NSApp mainMenu] removeItemAtIndex:[[NSApp mainMenu] indexOfItemWithSubmenu:_debugMenu]];
 #endif
 	
@@ -439,14 +439,14 @@ static WCApplicationController		*sharedController;
 	[self _update];
 	[self _updateBookmarksMenu];
 
-	if([WCSettings boolForKey:WCShowServersAtStartup])
+	if([[WCSettings settings] boolForKey:WCShowServersAtStartup])
 		[[WCServers servers] showWindow:self];
 
-	if([WCSettings boolForKey:WCShowConnectAtStartup])
+	if([[WCSettings settings] boolForKey:WCShowConnectAtStartup])
 		[[WCConnect connect] showWindow:self];
 	
 	if((GetCurrentKeyModifiers() & optionKey) == 0) {
-		enumerator = [[WCSettings objectForKey:WCBookmarks] objectEnumerator];
+		enumerator = [[[WCSettings settings] objectForKey:WCBookmarks] objectEnumerator];
 
 		while((bookmark = [enumerator nextObject])) {
 			if([[bookmark objectForKey:WCBookmarksAutoConnect] boolValue])
@@ -472,7 +472,7 @@ static WCApplicationController		*sharedController;
 			count++;
 	}
 	
-	if([WCSettings boolForKey:WCConfirmDisconnect] && count > 0)
+	if([[WCSettings settings] boolForKey:WCConfirmDisconnect] && count > 0)
 		return [(WIApplication *) NSApp runTerminationDelayPanelWithTimeInterval:30.0];
 
 	return NSTerminateNow;
@@ -578,7 +578,7 @@ static WCApplicationController		*sharedController;
 		sound = [event objectForKey:WCEventsSound];
 		
 		if(sound)
-			[NSSound playSoundNamed:sound atVolume:[WCSettings floatForKey:WCEventsVolume]];
+			[NSSound playSoundNamed:sound atVolume:[[WCSettings settings] floatForKey:WCEventsVolume]];
 	}
 	
 	if([event boolForKey:WCEventsBounceInDock])
@@ -769,7 +769,7 @@ static WCApplicationController		*sharedController;
 					[NSString UUIDString],		WCTrackerBookmarksIdentifier,
 					NULL];
 		
-		[WCSettings addObject:bookmark toArrayForKey:WCTrackerBookmarks];
+		[[WCSettings settings] addObject:bookmark toArrayForKey:WCTrackerBookmarks];
 		
 		[[WCServers servers] showWindow:self];
 	}

@@ -109,7 +109,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 - (void)_themeDidChange {
 	NSDictionary		*theme;
 	
-	theme = [WCSettings themeWithIdentifier:[WCSettings objectForKey:WCTheme]];
+	theme = [[WCSettings settings] themeWithIdentifier:[[WCSettings settings] objectForKey:WCTheme]];
 	
 	[_threadFont release];
 	_threadFont = [WIFontFromString([theme objectForKey:WCThemesBoardsFont]) retain];
@@ -157,7 +157,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	
 	boards = [_boards boardsWithExpansionStatus:NO];
 	
-	[WCSettings setObject:[NSKeyedArchiver archivedDataWithRootObject:boards] forKey:WCCollapsedBoards];
+	[[WCSettings settings] setObject:[NSKeyedArchiver archivedDataWithRootObject:boards] forKey:WCCollapsedBoards];
 }
 
 
@@ -243,7 +243,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 
 
 - (void)_savePosts {
-	[WCSettings setObject:[_readPosts allObjects] forKey:WCReadBoardPosts];
+	[[WCSettings settings] setObject:[_readPosts allObjects] forKey:WCReadBoardPosts];
 }
 
 
@@ -298,7 +298,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 		}
 	}
 	
-	[WCSettings setObject:[NSKeyedArchiver archivedDataWithRootObject:filters] forKey:WCBoardFilters];
+	[[WCSettings settings] setObject:[NSKeyedArchiver archivedDataWithRootObject:filters] forKey:WCBoardFilters];
 }
 
 
@@ -839,7 +839,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	_boards				= [[WCBoard rootBoard] retain];
 	_searchBoard		= [[WCSmartBoard rootBoard] retain];
 	_receivedBoards		= [[NSMutableSet alloc] init];
-	_readPosts			= [[NSMutableSet alloc] initWithArray:[WCSettings objectForKey:WCReadBoardPosts]];
+	_readPosts			= [[NSMutableSet alloc] initWithArray:[[WCSettings settings] objectForKey:WCReadBoardPosts]];
 	
 	_headerTemplate		= [[NSMutableString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"PostHeader" ofType:@"html"]
 															  encoding:NSUTF8StringEncoding
@@ -863,12 +863,12 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 
 	[_smartBoards setSorting:1];
 
-	data = [WCSettings objectForKey:WCCollapsedBoards];
+	data = [[WCSettings settings] objectForKey:WCCollapsedBoards];
 	
 	if(data)
 		_collapsedBoards = [[NSKeyedUnarchiver unarchiveObjectWithData:data] retain];
 	
-	data = [WCSettings objectForKey:WCBoardFilters];
+	data = [[WCSettings settings] objectForKey:WCBoardFilters];
 	
 	if(data) {
 		enumerator = [[NSKeyedUnarchiver unarchiveObjectWithData:data] objectEnumerator];

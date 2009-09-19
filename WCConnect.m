@@ -50,10 +50,10 @@
 	[_connection setURL:url];
 	[_connection setBookmark:bookmark];
 	
-	theme = [WCSettings themeWithIdentifier:[bookmark objectForKey:WCBookmarksTheme]];
+	theme = [[WCSettings settings] themeWithIdentifier:[bookmark objectForKey:WCBookmarksTheme]];
 	
 	if(!theme)
-		theme = [WCSettings themeWithIdentifier:[WCSettings objectForKey:WCTheme]];
+		theme = [[WCSettings settings] themeWithIdentifier:[[WCSettings settings] objectForKey:WCTheme]];
 	
 	[_connection setTheme:theme];
 	

@@ -150,7 +150,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 - (void)_themeDidChange {
 	NSDictionary		*theme;
 	
-	theme = [WCSettings themeWithIdentifier:[WCSettings objectForKey:WCTheme]];
+	theme = [[WCSettings settings] themeWithIdentifier:[[WCSettings settings] objectForKey:WCTheme]];
 	
 	if([theme boolForKey:WCThemesTransferListShowProgressBar]) {
 		[_transfersTableView setRowHeight:46.0];
@@ -365,7 +365,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	if(count == 1)
 		[self showWindow:self];
 	
-	if(count > 1 && [WCSettings boolForKey:WCQueueTransfers])
+	if(count > 1 && [[WCSettings settings] boolForKey:WCQueueTransfers])
 		[transfer setState:WCTransferLocallyQueued];
 	else
 		[self _requestTransfer:transfer];
@@ -468,14 +468,14 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	if(count == 1)
 		[self showWindow:self];
 	
-	if(count > 1 && [WCSettings boolForKey:WCQueueTransfers])
+	if(count > 1 && [[WCSettings settings] boolForKey:WCQueueTransfers])
 		[transfer setState:WCTransferLocallyQueued];
 	else
 		[self _requestTransfer:transfer];
 	
 	[_transfersTableView reloadData];
 	
-	if(resourceForks > 0 && [WCSettings boolForKey:WCCheckForResourceForks]) {
+	if(resourceForks > 0 && [[WCSettings settings] boolForKey:WCCheckForResourceForks]) {
 		if(resourceForks == 1) {
 			error = [WCError errorWithDomain:WCWiredClientErrorDomain
 										code:WCWiredClientTransferWithResourceFork
@@ -500,7 +500,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	WCTransfer		*transfer = NULL;
 	NSUInteger		downloads, uploads;
 	
-	if(![WCSettings boolForKey:WCQueueTransfers]) {
+	if(![[WCSettings settings] boolForKey:WCQueueTransfers]) {
 		transfer	= [self _transferWithState:WCTransferLocallyQueued];
 	} else {
 		downloads	= [self _numberOfWorkingTransfersOfClass:[WCDownloadTransfer class] connection:connection];
@@ -642,7 +642,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 			[transfers addObject:transfer];
 	}
 	
-	[WCSettings setObject:[NSKeyedArchiver archivedDataWithRootObject:transfers] forKey:WCTransferList];
+	[[WCSettings settings] setObject:[NSKeyedArchiver archivedDataWithRootObject:transfers] forKey:WCTransferList];
 }
 
 
@@ -689,7 +689,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 			[transfer setState:WCTransferFinished];
 			[[transfer progressIndicator] setDoubleValue:1.0];
 			
-			if([WCSettings boolForKey:WCRemoveTransfers])
+			if([[WCSettings settings] boolForKey:WCRemoveTransfers])
 				[self _removeTransfer:transfer];
 
 			[_transfersTableView reloadData];
@@ -1580,7 +1580,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	[_transfersTableView registerForDraggedTypes:
 		[NSArray arrayWithObjects:NSStringPboardType, WCTransferPboardType, NULL]];
 
-    data = [WCSettings objectForKey:WCTransferList];
+    data = [[WCSettings settings] objectForKey:WCTransferList];
 
     if(data)
         _transfers = [[NSKeyedUnarchiver unarchiveObjectWithData:data] retain];
@@ -2039,7 +2039,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 
 - (BOOL)downloadFile:(WCFile *)file {
-	return [self _downloadFile:file toFolder:[[WCSettings objectForKey:WCDownloadFolder] stringByStandardizingPath]];
+	return [self _downloadFile:file toFolder:[[[WCSettings settings] objectForKey:WCDownloadFolder] stringByStandardizingPath]];
 }
 
 

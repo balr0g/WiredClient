@@ -145,7 +145,7 @@ WIP7Spec							*WCP7Spec;
 	nick = [[self bookmark] objectForKey:WCBookmarksNick];
 	
 	if([nick length] == 0)
-		nick = [WCSettings objectForKey:WCNick];
+		nick = [[WCSettings settings] objectForKey:WCNick];
 
 	message = [WIP7Message messageWithName:@"wired.user.set_nick" spec:WCP7Spec];
 	[message setString:nick forName:@"wired.user.nick"];
@@ -162,7 +162,7 @@ WIP7Spec							*WCP7Spec;
 	status = [[self bookmark] objectForKey:WCBookmarksStatus];
 	
 	if([status length] == 0)
-		status = [WCSettings objectForKey:WCStatus];
+		status = [[WCSettings settings] objectForKey:WCStatus];
 
 	message = [WIP7Message messageWithName:@"wired.user.set_status" spec:WCP7Spec];
 	[message setString:status forName:@"wired.user.status"];
@@ -176,7 +176,7 @@ WIP7Spec							*WCP7Spec;
 	NSData			*icon;
 	WIP7Message		*message;
 
-	icon = [NSData dataWithBase64EncodedString:[WCSettings objectForKey:WCIcon]];
+	icon = [NSData dataWithBase64EncodedString:[[WCSettings settings] objectForKey:WCIcon]];
 	message = [WIP7Message messageWithName:@"wired.user.set_icon" spec:WCP7Spec];
 	[message setData:icon forName:@"wired.user.icon"];
 	
