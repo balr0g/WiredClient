@@ -80,6 +80,9 @@ extern NSString * const					WCPlacePboardType;
 	NSMutableArray						*_selectFiles;
 	BOOL								_selectFilesWhenOpening;
 	
+	NSMutableArray						*_history;
+	NSUInteger							_historyPosition;
+	
 	WCFile								*_initialDirectory;
 	WCFile								*_currentDirectory;
 	

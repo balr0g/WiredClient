@@ -87,7 +87,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 - (NSUInteger)_selectedStyle;
 - (void)_selectStyle:(NSUInteger)style;
 
-- (void)_changeCurrentDirectory:(WCFile *)file reselectFiles:(BOOL)reselectFiles;
+- (void)_changeCurrentDirectory:(WCFile *)file reselectFiles:(BOOL)reselectFiles addToHistory:(BOOL)addToHistory;
 - (void)_loadFilesAtDirectory:(WCFile *)file reselectFiles:(BOOL)reselectFiles;
 - (void)_reloadFilesAtDirectory:(WCFile *)file;
 - (void)_reloadFilesAtDirectory:(WCFile *)file reselectFiles:(BOOL)reselectFiles;
@@ -114,6 +114,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	_servers			= [[NSMutableArray alloc] init];
 	_places				= [[NSMutableArray alloc] init];
 	_initialDirectory	= [file retain];
+	_history			= [[NSMutableArray alloc] init];
 	_quickLookFiles		= [[NSMutableArray alloc] init];
 	_selectFiles		= [[NSMutableArray alloc] init];
 	
@@ -122,6 +123,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		
 		_selectFilesWhenOpening = YES;
 	}
+	
 	
 	[_files setObject:[NSDictionary dictionaryWithObjectsAndKeys:
 							[NSMutableDictionary dictionary],
@@ -262,11 +264,9 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 			[_infoButton setEnabled:(([account fileGetInfo] || readable) && connected)];
 			break;
 	}
-
-	[[_historyControl cell] setEnabled:NO forSegment:0];
-	[[_historyControl cell] setEnabled:NO forSegment:1];
-//	[[_historyControl cell] setEnabled:(_type == WCFilesStyleList && _historyPosition > 0 && connected) forSegment:0];
-//	[[_historyControl cell] setEnabled:(_type == WCFilesStyleList && _historyPosition + 1 < [_history count] && connected) forSegment:1];
+	
+	[[_historyControl cell] setEnabled:(_historyPosition > 0 && connected) forSegment:0];
+	[[_historyControl cell] setEnabled:(_historyPosition + 1 < [_history count] && connected) forSegment:1];
 
 //	[_uploadButton setEnabled:([self _validateUpload] && connected)];
 	[_uploadButton setEnabled:YES];
@@ -598,7 +598,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 #pragma mark -
 
-- (void)_changeCurrentDirectory:(WCFile *)file reselectFiles:(BOOL)reselectFiles {
+- (void)_changeCurrentDirectory:(WCFile *)file reselectFiles:(BOOL)reselectFiles addToHistory:(BOOL)addToHistory {
 	if(_initialDirectory) {
 		file = [[_initialDirectory retain] autorelease];
 		
@@ -618,6 +618,15 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		[self _unsubscribeFromDirectory:_currentDirectory];
 	}
 	
+	if(addToHistory) {
+		if([_history count] > 0 && _historyPosition != [_history count] - 1)
+			[_history removeObjectsInRange:NSMakeRange(_historyPosition + 1, [_history count] - _historyPosition - 1)];
+		
+		[_history addObject:file];
+
+		_historyPosition = [_history count] - 1;
+	}
+
 	[file retain];
 	[_currentDirectory release];
 	
@@ -626,7 +635,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	[[self window] setTitle:NSLS(@"Files", @"Files window title") withSubtitle:[_currentDirectory path]];
 	
 	[_filesTreeView selectPath:[_currentDirectory path]];
-
+	
 	[self _loadFilesAtDirectory:file
 				  reselectFiles:_selectFilesWhenOpening ? _selectFilesWhenOpening : reselectFiles];
 	[self _subscribeToDirectory:_currentDirectory];
@@ -757,7 +766,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 			if(override || (newWindows && !optionKey) || (!newWindows && optionKey))
 				[WCFiles filesWithConnection:[file connection] file:file];
 			else
-				[self _changeCurrentDirectory:file reselectFiles:YES];
+				[self _changeCurrentDirectory:file reselectFiles:YES addToHistory:YES];
 			break;
 
 		case WCFileFile:
@@ -891,6 +900,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	[_servers release];
 	[_places release];
 	[_quickLookFiles release];
+	[_history release];
 	[_selectFiles release];
 	[_initialDirectory release];
 	
@@ -1399,6 +1409,31 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 #pragma mark -
 
 - (IBAction)history:(id)sender {
+	NSArray		*history;
+	
+	history = [_history copy];
+	
+	if([_historyControl selectedSegment] == 0) {
+		if(_historyPosition > 0) {
+			[self _changeCurrentDirectory:[_history objectAtIndex:_historyPosition - 1]
+							reselectFiles:NO
+							 addToHistory:NO];
+			
+			_historyPosition--;
+		}
+	} else {
+		if(_historyPosition < [_history count] - 1) {
+			[self _changeCurrentDirectory:[_history objectAtIndex:_historyPosition + 1]
+							reselectFiles:NO
+							 addToHistory:NO];
+			
+			_historyPosition++;
+		}
+	}
+	
+	[_history setArray:history];
+	
+	[self _validate];
 }
 
 
@@ -1684,7 +1719,9 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 			file = [files objectAtIndex:0];
 			path = [[file path] stringByDeletingLastPathComponent];
 			
-			[self _changeCurrentDirectory:[WCFile fileWithDirectory:path connection:[file connection]] reselectFiles:YES];
+			[self _changeCurrentDirectory:[WCFile fileWithDirectory:path connection:[file connection]]
+							reselectFiles:YES
+							 addToHistory:NO];
 		}
 
 		while((file = [enumerator nextObject])) {
@@ -1903,7 +1940,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	outlineView = [notification object];
 	
 	if(outlineView == _sourceOutlineView)
-		[self _changeCurrentDirectory:[self _selectedSource] reselectFiles:NO];
+		[self _changeCurrentDirectory:[self _selectedSource] reselectFiles:NO addToHistory:YES];
 	else if(outlineView == _filesOutlineView)
 		[self _validate];
 }
@@ -2350,13 +2387,13 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	
 	if([self _selectedStyle] == WCFilesStyleTree) {
 		file = [[self _filesForConnection:[self _selectedConnection]] objectForKey:path];
-		
+			
 		if(![file isFolder]) {
 			file = [self _existingFileForFile:[WCFile fileWithDirectory:[[file path] stringByDeletingLastPathComponent]
 															 connection:[file connection]]];
 		}
 		
-		[self _changeCurrentDirectory:file reselectFiles:YES];
+		[self _changeCurrentDirectory:file reselectFiles:YES addToHistory:YES];
 		[self _validate];
 	}
 }
