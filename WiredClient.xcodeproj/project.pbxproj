@@ -227,7 +227,7 @@
 		A54AF9620F13AEBB00AFD50E /* QuickLook.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF9160F13AEBB00AFD50E /* QuickLook.tiff */; };
 		A54AF9630F13AEBB00AFD50E /* PostNews.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF9170F13AEBB00AFD50E /* PostNews.tiff */; };
 		A54AF9640F13AEBB00AFD50E /* Plus.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF9180F13AEBB00AFD50E /* Plus.tiff */; };
-		A54AF9650F13AEBB00AFD50E /* Pause.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF9190F13AEBB00AFD50E /* Pause.tiff */; };
+		A54AF9650F13AEBB00AFD50E /* PauseTransfer.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF9190F13AEBB00AFD50E /* PauseTransfer.tiff */; };
 		A54AF9660F13AEBB00AFD50E /* News.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF91A0F13AEBB00AFD50E /* News.tiff */; };
 		A54AF9670F13AEBB00AFD50E /* NewFolder.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF91B0F13AEBB00AFD50E /* NewFolder.tiff */; };
 		A54AF9680F13AEBB00AFD50E /* NewAccount.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF91C0F13AEBB00AFD50E /* NewAccount.tiff */; };
@@ -245,14 +245,14 @@
 		A54AF9750F13AEBB00AFD50E /* Transfers.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF9290F13AEBB00AFD50E /* Transfers.tiff */; };
 		A54AF9760F13AEBB00AFD50E /* Trackers.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF92A0F13AEBB00AFD50E /* Trackers.tiff */; };
 		A54AF9770F13AEBB00AFD50E /* Themes.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF92B0F13AEBB00AFD50E /* Themes.tiff */; };
-		A54AF9780F13AEBB00AFD50E /* Stop.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF92C0F13AEBB00AFD50E /* Stop.tiff */; };
-		A54AF9790F13AEBB00AFD50E /* Start.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF92D0F13AEBB00AFD50E /* Start.tiff */; };
+		A54AF9780F13AEBB00AFD50E /* StopTransfer.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF92C0F13AEBB00AFD50E /* StopTransfer.tiff */; };
+		A54AF9790F13AEBB00AFD50E /* StartTransfer.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF92D0F13AEBB00AFD50E /* StartTransfer.tiff */; };
 		A54AF97A0F13AEBB00AFD50E /* Settings.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF92E0F13AEBB00AFD50E /* Settings.tiff */; };
 		A54AF97B0F13AEBB00AFD50E /* Search.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF92F0F13AEBB00AFD50E /* Search.tiff */; };
 		A54AF97C0F13AEBB00AFD50E /* RevealInUserList.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF9300F13AEBB00AFD50E /* RevealInUserList.tiff */; };
 		A54AF97D0F13AEBB00AFD50E /* RevealInFinder.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF9310F13AEBB00AFD50E /* RevealInFinder.tiff */; };
 		A54AF97E0F13AEBB00AFD50E /* ReplyMessage.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF9320F13AEBB00AFD50E /* ReplyMessage.tiff */; };
-		A54AF97F0F13AEBB00AFD50E /* Remove.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF9330F13AEBB00AFD50E /* Remove.tiff */; };
+		A54AF97F0F13AEBB00AFD50E /* RemoveTransfer.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF9330F13AEBB00AFD50E /* RemoveTransfer.tiff */; };
 		A54AF9800F13AEBB00AFD50E /* ChangePassword.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF9340F13AEBB00AFD50E /* ChangePassword.tiff */; };
 		A54AF9810F13AEBB00AFD50E /* Bookmarks.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF9350F13AEBB00AFD50E /* Bookmarks.tiff */; };
 		A54AF9820F13AEBB00AFD50E /* AddTracker.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF9360F13AEBB00AFD50E /* AddTracker.tiff */; };
@@ -340,6 +340,8 @@
 		A5F7F9F50F1D528F007BF4FD /* SourceBar.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5F7F9F40F1D528F007BF4FD /* SourceBar.tiff */; };
 		A5F7F9F90F1D52DB007BF4FD /* WCSourceImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = A5F7F9F80F1D52DB007BF4FD /* WCSourceImageView.m */; };
 		A5F802980D8E378300A84685 /* WCMonitorCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A5F802970D8E378300A84685 /* WCMonitorCell.m */; };
+		A5F990191065021A0055E9E4 /* ClearTransfers.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5F990181065021A0055E9E4 /* ClearTransfers.tiff */; };
+		A5F9905C106506030055E9E4 /* ConnectTransfer.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A5F9905B106506030055E9E4 /* ConnectTransfer.tiff */; };
 		A5FD60630D77FEE8000A7941 /* WCFilesController.m in Sources */ = {isa = PBXBuildFile; fileRef = A5FD60610D77FEE8000A7941 /* WCFilesController.m */; };
 /* End PBXBuildFile section */
 
@@ -658,7 +660,7 @@
 		A54AF9160F13AEBB00AFD50E /* QuickLook.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = QuickLook.tiff; sourceTree = "<group>"; };
 		A54AF9170F13AEBB00AFD50E /* PostNews.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = PostNews.tiff; sourceTree = "<group>"; };
 		A54AF9180F13AEBB00AFD50E /* Plus.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Plus.tiff; sourceTree = "<group>"; };
-		A54AF9190F13AEBB00AFD50E /* Pause.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Pause.tiff; sourceTree = "<group>"; };
+		A54AF9190F13AEBB00AFD50E /* PauseTransfer.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = PauseTransfer.tiff; sourceTree = "<group>"; };
 		A54AF91A0F13AEBB00AFD50E /* News.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = News.tiff; sourceTree = "<group>"; };
 		A54AF91B0F13AEBB00AFD50E /* NewFolder.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = NewFolder.tiff; sourceTree = "<group>"; };
 		A54AF91C0F13AEBB00AFD50E /* NewAccount.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = NewAccount.tiff; sourceTree = "<group>"; };
@@ -676,14 +678,14 @@
 		A54AF9290F13AEBB00AFD50E /* Transfers.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Transfers.tiff; sourceTree = "<group>"; };
 		A54AF92A0F13AEBB00AFD50E /* Trackers.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Trackers.tiff; sourceTree = "<group>"; };
 		A54AF92B0F13AEBB00AFD50E /* Themes.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Themes.tiff; sourceTree = "<group>"; };
-		A54AF92C0F13AEBB00AFD50E /* Stop.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Stop.tiff; sourceTree = "<group>"; };
-		A54AF92D0F13AEBB00AFD50E /* Start.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Start.tiff; sourceTree = "<group>"; };
+		A54AF92C0F13AEBB00AFD50E /* StopTransfer.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = StopTransfer.tiff; sourceTree = "<group>"; };
+		A54AF92D0F13AEBB00AFD50E /* StartTransfer.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = StartTransfer.tiff; sourceTree = "<group>"; };
 		A54AF92E0F13AEBB00AFD50E /* Settings.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Settings.tiff; sourceTree = "<group>"; };
 		A54AF92F0F13AEBB00AFD50E /* Search.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Search.tiff; sourceTree = "<group>"; };
 		A54AF9300F13AEBB00AFD50E /* RevealInUserList.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = RevealInUserList.tiff; sourceTree = "<group>"; };
 		A54AF9310F13AEBB00AFD50E /* RevealInFinder.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = RevealInFinder.tiff; sourceTree = "<group>"; };
 		A54AF9320F13AEBB00AFD50E /* ReplyMessage.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = ReplyMessage.tiff; sourceTree = "<group>"; };
-		A54AF9330F13AEBB00AFD50E /* Remove.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Remove.tiff; sourceTree = "<group>"; };
+		A54AF9330F13AEBB00AFD50E /* RemoveTransfer.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = RemoveTransfer.tiff; sourceTree = "<group>"; };
 		A54AF9340F13AEBB00AFD50E /* ChangePassword.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = ChangePassword.tiff; sourceTree = "<group>"; };
 		A54AF9350F13AEBB00AFD50E /* Bookmarks.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Bookmarks.tiff; sourceTree = "<group>"; };
 		A54AF9360F13AEBB00AFD50E /* AddTracker.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = AddTracker.tiff; sourceTree = "<group>"; };
@@ -820,6 +822,8 @@
 		A5F7F9F80F1D52DB007BF4FD /* WCSourceImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCSourceImageView.m; sourceTree = "<group>"; };
 		A5F802960D8E378300A84685 /* WCMonitorCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCMonitorCell.h; sourceTree = "<group>"; };
 		A5F802970D8E378300A84685 /* WCMonitorCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCMonitorCell.m; sourceTree = "<group>"; };
+		A5F990181065021A0055E9E4 /* ClearTransfers.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = ClearTransfers.tiff; sourceTree = "<group>"; };
+		A5F9905B106506030055E9E4 /* ConnectTransfer.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = ConnectTransfer.tiff; sourceTree = "<group>"; };
 		A5FD60610D77FEE8000A7941 /* WCFilesController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCFilesController.m; sourceTree = "<group>"; };
 		A5FD60620D77FEE8000A7941 /* WCFilesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCFilesController.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -1363,8 +1367,10 @@
 				A54AF9080F13AEBB00AFD50E /* Chat.tiff */,
 				A54AF9070F13AEBB00AFD50E /* ClearMessages.tiff */,
 				A54AF9060F13AEBA00AFD50E /* ClearNews.tiff */,
+				A5F990181065021A0055E9E4 /* ClearTransfers.tiff */,
 				A54AF9050F13AEBA00AFD50E /* ColumnView.tiff */,
 				A54AF9040F13AEBA00AFD50E /* Connect.tiff */,
+				A5F9905B106506030055E9E4 /* ConnectTransfer.tiff */,
 				A54AF9030F13AEBA00AFD50E /* Console.tiff */,
 				A54AF9020F13AEBA00AFD50E /* Conversation.tiff */,
 				A54AF9010F13AEBA00AFD50E /* DefaultIcon.tiff */,
@@ -1412,7 +1418,7 @@
 				A54AF91B0F13AEBB00AFD50E /* NewFolder.tiff */,
 				A54AF91A0F13AEBB00AFD50E /* News.tiff */,
 				A5CD594C0F4CAFDB00CF374C /* NewThread.tiff */,
-				A54AF9190F13AEBB00AFD50E /* Pause.tiff */,
+				A54AF9190F13AEBB00AFD50E /* PauseTransfer.tiff */,
 				A54AF9180F13AEBB00AFD50E /* Plus.tiff */,
 				A54AF9170F13AEBB00AFD50E /* PostNews.tiff */,
 				A54AF9150F13AEBB00AFD50E /* PrivateChat.tiff */,
@@ -1423,7 +1429,7 @@
 				A54AF90B0F13AEBB00AFD50E /* ReloadFiles.tiff */,
 				A54AF90A0F13AEBB00AFD50E /* ReloadNews.tiff */,
 				A54AF9090F13AEBB00AFD50E /* ReloadTracker.tiff */,
-				A54AF9330F13AEBB00AFD50E /* Remove.tiff */,
+				A54AF9330F13AEBB00AFD50E /* RemoveTransfer.tiff */,
 				A54AF9320F13AEBB00AFD50E /* ReplyMessage.tiff */,
 				A54AF9310F13AEBB00AFD50E /* RevealInFinder.tiff */,
 				A54AF9300F13AEBB00AFD50E /* RevealInUserList.tiff */,
@@ -1442,8 +1448,8 @@
 				A5F7F9C30F1D50FD007BF4FD /* SourceDeletePressed.tiff */,
 				A5923E850F4CA2C000366A5D /* SourceReload.tiff */,
 				A5923E840F4CA2C000366A5D /* SourceReloadPressed.tiff */,
-				A54AF92D0F13AEBB00AFD50E /* Start.tiff */,
-				A54AF92C0F13AEBB00AFD50E /* Stop.tiff */,
+				A54AF92D0F13AEBB00AFD50E /* StartTransfer.tiff */,
+				A54AF92C0F13AEBB00AFD50E /* StopTransfer.tiff */,
 				A54AF92B0F13AEBB00AFD50E /* Themes.tiff */,
 				A54AF92A0F13AEBB00AFD50E /* Trackers.tiff */,
 				A54AF9290F13AEBB00AFD50E /* Transfers.tiff */,
@@ -1822,8 +1828,10 @@
 				A54AF9540F13AEBB00AFD50E /* Chat.tiff in Resources */,
 				A54AF9530F13AEBB00AFD50E /* ClearMessages.tiff in Resources */,
 				A54AF9520F13AEBB00AFD50E /* ClearNews.tiff in Resources */,
+				A5F990191065021A0055E9E4 /* ClearTransfers.tiff in Resources */,
 				A54AF9510F13AEBB00AFD50E /* ColumnView.tiff in Resources */,
 				A54AF9500F13AEBB00AFD50E /* Connect.tiff in Resources */,
+				A5F9905C106506030055E9E4 /* ConnectTransfer.tiff in Resources */,
 				A54AF94F0F13AEBB00AFD50E /* Console.tiff in Resources */,
 				A54AF94E0F13AEBB00AFD50E /* Conversation.tiff in Resources */,
 				A54AF94D0F13AEBB00AFD50E /* DefaultIcon.tiff in Resources */,
@@ -1871,7 +1879,7 @@
 				A54AF9670F13AEBB00AFD50E /* NewFolder.tiff in Resources */,
 				A5CD594D0F4CAFDB00CF374C /* NewThread.tiff in Resources */,
 				A54AF9660F13AEBB00AFD50E /* News.tiff in Resources */,
-				A54AF9650F13AEBB00AFD50E /* Pause.tiff in Resources */,
+				A54AF9650F13AEBB00AFD50E /* PauseTransfer.tiff in Resources */,
 				A54AF9640F13AEBB00AFD50E /* Plus.tiff in Resources */,
 				A54AF9630F13AEBB00AFD50E /* PostNews.tiff in Resources */,
 				A54AF9620F13AEBB00AFD50E /* QuickLook.tiff in Resources */,
@@ -1882,7 +1890,7 @@
 				A54AF9570F13AEBB00AFD50E /* ReloadFiles.tiff in Resources */,
 				A54AF9560F13AEBB00AFD50E /* ReloadNews.tiff in Resources */,
 				A54AF9550F13AEBB00AFD50E /* ReloadTracker.tiff in Resources */,
-				A54AF97F0F13AEBB00AFD50E /* Remove.tiff in Resources */,
+				A54AF97F0F13AEBB00AFD50E /* RemoveTransfer.tiff in Resources */,
 				A54AF97E0F13AEBB00AFD50E /* ReplyMessage.tiff in Resources */,
 				A54AF97D0F13AEBB00AFD50E /* RevealInFinder.tiff in Resources */,
 				A54AF97C0F13AEBB00AFD50E /* RevealInUserList.tiff in Resources */,
@@ -1901,8 +1909,8 @@
 				A5F7F9C70F1D50FD007BF4FD /* SourceDeletePressed.tiff in Resources */,
 				A5923E870F4CA2C000366A5D /* SourceReload.tiff in Resources */,
 				A5923E860F4CA2C000366A5D /* SourceReloadPressed.tiff in Resources */,
-				A54AF9790F13AEBB00AFD50E /* Start.tiff in Resources */,
-				A54AF9780F13AEBB00AFD50E /* Stop.tiff in Resources */,
+				A54AF9790F13AEBB00AFD50E /* StartTransfer.tiff in Resources */,
+				A54AF9780F13AEBB00AFD50E /* StopTransfer.tiff in Resources */,
 				A54AF9770F13AEBB00AFD50E /* Themes.tiff in Resources */,
 				A54AF9750F13AEBB00AFD50E /* Transfers.tiff in Resources */,
 				A54AF9760F13AEBB00AFD50E /* Trackers.tiff in Resources */,

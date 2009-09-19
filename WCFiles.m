@@ -1205,8 +1205,15 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		if(file) {
 			quickLookPanel = [_quickLookPanelClass performSelector:@selector(sharedPreviewPanel)];
 			
-			if([quickLookPanel respondsToSelector:@selector(refreshCurrentPreviewItem)])
-				[quickLookPanel performSelector:@selector(refreshCurrentPreviewItem)];
+			if(NSAppKitVersionNumber >= 1038.0) {
+					if([quickLookPanel respondsToSelector:@selector(refreshCurrentPreviewItem)])
+						[quickLookPanel performSelector:@selector(refreshCurrentPreviewItem)];
+			} else {
+				if([quickLookPanel respondsToSelector:@selector(setURLs:)]) {
+					[quickLookPanel performSelector:@selector(setURLs:)
+										 withObject:[NSArray arrayWithObject:[[_quickLookFiles objectAtIndex:0] previewItemURL]]];
+				}
+			}
 		}
 		
 		[connection removeObserver:self message:message];
@@ -1399,8 +1406,10 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	else
 		[quickLookPanel makeKeyAndOrderFront:self];
 
-	if([quickLookPanel respondsToSelector:@selector(reloadData)])
-		[quickLookPanel reloadData];
+	if(NSAppKitVersionNumber >= 1038.0) {
+		if([quickLookPanel respondsToSelector:@selector(reloadData)])
+			[quickLookPanel performSelector:@selector(reloadData)];
+	}
 }
 
 

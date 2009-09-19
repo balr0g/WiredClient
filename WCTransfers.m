@@ -121,6 +121,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 				[_startButton setEnabled:NO];
 				[_pauseButton setEnabled:YES];
 				[_stopButton setEnabled:YES];
+				break;
 
 			default:
 				[_startButton setEnabled:NO];
@@ -137,7 +138,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	[_removeButton setEnabled:(transfer != NULL)];
 	[_clearButton setEnabled:([self _transferWithState:WCTransferFinished] != NULL)];
 	
-	[_connectButton setEnabled:(transfer != NULL && [transfer state] == WCTransferDisconnected)];
+	[_connectButton setEnabled:(transfer != NULL && [transfer connection] == NULL)];
 	[_quickLookButton setEnabled:(transfer != NULL && _quickLookPanelClass != NULL)];
 	[_revealInFinderButton setEnabled:(transfer != NULL)];
 	[_revealInFilesButton setEnabled:(transfer != NULL && connected)];
@@ -550,6 +551,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	} else {
 		[self _startTransfer:transfer first:YES];
 	}
+
+	[self _validate];
 }
 
 
@@ -2151,8 +2154,15 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	else
 		[quickLookPanel makeKeyAndOrderFront:self];
 
-	if([quickLookPanel respondsToSelector:@selector(reloadData)])
-		[quickLookPanel performSelector:@selector(reloadData)];
+	if(NSAppKitVersionNumber >= 1038.0) {
+		if([quickLookPanel respondsToSelector:@selector(reloadData)])
+			[quickLookPanel performSelector:@selector(reloadData)];
+	} else {
+		if([quickLookPanel respondsToSelector:@selector(setURLs:)]) {
+			[quickLookPanel performSelector:@selector(setURLs:)
+								 withObject:[NSArray arrayWithObject:[[_quickLookTransfers objectAtIndex:0] previewItemURL]]];
+		}
+	}
 }
 
 
