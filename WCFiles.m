@@ -904,12 +904,22 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 #pragma mark -
 
 - (void)windowDidLoad {
+	NSToolbar			*toolbar;
 	NSInvocation		*invocation;
 	NSUInteger			style;
 
 	[self setShouldCascadeWindows:YES];
 	[self setWindowFrameAutosaveName:@"Files"];
 
+	toolbar = [[NSToolbar alloc] initWithIdentifier:@"Files"];
+	[toolbar setDisplayMode:NSToolbarDisplayModeIconOnly];
+	[toolbar setDelegate:self];
+	[toolbar setShowsBaselineSeparator:NO];
+	[toolbar setAllowsUserCustomization:YES];
+	[toolbar setAutosavesConfiguration:YES];
+	[[self window] setToolbar:toolbar];
+	[toolbar release];
+	
 	_errorQueue = [[WCErrorQueue alloc] initWithWindow:[self window]];
 	
 	if([_sourceOutlineView respondsToSelector:@selector(setSelectionHighlightStyle:)]) {
@@ -958,6 +968,105 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 	[_sourceOutlineView expandItem:[NSNumber numberWithInteger:0]];
 	[_sourceOutlineView expandItem:[NSNumber numberWithInteger:1]];
+}
+
+
+
+- (NSToolbarItem *)toolbar:(NSToolbar *)toolbar itemForItemIdentifier:(NSString *)identifier willBeInsertedIntoToolbar:(BOOL)willBeInsertedIntoToolbar {
+	if([identifier isEqualToString:@"History"]) {
+		return [NSToolbarItem toolbarItemWithIdentifier:identifier
+												   name:NSLS(@"Back/Forward", @"Back/forward toolbar item")
+												content:_historyControl
+												 target:self
+												 action:@selector(history:)];
+	}
+	else if([identifier isEqualToString:@"Style"]) {
+		return [NSToolbarItem toolbarItemWithIdentifier:identifier
+												   name:NSLS(@"Style", @"Style toolbar item")
+												content:_styleControl
+												 target:self
+												 action:@selector(style:)];
+	}
+	else if([identifier isEqualToString:@"Download"]) {
+		return [NSToolbarItem toolbarItemWithIdentifier:identifier
+												   name:NSLS(@"Download", @"Download toolbar item")
+												content:_downloadButton
+												 target:self
+												 action:@selector(download:)];
+	}
+	else if([identifier isEqualToString:@"Upload"]) {
+		return [NSToolbarItem toolbarItemWithIdentifier:identifier
+												   name:NSLS(@"Upload", @"Upload toolbar item")
+												content:_uploadButton
+												 target:self
+												 action:@selector(upload:)];
+	}
+	else if([identifier isEqualToString:@"GetInfo"]) {
+		return [NSToolbarItem toolbarItemWithIdentifier:identifier
+												   name:NSLS(@"Get Info", @"Get info toolbar item")
+												content:_infoButton
+												 target:self
+												 action:@selector(getInfo:)];
+	}
+	else if([identifier isEqualToString:@"QuickLook"]) {
+		return [NSToolbarItem toolbarItemWithIdentifier:identifier
+												   name:NSLS(@"Quick Look", @"Quick Look toolbar item")
+												content:_quickLookButton
+												 target:self
+												 action:@selector(quickLook:)];
+	}
+	else if([identifier isEqualToString:@"CreateFolder"]) {
+		return [NSToolbarItem toolbarItemWithIdentifier:identifier
+												   name:NSLS(@"Create Folder", @"Create folder toolbar item")
+												content:_createFolderButton
+												 target:self
+												 action:@selector(createFolder:)];
+	}
+	else if([identifier isEqualToString:@"Delete"]) {
+		return [NSToolbarItem toolbarItemWithIdentifier:identifier
+												   name:NSLS(@"Delete", @"Delete toolbar item")
+												content:_deleteButton
+												 target:self
+												 action:@selector(delete:)];
+	}
+	
+	return NULL;
+}
+
+
+
+- (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar {
+	return [NSArray arrayWithObjects:
+		@"History",
+		@"Style",
+		@"Download",
+		@"Upload",
+		@"GetInfo",
+		@"QuickLook",
+		@"CreateFolder",
+		NSToolbarFlexibleSpaceItemIdentifier,
+		@"Delete",
+		NULL];
+}
+
+
+
+- (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar *)toolbar {
+	return [NSArray arrayWithObjects:
+		@"History",
+		@"Style",
+		@"Download",
+		@"Upload",
+		@"GetInfo",
+		@"QuickLook",
+		@"CreateFolder",
+		@"Reload",
+		@"Delete",
+		NSToolbarSeparatorItemIdentifier,
+		NSToolbarSpaceItemIdentifier,
+		NSToolbarFlexibleSpaceItemIdentifier,
+		NSToolbarCustomizeToolbarItemIdentifier,
+		NULL];
 }
 
 
