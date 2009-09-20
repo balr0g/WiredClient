@@ -103,6 +103,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 - (void)_unsubscribeFromDirectory:(WCFile *)file;
 
 - (void)_openFile:(WCFile *)file overrideNewWindow:(BOOL)override;
+- (void)_quickLook;
 - (void)_reloadStatus;
 - (void)_reselectFiles;
 - (void)_sortFiles;
@@ -399,7 +400,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	if(!_quickLookPanelClass)
 		return NO;
 	
-	if([file totalSize] > 250 * 1024)
+	if([file totalSize] > (10 * 1024 * 1024) - (10 * 1024))
 		return NO;
 	
 	return YES;
@@ -877,6 +878,41 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		case WCFileFile:
 			[[WCTransfers transfers] downloadFile:file];
 			break;
+	}
+}
+
+
+
+- (void)_quickLook {
+	NSEnumerator	*enumerator;
+	WIP7Message		*message;
+	WCFile			*file;
+	id				quickLookPanel;
+	
+	[_quickLookFiles removeAllObjects];
+
+	enumerator = [[self _selectedFiles] objectEnumerator];
+
+	while((file = [enumerator nextObject])) {
+		if(![file previewItemURL]) {
+			message = [WIP7Message messageWithName:@"wired.file.preview_file" spec:WCP7Spec];
+			[message setString:[file path] forName:@"wired.file.path"];
+			[[file connection] sendMessage:message fromObserver:self selector:@selector(wiredFilePreviewFileReply:)];
+		}
+
+		[_quickLookFiles addObject:file];
+	}
+
+	quickLookPanel = [_quickLookPanelClass performSelector:@selector(sharedPreviewPanel)];
+	
+	if([quickLookPanel isVisible])
+		[quickLookPanel orderOut:self];
+	else
+		[quickLookPanel makeKeyAndOrderFront:self];
+
+	if(NSAppKitVersionNumber >= 1038.0) {
+		if([quickLookPanel respondsToSelector:@selector(reloadData)])
+			[quickLookPanel performSelector:@selector(reloadData)];
 	}
 }
 
@@ -1725,38 +1761,56 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 - (IBAction)quickLook:(id)sender {
 	NSEnumerator	*enumerator;
-	WIP7Message		*message;
+	NSArray			*files;
+	NSAlert			*alert;
 	WCFile			*file;
-	id				quickLookPanel;
+	BOOL			confirmQuickLook = NO;
 	
 	if(![self _validateQuickLook])
 		return;
 	
-	[_quickLookFiles removeAllObjects];
-
-	enumerator = [[self _selectedFiles] objectEnumerator];
-
-	while((file = [enumerator nextObject])) {
-		if(![file previewItemURL]) {
-			message = [WIP7Message messageWithName:@"wired.file.preview_file" spec:WCP7Spec];
-			[message setString:[file path] forName:@"wired.file.path"];
-			[[file connection] sendMessage:message fromObserver:self selector:@selector(wiredFilePreviewFileReply:)];
-		}
-
-		[_quickLookFiles addObject:file];
-	}
-
-	quickLookPanel = [_quickLookPanelClass performSelector:@selector(sharedPreviewPanel)];
+	files		= [self _selectedFiles];
+	enumerator	= [files objectEnumerator];
 	
-	if([quickLookPanel isVisible])
-		[quickLookPanel orderOut:self];
-	else
-		[quickLookPanel makeKeyAndOrderFront:self];
-
-	if(NSAppKitVersionNumber >= 1038.0) {
-		if([quickLookPanel respondsToSelector:@selector(reloadData)])
-			[quickLookPanel performSelector:@selector(reloadData)];
+	while((file = [enumerator nextObject])) {
+		if(![file previewItemURL] && [file totalSize] >= 512 * 1024)
+			confirmQuickLook = YES;
 	}
+	
+	if(confirmQuickLook) {
+		alert = [[NSAlert alloc] init];
+		
+		if([files count] == 1) {
+			[alert setMessageText:[NSSWF:
+				NSLS(@"Are you sure you want to Quick Look \u201c%@\u201d?", @"Confirm Quick Look dialog title"),
+				[[files objectAtIndex:0] name]]];
+			[alert setInformativeText:
+				NSLS(@"This file is large and make take a while to load.", @"Confirm Quick Look dialog description")];
+		} else {
+			[alert setMessageText:[NSSWF:
+				NSLS(@"Are you sure you want to Quick Look %u items?", @"Confirm Quick Look dialog title"),
+				[files count]]];
+			[alert setInformativeText:
+				NSLS(@"Some of the files are large and make take a while to load.", @"Confirm Quick Look dialog description")];
+		}
+		
+		[alert addButtonWithTitle:NSLS(@"Quick Look", @"Confirm Quick Look button title")];
+		[alert addButtonWithTitle:NSLS(@"Cancel", @"Confirm Quick Look button title")];
+		[alert beginSheetModalForWindow:[self window]
+						  modalDelegate:self
+						 didEndSelector:@selector(quickLookSheetDidEnd:returnCode:contextInfo:)
+							contextInfo:NULL];
+		[alert release];
+	} else {
+		[self _quickLook];
+	}
+}
+
+
+
+- (void)quickLookSheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+	if(returnCode == NSAlertFirstButtonReturn)
+		[self _quickLook];
 }
 
 
