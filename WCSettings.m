@@ -441,29 +441,35 @@ NSString * const WCDebug								= @"WCDebug";
 @implementation WCSettings
 
 + (id)settings {
+	static BOOL			upgraded;
 #ifndef WCConfigurationRelease
-	NSUserDefaults	*defaults;
-	NSDictionary	*persistentDomain;
+	static BOOL			migrated;
+	NSDictionary		*dictionary;
 #endif
-	id				settings;
+	id					settings;
 	
 #ifndef WCConfigurationRelease
-	defaults = [NSUserDefaults standardUserDefaults];
-	persistentDomain = [defaults persistentDomainForName:@"com.zanka.WiredClientDebugP7"];
+	if(!migrated) {
+		dictionary = [[NSUserDefaults standardUserDefaults] persistentDomainForName:@"com.zanka.WiredClientDebugP7"];
+			
+		if(!dictionary) {
+			dictionary = [[NSUserDefaults standardUserDefaults] persistentDomainForName:@"com.zanka.WiredClient"];
+			
+			if(dictionary)
+				[[NSUserDefaults standardUserDefaults] setPersistentDomain:dictionary forName:@"com.zanka.WiredClientDebugP7"];
+		}
 		
-	if(!persistentDomain) {
-		persistentDomain = [defaults persistentDomainForName:@"com.zanka.WiredClient"];
-		
-		if(persistentDomain)
-			[defaults setPersistentDomain:persistentDomain forName:@"com.zanka.WiredClientDebugP7"];
+		[[NSUserDefaults standardUserDefaults] synchronize];
 	}
-	
-	[defaults synchronize];
 #endif
 	
 	settings = [super settings];
 	
-	[settings _upgrade];
+	if(!upgraded) {
+		[settings _upgrade];
+		
+		upgraded = YES;
+	}
 	
 	return settings;
 }
