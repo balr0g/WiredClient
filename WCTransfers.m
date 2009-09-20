@@ -59,6 +59,16 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 @interface WCTransfers(Private)
 
 - (void)_validate;
+- (BOOL)_validateStart;
+- (BOOL)_validatePause;
+- (BOOL)_validateStop;
+- (BOOL)_validateRemove;
+- (BOOL)_validateClear;
+- (BOOL)_validateConnect;
+- (BOOL)_validateQuickLook;
+- (BOOL)_validateRevealInFinder;
+- (BOOL)_validateRevealInFiles;
+
 - (void)_themeDidChange;
 - (void)_reload;
 
@@ -100,50 +110,112 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 @implementation WCTransfers(Private)
 
 - (void)_validate {
-	WCTransfer		*transfer;
-	BOOL			connected;
+	[_startButton setEnabled:[self _validateStart]];
+	[_pauseButton setEnabled:[self _validatePause]];
+	[_stopButton setEnabled:[self _validateStop]];
+	[_removeButton setEnabled:[self _validateRemove]];
+	[_clearButton setEnabled:[self _validateClear]];
 	
-	transfer = [self _selectedTransfer];
-	connected = [[transfer connection] isConnected];
-	
-	if(transfer && connected) {
-		switch([transfer state]) {
-			case WCTransferLocallyQueued:
-			case WCTransferPaused:
-			case WCTransferStopped:
-			case WCTransferDisconnected:
-				[_startButton setEnabled:YES];
-				[_pauseButton setEnabled:NO];
-				[_stopButton setEnabled:NO];
-				break;
-
-			case WCTransferRunning:
-				[_startButton setEnabled:NO];
-				[_pauseButton setEnabled:YES];
-				[_stopButton setEnabled:YES];
-				break;
-
-			default:
-				[_startButton setEnabled:NO];
-				[_pauseButton setEnabled:NO];
-				[_stopButton setEnabled:NO];
-				break;
-		}
-	} else {
-		[_startButton setEnabled:NO];
-		[_pauseButton setEnabled:NO];
-		[_stopButton setEnabled:NO];
-	}
-	
-	[_removeButton setEnabled:(transfer != NULL)];
-	[_clearButton setEnabled:([self _transferWithState:WCTransferFinished] != NULL)];
-	
-	[_connectButton setEnabled:(transfer != NULL && [transfer connection] == NULL)];
-	[_quickLookButton setEnabled:(transfer != NULL && _quickLookPanelClass != NULL)];
-	[_revealInFinderButton setEnabled:(transfer != NULL)];
-	[_revealInFilesButton setEnabled:(transfer != NULL && connected)];
+	[_connectButton setEnabled:[self _validateConnect]];
+	[_quickLookButton setEnabled:[self _validateQuickLook]];
+	[_revealInFinderButton setEnabled:[self _validateRevealInFinder]];
+	[_revealInFilesButton setEnabled:[self _validateRevealInFiles]];
 
 	[[[self window] toolbar] validateVisibleItems];
+}
+
+
+
+- (BOOL)_validateStart {
+	WCTransfer		*transfer;
+	
+	transfer = [self _selectedTransfer];
+	
+	if(!transfer || ![transfer connection] || ![[transfer connection] isConnected])
+		return NO;
+	
+	switch([transfer state]) {
+		case WCTransferLocallyQueued:
+		case WCTransferPaused:
+		case WCTransferStopped:
+		case WCTransferDisconnected:
+			return YES;
+			break;
+			
+		default:
+			return NO;
+			break;
+	}
+}
+
+
+
+- (BOOL)_validatePause {
+	WCTransfer		*transfer;
+	
+	transfer = [self _selectedTransfer];
+	
+	if(!transfer || ![transfer connection] || ![[transfer connection] isConnected])
+		return NO;
+	
+	return ([transfer state] == WCTransferRunning);
+}
+
+
+
+- (BOOL)_validateStop {
+	WCTransfer		*transfer;
+	
+	transfer = [self _selectedTransfer];
+	
+	if(!transfer || ![transfer connection] || ![[transfer connection] isConnected])
+		return NO;
+	
+	return ([transfer state] == WCTransferRunning);
+}
+
+
+
+- (BOOL)_validateRemove {
+	return ([self _selectedTransfer] != NULL);
+}
+
+
+
+- (BOOL)_validateClear {
+	return ([self _transferWithState:WCTransferFinished] != NULL);
+}
+
+
+
+- (BOOL)_validateConnect {
+	WCTransfer		*transfer;
+	
+	transfer = [self _selectedTransfer];
+	
+	return (transfer != NULL && [transfer connection] == NULL);
+}
+
+
+
+- (BOOL)_validateQuickLook {
+	return ([self _selectedTransfer] != NULL && _quickLookPanelClass != NULL);
+}
+
+
+
+- (BOOL)_validateRevealInFinder {
+	return ([self _selectedTransfer] != NULL);
+}
+
+
+
+- (BOOL)_validateRevealInFiles {
+	WCTransfer		*transfer;
+	
+	transfer = [self _selectedTransfer];
+	
+	return (transfer != NULL && [transfer connection] != NULL && [[transfer connection] isConnected]);
 }
 
 
@@ -1968,6 +2040,23 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 #pragma mark -
 
+- (BOOL)validateMenuItem:(NSMenuItem *)item {
+	SEL		selector;
+	
+	selector = [item action];
+	
+	if(selector == @selector(deleteDocument:))
+		return [self _validateRemove];
+	else if(selector == @selector(quickLook:))
+		return [self _validateQuickLook];
+	
+	return YES;
+}
+
+
+
+#pragma mark -
+
 - (void)transferThread:(id)arg {
 	NSAutoreleasePool		*pool;
 	WCTransfer				*transfer = arg;
@@ -1997,6 +2086,34 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 			[_transfersTableView setNeedsDisplayInRect:rect];
 		}
 	}
+}
+
+
+
+#pragma mark -
+
+- (NSString *)deleteDocumentMenuItemTitle {
+	WCTransfer		*transfer;
+	
+	transfer = [self _selectedTransfer];
+	
+	if(transfer)
+		return [NSSWF:NSLS(@"Remove \u201c%@\u201d", @"Delete menu item (transfer"), [transfer name]];
+	
+	return NSLS(@"Delete", @"Delete menu item");
+}
+
+
+
+- (NSString *)quickLookMenuItemTitle {
+	WCTransfer		*transfer;
+	
+	transfer = [self _selectedTransfer];
+	
+	if(transfer)
+		return [NSSWF:NSLS(@"Quick Look \u201c%@\u201d", @"Quick Look menu item (transfer"), [transfer name]];
+	
+	return NSLS(@"Quick Look", @"Quick Look menu item");
 }
 
 
@@ -2061,8 +2178,17 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 #pragma mark -
 
+- (IBAction)deleteDocument:(id)sender {
+	[self remove:sender];
+}
+
+
+
 - (IBAction)start:(id)sender {
 	WCTransfer		*transfer;
+	
+	if(![self _validateStart])
+		return;
 	
 	transfer = [self _selectedTransfer];
 	
@@ -2082,6 +2208,9 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 - (IBAction)pause:(id)sender {
 	WCTransfer		*transfer;
 	
+	if(![self _validatePause])
+		return;
+	
 	transfer = [self _selectedTransfer];
 	
 	if([transfer state] == WCTransferRunning)
@@ -2095,6 +2224,9 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 
 - (IBAction)stop:(id)sender {
+	if(![self _validateStop])
+		return;
+	
 	[[self _selectedTransfer] setState:WCTransferStopping];
 
 	[_transfersTableView setNeedsDisplay:YES];
@@ -2106,6 +2238,9 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 - (IBAction)remove:(id)sender {
 	WCTransfer		*transfer;
+	
+	if(![self _validateRemove])
+		return;
 
 	transfer = [self _selectedTransfer];
 	
@@ -2124,6 +2259,9 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 - (IBAction)clear:(id)sender {
 	WCTransfer		*transfer;
+	
+	if(![self _validateClear])
+		return;
 
 	while((transfer = [self _transferWithState:WCTransferFinished]))
 		[self _removeTransfer:transfer];
@@ -2140,7 +2278,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	WCTransfer		*transfer;
 	id				quickLookPanel;
 	
-	if(![_quickLookButton isEnabled])
+	if(![self _validateQuickLook])
 		return;
 	
 	transfer = [self _selectedTransfer];
@@ -2171,6 +2309,9 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	WCConnect		*connect;
 	WCTransfer		*transfer;
 	
+	if(![self _validateConnect])
+		return;
+	
 	transfer = [self _selectedTransfer];
 	
 	connect = [WCConnect connectWithURL:[transfer URL] bookmark:[transfer bookmark]];
@@ -2183,6 +2324,9 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 - (IBAction)revealInFinder:(id)sender {
 	NSString		*path;
 	WCTransfer		*transfer;
+	
+	if(![self _validateRevealInFinder])
+		return;
 	
 	transfer = [self _selectedTransfer];
 	
@@ -2199,6 +2343,9 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 - (IBAction)revealInFiles:(id)sender {
 	WCTransfer		*transfer;
 	NSString		*path;
+	
+	if(![self _validateRevealInFiles])
+		return;
 	
 	transfer = [self _selectedTransfer];
 	path = [transfer remotePath];

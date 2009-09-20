@@ -59,11 +59,19 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 - (void)_validate;
 - (void)_validatePermissions;
+- (BOOL)_validateConnected;
+- (BOOL)_validateDownload;
+- (BOOL)_validateUploadToDirectory:(WCFile *)directory;
+- (BOOL)_validateGetInfo;
+- (BOOL)_validateQuickLook;
+- (BOOL)_validateCreateFolder;
+- (BOOL)_validateDelete;
 
 - (BOOL)_canPreviewFile:(WCFile *)file;
 
 - (WCFile *)_selectedSource;
 - (WCServerConnection *)_selectedConnection;
+- (WCAccount *)_selectedAccount;
 - (NSArray *)_selectedFiles;
 
 - (NSMutableDictionary *)_filesForConnection:(WCServerConnection *)connection;
@@ -209,69 +217,21 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 #pragma mark -
 
 - (void)_validate {
-	NSEnumerator			*enumerator;
-	NSArray					*files;
-	WCServerConnection		*connection;
-	WCAccount				*account;
-	WCFile					*file;
-	BOOL					connected, quickLook, writable, readable;
-	
-	connection	= [self _selectedConnection];
-	connected	= [connection isConnected];
-	account		= [connection account];
-	writable	= [self _existingDirectoryTreeIsWritableForFile:_currentDirectory];
-	readable	= [self _existingDirectoryTreeIsReadableForFile:_currentDirectory];
-	files		= [self _selectedFiles];
-
-	switch([files count]) {
-		case 0:
-			[_downloadButton setEnabled:NO];
-			[_quickLookButton setEnabled:NO];
-			[_infoButton setEnabled:NO];
-			[_deleteButton setEnabled:NO];
-			break;
-
-		case 1:
-			file = [files objectAtIndex:0];
-
-			[_downloadButton setEnabled:([account transferDownloadFiles] && connected)];
-			[_deleteButton setEnabled:(([account fileDeleteFiles] || writable) && connected)];
-			[_infoButton setEnabled:([account fileGetInfo] && connected)];
-			[_quickLookButton setEnabled:([account transferDownloadFiles] &&
-										  connected &&
-										  [self _canPreviewFile:file])];
-			break;
-
-		default:
-			[_downloadButton setEnabled:([account transferDownloadFiles] && connected)];
-			
-			quickLook = ([account transferDownloadFiles] && connected);
-			
-			if(quickLook) {
-				enumerator = [files objectEnumerator];
-				
-				while((file = [enumerator nextObject])) {
-					if(![self _canPreviewFile:file]) {
-						quickLook = NO;
-						
-						break;
-					}
-				}
-			}
-			
-			[_quickLookButton setEnabled:quickLook];
-			[_deleteButton setEnabled:(([account fileDeleteFiles] || writable) && connected)];
-			[_infoButton setEnabled:(([account fileGetInfo] || readable) && connected)];
-			break;
+	if([self _validateConnected]) {
+		[[_historyControl cell] setEnabled:(_historyPosition > 0) forSegment:0];
+		[[_historyControl cell] setEnabled:(_historyPosition + 1 < [_history count]) forSegment:1];
+	} else {
+		[[_historyControl cell] setEnabled:NO forSegment:0];
+		[[_historyControl cell] setEnabled:NO forSegment:1];
 	}
-	
-	[[_historyControl cell] setEnabled:(_historyPosition > 0 && connected) forSegment:0];
-	[[_historyControl cell] setEnabled:(_historyPosition + 1 < [_history count] && connected) forSegment:1];
 
-//	[_uploadButton setEnabled:([self _validateUpload] && connected)];
-	[_uploadButton setEnabled:YES];
-	[_createFolderButton setEnabled:(([account fileCreateDirectories] || writable) && connected)];
-	[_reloadButton setEnabled:connected];
+	[_downloadButton setEnabled:[self _validateUploadToDirectory:_currentDirectory]];
+	[_uploadButton setEnabled:[self _validateUploadToDirectory:_currentDirectory]];
+	[_infoButton setEnabled:[self _validateGetInfo]];
+	[_quickLookButton setEnabled:[self _validateUploadToDirectory:_currentDirectory]];
+	[_createFolderButton setEnabled:[self _validateCreateFolder]];
+	[_reloadButton setEnabled:[self _validateConnected]];
+	[_deleteButton setEnabled:[self _validateDelete]];
 }
 
 
@@ -287,6 +247,145 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	[_groupPopUpButton setEnabled:(dropBox && setPermissions)];
 	[_groupPermissionsPopUpButton setEnabled:(dropBox && setPermissions)];
 	[_everyonePermissionsPopUpButton setEnabled:(dropBox && setPermissions)];
+}
+
+
+
+- (BOOL)_validateConnected {
+	WCServerConnection		*connection;
+	
+	connection = [self _selectedConnection];
+	
+	return (connection != NULL && [connection isConnected]);
+}
+
+
+
+- (BOOL)_validateDownload {
+	WCAccount		*account;
+	
+	if(![self _validateConnected])
+		return NO;
+	
+	account = [self _selectedAccount];
+	
+	if(![account transferDownloadFiles]) {
+		if(![account fileAccessAllDropboxes] && ![self _existingDirectoryTreeIsReadableForFile:_currentDirectory])
+			return NO;
+	}
+	
+	return ([[self _selectedFiles] count] > 0);
+}
+
+
+
+- (BOOL)_validateUploadToDirectory:(WCFile *)directory {
+	WCServerConnection		*connection;
+	WCAccount				*account;
+	
+	connection = [directory connection];
+	
+	if(!connection || [connection isConnected])
+		return NO;
+	
+	account = [self _selectedAccount];
+	
+	if(![account transferUploadFiles] || ![account transferUploadDirectories]) {
+		if(![account fileAccessAllDropboxes] && ![self _existingDirectoryTreeIsWritableForFile:directory])
+			return NO;
+	}
+	
+	if(![directory isUploadsFolder] && ![account transferUploadAnywhere])
+		return NO;
+	
+	return YES;
+}
+
+
+
+- (BOOL)_validateGetInfo {
+	WCAccount		*account;
+	
+	if(![self _validateConnected])
+		return NO;
+	
+	account = [self _selectedAccount];
+	
+	if(![account fileGetInfo]) {
+		if(![account fileAccessAllDropboxes] && ![self _existingDirectoryTreeIsReadableForFile:_currentDirectory])
+			return NO;
+	}
+	
+	return ([[self _selectedFiles] count] > 0);
+}
+
+
+
+- (BOOL)_validateQuickLook {
+	NSEnumerator	*enumerator;
+	NSArray			*files;
+	WCAccount		*account;
+	WCFile			*file;
+	
+	if(![self _validateConnected])
+		return NO;
+	
+	account = [self _selectedAccount];
+	
+	if(![account transferDownloadFiles]) {
+		if(![account fileAccessAllDropboxes] && ![self _existingDirectoryTreeIsReadableForFile:_currentDirectory])
+			return NO;
+	}
+	
+	files = [self _selectedFiles];
+	
+	if([files count] == 0)
+		return NO;
+	
+	enumerator = [files objectEnumerator];
+	
+	while((file = [enumerator nextObject])) {
+		if(![self _canPreviewFile:file])
+			return NO;
+	}
+	
+	return YES;
+}
+
+
+
+- (BOOL)_validateCreateFolder {
+	WCAccount		*account;
+	
+	if(![self _validateConnected])
+		return NO;
+	
+	account = [self _selectedAccount];
+	
+	if(![account fileCreateDirectories]) {
+		if(![account fileAccessAllDropboxes] && ![self _existingDirectoryTreeIsWritableForFile:_currentDirectory])
+			return NO;
+	}
+	
+	return YES;
+}
+
+
+
+- (BOOL)_validateDelete {
+	WCAccount		*account;
+	
+	if(![self _validateConnected])
+		return NO;
+	
+	account = [self _selectedAccount];
+	
+	if(![account fileDeleteFiles]) {
+		if(![account fileAccessAllDropboxes] && ![self _existingDirectoryTreeIsWritableForFile:_currentDirectory])
+			return NO;
+	}
+	
+	return ([[self _selectedFiles] count] > 0);
 }
 
 
@@ -339,6 +438,12 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		return [[[WCPublicChat publicChat] chatControllerForConnectionIdentifier:item] connection];
 	
 	return NULL;
+}
+
+
+
+- (WCAccount *)_selectedAccount {
+	return [[self _selectedConnection] account];
 }
 
 
@@ -1032,6 +1137,13 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 												 target:self
 												 action:@selector(createFolder:)];
 	}
+	else if([identifier isEqualToString:@"Reload"]) {
+		return [NSToolbarItem toolbarItemWithIdentifier:identifier
+												   name:NSLS(@"Reload", @"Reload toolbar item")
+												content:_reloadButton
+												 target:self
+												 action:@selector(reload:)];
+	}
 	else if([identifier isEqualToString:@"Delete"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
 												   name:NSLS(@"Delete", @"Delete toolbar item")
@@ -1054,6 +1166,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		@"GetInfo",
 		@"QuickLook",
 		@"CreateFolder",
+		@"Reload",
 		NSToolbarFlexibleSpaceItemIdentifier,
 		@"Delete",
 		NULL];
@@ -1367,6 +1480,87 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 #pragma mark -
 
+- (BOOL)validateMenuItem:(NSMenuItem *)item {
+	SEL		selector;
+	
+	selector = [item action];
+	
+	if(selector == @selector(getInfo:))
+		return [self _validateGetInfo];
+	else if(selector == @selector(newDocument:))
+		return [self _validateCreateFolder];
+	else if(selector == @selector(deleteDocument:))
+		return [self _validateDelete];
+	else if(selector == @selector(reloadDocument:))
+		return YES;
+	else if(selector == @selector(quickLook:))
+		return [self _validateQuickLook];
+	
+	return YES;
+}
+
+
+
+#pragma mark -
+
+- (NSString *)newDocumentMenuItemTitle {
+	return NSLS(@"New Folder\u2026", @"New menu item");
+}
+
+
+
+- (NSString *)deleteDocumentMenuItemTitle {
+	NSArray		*files;
+	
+	files = [self _selectedFiles];
+	
+	switch([files count]) {
+		case 0:
+			return NSLS(@"Delete File\u2026", @"Delete menu item");
+			break;
+		
+		case 1:
+			return [NSSWF:NSLS(@"Delete \u201c%@\u201d\u2026", @"Delete menu item (file)"), [[files objectAtIndex:0] name]];
+			break;
+		
+		default:
+			return [NSSWF:NSLS(@"Delete %u Items\u2026", @"Delete menu item (count)"), [files count]];
+			break;
+	}
+}
+
+
+
+- (NSString *)reloadDocumentMenuItemTitle {
+	return [NSSWF:NSLS(@"Reload \u201c%@\u201d", @"Reload menu item (file)"), [_currentDirectory name]];
+}
+
+
+
+- (NSString *)quickLookMenuItemTitle {
+	NSArray		*files;
+	
+	files = [self _selectedFiles];
+	
+	switch([files count]) {
+		case 0:
+			return NSLS(@"Quick Look", @"Quick Look menu item");
+			break;
+		
+		case 1:
+			return [NSSWF:NSLS(@"Quick Look \u201c%@\u201d", @"Quick Look menu item (file)"), [[files objectAtIndex:0] name]];
+			break;
+		
+			default:
+			return [NSSWF:NSLS(@"Quick Look %u Items", @"Quick Look menu item (count)"), [files count]];
+			break;
+	}
+}
+
+
+
+#pragma mark -
+
 - (IBAction)open:(id)sender {
 	NSEnumerator	*enumerator;
 	NSArray			*files;
@@ -1455,6 +1649,9 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	NSEnumerator	*enumerator;
 	WCFile			*file;
 
+	if(![self _validateDownload])
+		return;
+
 	enumerator = [[self _selectedFiles] objectEnumerator];
 
 	while((file = [enumerator nextObject]))
@@ -1465,11 +1662,14 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 - (IBAction)upload:(id)sender {
 	NSOpenPanel		*openPanel;
+	
+	if(![self _validateUploadToDirectory:_currentDirectory])
+		return;
 
 	openPanel = [NSOpenPanel openPanel];
 
 	[openPanel setCanChooseDirectories:[[[self _selectedConnection] account] transferUploadDirectories]];
-	[openPanel setCanChooseFiles:YES];
+	[openPanel setCanChooseFiles:[[[self _selectedConnection] account] transferUploadFiles]];
 	[openPanel setAllowsMultipleSelection:YES];
 
 	[openPanel beginSheetForDirectory:NULL
@@ -1504,6 +1704,9 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	NSArray				*files;
 	WCFile				*file;
 	
+	if(![self _validateGetInfo])
+		return;
+	
 	files = [self _selectedFiles];
 	
 	if([[NSApp currentEvent] alternateKeyModifier]) {
@@ -1526,7 +1729,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	WCFile			*file;
 	id				quickLookPanel;
 	
-	if(![_quickLookButton isEnabled])
+	if(![self _validateQuickLook])
 		return;
 	
 	[_quickLookFiles removeAllObjects];
@@ -1558,11 +1761,20 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 
+- (IBAction)newDocument:(id)sender {
+	[self createFolder:sender];
+}
+
+
+
 - (IBAction)createFolder:(id)sender {
 	NSEnumerator		*enumerator;
 	NSArray				*array;
 	NSMenuItem			*item;
 	WCServerConnection	*connection;
+	
+	if(![self _validateCreateFolder])
+		return;
 	
 	connection = [self _selectedConnection];
 	
@@ -1664,18 +1876,30 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 
-- (IBAction)reloadFiles:(id)sender {
+- (IBAction)reloadDocument:(id)sender {
+	[self reload:sender];
+}
+
+
+
+- (IBAction)reload:(id)sender {
 	[self _reloadFilesAtDirectory:_currentDirectory];
 }
 
 
 
-- (IBAction)deleteFiles:(id)sender {
+- (IBAction)deleteDocument:(id)sender {
+	[self delete:sender];
+}
+
+
+
+- (IBAction)delete:(id)sender {
 	NSAlert			*alert;
 	NSArray			*files;
 	NSString		*title;
 	
-	if(![_deleteButton isEnabled])
+	if(![self _validateDelete])
 		return;
 
 	files = [self _selectedFiles];

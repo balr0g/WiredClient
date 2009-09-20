@@ -27,10 +27,14 @@
  */
 
 #import "WCAboutWindow.h"
+#import "WCAccountsController.h"
+#import "WCAdministration.h"
 #import "WCApplicationController.h"
+#import "WCBanlistController.h"
 #import "WCBoards.h"
 #import "WCConnect.h"
 #import "WCConsole.h"
+#import "WCFiles.h"
 #import "WCKeychain.h"
 #import "WCMessage.h"
 #import "WCMessages.h"
@@ -508,7 +512,51 @@ static WCApplicationController		*sharedController;
 
 
 - (void)menuNeedsUpdate:(NSMenu *)menu {
-	if(menu == _windowMenu) {
+	NSString		*newString, *deleteString, *reloadString, *quickLookString;
+	id				delegate;
+	
+	if(menu == _connectionMenu) {
+		delegate = [[NSApp keyWindow] delegate];
+		
+		if([delegate isKindOfClass:[WCFiles class]]) {
+			newString		= [delegate newDocumentMenuItemTitle];
+			deleteString	= [delegate deleteDocumentMenuItemTitle];
+			reloadString	= [delegate reloadDocumentMenuItemTitle];
+			quickLookString	= [delegate quickLookMenuItemTitle];
+		}
+		else if([delegate isKindOfClass:[WCTransfers class]]) {
+			newString		= [[WCBoards boards] newDocumentMenuItemTitle];
+			deleteString	= [delegate deleteDocumentMenuItemTitle];
+			reloadString	= NULL;
+			quickLookString	= [delegate quickLookMenuItemTitle];
+		}
+		else if([delegate isKindOfClass:[WCBoards class]]) {
+			newString		= [delegate newDocumentMenuItemTitle];
+			deleteString	= [delegate deleteDocumentMenuItemTitle];
+			reloadString	= NULL;
+			quickLookString	= NULL;
+		}
+		else if([delegate isKindOfClass:[WCAdministration class]] &&
+				([[delegate selectedController] isKindOfClass:[WCAccountsController class]] ||
+				 [[delegate selectedController] isKindOfClass:[WCBanlistController class]])) {
+			newString		= [[delegate selectedController] newDocumentMenuItemTitle];
+			deleteString	= [[delegate selectedController] deleteDocumentMenuItemTitle];
+			reloadString	= NULL;
+			quickLookString	= NULL;
+		}
+		else {
+			newString		= [[WCBoards boards] newDocumentMenuItemTitle];
+			deleteString	= NULL;
+			reloadString	= NULL;
+			quickLookString	= NULL;
+		}
+		
+		[_newDocumentMenuItem setTitle:newString ? newString : NSLS(@"New", @"New menu item")];
+		[_deleteDocumentMenuItem setTitle:deleteString ? deleteString : NSLS(@"Delete", @"Delete menu item")];
+		[_reloadDocumentMenuItem setTitle:reloadString ? reloadString : NSLS(@"Reload", @"Reload menu item")];
+		[_quickLookMenuItem setTitle:quickLookString ? quickLookString : NSLS(@"Quick Look", @"Quick Look menu item")];
+	}
+	else if(menu == _windowMenu) {
 		if([NSApp keyWindow] == [[WCPublicChat publicChat] window] && [[WCPublicChat publicChat] selectedChatController] != NULL) {
 			[_closeWindowMenuItem setAction:@selector(closeTab:)];
 			[_closeWindowMenuItem setTitle:NSLS(@"Close Tab", @"Close tab menu item")];
@@ -861,11 +909,14 @@ static WCApplicationController		*sharedController;
 	
 	if(selector == @selector(disconnect:) || selector == @selector(reconnect:) ||
 	   selector == @selector(serverInfo:) || selector == @selector(files:) ||
-	   selector == @selector(accounts:) || selector == @selector(administration:) ||
-	   selector == @selector(broadcast:) || selector == @selector(changePassword:) ||
-	   selector == @selector(addBookmark:) || selector == @selector(console:) ||
-	   selector == @selector(nextConnection:) || selector == @selector(previousConnection:)) {
+	   selector == @selector(administration:) || selector == @selector(broadcast:) ||
+	   selector == @selector(changePassword:) || selector == @selector(addBookmark:) ||
+	   selector == @selector(console:) || selector == @selector(nextConnection:) ||
+	   selector == @selector(previousConnection:)) {
 		return [[WCPublicChat publicChat] validateMenuItem:item];
+	}
+	else if(selector == @selector(newDocument:) || selector == @selector(deleteDocument:)) {
+		return [[WCBoards boards] validateMenuItem:item];
 	}
 	else if(selector == @selector(insertSmiley:)) {
 		return ([[[NSApp keyWindow] firstResponder] respondsToSelector:@selector(insertText:)]);
@@ -985,12 +1036,6 @@ static WCApplicationController		*sharedController;
 
 
 
-- (IBAction)accounts:(id)sender {
-	[[WCPublicChat publicChat] accounts:sender];
-}
-
-
-
 - (IBAction)administration:(id)sender {
 	[[WCPublicChat publicChat] administration:sender];
 }
@@ -999,6 +1044,20 @@ static WCApplicationController		*sharedController;
 
 - (IBAction)broadcast:(id)sender {
 	[[WCPublicChat publicChat] broadcast:sender];
+}
+
+
+
+- (IBAction)newDocument:(id)sender {
+	[[WCBoards boards] showWindow:sender];
+	[[WCBoards boards] newDocument:sender];
+}
+
+
+
+- (IBAction)deleteDocument:(id)sender {
+	[[WCBoards boards] showWindow:sender];
+	[[WCBoards boards] deleteDocument:sender];
 }
 
 

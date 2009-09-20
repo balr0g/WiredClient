@@ -116,6 +116,8 @@ extern NSString * const								WCBoardsDidChangeUnreadCountNotification;
 - (NSUInteger)numberOfUnreadThreads;
 - (NSUInteger)numberOfUnreadThreadsForConnection:(WCServerConnection *)connection;
 
+- (IBAction)newDocument:(id)sender;
+- (IBAction)deleteDocument:(id)sender;
 - (IBAction)addBoard:(id)sender;
 - (IBAction)addSmartBoard:(id)sender;
 - (IBAction)editSmartBoard:(id)sender;

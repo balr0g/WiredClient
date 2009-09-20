@@ -473,6 +473,28 @@
 
 
 
+- (NSUInteger)numberOfThreadsIncludingChildBoards:(BOOL)includeChildBoards {
+	WCBoard				*board;
+	NSUInteger			i, count, number = 0;
+	
+	number = [_threadsArray count];
+	
+	if(includeChildBoards) {
+		count = [_boards count];
+		
+		for(i = 0; i < count; i++) {
+			board = [_boards objectAtIndex:i];
+			
+			if(![board isKindOfClass:[WCSmartBoard class]])
+				number += [board numberOfThreadsIncludingChildBoards:includeChildBoards];
+		}
+	}
+	
+	return number;
+}
+
+
+
 - (NSUInteger)numberOfUnreadThreadsForConnection:(WCServerConnection *)connection includeChildBoards:(BOOL)includeChildBoards {
 	WCBoard				*board;
 	WCBoardThread		*thread;

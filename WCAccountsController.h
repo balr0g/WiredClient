@@ -28,6 +28,8 @@
 
 #import "WCAdministration.h"
 
+@class WCAccount;
+
 @interface WCAccountsController : WCAdministrationController {
 	IBOutlet NSButton					*_allFilterButton;
 	IBOutlet NSButton					*_usersFilterButton;
@@ -95,6 +97,9 @@
 	WIDateFormatter						*_dateFormatter;
 }
 
+- (NSString *)newDocumentMenuItemTitle;
+- (NSString *)deleteDocumentMenuItemTitle;
+
 - (NSArray *)accounts;
 - (NSArray *)users;
 - (NSArray *)userNames;
@@ -104,10 +109,11 @@
 - (WCAccount *)groupWithName:(NSString *)name;
 - (void)editUserAccountWithName:(NSString *)name;
 
+- (IBAction)newDocument:(id)sender;
+- (IBAction)deleteDocument:(id)sender;
 - (IBAction)touch:(id)sender;
-- (IBAction)add:(id)sender;
-- (IBAction)delete:(id)sender;
-- (IBAction)reload:(id)sender;
+- (IBAction)addAccount:(id)sender;
+- (IBAction)deleteAccount:(id)sender;
 - (IBAction)all:(id)sender;
 - (IBAction)users:(id)sender;
 - (IBAction)groups:(id)sender;

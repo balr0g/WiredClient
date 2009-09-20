@@ -35,12 +35,13 @@
 @interface WCBanlistController(Private)
 
 - (void)_validate;
+- (BOOL)_validateAddBan;
+- (BOOL)_validateDeleteBan;
 
 - (void)_reloadBans;
 - (void)_getBans;
 
 - (WCBan *)_banAtIndex:(NSUInteger)index;
-- (WCBan *)_selectedBan;
 - (NSArray *)_selectedBans;
 - (void)_sortBans;
 
@@ -50,14 +51,26 @@
 @implementation WCBanlistController(Private)
 
 - (void)_validate {
-	WCAccount		*account;
-	BOOL			connected;
+	[_addButton setEnabled:[self _validateAddBan]];
+	[_deleteButton setEnabled:[self _validateDeleteBan]];
+}
 
-	account		= [[_administration connection] account];
-	connected	= [[_administration connection] isConnected];
 
-	[_addButton setEnabled:(connected && [account banlistAddBans])];
-	[_deleteButton setEnabled:(connected && [account banlistDeleteBans] && ([_banlistTableView selectedRow] >= 0))];
+
+- (BOOL)_validateAddBan {
+	if(![_administration connection] || ![[_administration connection] isConnected])
+		return NO;
+	
+	return [[[_administration connection] account] banlistAddBans];
+}
+
+
+
+- (BOOL)_validateDeleteBan {
+	if(![_administration connection] || ![[_administration connection] isConnected])
+		return NO;
+	
+	return ([[[_administration connection] account] banlistDeleteBans] && [[self _selectedBans] count] > 0);
 }
 
 
@@ -96,19 +109,6 @@
 		: index;
 	
 	return [_shownBans objectAtIndex:i];
-}
-
-
-
-- (WCBan *)_selectedBan {
-	NSInteger		row;
-	
-	row = [_banlistTableView selectedRow];
-	
-	if(row < 0)
-		return NULL;
-	
-	return [self _banAtIndex:row];
 }
 
 
@@ -232,6 +232,23 @@
 
 #pragma mark -
 
+- (BOOL)validateMenuItem:(NSMenuItem *)item {
+	SEL		selector;
+	
+	selector = [item action];
+	
+	if(selector == @selector(newDocument:))
+		return [self _validateAddBan];
+	else if(selector == @selector(deleteDocument:))
+		return [self _validateDeleteBan];
+	
+	return YES;
+}
+
+
+
+#pragma mark -
+
 - (void)controllerWindowDidBecomeKey {
 	[self _reloadBans];
 }
@@ -248,6 +265,8 @@
 
 - (void)controllerDidSelect {
 	[self _reloadBans];
+
+	[[_administration window] makeFirstResponder:_banlistTableView];
 }
 
 
@@ -268,7 +287,52 @@
 
 #pragma mark -
 
+- (NSString *)newDocumentMenuItemTitle {
+	return NSLS(@"New Ban\u2026", @"New menu item");
+}
+
+
+
+- (NSString *)deleteDocumentMenuItemTitle {
+	NSArray			*bans;
+	
+	bans = [self _selectedBans];
+	
+	switch([bans count]) {
+		case 0:
+			return NSLS(@"Delete Ban\u2026", @"Delete menu item");
+			break;
+		
+		case 1:
+			return [NSSWF:NSLS(@"Delete \u201c%@\u201d\u2026", @"Delete menu item (IP)"), [[bans objectAtIndex:0] IP]];
+			break;
+		
+		default:
+			return [NSSWF:NSLS(@"Delete %u Items\u2026", @"Delete menu item (count)"), [bans count]];
+			break;
+	}
+}
+
+
+
+#pragma mark -
+
+- (IBAction)newDocument:(id)sender {
+	[self addBan:sender];
+}
+
+
+
+- (IBAction)deleteDocument:(id)sender {
+	[self deleteBan:sender];
+}
+
+
+
 - (IBAction)addBan:(id)sender {
+	if(![self _validateAddBan])
+		return;
+	
 	[NSApp beginSheet:_addBanPanel
 	   modalForWindow:[_administration window]
 		modalDelegate:self
@@ -301,25 +365,22 @@
 
 - (IBAction)deleteBan:(id)sender {
 	NSAlert			*alert;
+	NSArray			*bans;
 	NSString		*title;
-	NSUInteger		count;
-
-	if(![[_administration connection] isConnected])
-		return;
-
-	count = [[self _selectedBans] count];
-
-	if(count == 0)
+	
+	if(![self _validateDeleteBan])
 		return;
 	
-	if(count == 1) {
+	bans = [self _selectedBans];
+	
+	if([bans count] == 1) {
 		title = [NSSWF:
 			NSLS(@"Are you sure you want to delete \u201c%@\u201d?", @"Delete ban dialog title (IP)"),
-			[[self _selectedBan] IP]];
+			[[bans objectAtIndex:0] IP]];
 	} else {
 		title = [NSSWF:
 			NSLS(@"Are you sure you want to delete %lu items?", @"Delete ban dialog title (count)"),
-			count];
+			[bans count]];
 	}
 
 	alert = [[NSAlert alloc] init];

@@ -51,6 +51,11 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 @interface WCBoards(Private)
 
 - (void)_validate;
+- (BOOL)_validateAddThread;
+- (BOOL)_validateDeleteThread;
+- (BOOL)_validateMarkAsRead;
+- (BOOL)_validateMarkAsUnread;
+
 - (void)_themeDidChange;
 
 - (void)_getBoardsForConnection:(WCServerConnection *)connection;
@@ -105,6 +110,88 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 }
 
 
+
+- (BOOL)_validateAddThread {
+	WCServerConnection		*connection;
+	WCUserAccount			*account;
+	WCBoard					*board;
+	
+	board		= [self _selectedBoard];
+	connection	= [board connection];
+	account		= [connection account];
+
+	return (board != NULL && connection != NULL && [connection isConnected] &&
+			[board isWritableByAccount:account] && [account boardAddThreads]);
+}
+
+
+
+- (BOOL)_validateDeleteThread {
+	WCServerConnection		*connection;
+	WCUserAccount			*account;
+	WCBoard					*board;
+	
+	board		= [self _selectedBoard];
+	connection	= [board connection];
+	account		= [connection account];
+
+	return (board != NULL && connection != NULL && [connection isConnected] &&
+			[board isWritableByAccount:account] && [account boardDeleteThreads] && [[self _selectedThreads] count] > 0);
+}
+
+
+
+- (BOOL)_validateMarkAsRead {
+	NSEnumerator		*enumerator;
+	NSArray				*threads;
+	WCBoard				*board;
+	WCBoardThread		*thread;
+	NSUInteger			unread = 0;
+	
+	board		= [self _selectedBoard];
+	threads		= [self _selectedThreads];
+	
+	if([threads count] > 0) {
+		enumerator = [threads objectEnumerator];
+		
+		while((thread = [enumerator nextObject]))
+			unread += [thread numberOfUnreadPosts];
+	} else {
+		unread = [board numberOfUnreadThreadsForConnection:NULL includeChildBoards:YES];
+	}
+	
+	return (unread > 0);
+}
+
+
+
+- (BOOL)_validateMarkAsUnread {
+	NSEnumerator		*enumerator;
+	NSArray				*threads;
+	WCBoard				*board;
+	WCBoardThread		*thread;
+	
+	board		= [self _selectedBoard];
+	threads		= [self _selectedThreads];
+	
+	if([threads count] > 0) {
+		enumerator = [threads objectEnumerator];
+		
+		while((thread = [enumerator nextObject])) {
+			if([thread numberOfPosts] > [thread numberOfUnreadPosts])
+				return YES;
+		}
+	} else {
+		if([board numberOfThreadsIncludingChildBoards:YES] > [board numberOfUnreadThreadsForConnection:NULL includeChildBoards:YES])
+			return YES;
+	}
+	
+	return NO;
+}
+
+
+
+#pragma mark -
 
 - (void)_themeDidChange {
 	NSDictionary		*theme;
@@ -1239,6 +1326,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	NSEnumerator		*enumerator;
 	WCServerConnection	*connection;
 	WCBoard				*board, *parent, *collapsedBoard, *childBoard;
+	NSInteger			row;
 	
 	connection = [message contextInfo];
 
@@ -1270,6 +1358,13 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	
 		[self _reloadBoardListsSelectingBoard:NULL];
 		[self _validate];
+		
+		if(![self _selectedBoard] && [[board boards] count] > 0) {
+			row = [_boardsOutlineView rowForItem:[board boardAtIndex:0]];
+			
+			if(row >= 0)
+				[_boardsOutlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
+		}
 		
 		[connection removeObserver:self message:message];
 	}
@@ -1912,42 +2007,18 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 #pragma mark -
 
 - (BOOL)validateToolbarItem:(NSToolbarItem *)item {
-	NSEnumerator		*enumerator;
-	WCUserAccount		*account;
-	WCBoard				*board;
-	WCBoardThread		*thread;
-	NSArray				*threads;
-	SEL					selector;
-	BOOL				connected;
-	NSUInteger			unread = 0;
+	SEL			selector;
+
+	selector = [item action];
 	
-	selector	= [item action];
-	board		= [self _selectedBoard];
-	threads		= [self _selectedThreads];
-	account		= [[board connection] account];
-	connected	= [[board connection] isConnected];
-	
-	if(selector == @selector(addThread:)) {
-		return (board != NULL && connected && [board isWritableByAccount:account] && [account boardAddThreads]);
-	}
-	else if(selector == @selector(deleteThread:)) {
-		return (board != NULL && connected && [board isWritableByAccount:account] && [threads count] > 0 && [account boardDeleteThreads]);
-	}
-	else if(selector == @selector(markAsRead:)) {
-		if([threads count] > 0) {
-			enumerator = [threads objectEnumerator];
-			
-			while((thread = [enumerator nextObject]))
-				unread += [thread numberOfUnreadPosts];
-		} else {
-			unread = [board numberOfUnreadThreadsForConnection:NULL includeChildBoards:YES];
-		}
-		
-		return (unread > 0);
-	}
-	else if(selector == @selector(markAllAsRead:)) {
+	if(selector == @selector(addThread:))
+		return [self _validateAddThread];
+	else if(selector == @selector(deleteThread:))
+		return [self _validateDeleteThread];
+	else if(selector == @selector(markAsRead:))
+		return [self _validateMarkAsRead];
+	else if(selector == @selector(markAllAsRead:))
 		return ([_boards numberOfUnreadThreadsForConnection:NULL includeChildBoards:YES] > 0);
-	}
 	
 	return YES;
 }
@@ -1973,8 +2044,14 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 		return (board != NULL && ![board isRootBoard] && connected && [account boardSetPermissions]);
 	else if(selector == @selector(editSmartBoard:))
 		return [board isKindOfClass:[WCSmartBoard class]];
-	else if(selector == @selector(markAsRead:) || selector == @selector(markAsUnread:))
-		return (board != NULL);
+	else if(selector == @selector(markAsRead:))
+		return [self _validateMarkAsRead];
+	else if(selector == @selector(markAsUnread:))
+		return [self _validateMarkAsUnread];
+	else if(selector == @selector(newDocument:))
+		return [self _validateAddThread];
+	else if(selector == @selector(deleteDocument:))
+		return [self _validateDeleteThread];
 	
 	return YES;
 }
@@ -1997,6 +2074,26 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	
 	if(valid)
 		[super submitSheet:sender];
+}
+
+
+
+#pragma mark -
+
+- (NSString *)newDocumentMenuItemTitle {
+	return NSLS(@"New Thread\u2026", "New menu item");
+}
+
+
+
+- (NSString *)deleteDocumentMenuItemTitle {
+	return NSLS(@"Delete Thread\u2026", "Delete menu item");
+}
+
+
+
+- (NSString *)reloadDocumentMenuItemTitle {
+	return NSLS(@"Reload", @"Reload menu item");
 }
 
 
@@ -2295,6 +2392,18 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 
 
 #pragma mark -
+
+- (IBAction)newDocument:(id)sender {
+	[self addThread:sender];
+}
+
+
+
+- (IBAction)deleteDocument:(id)sender {
+	[self deleteThread:sender];
+}
+
+
 
 - (IBAction)addBoard:(id)sender {
 	[self _reloadBoardListsSelectingBoard:[self _selectedBoard]];

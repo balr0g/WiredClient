@@ -589,8 +589,8 @@ typedef enum _WCChatActivity				WCChatActivity;
 		return (connection != NULL && ![connection isConnected] && ![connection isManuallyReconnecting]);
 	else if(selector == @selector(files:))
 		return (connection != NULL && [connection isConnected] && [[connection account] fileListFiles]);
-	else if(selector == @selector(serverInfo:) || selector == @selector(accounts:) ||
-			selector == @selector(administration:) || selector == @selector(console:))
+	else if(selector == @selector(serverInfo:) || selector == @selector(administration:) ||
+			selector == @selector(console:))
 		return (connection != NULL);
 	
 	return YES;

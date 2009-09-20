@@ -37,6 +37,8 @@
 @interface WCAccountsController(Private)
 
 - (void)_validate;
+- (BOOL)_validateAddAccount;
+- (BOOL)_validateDeleteAccount;
 
 - (void)_requestAccounts;
 
@@ -53,7 +55,6 @@
 - (void)_writeToAccount:(WCAccount *)account;
 
 - (WCAccount *)_accountAtIndex:(NSUInteger)index;
-- (WCAccount *)_selectedAccount;
 - (NSArray *)_selectedAccounts;
 - (void)_reloadGroups;
 - (void)_reloadSettings;
@@ -67,12 +68,12 @@
 	WCAccount	*account;
 	BOOL		save = NO;
 
-	account = [[_administration connection] account];
-	
-	[_addButton setEnabled:([account accountCreateUsers] || [account accountCreateGroups])];
-	[_deleteButton setEnabled:([self _selectedAccount] != NULL && ([account accountDeleteUsers] || [account accountDeleteGroups]))];
+	[_addButton setEnabled:[self _validateAddAccount]];
+	[_deleteButton setEnabled:[self _validateDeleteAccount]];
 
 	if(_touched && [[_administration connection] isConnected]) {
+		account = [[_administration connection] account];
+	
 		if(_creating && ([account accountCreateUsers] || [account accountCreateGroups]))
 			save = YES;
 		else if(_editing && ([account accountEditUsers] || [account accountEditGroups]))
@@ -80,6 +81,55 @@
 	}
 
 	[_saveButton setEnabled:save];
+}
+
+
+
+- (BOOL)_validateAddAccount {
+	WCAccount		*account;
+	
+	if(![_administration connection] || ![[_administration connection] isConnected])
+		return NO;
+	
+	account = [[_administration connection] account];
+
+	return ([account accountCreateUsers] || [account accountCreateGroups]);
+}
+
+
+
+- (BOOL)_validateDeleteAccount {
+	NSEnumerator	*enumerator;
+	NSArray			*accounts;
+	WCAccount		*account, *selectedAccount;
+	
+	if(![_administration connection] || ![[_administration connection] isConnected])
+		return NO;
+	
+	accounts = [self _selectedAccounts];
+	
+	if([accounts count] == 0)
+		return NO;
+	
+	account = [[_administration connection] account];
+	
+	if([account accountDeleteUsers] && [account accountDeleteGroups])
+		return YES;
+
+	if([account accountDeleteUsers] || [account accountDeleteGroups]) {
+		enumerator = [accounts objectEnumerator];
+		
+		while((selectedAccount = [enumerator nextObject])) {
+			if([selectedAccount isKindOfClass:[WCUserAccount class]] && ![account accountDeleteUsers])
+				return NO;
+			else if([selectedAccount isKindOfClass:[WCGroupAccount class]] && ![account accountDeleteGroups])
+				return NO;
+		}
+		
+		return YES;
+	}
+	
+	return NO;
 }
 
 
@@ -512,19 +562,6 @@
 		: index;
 	
 	return [_shownAccounts objectAtIndex:i];
-}
-
-
-
-- (WCAccount *)_selectedAccount {
-	NSInteger		row;
-
-	row = [_accountsTableView selectedRow];
-
-	if(row < 0)
-		return NULL;
-
-	return [self _accountAtIndex:row];
 }
 
 
@@ -1055,6 +1092,23 @@
 
 #pragma mark -
 
+- (BOOL)validateMenuItem:(NSMenuItem *)item {
+	SEL		selector;
+	
+	selector = [item action];
+	
+	if(selector == @selector(newDocument:))
+		return [self _validateAddAccount];
+	else if(selector == @selector(deleteDocument:))
+		return [self _validateDeleteAccount];
+	
+	return YES;
+}
+
+
+
+#pragma mark -
+
 - (BOOL)controllerWindowShouldClose {
 	return [self _verifyUnsavedAndSelectRow:-2];
 }
@@ -1081,6 +1135,36 @@
 
 - (BOOL)controllerShouldUnselect {
 	return [self _verifyUnsavedAndSelectRow:-1];
+}
+
+
+
+#pragma mark -
+
+- (NSString *)newDocumentMenuItemTitle {
+	return NSLS(@"New Account\u2026", @"New menu item");
+}
+
+
+
+- (NSString *)deleteDocumentMenuItemTitle {
+	NSArray			*accounts;
+	
+	accounts = [self _selectedAccounts];
+	
+	switch([accounts count]) {
+		case 0:
+			return NSLS(@"Delete Account\u2026", @"Delete menu item");
+			break;
+		
+		case 1:
+			return [NSSWF:NSLS(@"Delete \u201c%@\u201d\u2026", @"Delete menu item (account)"), [[accounts objectAtIndex:0] name]];
+			break;
+		
+		default:
+			return [NSSWF:NSLS(@"Delete %u Items\u2026", @"Delete menu item (count)"), [accounts count]];
+			break;
+	}
 }
 
 
@@ -1221,6 +1305,18 @@
 
 #pragma mark -
 
+- (IBAction)newDocument:(id)sender {
+	[self addAccount:sender];
+}
+
+
+
+- (IBAction)deleteDocument:(id)sender {
+	[self deleteAccount:sender];
+}
+
+
+
 - (IBAction)touch:(id)sender {
 	_touched = YES;
 
@@ -1231,8 +1327,11 @@
 
 
 
-- (IBAction)add:(id)sender {
+- (IBAction)addAccount:(id)sender {
 	WCUserAccount		*account;
+	
+	if(![self _validateAddAccount])
+		return;
 	
 	[_accounts removeAllObjects];
 
@@ -1267,27 +1366,24 @@
 
 
 
-- (IBAction)delete:(id)sender {
+- (IBAction)deleteAccount:(id)sender {
 	NSAlert			*alert;
+	NSArray			*accounts;
 	NSString		*title;
-	NSUInteger		count;
-
-	if(![[_administration connection] isConnected])
+	
+	if(![self _validateDeleteAccount])
 		return;
 
-	count = [[self _selectedAccounts] count];
+	accounts = [self _selectedAccounts];
 
-	if(count == 0)
-		return;
-
-	if(count == 1) {
+	if([accounts count] == 1) {
 		title = [NSSWF:
 			NSLS(@"Are you sure you want to delete \u201c%@\u201d?", @"Delete account dialog title (filename)"),
-			[[self _selectedAccount] name]];
+			[[accounts objectAtIndex:0] name]];
 	} else {
 		title = [NSSWF:
 			NSLS(@"Are you sure you want to delete %lu items?", @"Delete account dialog title (count)"),
-			count];
+			[accounts count]];
 	}
 
 	alert = [[NSAlert alloc] init];
@@ -1322,12 +1418,6 @@
 			[[_administration connection] sendMessage:message fromObserver:self selector:@selector(wiredAccountDeleteAccountReply:)];
 		}
 	}
-}
-
-
-
-- (IBAction)reload:(id)sender {
-	[self _reloadAccounts];
 }
 
 

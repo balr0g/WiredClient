@@ -94,8 +94,13 @@ extern NSString * const					WCPlacePboardType;
 + (id)filesWithConnection:(WCServerConnection *)connection file:(WCFile *)file;
 + (id)filesWithConnection:(WCServerConnection *)connection file:(WCFile *)file selectFile:(WCFile *)selectFile;
 
-- (IBAction)enclosingFolder:(id)sender;
+- (NSString *)newDocumentMenuItemTitle;
+- (NSString *)deleteDocumentMenuItemTitle;
+- (NSString *)reloadDocumentMenuItemTitle;
+- (NSString *)quickLookMenuItemTitle;
+
 - (IBAction)open:(id)sender;
+- (IBAction)enclosingFolder:(id)sender;
 
 - (IBAction)history:(id)sender;
 - (IBAction)style:(id)sender;
@@ -103,9 +108,12 @@ extern NSString * const					WCPlacePboardType;
 - (IBAction)upload:(id)sender;
 - (IBAction)getInfo:(id)sender;
 - (IBAction)quickLook:(id)sender;
+- (IBAction)newDocument:(id)sender;
 - (IBAction)createFolder:(id)sender;
 - (IBAction)type:(id)sender;
-- (IBAction)reloadFiles:(id)sender;
-- (IBAction)deleteFiles:(id)sender;
+- (IBAction)reloadDocument:(id)sender;
+- (IBAction)reload:(id)sender;
+- (IBAction)deleteDocument:(id)sender;
+- (IBAction)delete:(id)sender;
 
 @end

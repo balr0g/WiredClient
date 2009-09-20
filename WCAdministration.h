@@ -62,6 +62,11 @@
 
 - (void)showError:(WCError *)error;
 
+- (IBAction)newDocument:(id)sender;
+- (IBAction)deleteDocument:(id)sender;
+- (IBAction)toolbarItem:(id)sender;
+- (IBAction)submitSheet:(id)sender;
+
 @end
 
 

@@ -48,6 +48,11 @@
 	WIDateFormatter						*_dateFormatter;
 }
 
+- (NSString *)newDocumentMenuItemTitle;
+- (NSString *)deleteDocumentMenuItemTitle;
+
+- (IBAction)newDocument:(id)sender;
+- (IBAction)deleteDocument:(id)sender;
 - (IBAction)addBan:(id)sender;
 - (IBAction)deleteBan:(id)sender;
 

@@ -32,13 +32,17 @@ extern NSString * const						WCExceptionHandlerReceivedExceptionNotification;
 
 
 @interface WCApplicationController : WIObject <GrowlApplicationBridgeDelegate> {
+	IBOutlet NSMenu							*_connectionMenu;
+	IBOutlet NSMenuItem						*_disconnectMenuItem;
+	IBOutlet NSMenuItem						*_newDocumentMenuItem;
+	IBOutlet NSMenuItem						*_deleteDocumentMenuItem;
+	IBOutlet NSMenuItem						*_reloadDocumentMenuItem;
+	IBOutlet NSMenuItem						*_quickLookMenuItem;
 	IBOutlet NSMenu							*_bookmarksMenu;
 	IBOutlet NSMenu							*_insertSmileyMenu;
 	IBOutlet NSMenu							*_debugMenu;
 	IBOutlet NSMenu							*_windowMenu;
 	IBOutlet NSMenuItem						*_closeWindowMenuItem;
-	
-	IBOutlet NSMenuItem						*_disconnectMenuItem;
 	
 	IBOutlet SUUpdater						*_updater;
 	
@@ -61,9 +65,10 @@ extern NSString * const						WCExceptionHandlerReceivedExceptionNotification;
 - (IBAction)reconnect:(id)sender;
 - (IBAction)serverInfo:(id)sender;
 - (IBAction)files:(id)sender;
-- (IBAction)accounts:(id)sender;
 - (IBAction)administration:(id)sender;
 - (IBAction)broadcast:(id)sender;
+- (IBAction)newDocument:(id)sender;
+- (IBAction)deleteDocument:(id)sender;
 - (IBAction)changePassword:(id)sender;
 
 - (IBAction)search:(id)sender;

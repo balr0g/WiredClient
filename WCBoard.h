@@ -91,6 +91,7 @@ typedef enum _WCBoardPermissions		WCBoardPermissions;
 - (void)removeAllBoards;
 
 - (NSUInteger)numberOfThreads;
+- (NSUInteger)numberOfThreadsIncludingChildBoards:(BOOL)includeChildBoards;
 - (NSUInteger)numberOfUnreadThreadsForConnection:(WCServerConnection *)connection includeChildBoards:(BOOL)includeChildBoards;
 - (NSArray *)threads;
 - (WCBoardThread *)threadAtIndex:(NSUInteger)index;

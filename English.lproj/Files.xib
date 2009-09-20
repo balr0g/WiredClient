@@ -12,8 +12,9 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="5"/>
+			<integer value="1"/>
 			<integer value="190"/>
+			<integer value="5"/>
 			<integer value="2"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
@@ -643,7 +644,7 @@
 				<string key="NSWindowContentMaxSize">{1.79769e+308, 1.79769e+308}</string>
 				<string key="NSWindowContentMinSize">{213, 107}</string>
 				<object class="NSView" key="NSWindowView" id="537927326">
-					<nil key="NSNextResponder"/>
+					<reference key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
 					<object class="NSMutableArray" key="NSSubviews">
 						<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1218,6 +1219,7 @@
 						</object>
 					</object>
 					<string key="NSFrameSize">{410, 280}</string>
+					<reference key="NSSuperview"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1680, 1028}}</string>
 				<string key="NSMinSize">{213, 129}</string>
@@ -1828,86 +1830,6 @@
 					<int key="connectionID">186</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">deleteFiles:</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="427451511"/>
-					</object>
-					<int key="connectionID">187</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">history:</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="987018695"/>
-					</object>
-					<int key="connectionID">193</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">style:</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="636044266"/>
-					</object>
-					<int key="connectionID">197</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">quickLook:</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="547706532"/>
-					</object>
-					<int key="connectionID">213</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">upload:</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="458867561"/>
-					</object>
-					<int key="connectionID">214</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">reloadFiles:</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="929943931"/>
-					</object>
-					<int key="connectionID">215</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">getInfo:</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="157737507"/>
-					</object>
-					<int key="connectionID">216</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">download:</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="94826532"/>
-					</object>
-					<int key="connectionID">217</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">deleteFiles:</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="1072473847"/>
-					</object>
-					<int key="connectionID">218</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">createFolder:</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="22409882"/>
-					</object>
-					<int key="connectionID">219</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">_uploadButton</string>
 						<reference key="source" ref="1001"/>
@@ -1978,6 +1900,14 @@
 						<reference key="destination" ref="22409882"/>
 					</object>
 					<int key="connectionID">237</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">delete:</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="427451511"/>
+					</object>
+					<int key="connectionID">239</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -3090,9 +3020,9 @@
 				<object class="NSMutableArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{333, 171}, {410, 280}}</string>
+					<string>{{227, 425}, {410, 280}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{333, 171}, {410, 280}}</string>
+					<string>{{227, 425}, {410, 280}}</string>
 					<integer value="1"/>
 					<integer value="1"/>
 					<string>{3.40282e+38, 3.40282e+38}</string>
@@ -3138,7 +3068,7 @@
 					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
-					<string>{{0, 783}, {134, 73}}</string>
+					<string>{{58, 656}, {134, 73}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<object class="NSMutableDictionary">
@@ -3374,7 +3304,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">237</int>
+			<int key="maxID">239</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -3429,20 +3359,26 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>createFolder:</string>
-							<string>deleteFiles:</string>
+							<string>delete:</string>
+							<string>deleteDocument:</string>
 							<string>download:</string>
 							<string>enclosingFolder:</string>
 							<string>getInfo:</string>
 							<string>history:</string>
+							<string>newDocument:</string>
 							<string>open:</string>
 							<string>quickLook:</string>
-							<string>reloadFiles:</string>
+							<string>reload:</string>
+							<string>reloadDocument:</string>
 							<string>style:</string>
 							<string>type:</string>
 							<string>upload:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>

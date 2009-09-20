@@ -57,11 +57,15 @@
 
 + (id)transfers;
 
+- (NSString *)deleteDocumentMenuItemTitle;
+- (NSString *)quickLookMenuItemTitle;
+
 - (BOOL)addTransferAtPath:(NSString *)path;
 - (BOOL)downloadFile:(WCFile *)file;
 - (BOOL)downloadFile:(WCFile *)file toFolder:(NSString *)destination;
 - (BOOL)uploadPath:(NSString *)path toFolder:(WCFile *)destination;
 
+- (IBAction)deleteDocument:(id)sender;
 - (IBAction)start:(id)sender;
 - (IBAction)pause:(id)sender;
 - (IBAction)stop:(id)sender;

@@ -364,6 +364,15 @@
 
 
 
+- (BOOL)validateMenuItem:(NSMenuItem *)item {
+	if([[self selectedController] respondsToSelector:@selector(validateMenuItem:)])
+		return [[self selectedController] validateMenuItem:item];
+	
+	return YES;
+}
+
+
+
 #pragma mark -
 
 - (void)selectController:(id)controller {
@@ -406,7 +415,21 @@
 
 #pragma mark -
 
-- (void)toolbarItem:(id)sender {
+- (IBAction)newDocument:(id)sender {
+	if([[self selectedController] respondsToSelector:@selector(newDocument:)])
+		[[self selectedController] newDocument:self];
+}
+
+
+
+- (IBAction)deleteDocument:(id)sender {
+	if([[self selectedController] respondsToSelector:@selector(deleteDocument:)])
+		[[self selectedController] deleteDocument:self];
+}
+
+
+
+- (IBAction)toolbarItem:(id)sender {
 	NSString		*identifier;
 	
 	if([_shownController controllerShouldUnselect]) {
