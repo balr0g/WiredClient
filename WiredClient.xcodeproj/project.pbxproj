@@ -43,8 +43,9 @@
 		7739D4A90E7FFC6400D76C47 /* WiredFoundation.framework in Copy Files (Frameworks) */ = {isa = PBXBuildFile; fileRef = 779AB7D70E5C480A0031B6CE /* WiredFoundation.framework */; };
 		7739D4AA0E7FFC6400D76C47 /* WiredAppKit.framework in Copy Files (Frameworks) */ = {isa = PBXBuildFile; fileRef = 779AB7D90E5C480A0031B6CE /* WiredAppKit.framework */; };
 		7739D4AB0E7FFC6400D76C47 /* WiredNetworking.framework in Copy Files (Frameworks) */ = {isa = PBXBuildFile; fileRef = 774897940CC8A63300E95A83 /* WiredNetworking.framework */; };
+		775C63071066DB04001BDEA3 /* UnreadPost.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 775C63061066DB04001BDEA3 /* UnreadPost.tiff */; };
+		775C63091066DB1A001BDEA3 /* FileLink.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 775C63081066DB1A001BDEA3 /* FileLink.tiff */; };
 		777790B110617FE200248834 /* WCBoardsTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 777790B010617FE200248834 /* WCBoardsTextView.m */; };
-		777791AE10618F9B00248834 /* FileLink.png in Resources */ = {isa = PBXBuildFile; fileRef = 777791AD10618F9B00248834 /* FileLink.png */; };
 		7777A6E71062588A00248834 /* Warning.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 7777A6E61062588A00248834 /* Warning.tiff */; };
 		7777C7961063D8B800248834 /* WiredBookmarks.icns in Resources */ = {isa = PBXBuildFile; fileRef = 7777C7951063D8B800248834 /* WiredBookmarks.icns */; };
 		7777C7E91063DE8700248834 /* WiredTheme.icns in Resources */ = {isa = PBXBuildFile; fileRef = 7777C7E81063DE8700248834 /* WiredTheme.icns */; };
@@ -170,7 +171,6 @@
 		A5326A8F0F37981C004180AA /* PostHeader.html in Resources */ = {isa = PBXBuildFile; fileRef = A5326A8C0F37981C004180AA /* PostHeader.html */; };
 		A5326A900F37981C004180AA /* PostFooter.html in Resources */ = {isa = PBXBuildFile; fileRef = A5326A8D0F37981C004180AA /* PostFooter.html */; };
 		A5326A910F37981C004180AA /* Post.html in Resources */ = {isa = PBXBuildFile; fileRef = A5326A8E0F37981C004180AA /* Post.html */; };
-		A5326A930F379826004180AA /* UnreadPost.png in Resources */ = {isa = PBXBuildFile; fileRef = A5326A920F379826004180AA /* UnreadPost.png */; };
 		A5326D830F379935004180AA /* MessageFooter.html in Resources */ = {isa = PBXBuildFile; fileRef = A5326D800F379935004180AA /* MessageFooter.html */; };
 		A5326D840F379935004180AA /* MessageHeader.html in Resources */ = {isa = PBXBuildFile; fileRef = A5326D810F379935004180AA /* MessageHeader.html */; };
 		A5326D850F379935004180AA /* Message.html in Resources */ = {isa = PBXBuildFile; fileRef = A5326D820F379935004180AA /* Message.html */; };
@@ -455,9 +455,10 @@
 		771E6D4E0755F506000F9195 /* WCConversation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCConversation.h; sourceTree = "<group>"; };
 		771E6D4F0755F506000F9195 /* WCConversation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCConversation.m; sourceTree = "<group>"; };
 		77256AD00F2DFF6800EA5816 /* GrayDrop.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = GrayDrop.tiff; sourceTree = "<group>"; };
+		775C63061066DB04001BDEA3 /* UnreadPost.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = UnreadPost.tiff; sourceTree = "<group>"; };
+		775C63081066DB1A001BDEA3 /* FileLink.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = FileLink.tiff; sourceTree = "<group>"; };
 		777790AF10617FE200248834 /* WCBoardsTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCBoardsTextView.h; sourceTree = "<group>"; };
 		777790B010617FE200248834 /* WCBoardsTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCBoardsTextView.m; sourceTree = "<group>"; };
-		777791AD10618F9B00248834 /* FileLink.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FileLink.png; sourceTree = "<group>"; };
 		7777A6E61062588A00248834 /* Warning.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Warning.tiff; sourceTree = "<group>"; };
 		7777C7951063D8B800248834 /* WiredBookmarks.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = WiredBookmarks.icns; sourceTree = "<group>"; };
 		7777C7E81063DE8700248834 /* WiredTheme.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = WiredTheme.icns; sourceTree = "<group>"; };
@@ -595,7 +596,6 @@
 		A5326A8C0F37981C004180AA /* PostHeader.html */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.html; path = PostHeader.html; sourceTree = "<group>"; };
 		A5326A8D0F37981C004180AA /* PostFooter.html */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.html; path = PostFooter.html; sourceTree = "<group>"; };
 		A5326A8E0F37981C004180AA /* Post.html */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.html; path = Post.html; sourceTree = "<group>"; };
-		A5326A920F379826004180AA /* UnreadPost.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = UnreadPost.png; sourceTree = "<group>"; };
 		A5326D800F379935004180AA /* MessageFooter.html */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.html; path = MessageFooter.html; sourceTree = "<group>"; };
 		A5326D810F379935004180AA /* MessageHeader.html */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.html; path = MessageHeader.html; sourceTree = "<group>"; };
 		A5326D820F379935004180AA /* Message.html */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.html; path = Message.html; sourceTree = "<group>"; };
@@ -1094,8 +1094,6 @@
 				A5326A8C0F37981C004180AA /* PostHeader.html */,
 				7789555A0F56D9A50017C511 /* PostReply.html */,
 				A5326A8E0F37981C004180AA /* Post.html */,
-				777791AD10618F9B00248834 /* FileLink.png */,
-				A5326A920F379826004180AA /* UnreadPost.png */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1387,6 +1385,7 @@
 				A51B500F0F42282F00EAB0E1 /* FilterButtonMiddle.tiff */,
 				A51B500D0F42282F00EAB0E1 /* FilterButtonRight.tiff */,
 				A54AF8F80F13AEBA00AFD50E /* FileInfo.tiff */,
+				775C63081066DB1A001BDEA3 /* FileLink.tiff */,
 				A54AF8F70F13AEBA00AFD50E /* Forward.tiff */,
 				A54AF8F60F13AEBA00AFD50E /* General.tiff */,
 				77256AD00F2DFF6800EA5816 /* GrayDrop.tiff */,
@@ -1453,8 +1452,9 @@
 				A54AF92B0F13AEBB00AFD50E /* Themes.tiff */,
 				A54AF92A0F13AEBB00AFD50E /* Trackers.tiff */,
 				A54AF9290F13AEBB00AFD50E /* Transfers.tiff */,
-				7712242B0F27421D00984433 /* UnreadThread.tiff */,
 				7712242C0F27421D00984433 /* UnreadHeader.tiff */,
+				775C63061066DB04001BDEA3 /* UnreadPost.tiff */,
+				7712242B0F27421D00984433 /* UnreadThread.tiff */,
 				A54AF9270F13AEBB00AFD50E /* Upload.tiff */,
 				A54AF9110F13AEBB00AFD50E /* User.tiff */,
 				A54AF9100F13AEBB00AFD50E /* UserInfo.tiff */,
@@ -1801,8 +1801,6 @@
 				A5326A900F37981C004180AA /* PostFooter.html in Resources */,
 				7789555B0F56D9A50017C511 /* PostReply.html in Resources */,
 				A5326A910F37981C004180AA /* Post.html in Resources */,
-				777791AE10618F9B00248834 /* FileLink.png in Resources */,
-				A5326A930F379826004180AA /* UnreadPost.png in Resources */,
 				7777C7961063D8B800248834 /* WiredBookmarks.icns in Resources */,
 				A509A96305F3B8F000E6AE2D /* WiredClient.icns in Resources */,
 				7777C7E91063DE8700248834 /* WiredTheme.icns in Resources */,
@@ -1845,6 +1843,7 @@
 				A54AF9460F13AEBB00AFD50E /* EventOn.tiff in Resources */,
 				A54AF9450F13AEBB00AFD50E /* Events.tiff in Resources */,
 				A54AF9440F13AEBB00AFD50E /* FileInfo.tiff in Resources */,
+				775C63091066DB1A001BDEA3 /* FileLink.tiff in Resources */,
 				A51B50110F42282F00EAB0E1 /* FilterButtonLeft.tiff in Resources */,
 				A51B50120F42282F00EAB0E1 /* FilterButtonMiddle.tiff in Resources */,
 				A51B50100F42282F00EAB0E1 /* FilterButtonRight.tiff in Resources */,
@@ -1915,8 +1914,9 @@
 				A54AF9750F13AEBB00AFD50E /* Transfers.tiff in Resources */,
 				A54AF9760F13AEBB00AFD50E /* Trackers.tiff in Resources */,
 				A54AF95C0F13AEBB00AFD50E /* UserInfo.tiff in Resources */,
-				7712242D0F27421D00984433 /* UnreadThread.tiff in Resources */,
 				7712242E0F27421D00984433 /* UnreadHeader.tiff in Resources */,
+				775C63071066DB04001BDEA3 /* UnreadPost.tiff in Resources */,
+				7712242D0F27421D00984433 /* UnreadThread.tiff in Resources */,
 				A54AF95D0F13AEBB00AFD50E /* User.tiff in Resources */,
 				A54AF9730F13AEBB00AFD50E /* Upload.tiff in Resources */,
 				A54AF95B0F13AEBB00AFD50E /* VolumeLoud.tiff in Resources */,

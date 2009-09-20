@@ -38,6 +38,7 @@ extern NSString * const						WCExceptionHandlerReceivedExceptionNotification;
 	IBOutlet NSMenuItem						*_deleteDocumentMenuItem;
 	IBOutlet NSMenuItem						*_reloadDocumentMenuItem;
 	IBOutlet NSMenuItem						*_quickLookMenuItem;
+	IBOutlet NSMenuItem						*_saveDocumentMenuItem;
 	IBOutlet NSMenu							*_bookmarksMenu;
 	IBOutlet NSMenu							*_insertSmileyMenu;
 	IBOutlet NSMenu							*_debugMenu;

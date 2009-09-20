@@ -1711,6 +1711,14 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 #pragma mark -
 
+- (NSString *)saveDocumentMenuItemTitle {
+	return NSLS(@"Save Chat\u2026", @"Save menu item");
+}
+
+
+
+#pragma mark -
+
 - (void)validate {
 	BOOL	connected;
 	
@@ -1923,6 +1931,12 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 #pragma mark -
 
+- (IBAction)saveDocument:(id)sender {
+	[self saveChat:sender];
+}
+
+
+
 - (IBAction)stats:(id)sender {
 	WIP7Message		*message;
 	
@@ -1954,7 +1968,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 		
 		[_saveChatFileFormatPopUpButton removeAllItems];
 		[_saveChatFileFormatPopUpButton addItem:
-		 [NSMenuItem itemWithTitle:NSLS(@"Plain Text", @"Save chat format") tag:WCChatPlainText]];
+			[NSMenuItem itemWithTitle:NSLS(@"Plain Text", @"Save chat format") tag:WCChatPlainText]];
 		
 		[_saveChatPlainTextEncodingPopUpButton removeAllItems];
 		
@@ -1963,7 +1977,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 		while(encodings[i]) {
 			if(encodings[i] <= NSMacOSRomanStringEncoding) {
 				[_saveChatPlainTextEncodingPopUpButton addItem:
-				 [NSMenuItem itemWithTitle:[NSString localizedNameOfStringEncoding:encodings[i]] tag:encodings[i]]];
+					[NSMenuItem itemWithTitle:[NSString localizedNameOfStringEncoding:encodings[i]] tag:encodings[i]]];
 			}
 			
 			i++;
@@ -1975,13 +1989,13 @@ typedef enum _WCChatFormat					WCChatFormat;
 	
 	if([[_chatOutputTextView textStorage] containsAttachments]) {
 		[_saveChatFileFormatPopUpButton addItem:
-		 [NSMenuItem itemWithTitle:NSLS(@"Rich Text With Graphics Format (RTFD)", @"Save chat format") tag:WCChatRTFD]];
+			[NSMenuItem itemWithTitle:NSLS(@"Rich Text With Graphics Format (RTFD)", @"Save chat format") tag:WCChatRTFD]];
 		
 		if(format == WCChatRTF)
 			format = WCChatRTFD;
 	} else {
 		[_saveChatFileFormatPopUpButton addItem:
-		 [NSMenuItem itemWithTitle:NSLS(@"Rich Text Format (RTF)", @"Save chat format") tag:WCChatRTF]];
+			[NSMenuItem itemWithTitle:NSLS(@"Rich Text Format (RTF)", @"Save chat format") tag:WCChatRTF]];
 		
 		if(format == WCChatRTFD)
 			format = WCChatRTF;
@@ -1992,10 +2006,10 @@ typedef enum _WCChatFormat					WCChatFormat;
 	
 	if([self chatID] == WCPublicChatID) {
 		name = [NSSWF:NSLS(@"%@ Public Chat", "Save chat file name (server)"),
-				[[self connection] name]];
+			[[self connection] name]];
 	} else {
 		name = [NSSWF:NSLS(@"%@ Private Chat", "Save chat file name (server)"),
-				[[self connection] name]];
+			[[self connection] name]];
 	}
 	
 	savePanel = [NSSavePanel savePanel];
@@ -2015,21 +2029,21 @@ typedef enum _WCChatFormat					WCChatFormat;
 				string = [_chatOutputTextView string];
 				
 				[[string dataUsingEncoding:encoding]
-				 writeToFile:path atomically:YES];
+					writeToFile:path atomically:YES];
 				break;
 				
 			case WCChatRTF:
 				attributedString = [_chatOutputTextView textStorage];
 				
 				[[attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:NULL]
-				 writeToFile:path atomically:YES];
+					writeToFile:path atomically:YES];
 				break;
 				
 			case WCChatRTFD:
 				attributedString = [_chatOutputTextView textStorage];
 				
 				[[attributedString RTFDFileWrapperFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:NULL]
-				 writeToFile:path atomically:YES updateFilenames:YES];
+					writeToFile:path atomically:YES updateFilenames:YES];
 				break;
 		}
 	}

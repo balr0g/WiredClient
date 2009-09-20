@@ -128,6 +128,20 @@
 
 #pragma mark -
 
+- (NSString *)saveDocumentMenuItemTitle {
+	return [_chatController saveDocumentMenuItemTitle];
+}
+
+
+
+#pragma mark -
+
+- (IBAction)saveDocument:(id)sender {
+	[_chatController saveChat:sender];
+}
+
+
+
 - (IBAction)getInfo:(id)sender {
 	[_chatController getInfo:sender];
 }

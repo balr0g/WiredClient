@@ -108,16 +108,28 @@ extern NSString * const								WCBoardsDidChangeUnreadCountNotification;
 	NSMutableString									*_postTemplate;
 	NSMutableString									*_replyTemplate;
 	
+	NSString										*_fileLinkBase64String;
+	NSString										*_unreadPostBase64String;
+	NSString										*_defaultIconBase64String;
+	
+	NSMutableDictionary								*_smileyBase64Strings;
+	
 	NSRect											_previousVisibleRect;
 }
 
 + (id)boards;
+
+- (NSString *)newDocumentMenuItemTitle;
+- (NSString *)deleteDocumentMenuItemTitle;
+- (NSString *)reloadDocumentMenuItemTitle;
+- (NSString *)saveDocumentMenuItemTitle;
 
 - (NSUInteger)numberOfUnreadThreads;
 - (NSUInteger)numberOfUnreadThreadsForConnection:(WCServerConnection *)connection;
 
 - (IBAction)newDocument:(id)sender;
 - (IBAction)deleteDocument:(id)sender;
+- (IBAction)saveDocument:(id)sender;
 - (IBAction)addBoard:(id)sender;
 - (IBAction)addSmartBoard:(id)sender;
 - (IBAction)editSmartBoard:(id)sender;
@@ -127,6 +139,7 @@ extern NSString * const								WCBoardsDidChangeUnreadCountNotification;
 - (IBAction)location:(id)sender;
 - (IBAction)addThread:(id)sender;
 - (IBAction)deleteThread:(id)sender;
+- (IBAction)saveThread:(id)sender;
 - (IBAction)markAllAsRead:(id)sender;
 - (IBAction)markAsRead:(id)sender;
 - (IBAction)markAsUnread:(id)sender;

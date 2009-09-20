@@ -512,49 +512,42 @@ static WCApplicationController		*sharedController;
 
 
 - (void)menuNeedsUpdate:(NSMenu *)menu {
-	NSString		*newString, *deleteString, *reloadString, *quickLookString;
+	NSString		*newString, *deleteString, *reloadString, *quickLookString, *saveString;
 	id				delegate;
 	
 	if(menu == _connectionMenu) {
 		delegate = [[NSApp keyWindow] delegate];
 		
-		if([delegate isKindOfClass:[WCFiles class]]) {
-			newString		= [delegate newDocumentMenuItemTitle];
-			deleteString	= [delegate deleteDocumentMenuItemTitle];
-			reloadString	= [delegate reloadDocumentMenuItemTitle];
-			quickLookString	= [delegate quickLookMenuItemTitle];
-		}
-		else if([delegate isKindOfClass:[WCTransfers class]]) {
-			newString		= [[WCBoards boards] newDocumentMenuItemTitle];
-			deleteString	= [delegate deleteDocumentMenuItemTitle];
-			reloadString	= NULL;
-			quickLookString	= [delegate quickLookMenuItemTitle];
-		}
-		else if([delegate isKindOfClass:[WCBoards class]]) {
-			newString		= [delegate newDocumentMenuItemTitle];
-			deleteString	= [delegate deleteDocumentMenuItemTitle];
-			reloadString	= NULL;
-			quickLookString	= NULL;
-		}
-		else if([delegate isKindOfClass:[WCAdministration class]] &&
-				([[delegate selectedController] isKindOfClass:[WCAccountsController class]] ||
-				 [[delegate selectedController] isKindOfClass:[WCBanlistController class]])) {
-			newString		= [[delegate selectedController] newDocumentMenuItemTitle];
-			deleteString	= [[delegate selectedController] deleteDocumentMenuItemTitle];
-			reloadString	= NULL;
-			quickLookString	= NULL;
-		}
-		else {
-			newString		= [[WCBoards boards] newDocumentMenuItemTitle];
-			deleteString	= NULL;
-			reloadString	= NULL;
-			quickLookString	= NULL;
-		}
+		if([delegate respondsToSelector:@selector(newDocumentMenuItemTitle)])
+			newString = [delegate newDocumentMenuItemTitle];
+		else
+			newString = NULL;
+		
+		if([delegate respondsToSelector:@selector(deleteDocumentMenuItemTitle)])
+			deleteString = [delegate deleteDocumentMenuItemTitle];
+		else
+			deleteString = NULL;
+		
+		if([delegate respondsToSelector:@selector(reloadDocumentMenuItemTitle)])
+			reloadString = [delegate reloadDocumentMenuItemTitle];
+		else
+			reloadString = NULL;
+		
+		if([delegate respondsToSelector:@selector(quickLookMenuItemTitle)])
+			quickLookString = [delegate quickLookMenuItemTitle];
+		else
+			quickLookString = NULL;
+		
+		if([delegate respondsToSelector:@selector(saveDocumentMenuItemTitle)])
+			saveString = [delegate saveDocumentMenuItemTitle];
+		else
+			saveString = NULL;
 		
 		[_newDocumentMenuItem setTitle:newString ? newString : NSLS(@"New", @"New menu item")];
 		[_deleteDocumentMenuItem setTitle:deleteString ? deleteString : NSLS(@"Delete", @"Delete menu item")];
 		[_reloadDocumentMenuItem setTitle:reloadString ? reloadString : NSLS(@"Reload", @"Reload menu item")];
 		[_quickLookMenuItem setTitle:quickLookString ? quickLookString : NSLS(@"Quick Look", @"Quick Look menu item")];
+		[_saveDocumentMenuItem setTitle:saveString ? saveString : NSLS(@"Save", @"Save menu item")];
 	}
 	else if(menu == _windowMenu) {
 		if([NSApp keyWindow] == [[WCPublicChat publicChat] window] && [[WCPublicChat publicChat] selectedChatController] != NULL) {

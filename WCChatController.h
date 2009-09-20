@@ -121,6 +121,8 @@ extern NSString * const WCUserPboardType;
 - (void)linkConnectionLoggedIn:(NSNotification *)notification;
 - (void)wiredChatJoinChatReply:(WIP7Message *)message;
 
+- (NSString *)saveDocumentMenuItemTitle;
+
 - (void)validate;
 
 - (void)setConnection:(WCServerConnection *)connection;
@@ -143,6 +145,7 @@ extern NSString * const WCUserPboardType;
 
 - (void)printEvent:(NSString *)message;
 
+- (IBAction)saveDocument:(id)sender;
 - (IBAction)stats:(id)sender;
 - (IBAction)saveChat:(id)sender;
 - (IBAction)setTopic:(id)sender;

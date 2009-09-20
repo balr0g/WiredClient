@@ -41,6 +41,9 @@
 
 + (id)publicChat;
 
+- (NSString *)saveDocumentMenuItemTitle;
+
+- (IBAction)saveDocument:(id)sender;
 - (IBAction)disconnect:(id)sender;
 - (IBAction)reconnect:(id)sender;
 - (IBAction)serverInfo:(id)sender;

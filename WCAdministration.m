@@ -375,6 +375,26 @@
 
 #pragma mark -
 
+- (NSString *)newDocumentMenuItemTitle {
+	if([[self selectedController] respondsToSelector:@selector(newDocumentMenuItemTitle)])
+		return [[self selectedController] newDocumentMenuItemTitle];
+	
+	return NULL;
+}
+
+
+
+- (NSString *)deleteDocumentMenuItemTitle {
+	if([[self selectedController] respondsToSelector:@selector(deleteDocumentMenuItemTitle)])
+		return [[self selectedController] deleteDocumentMenuItemTitle];
+	
+	return NULL;
+}
+
+
+
+#pragma mark -
+
 - (void)selectController:(id)controller {
 	NSString		*identifier;
 	

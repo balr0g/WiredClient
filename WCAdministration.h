@@ -55,6 +55,9 @@
 
 + (id)administrationWithConnection:(WCServerConnection *)connection;
 
+- (NSString *)newDocumentMenuItemTitle;
+- (NSString *)deleteDocumentMenuItemTitle;
+
 - (void)selectController:(id)controller;
 - (id)selectedController;
 

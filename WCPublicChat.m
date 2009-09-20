@@ -600,6 +600,20 @@ typedef enum _WCChatActivity				WCChatActivity;
 
 #pragma mark -
 
+- (NSString *)saveDocumentMenuItemTitle {
+	return [[self selectedChatController] saveDocumentMenuItemTitle];
+}
+
+
+
+#pragma mark -
+
+- (IBAction)saveDocument:(id)sender {
+	[self saveChat:sender];
+}
+
+
+
 - (IBAction)disconnect:(id)sender {
 	WCServerConnection		*connection;
 	

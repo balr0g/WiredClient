@@ -39,6 +39,9 @@
 + (id)privateChatWithConnection:(WCServerConnection *)connection inviteUser:(WCUser *)user;
 + (id)privateChatWithConnection:(WCServerConnection *)connection chatID:(NSUInteger)cid inviteUser:(WCUser *)user;
 
+- (NSString *)saveDocumentMenuItemTitle;
+
+- (IBAction)saveDocument:(id)sender;
 - (IBAction)getInfo:(id)sender;
 - (IBAction)saveChat:(id)sender;
 - (IBAction)setTopic:(id)sender;
