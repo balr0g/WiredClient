@@ -2952,6 +2952,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 - (NSRect)previewPanel:(id /*QLPreviewPanel **/)panel sourceFrameOnScreenForPreviewItem:(id /*id <QLPreviewItem>*/)item {
 	NSMutableArray	*directory;
+	NSString		*path;
 	NSRect			frame;
 	NSUInteger		index;
 	NSInteger		row;
@@ -2966,14 +2967,14 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 			return NSMakeRect(frame.origin.x, frame.origin.y, frame.size.height, frame.size.height);
 		}
 	} else {
-		directory = [[self _directoriesForConnection:[(WCFile *) item connection]]
-			objectForKey:[[item path] stringByDeletingLastPathComponent]];
+		path		= [[item path] stringByDeletingLastPathComponent];
+		directory	= [[self _directoriesForConnection:[(WCFile *) item connection]] objectForKey:path];
 		
 		if(directory) {
 			index = [directory indexOfObject:item];
 			
 			if(index != NSNotFound) {
-				frame			= [_filesTreeView convertRect:[_filesTreeView frameOfRow:index inPath:[item path]] toView:NULL];
+				frame			= [_filesTreeView convertRect:[_filesTreeView frameOfRow:index inPath:path] toView:NULL];
 				frame.origin	= [[self window] convertBaseToScreen:frame.origin];
 
 				return NSMakeRect(frame.origin.x, frame.origin.y, frame.size.height, frame.size.height);
