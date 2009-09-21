@@ -27,6 +27,7 @@
  */
 
 #import "WCAccount.h"
+#import "WCAdministration.h"
 #import "WCApplicationController.h"
 #import "WCBoards.h"
 #import "WCFile.h"
@@ -341,6 +342,20 @@ typedef enum _WCChatActivity				WCChatActivity;
 												 target:self
 												 action:@selector(administration:)];
 	}
+	else if([identifier isEqualToString:@"Monitor"]) {
+		return [NSToolbarItem toolbarItemWithIdentifier:identifier
+												   name:NSLS(@"Monitor", @"Monitor toolbar item")
+												content:[NSImage imageNamed:@"Monitor"]
+												 target:self
+												 action:@selector(monitor:)];
+	}
+	else if([identifier isEqualToString:@"Accounts"]) {
+		return [NSToolbarItem toolbarItemWithIdentifier:identifier
+												   name:NSLS(@"Accounts", @"Accounts toolbar item")
+												content:[NSImage imageNamed:@"Accounts"]
+												 target:self
+												 action:@selector(accounts:)];
+	}
 	else if([identifier isEqualToString:@"Console"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
 												   name:NSLS(@"Console", @"Console toolbar item")
@@ -395,6 +410,8 @@ typedef enum _WCChatActivity				WCChatActivity;
 		@"Search",
 		@"Transfers",
 		@"Administration",
+		@"Monitor",
+		@"Accounts",
 #ifndef WCConfigurationRelease
 		@"Console",
 #endif
@@ -676,6 +693,28 @@ typedef enum _WCChatActivity				WCChatActivity;
 	
 	connection = [[self selectedChatController] connection];
 	
+	[[connection administration] showWindow:self];
+}
+
+
+
+- (IBAction)monitor:(id)sender {
+	WCServerConnection		*connection;
+	
+	connection = [[self selectedChatController] connection];
+	
+	[[connection administration] selectController:[[connection administration] monitorController]];
+	[[connection administration] showWindow:self];
+}
+
+
+
+- (IBAction)accounts:(id)sender {
+	WCServerConnection		*connection;
+	
+	connection = [[self selectedChatController] connection];
+	
+	[[connection administration] selectController:[[connection administration] accountsController]];
 	[[connection administration] showWindow:self];
 }
 

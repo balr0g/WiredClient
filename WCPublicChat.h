@@ -49,6 +49,8 @@
 - (IBAction)serverInfo:(id)sender;
 - (IBAction)files:(id)sender;
 - (IBAction)administration:(id)sender;
+- (IBAction)monitor:(id)sender;
+- (IBAction)accounts:(id)sender;
 - (IBAction)getInfo:(id)sender;
 - (IBAction)saveChat:(id)sender;
 - (IBAction)setTopic:(id)sender;

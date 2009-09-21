@@ -422,6 +422,12 @@
 
 #pragma mark -
 
+- (WCMonitorController *)monitorController {
+	return _monitorController;
+}
+
+
+
 - (WCAccountsController *)accountsController {
 	return _accountsController;
 }
