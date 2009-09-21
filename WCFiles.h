@@ -42,6 +42,7 @@ extern NSString * const					WCPlacePboardType;
 	IBOutlet NSButton					*_createFolderButton;
 	IBOutlet NSButton					*_reloadButton;
 	IBOutlet NSButton					*_deleteButton;
+	IBOutlet NSSearchField				*_searchField;
 	
 	IBOutlet WIOutlineView				*_sourceOutlineView;
 	IBOutlet NSTableColumn				*_sourceTableColumn;

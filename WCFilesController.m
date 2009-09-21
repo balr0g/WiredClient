@@ -269,7 +269,7 @@
 	WCFile		*file = item;
 	
 	if(tableColumn == _nameTableColumn)
-		[cell setImage:[file iconWithWidth:16.0]];
+		[cell setImage:[file iconWithWidth:16.0 open:NO]];
 }
 
 

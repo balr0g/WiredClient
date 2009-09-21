@@ -136,33 +136,41 @@
 
 #pragma mark -
 
-+ (NSImage *)iconForFolderType:(WCFileType)type width:(CGFloat)width {
-	static NSImage		*folderImage;
-	static NSImage		*folderImage32, *folderImage16, *folderImage12;
-	static NSImage		*uploadsImage32, *uploadsImage16, *uploadsImage12;
-	static NSImage		*dropBoxImage32, *dropBoxImage16, *dropBoxImage12;
++ (NSImage *)iconForFolderType:(WCFileType)type width:(CGFloat)width open:(BOOL)open {
+	static NSImage		*folderImage, *openFolderImage;
+	static NSImage		*folderImage32[2], *folderImage16[2], *folderImage12[2];
+	static NSImage		*uploadsImage32[2], *uploadsImage16[2], *uploadsImage12[2];
+	static NSImage		*dropBoxImage32[2], *dropBoxImage16[2], *dropBoxImage12[2];
 	NSEnumerator		*enumerator;
 	NSImageRep			*representation, *folderRepresentation;
-	NSImage				*image = NULL, *badgeImage;
+	NSImage				*image = NULL, *badgeImage, *selectedFolderImage;
+	NSUInteger			index;
 	
 	if(!folderImage)
 		folderImage = [[NSImage imageNamed:@"Folder"] retain];
 
+	if(!openFolderImage)
+		openFolderImage = [[NSImage imageNamed:@"OpenFolder"] retain];
+	
+	index				= open ? 1 : 0;
+	selectedFolderImage	= open ? openFolderImage : folderImage;
+	
 	switch(type) {
 		case WCFileDirectory:
 			if(width == 32.0)
-				image = folderImage32;
+				image = folderImage32[index];
 			else if(width == 16.0)
-				image = folderImage16;
+				image = folderImage16[index];
 			else if(width == 12.0)
-				image = folderImage12;
+				image = folderImage12[index];
 			
 			if(!image) {
-				image = [[NSImage alloc] initWithSize:NSMakeSize(width, width)];
-				[folderImage setSize:[image size]];
-				
+				image					= [[NSImage alloc] initWithSize:NSMakeSize(width, width)];
 				folderRepresentation	= NULL;
-				enumerator				= [[folderImage representations] objectEnumerator];
+
+				[selectedFolderImage setSize:[image size]];
+				
+				enumerator				= [[selectedFolderImage representations] objectEnumerator];
 				
 				while((representation = [enumerator nextObject])) {
 					if([representation size].width >= width)
@@ -173,11 +181,11 @@
 					[image addRepresentation:folderRepresentation];
 				
 				if(width == 32.0)
-					folderImage32 = image;
+					folderImage32[index] = image;
 				else if(width == 16.0)
-					folderImage16 = image;
+					folderImage16[index] = image;
 				else if(width == 12.0)
-					folderImage12 = image;
+					folderImage12[index] = image;
 				else
 					[image autorelease];
 			}
@@ -185,24 +193,26 @@
 		
 		case WCFileUploads:
 			if(width == 32.0)
-				image = uploadsImage32;
+				image = uploadsImage32[index];
 			else if(width == 16.0)
-				image = uploadsImage16;
+				image = uploadsImage16[index];
 			else if(width == 12.0)
-				image = uploadsImage12;
+				image = uploadsImage12[index];
 			
 			if(!image) {
-				[folderImage setSize:NSMakeSize(width, width)];
+				[selectedFolderImage setSize:NSMakeSize(width, width)];
+				
 				badgeImage = [[[NSImage imageNamed:@"UploadsBadge"] copy] autorelease];
-				[badgeImage setSize:[folderImage size]];
-				image = [[folderImage imageBySuperimposingImage:badgeImage] retain];
+				[badgeImage setSize:[selectedFolderImage size]];
+				
+				image = [[selectedFolderImage imageBySuperimposingImage:badgeImage] retain];
 				
 				if(width == 32.0)
-					uploadsImage32 = image;
+					uploadsImage32[index] = image;
 				else if(width == 16.0)
-					uploadsImage16 = image;
+					uploadsImage16[index] = image;
 				else if(width == 12.0)
-					uploadsImage12 = image;
+					uploadsImage12[index] = image;
 				else
 					[image autorelease];
 			}
@@ -210,24 +220,26 @@
 
 		case WCFileDropBox:
 			if(width == 32.0)
-				image = dropBoxImage32;
+				image = dropBoxImage32[index];
 			else if(width == 16.0)
-				image = dropBoxImage16;
+				image = dropBoxImage16[index];
 			else if(width == 12.0)
-				image = dropBoxImage12;
+				image = dropBoxImage12[index];
 			
 			if(!image) {
-				[folderImage setSize:NSMakeSize(width, width)];
+				[selectedFolderImage setSize:NSMakeSize(width, width)];
+				
 				badgeImage = [[[NSImage imageNamed:@"DropBoxBadge"] copy] autorelease];
-				[badgeImage setSize:[folderImage size]];
-				image = [[folderImage imageBySuperimposingImage:badgeImage] retain];
+				[badgeImage setSize:[selectedFolderImage size]];
+				
+				image = [[selectedFolderImage imageBySuperimposingImage:badgeImage] retain];
 				
 				if(width == 32.0)
-					dropBoxImage32 = image;
+					dropBoxImage32[index] = image;
 				else if(width == 16.0)
-					dropBoxImage16 = image;
+					dropBoxImage16[index] = image;
 				else if(width == 12.0)
-					dropBoxImage12 = image;
+					dropBoxImage12[index] = image;
 				else
 					[image autorelease];
 			}
@@ -669,15 +681,16 @@
 
 
 
-- (NSImage *)iconWithWidth:(CGFloat)width {
+- (NSImage *)iconWithWidth:(CGFloat)width open:(BOOL)open {
 	NSImage		*icon, *badgeImage;
-	NSString	*extension;
+	NSString	*key, *extension;
 	
-	icon = [_icons objectForKey:[NSNumber numberWithFloat:width]];
+	key		= [NSSWF:@"%.0f %u", width, open ? 1 : 0];
+	icon	= [_icons objectForKey:key];
 	
 	if(!icon) {
 		if([self isFolder]) {
-			icon = [[self class] iconForFolderType:[self type] width:width];
+			icon = [[self class] iconForFolderType:[self type] width:width open:open];
 		}
 		else if([self isExecutable]) {
 			icon = [[[NSImage imageNamed:@"Executable"] copy] autorelease];
@@ -701,7 +714,7 @@
 			icon = [icon imageBySuperimposingImage:badgeImage];
 		}
 		
-		[_icons setObject:icon forKey:[NSNumber numberWithFloat:width]];
+		[_icons setObject:icon forKey:key];
 	}
 	
 	return icon;

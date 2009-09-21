@@ -96,7 +96,7 @@ typedef enum _WCFileLabel			WCFileLabel;
 	WIFileOffset					_rsrcTransferred;
 }
 
-+ (NSImage *)iconForFolderType:(WCFileType)type width:(CGFloat)width;
++ (NSImage *)iconForFolderType:(WCFileType)type width:(CGFloat)width open:(BOOL)opened;
 + (NSString *)kindForFolderType:(WCFileType)type;
 + (WCFileType)folderTypeForString:(NSString *)string;
 
@@ -126,7 +126,8 @@ typedef enum _WCFileLabel			WCFileLabel;
 - (WCFileLabel)label;
 - (NSColor *)labelColor;
 - (NSUInteger)volume;
-- (NSImage *)iconWithWidth:(CGFloat)width;
+- (NSImage *)iconWithWidth:(CGFloat)width open:(BOOL)open;
+- (NSImage *)iconWithWidth:(CGFloat)width open:(BOOL)open;
 - (NSString *)humanReadableSize;
 
 - (void)setDataSize:(WIFileOffset)size;

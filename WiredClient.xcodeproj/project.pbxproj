@@ -131,6 +131,7 @@
 		77A1BA230F161A8100F7D24B /* SUPublicDSAKeyFile.pem in Resources */ = {isa = PBXBuildFile; fileRef = 77A1BA220F161A8100F7D24B /* SUPublicDSAKeyFile.pem */; };
 		77ACA8580F4AF26E00577FA1 /* WCAccountsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 77ACA8570F4AF26E00577FA1 /* WCAccountsController.m */; };
 		77BB1C9A0F28C20E00A402B7 /* WCBoardsWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 77BB1C990F28C20E00A402B7 /* WCBoardsWindow.m */; };
+		77C586AB106826CC0068AA15 /* OpenFolder.icns in Resources */ = {isa = PBXBuildFile; fileRef = 77C586AA106826CC0068AA15 /* OpenFolder.icns */; };
 		77C83C340B70FBD8000F8478 /* WCChatTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 77C83C320B70FBD8000F8478 /* WCChatTextView.m */; };
 		77CED3A50EC068F500123164 /* WCBoard.m in Sources */ = {isa = PBXBuildFile; fileRef = 77CED39E0EC068F500123164 /* WCBoard.m */; };
 		77CED3A60EC068F500123164 /* WCBoardPost.m in Sources */ = {isa = PBXBuildFile; fileRef = 77CED3A00EC068F500123164 /* WCBoardPost.m */; };
@@ -548,6 +549,7 @@
 		77ACA8570F4AF26E00577FA1 /* WCAccountsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCAccountsController.m; sourceTree = "<group>"; };
 		77BB1C980F28C20E00A402B7 /* WCBoardsWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCBoardsWindow.h; sourceTree = "<group>"; };
 		77BB1C990F28C20E00A402B7 /* WCBoardsWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCBoardsWindow.m; sourceTree = "<group>"; };
+		77C586AA106826CC0068AA15 /* OpenFolder.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = OpenFolder.icns; sourceTree = "<group>"; };
 		77C83C310B70FBD8000F8478 /* WCChatTextView.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCChatTextView.h; sourceTree = "<group>"; };
 		77C83C320B70FBD8000F8478 /* WCChatTextView.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCChatTextView.m; sourceTree = "<group>"; };
 		77CED39D0EC068F500123164 /* WCBoard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCBoard.h; sourceTree = "<group>"; };
@@ -1349,6 +1351,7 @@
 				A54AF98A0F13AED000AFD50E /* DropBoxBadge.icns */,
 				A54AF9890F13AED000AFD50E /* Executable.icns */,
 				A54AF9880F13AED000AFD50E /* Folder.icns */,
+				77C586AA106826CC0068AA15 /* OpenFolder.icns */,
 				A54AF98B0F13AED000AFD50E /* UploadsBadge.icns */,
 				A54AF90C0F13AEBB00AFD50E /* Accounts.tiff */,
 				A54AF9370F13AEBB00AFD50E /* Action.tiff */,
@@ -1810,6 +1813,7 @@
 				A54AF98D0F13AED000AFD50E /* Folder.icns in Resources */,
 				A54AF98E0F13AED000AFD50E /* Executable.icns in Resources */,
 				A54AF98F0F13AED000AFD50E /* DropBoxBadge.icns in Resources */,
+				77C586AB106826CC0068AA15 /* OpenFolder.icns in Resources */,
 				A54AF9900F13AED000AFD50E /* UploadsBadge.icns in Resources */,
 				A54AF9580F13AEBB00AFD50E /* Accounts.tiff in Resources */,
 				A54AF9830F13AEBB00AFD50E /* Action.tiff in Resources */,

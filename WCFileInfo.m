@@ -119,7 +119,7 @@
 	if([_info count] == 1) {
 		file = [_info objectAtIndex:0];
 	
-		[_iconImageView setImage:[file iconWithWidth:32.0]];
+		[_iconImageView setImage:[file iconWithWidth:32.0 open:NO]];
 		[_fileTextField setStringValue:[file name]];
 		[_kindTextField setStringValue:[file kind]];
 		[_kindPopUpButton selectItemWithTag:[file type]];
@@ -479,7 +479,7 @@
 	enumerator = [[_kindPopUpButton itemArray] objectEnumerator];
 	
 	while((item = [enumerator nextObject]))
-		[item setImage:[WCFile iconForFolderType:[item tag] width:12.0]];
+		[item setImage:[WCFile iconForFolderType:[item tag] width:12.0 open:NO]];
 	
 	if([_files count] == 1) {
 		[[self window] setTitle:[NSSWF:

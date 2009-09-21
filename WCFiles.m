@@ -1124,6 +1124,8 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 - (NSToolbarItem *)toolbar:(NSToolbar *)toolbar itemForItemIdentifier:(NSString *)identifier willBeInsertedIntoToolbar:(BOOL)willBeInsertedIntoToolbar {
+	NSToolbarItem	*item;
+	
 	if([identifier isEqualToString:@"History"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
 												   name:NSLS(@"Back/Forward", @"Back/forward toolbar item")
@@ -1187,6 +1189,18 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 												 target:self
 												 action:@selector(delete:)];
 	}
+	else if([identifier isEqualToString:@"Search"]) {
+		item = [NSToolbarItem toolbarItemWithIdentifier:identifier
+												   name:NSLS(@"Search", @"Search toolbar item")
+												content:_searchField
+												 target:self
+												 action:@selector(search:)];
+		
+		[item setMinSize:NSMakeSize(50.0, [_searchField frame].size.height)];
+		[item setMaxSize:NSMakeSize(250.0, [_searchField frame].size.height)];
+		
+		return item;
+	}
 	
 	return NULL;
 }
@@ -1203,8 +1217,9 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		@"QuickLook",
 		@"CreateFolder",
 		@"Reload",
-		NSToolbarFlexibleSpaceItemIdentifier,
 		@"Delete",
+		NSToolbarFlexibleSpaceItemIdentifier,
+		@"Search",
 		NULL];
 }
 
@@ -1221,6 +1236,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		@"CreateFolder",
 		@"Reload",
 		@"Delete",
+		@"Search",
 		NSToolbarSeparatorItemIdentifier,
 		NSToolbarSpaceItemIdentifier,
 		NSToolbarFlexibleSpaceItemIdentifier,
@@ -1836,7 +1852,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		enumerator = [[_typePopUpButton itemArray] objectEnumerator];
 		
 		while((item = [enumerator nextObject]))
-			[item setImage:[WCFile iconForFolderType:[item tag] width:16.0]];
+			[item setImage:[WCFile iconForFolderType:[item tag] width:16.0 open:NO]];
 	}
 	
 	[_nameTextField setStringValue:NSLS(@"Untitled", @"New folder name")];
@@ -2012,6 +2028,12 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 
+- (IBAction)search:(id)sender {
+	NSLog(@"search");
+}
+
+
+
 #pragma mark -
 
 - (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item {
@@ -2163,7 +2185,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		if([item isKindOfClass:[NSNumber class]])
 			[cell setImage:NULL];
 		else if([item isKindOfClass:[WCFile class]])
-			[cell setImage:[item iconWithWidth:16.0]];
+			[cell setImage:[item iconWithWidth:16.0 open:NO]];
 		else if([item isKindOfClass:[NSString class]])
 			[cell setImage:NULL];
 		
@@ -2171,7 +2193,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	}
 	else if(outlineView == _filesOutlineView) {
 		if(tableColumn == _nameTableColumn)
-			[cell setImage:[item iconWithWidth:16.0]];
+			[cell setImage:[item iconWithWidth:16.0 open:[_filesOutlineView isItemExpanded:item]]];
 	}
 }
 
@@ -2650,7 +2672,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	file = [[self _filesForConnection:[self _selectedConnection]] objectForKey:path];
 
 	return [NSDictionary dictionaryWithObjectsAndKeys:
-		[file iconWithWidth:128.0],								WIFileIcon,
+		[file iconWithWidth:128.0 open:NO],						WIFileIcon,
 		[NSNumber numberWithUnsignedLongLong:[file totalSize]],	WIFileSize,
 		[file kind],											WIFileKind,
 		[file creationDate],									WIFileCreationDate,
@@ -2683,7 +2705,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	
 	file = [[self _filesForConnection:[self _selectedConnection]] objectForKey:path];
 	
-	[cell setImage:[file iconWithWidth:16.0]];
+	[cell setImage:[file iconWithWidth:16.0 open:[[_currentDirectory path] hasPrefix:path]]];
 }
 
 

@@ -724,9 +724,9 @@
 - (NSImage *)icon {
 	if(!_icon) {
 		if([self isFolder])
-			_icon = [[WCFile iconForFolderType:WCFileDirectory width:32.0] retain];
+			_icon = [[WCFile iconForFolderType:WCFileDirectory width:32.0 open:NO] retain];
 		else
-			_icon = [[_file iconWithWidth:32.0] copy];
+			_icon = [[_file iconWithWidth:32.0 open:NO] copy];
 	}
 	
 	return _icon;
