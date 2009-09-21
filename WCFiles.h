@@ -90,6 +90,9 @@ extern NSString * const					WCPlacePboardType;
 	WIDateFormatter						*_dateFormatter;
 	
 	Class								_quickLookPanelClass;
+	
+	BOOL								_searching;
+	NSUInteger							_styleBeforeSearch;
 }
 
 + (id)filesWithConnection:(WCServerConnection *)connection file:(WCFile *)file;

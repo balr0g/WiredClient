@@ -2029,7 +2029,25 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 - (IBAction)search:(id)sender {
-	NSLog(@"search");
+	if([[_searchField stringValue] length] > 0) {
+		_styleBeforeSearch = [self _selectedStyle];
+		
+		[self _selectStyle:WCFilesStyleList];
+		
+		[_styleControl selectSegmentWithTag:WCFilesStyleList];
+		[_styleControl setEnabled:NO];
+		
+		_searching = YES;
+	} else {
+		if(_searching) {
+			[self _selectStyle:_styleBeforeSearch];
+			
+			[_styleControl selectSegmentWithTag:_styleBeforeSearch];
+			[_styleControl setEnabled:YES];
+			
+			_searching = NO;
+		}
+	}
 }
 
 
