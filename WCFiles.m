@@ -226,7 +226,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		[[_historyControl cell] setEnabled:NO forSegment:1];
 	}
 
-	[_downloadButton setEnabled:[self _validateUploadToDirectory:_currentDirectory]];
+	[_downloadButton setEnabled:[self _validateDownload]];
 	[_uploadButton setEnabled:[self _validateUploadToDirectory:_currentDirectory]];
 	[_infoButton setEnabled:[self _validateGetInfo]];
 	[_quickLookButton setEnabled:[self _validateUploadToDirectory:_currentDirectory]];
@@ -286,7 +286,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	
 	connection = [directory connection];
 	
-	if(!connection || [connection isConnected])
+	if(!connection || ![connection isConnected])
 		return NO;
 	
 	account = [self _selectedAccount];
@@ -1603,7 +1603,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	WCFile			*file;
 	NSUInteger		style;
 	
-	if([_filesOutlineView clickedHeader])
+	if([self _selectedStyle] == WCFilesStyleList && [_filesOutlineView clickedHeader])
 		return;
 
 	style		= [self _selectedStyle];
