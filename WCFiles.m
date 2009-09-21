@@ -696,7 +696,9 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		[_filesTabView selectTabViewItemWithIdentifier:@"Tree"];
 
 		if(_currentDirectory)
-			[_filesTreeView selectPath:[_currentDirectory path]];
+			[_filesTreeView selectPath:[_currentDirectory path] byExtendingSelection:NO];
+
+		[[self window] makeFirstResponder:_filesTreeView];
 	}
 }
 
@@ -739,8 +741,6 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	_currentDirectory = file;
 	
 	[[self window] setTitle:NSLS(@"Files", @"Files window title") withSubtitle:[_currentDirectory path]];
-	
-	[_filesTreeView selectPath:[_currentDirectory path]];
 	
 	[self _loadFilesAtDirectory:file
 				  reselectFiles:_selectFilesWhenOpening ? _selectFilesWhenOpening : reselectFiles];
@@ -960,14 +960,14 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 			
 			if(index != NSNotFound)
 				[indexes addIndex:index];
+
+			[_filesTreeView selectPath:[file path] byExtendingSelection:YES];
 		}
 		
 		if([indexes count] > 0) {
 			[_filesOutlineView selectRowIndexes:indexes byExtendingSelection:NO];
 			[_filesOutlineView scrollRowToVisible:[indexes firstIndex]];
 		}
-		
-		[_filesTreeView selectPath:[[_selectFiles objectAtIndex:0] path]];
 		
 		[_selectFiles removeAllObjects];
 	}
@@ -1133,7 +1133,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	}
 	else if([identifier isEqualToString:@"Style"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
-												   name:NSLS(@"Style", @"Style toolbar item")
+												   name:NSLS(@"View", @"View toolbar item")
 												content:_styleControl
 												 target:self
 												 action:@selector(style:)];
@@ -1168,7 +1168,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	}
 	else if([identifier isEqualToString:@"CreateFolder"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
-												   name:NSLS(@"Create Folder", @"Create folder toolbar item")
+												   name:NSLS(@"New Folder", @"New folder toolbar item")
 												content:_createFolderButton
 												 target:self
 												 action:@selector(createFolder:)];
