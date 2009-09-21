@@ -1035,9 +1035,19 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 
 
 - (void)deleteThemeSheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-	NSNumber	*row = contextInfo;
+	NSNumber		*row = contextInfo;
+	NSString		*identifier;
 
 	if(returnCode == NSAlertFirstButtonReturn) {
+		identifier = [[[[WCSettings settings] objectForKey:WCThemes] objectAtIndex:[row unsignedIntegerValue]]
+			objectForKey:WCThemesIdentifier];
+		
+		if([[[WCSettings settings] objectForKey:WCTheme] isEqualToString:identifier]) {
+			identifier = [[[[WCSettings settings] objectForKey:WCThemes] objectAtIndex:0] objectForKey:WCThemesIdentifier];
+			
+			[[WCSettings settings] setObject:identifier forKey:WCTheme];
+		}
+		
 		[[WCSettings settings] removeObjectAtIndex:[row unsignedIntegerValue] fromArrayForKey:WCThemes];
 
 		[_themesTableView reloadData];
