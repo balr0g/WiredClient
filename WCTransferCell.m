@@ -151,10 +151,12 @@ NSString * const WCTransferCellProgressKey		= @"WCTransferCellProgressKey";
 	rect				= NSMakeRect(frame.origin.x - 2.0, frame.origin.y, frame.size.width, 16.0);
 	string				= [NSMutableAttributedString attributedStringWithString:name attributes:_nameAttributes];
 	
-	if([self isHighlighted] && [_nameCell highlightColorWithFrame:rect inView:view] == [NSColor alternateSelectedControlColor]) {
-		[string addAttribute:NSForegroundColorAttributeName
-					   value:[NSColor whiteColor]
-					   range:NSMakeRange(0, [string length])];
+	if([_nameCell highlightColorWithFrame:rect inView:view] == [NSColor alternateSelectedControlColor]) {
+		if([self isHighlighted]) {
+			[string addAttribute:NSForegroundColorAttributeName
+						   value:[NSColor whiteColor]
+						   range:NSMakeRange(0, [string length])];
+		}
 	}
 	
 	[_nameCell setAttributedStringValue:string];
@@ -175,10 +177,12 @@ NSString * const WCTransferCellProgressKey		= @"WCTransferCellProgressKey";
 	rect = NSMakeRect(frame.origin.x - 2.0, frame.origin.y + offset, frame.size.width, 14.0);
 	string = [NSMutableAttributedString attributedStringWithString:status attributes:_statusAttributes];
 	
-	if([self isHighlighted] && [_statusCell highlightColorWithFrame:rect inView:view] == [NSColor alternateSelectedControlColor]) {
-		[string addAttribute:NSForegroundColorAttributeName
-					   value:[NSColor whiteColor]
-					   range:NSMakeRange(0, [string length])];
+	if([_statusCell highlightColorWithFrame:rect inView:view] == [NSColor alternateSelectedControlColor]) {
+		if([self isHighlighted]) {
+			[string addAttribute:NSForegroundColorAttributeName
+						   value:[NSColor whiteColor]
+						   range:NSMakeRange(0, [string length])];
+		}
 	}
 	
 	[_statusCell setAttributedStringValue:string];

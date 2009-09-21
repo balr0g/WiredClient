@@ -65,6 +65,11 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 - (void)_reloadDownloadFolder;
 - (void)_reloadTrackerBookmark;
 
+- (void)_changeSelectedThemeToTheme:(NSDictionary *)theme;
+
+- (void)_savePasswordForBookmark:(NSArray *)arguments;
+- (void)_savePasswordForTrackerBookmark:(NSArray *)arguments;
+
 @end
 
 
@@ -162,6 +167,9 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 		[_themesTransferListAlternateRowsButton setState:[theme boolForKey:WCThemesTransferListAlternateRows]];
 		
 		[_themesTrackerListAlternateRowsButton setState:[theme boolForKey:WCThemesTrackerListAlternateRows]];
+		
+		[_themesMonitorIconSizeMatrix selectCellWithTag:[theme integerForKey:WCThemesMonitorIconSize]];
+		[_themesMonitorAlternateRowsButton setState:[theme boolForKey:WCThemesMonitorAlternateRows]];
 	}
 }
 
@@ -465,6 +473,60 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 		[_trackerBookmarksLoginTextField setStringValue:@""];
 		[_trackerBookmarksPasswordTextField setStringValue:@""];
 	}
+}
+
+
+
+#pragma mark -
+
+- (void)_changeSelectedThemeToTheme:(NSDictionary *)theme {
+	NSAlert		*alert;
+	
+	if([theme objectForKey:WCThemesBuiltinName]) {
+		alert = [[NSAlert alloc] init];
+		[alert setMessageText:[NSSWF:
+			NSLS(@"You cannot edit the built-in theme \u201c%@\u201d", @"Duplicate builtin theme dialog title (theme)"),
+			[theme objectForKey:WCThemesName]]];
+		[alert setInformativeText:NSLS(@"Make a copy of it to edit it.", @"Duplicate builtin theme dialog description")];
+		[alert addButtonWithTitle:NSLS(@"Duplicate", @"Duplicate builtin theme dialog button title")];
+		[alert addButtonWithTitle:NSLS(@"Cancel", @"Duplicate builtin theme button title")];
+		[alert beginSheetModalForWindow:[self window]
+						  modalDelegate:self
+						 didEndSelector:@selector(_changeBuiltinThemePanelDidEnd:returnCode:contextInfo:)
+							contextInfo:[theme retain]];
+		[alert release];
+	} else {
+		[[WCSettings settings] replaceObjectAtIndex:[_themesTableView selectedRow] withObject:theme inArrayForKey:WCThemes];
+
+		[[NSNotificationCenter defaultCenter] postNotificationName:WCThemeDidChangeNotification object:theme];
+
+		[self _reloadTheme];
+		[self _reloadThemes];
+	}
+}
+
+
+
+- (void)_changeBuiltinThemePanelDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+	NSMutableDictionary		*newTheme;
+	NSDictionary			*theme = contextInfo;
+	
+	if(returnCode == NSAlertFirstButtonReturn) {
+		newTheme = [[theme mutableCopy] autorelease];
+		[newTheme setObject:[NSSWF:NSLS(@"%@ Copy", @"Duplicated builtin theme name"), [theme objectForKey:WCThemesName]]
+							forKey:WCThemesName];
+		[newTheme setObject:[NSString UUIDString] forKey:WCThemesIdentifier];
+		[newTheme removeObjectForKey:WCThemesBuiltinName];
+		[newTheme removeObjectForKey:WCThemesBuiltinVersion];
+		
+		[[WCSettings settings] addObject:newTheme toArrayForKey:WCThemes];
+		
+		[_themesTableView reloadData];
+		[_themesTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:[[[WCSettings settings] objectForKey:WCThemes] count] - 1]
+					  byExtendingSelection:NO];
+	}
+	
+	[theme release];
 }
 
 
@@ -931,6 +993,8 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 		[NSNumber numberWithBool:YES],									WCThemesTransferListShowProgressBar,
 		[NSNumber numberWithBool:NO],									WCThemesTransferListAlternateRows,
 		[NSNumber numberWithBool:NO],									WCThemesTrackerListAlternateRows,
+		[NSNumber numberWithInteger:WCThemesMonitorIconSizeLarge],		WCThemesMonitorIconSize,
+		[NSNumber numberWithBool:NO],									WCThemesMonitorAlternateRows,
 		NULL];
 
 	[[WCSettings settings] addObject:theme toArrayForKey:WCThemes];
@@ -1105,7 +1169,7 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 
 	oldTheme		= [[[[[WCSettings settings] objectForKey:WCThemes] objectAtIndex:row] retain] autorelease];
 	theme			= [[oldTheme mutableCopy] autorelease];
-
+	
 	[theme setObject:WIStringFromColor([_themesChatTextColorWell color]) forKey:WCThemesChatTextColor];
 	[theme setObject:WIStringFromColor([_themesChatBackgroundColorWell color]) forKey:WCThemesChatBackgroundColor];
 	[theme setObject:WIStringFromColor([_themesChatEventsColorWell color]) forKey:WCThemesChatEventsColor];
@@ -1131,13 +1195,11 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 	
 	[theme setBool:[_themesTrackerListAlternateRowsButton state] forKey:WCThemesTrackerListAlternateRows];
 
-	if(![oldTheme isEqualToDictionary:theme]) {
-		[[WCSettings settings] replaceObjectAtIndex:row withObject:theme inArrayForKey:WCThemes];
-
-		[[NSNotificationCenter defaultCenter] postNotificationName:WCThemeDidChangeNotification object:theme];
-
-		[self _reloadThemes];
-	}
+	[theme setInteger:[_themesMonitorIconSizeMatrix selectedTag] forKey:WCThemesMonitorIconSize];
+	[theme setBool:[_themesMonitorAlternateRowsButton state] forKey:WCThemesMonitorAlternateRows];
+	
+	if(![oldTheme isEqualToDictionary:theme])
+		[self _changeSelectedThemeToTheme:theme];
 }
 
 
@@ -1177,11 +1239,7 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 	
 	[theme setObject:WIStringFromFont(newFont) forKey:WCThemesChatFont];
 	
-	[[WCSettings settings] replaceObjectAtIndex:[_themesTableView selectedRow] withObject:theme inArrayForKey:WCThemes];
-	
-	[_themesChatFontTextField setStringValue:[newFont displayNameWithSize]];
-
-	[[NSNotificationCenter defaultCenter] postNotificationName:WCThemeDidChangeNotification object:theme];
+	[self _changeSelectedThemeToTheme:theme];
 }
 
 
@@ -1196,11 +1254,7 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 	
 	[theme setObject:WIStringFromFont(newFont) forKey:WCThemesMessagesFont];
 	
-	[[WCSettings settings] replaceObjectAtIndex:[_themesTableView selectedRow] withObject:theme inArrayForKey:WCThemes];
-	
-	[_themesMessagesFontTextField setStringValue:[newFont displayNameWithSize]];
-
-	[[NSNotificationCenter defaultCenter] postNotificationName:WCThemeDidChangeNotification object:theme];
+	[self _changeSelectedThemeToTheme:theme];
 }
 
 
@@ -1215,11 +1269,7 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 	
 	[theme setObject:WIStringFromFont(newFont) forKey:WCThemesBoardsFont];
 	
-	[[WCSettings settings] replaceObjectAtIndex:[_themesTableView selectedRow] withObject:theme inArrayForKey:WCThemes];
-	
-	[_themesBoardsFontTextField setStringValue:[newFont displayNameWithSize]];
-
-	[[NSNotificationCenter defaultCenter] postNotificationName:WCThemeDidChangeNotification object:theme];
+	[self _changeSelectedThemeToTheme:theme];
 }
 
 
@@ -1959,9 +2009,23 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 
 
 
+- (BOOL)tableView:(NSTableView *)tableView shouldEditTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
+	NSDictionary		*dictionary;
+	
+	if(tableView == _themesTableView) {
+		dictionary = [[[WCSettings settings] objectForKey:WCThemes] objectAtIndex:row];
+		
+		return ([dictionary objectForKey:WCThemesBuiltinName] == NULL);
+	}
+	
+	return YES;
+}
+
+
+
 - (void)tableView:(NSTableView *)tableView setObjectValue:(id)object forTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
 	NSMutableDictionary		*dictionary;
-		
+	
 	if(tableView == _themesTableView) {
 		dictionary = [[[[[WCSettings settings] objectForKey:WCThemes] objectAtIndex:row] mutableCopy] autorelease];
 		

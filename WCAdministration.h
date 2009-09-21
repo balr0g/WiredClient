@@ -77,6 +77,7 @@
 	IBOutlet WCAdministration			*_administration;
 }
 
+- (void)themeDidChange:(NSDictionary *)theme;
 - (void)windowDidLoad;
 - (void)linkConnectionLoggedIn:(NSNotification *)notification;
 - (void)linkConnectionDidClose:(NSNotification *)notification;
@@ -89,6 +90,9 @@
 - (void)controllerDidSelect;
 - (BOOL)controllerShouldUnselect;
 - (void)controllerDidUnselect;
+
+- (NSString *)newDocumentMenuItemTitle;
+- (NSString *)deleteDocumentMenuItemTitle;
 
 - (void)setAdministration:(WCAdministration *)administration;
 

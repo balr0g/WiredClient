@@ -89,6 +89,8 @@ extern NSString * const								WCIconDidChangeNotification;
 	IBOutlet NSButton								*_themesTransferListShowProgressBarButton;
 	IBOutlet NSButton								*_themesTransferListAlternateRowsButton;
 	IBOutlet NSButton								*_themesTrackerListAlternateRowsButton;
+	IBOutlet NSMatrix								*_themesMonitorIconSizeMatrix;
+	IBOutlet NSButton								*_themesMonitorAlternateRowsButton;
 	
 	IBOutlet NSTableView							*_bookmarksTableView;
 	IBOutlet NSTableColumn							*_bookmarksNameTableColumn;

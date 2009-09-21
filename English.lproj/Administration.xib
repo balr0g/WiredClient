@@ -85,7 +85,7 @@
 											<object class="NSTableColumn" id="470191314">
 												<string key="NSIdentifier">Icon</string>
 												<double key="NSWidth">36</double>
-												<double key="NSMinWidth">36</double>
+												<double key="NSMinWidth">20</double>
 												<double key="NSMaxWidth">36</double>
 												<object class="NSTableHeaderCell" key="NSHeaderCell">
 													<int key="NSCellFlags">75628096</int>
@@ -8268,9 +8268,13 @@ AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>addBan:</string>
 							<string>deleteBan:</string>
+							<string>deleteDocument:</string>
+							<string>newDocument:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 						</object>

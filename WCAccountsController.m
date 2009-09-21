@@ -1599,6 +1599,8 @@
 
 
 - (IBAction)save:(id)sender {
+	[[_administration window] makeFirstResponder:_accountsTableView];
+	
 	[self _save];
 }
 

@@ -166,6 +166,30 @@
 
 #pragma mark -
 
+- (void)themeDidChange:(NSDictionary *)theme {
+	[_usersTableView setUsesAlternatingRowBackgroundColors:[[theme objectForKey:WCThemesMonitorAlternateRows] boolValue]];
+	
+	switch([[theme objectForKey:WCThemesMonitorIconSize] integerValue]) {
+		case WCThemesMonitorIconSizeLarge:
+			[_usersTableView setRowHeight:46.0];
+			
+			[_iconTableColumn setWidth:[_iconTableColumn maxWidth]];
+			[[_nickTableColumn dataCell] setControlSize:NSRegularControlSize];
+			[[_statusTableColumn dataCell] setControlSize:NSRegularControlSize];
+			break;
+
+		case WCThemesMonitorIconSizeSmall:
+			[_usersTableView setRowHeight:17.0];
+
+			[_iconTableColumn setWidth:[_iconTableColumn minWidth]];
+			[[_nickTableColumn dataCell] setControlSize:NSSmallControlSize];
+			[[_statusTableColumn dataCell] setControlSize:NSSmallControlSize];
+			break;
+	}
+}
+
+
+
 - (void)serverConnectionPrivilegesDidChange:(NSNotification *)notification {
 	[self _reloadUsers];
 }

@@ -178,10 +178,12 @@ NSString * const WCUserCellStatusKey		= @"WCUserCellStatusKey";
 	
 	string = [NSMutableAttributedString attributedStringWithString:nick attributes:_nickAttributes];
 	
-	if([self isHighlighted] && [_nickCell highlightColorWithFrame:rect inView:view] == [NSColor alternateSelectedControlColor]) {
-		[string addAttribute:NSForegroundColorAttributeName
-					   value:[NSColor whiteColor]
-					   range:NSMakeRange(0, [string length])];
+	if([_nickCell highlightColorWithFrame:rect inView:view] == [NSColor alternateSelectedControlColor]) {
+		if([self isHighlighted]) {
+			[string addAttribute:NSForegroundColorAttributeName
+						   value:[NSColor whiteColor]
+						   range:NSMakeRange(0, [string length])];
+		}
 	}
 	
 	if([self controlSize] == NSSmallControlSize && [status length] > 0) {

@@ -43,8 +43,6 @@ NSString * const WCMonitorCellStatusKey			= @"WCMonitorCellStatusKey";
 @implementation WCMonitorCell(Private)
 
 - (void)_initMonitorCell {
-	NSMutableParagraphStyle		*style;
-
 	_imageCell = [[NSCell alloc] init];
 
 	_statusCell = [[NSCell alloc] init];
@@ -53,18 +51,18 @@ NSString * const WCMonitorCellStatusKey			= @"WCMonitorCellStatusKey";
 	_transferStatusCell = [[NSCell alloc] init];
 	[_transferStatusCell setFont:[NSFont systemFontOfSize:10.0]];
 	
-	style = [[NSMutableParagraphStyle alloc] init];
-	[style setLineBreakMode:NSLineBreakByTruncatingMiddle];
+	_truncatingHeadParagraphStyle = [[NSMutableParagraphStyle alloc] init];
+	[_truncatingHeadParagraphStyle setLineBreakMode:NSLineBreakByTruncatingHead];
 
+	_truncatingMiddleParagraphStyle = [[NSMutableParagraphStyle alloc] init];
+	[_truncatingMiddleParagraphStyle setLineBreakMode:NSLineBreakByTruncatingMiddle];
+	
 	_statusAttributes = [[NSMutableDictionary alloc] init];
 	[_statusAttributes setObject:[_statusCell font] forKey:NSFontAttributeName];
-	[_statusAttributes setObject:style forKey:NSParagraphStyleAttributeName];
 	
 	_transferStatusAttributes = [[NSMutableDictionary alloc] init];
 	[_transferStatusAttributes setObject:[_transferStatusCell font] forKey:NSFontAttributeName];
-	[_transferStatusAttributes setObject:style forKey:NSParagraphStyleAttributeName];
-
-	[style release];
+	[_transferStatusAttributes setObject:_truncatingMiddleParagraphStyle forKey:NSParagraphStyleAttributeName];
 }
 
 @end
@@ -113,13 +111,16 @@ NSString * const WCMonitorCellStatusKey			= @"WCMonitorCellStatusKey";
 	WCMonitorCell	*cell;
 	
 	cell = [super copyWithZone:zone];
-	cell->_imageCell = [_imageCell retain];
 
-	cell->_statusCell = [_statusCell retain];
-	cell->_transferStatusCell = [_transferStatusCell retain];
+	cell->_imageCell						= [_imageCell retain];
+	cell->_statusCell						= [_statusCell retain];
+	cell->_transferStatusCell				= [_transferStatusCell retain];
 	
-	cell->_statusAttributes = [_statusAttributes retain];
-	cell->_transferStatusAttributes = [_transferStatusAttributes retain];
+	cell->_statusAttributes					= [_statusAttributes retain];
+	cell->_transferStatusAttributes			= [_transferStatusAttributes retain];
+	
+	cell->_truncatingHeadParagraphStyle		= [_truncatingHeadParagraphStyle retain];
+	cell->_truncatingMiddleParagraphStyle	= [_truncatingMiddleParagraphStyle retain];
 	
 	return cell;
 }
@@ -140,25 +141,60 @@ NSString * const WCMonitorCellStatusKey			= @"WCMonitorCellStatusKey";
 	status		= [(NSDictionary *) [self objectValue] objectForKey:WCMonitorCellStatusKey];
 
 	if(transfer) {
-		imageRect			= NSMakeRect(frame.origin.x + 2.0, frame.origin.y + 14.0, frame.size.width, frame.size.height);
-		statusRect			= NSMakeRect(frame.origin.x + 14.0, frame.origin.y, frame.size.width - 12.0, 16.0);
-		progressRect		= NSMakeRect(frame.origin.x, frame.origin.y + 19.0, frame.size.width - 5.0, 10.0);
-		transferStatusRect	= NSMakeRect(frame.origin.x, frame.origin.y + 32.0, frame.size.width, 14.0);
+		if([self controlSize] == NSRegularControlSize) {
+			imageRect			= NSMakeRect(frame.origin.x + 2.0,
+											 frame.origin.y + 14.0,
+											 frame.size.width,
+											 frame.size.height);
+			statusRect			= NSMakeRect(frame.origin.x + 14.0,
+											 frame.origin.y,
+											 frame.size.width - 12.0,
+											 16.0);
+			progressRect		= NSMakeRect(frame.origin.x,
+											 frame.origin.y + 19.0,
+											 frame.size.width - 5.0,
+											 11.0);
+			transferStatusRect	= NSMakeRect(frame.origin.x,
+											 frame.origin.y + 32.0,
+											 frame.size.width,
+											 14.0);
 
-		if([transfer queuePosition] > 0) {
-			imageRect.origin.y			+= 6.0;
-			statusRect.origin.y			+= 6.0;
-			transferStatusRect.origin.y	-= 7.0;
+			if([transfer queuePosition] > 0) {
+				imageRect.origin.y			+= 6.0;
+				statusRect.origin.y			+= 6.0;
+				transferStatusRect.origin.y	-= 7.0;
+			}
+		} else {
+			imageRect			= NSMakeRect(frame.origin.x + 2.0,
+											 frame.origin.y + 13.0,
+											 frame.size.width,
+											 frame.size.height);
+			statusRect			= NSMakeRect(frame.origin.x + 13.0,
+											 frame.origin.y,
+											 frame.size.width / 3.0,
+											 16.0);
+			progressRect		= NSMakeRect(frame.origin.x + statusRect.size.width + 10.0,
+											 frame.origin.y + 3.0,
+											 (frame.size.width / 3.0) - 10.0,
+											 11.0);
+			transferStatusRect	= NSMakeRect(frame.origin.x + statusRect.size.width + progressRect.size.width + 20.0,
+											 frame.origin.y + 2.0,
+											 (frame.size.width / 3.0) - 10.0,
+											 14.0);
 		}
 
 		image = [NSImage imageNamed:[transfer isKindOfClass:[WCDownloadTransfer class]] ? @"Download" : @"Upload"];
 		[image compositeToPoint:imageRect.origin operation:NSCompositeSourceOver fraction:1.0];
 		
+		[_statusAttributes setObject:_truncatingHeadParagraphStyle forKey:NSParagraphStyleAttributeName];
+		
 		string = [NSMutableAttributedString attributedStringWithString:[transfer remotePath] attributes:_statusAttributes];
 		
-		if([self isHighlighted] && [_statusCell highlightColorWithFrame:statusRect inView:view] == [NSColor alternateSelectedControlColor])
-			[string addAttribute:NSForegroundColorAttributeName value:[NSColor whiteColor]];
-		
+		if([_statusCell highlightColorWithFrame:statusRect inView:view] == [NSColor alternateSelectedControlColor]) {
+			if([self isHighlighted])
+				[string addAttribute:NSForegroundColorAttributeName value:[NSColor whiteColor]];
+		}
+			
 		[_statusCell setAttributedStringValue:string];
 		[_statusCell drawWithFrame:statusRect inView:view];
 
@@ -178,18 +214,28 @@ NSString * const WCMonitorCellStatusKey			= @"WCMonitorCellStatusKey";
 
 		string = [NSMutableAttributedString attributedStringWithString:[transfer status] attributes:_transferStatusAttributes];
 		
-		if([self isHighlighted] && [_transferStatusCell highlightColorWithFrame:transferStatusRect inView:view] == [NSColor alternateSelectedControlColor])
-			[string addAttribute:NSForegroundColorAttributeName value:[NSColor whiteColor]];
+		if([_transferStatusCell highlightColorWithFrame:transferStatusRect inView:view] == [NSColor alternateSelectedControlColor]) {
+			if([self isHighlighted])
+				[string addAttribute:NSForegroundColorAttributeName value:[NSColor whiteColor]];
+		}
 		
 		[_transferStatusCell setAttributedStringValue:string];
 		[_transferStatusCell drawWithFrame:transferStatusRect inView:view];
 	}
 	else if(status) {
-		statusRect = NSMakeRect(frame.origin.x, frame.origin.y + 13.0, frame.size.width, 16.0);
+		if([self controlSize] == NSRegularControlSize)
+			statusRect = NSMakeRect(frame.origin.x, frame.origin.y + 13.0, frame.size.width, 17.0);
+		else
+			statusRect = NSMakeRect(frame.origin.x, frame.origin.y - 1.0, frame.size.width, 17.0);
+		
+		[_statusAttributes setObject:_truncatingMiddleParagraphStyle forKey:NSParagraphStyleAttributeName];
+		
 		string = [NSMutableAttributedString attributedStringWithString:status attributes:_statusAttributes];
 		
-		if([self isHighlighted] && [_statusCell highlightColorWithFrame:statusRect inView:view] == [NSColor alternateSelectedControlColor])
-			[string addAttribute:NSForegroundColorAttributeName value:[NSColor whiteColor]];
+		if([_statusCell highlightColorWithFrame:statusRect inView:view] == [NSColor alternateSelectedControlColor]) {
+			if([self isHighlighted])
+				[string addAttribute:NSForegroundColorAttributeName value:[NSColor whiteColor]];
+		}
 		
 		[_statusCell setAttributedStringValue:string];
 		[_statusCell drawWithFrame:statusRect inView:view];

@@ -187,6 +187,18 @@
 
 #pragma mark -
 
+- (void)themeDidChange:(NSDictionary *)theme {
+	NSEnumerator		*enumerator;
+	NSDictionary		*dictionary;
+	
+	enumerator = [_views objectEnumerator];
+	
+	while((dictionary = [enumerator nextObject]))
+		[[dictionary objectForKey:WCAdministrationControllerKey] themeDidChange:theme];
+}
+
+
+
 - (void)windowDidLoad {
 	NSEnumerator	*enumerator;
 	NSWindow		*window;
@@ -365,10 +377,7 @@
 
 
 - (BOOL)validateMenuItem:(NSMenuItem *)item {
-	if([[self selectedController] respondsToSelector:@selector(validateMenuItem:)])
-		return [[self selectedController] validateMenuItem:item];
-	
-	return YES;
+	return [[self selectedController] validateMenuItem:item];
 }
 
 
@@ -376,19 +385,13 @@
 #pragma mark -
 
 - (NSString *)newDocumentMenuItemTitle {
-	if([[self selectedController] respondsToSelector:@selector(newDocumentMenuItemTitle)])
-		return [[self selectedController] newDocumentMenuItemTitle];
-	
-	return NULL;
+	return [[self selectedController] newDocumentMenuItemTitle];
 }
 
 
 
 - (NSString *)deleteDocumentMenuItemTitle {
-	if([[self selectedController] respondsToSelector:@selector(deleteDocumentMenuItemTitle)])
-		return [[self selectedController] deleteDocumentMenuItemTitle];
-	
-	return NULL;
+	return [[self selectedController] deleteDocumentMenuItemTitle];
 }
 
 
@@ -436,15 +439,13 @@
 #pragma mark -
 
 - (IBAction)newDocument:(id)sender {
-	if([[self selectedController] respondsToSelector:@selector(newDocument:)])
-		[[self selectedController] newDocument:self];
+	[[self selectedController] newDocument:self];
 }
 
 
 
 - (IBAction)deleteDocument:(id)sender {
-	if([[self selectedController] respondsToSelector:@selector(deleteDocument:)])
-		[[self selectedController] deleteDocument:self];
+	[[self selectedController] deleteDocument:self];
 }
 
 
@@ -472,6 +473,11 @@
 
 
 @implementation WCAdministrationController
+
+- (void)themeDidChange:(NSDictionary *)theme {
+}
+
+
 
 - (void)windowDidLoad {
 }
@@ -529,6 +535,40 @@
 
 
 - (void)controllerDidUnselect {
+}
+
+
+
+#pragma mark -
+
+- (BOOL)validateMenuItem:(NSMenuItem *)item {
+	return YES;
+}
+
+
+
+#pragma mark -
+
+- (NSString *)newDocumentMenuItemTitle {
+	return NULL;
+}
+
+
+
+- (NSString *)deleteDocumentMenuItemTitle {
+	return NULL;
+}
+
+
+
+#pragma mark -
+
+- (IBAction)newDocument:(id)sender {
+}
+
+
+
+- (IBAction)deleteDocument:(id)sender {
 }
 
 

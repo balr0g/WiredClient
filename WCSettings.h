@@ -71,6 +71,14 @@ extern NSString * const						WCThemesFileListAlternateRows;
 extern NSString * const						WCThemesTransferListShowProgressBar;
 extern NSString * const						WCThemesTransferListAlternateRows;
 extern NSString * const						WCThemesTrackerListAlternateRows;
+extern NSString * const						WCThemesMonitorIconSize;
+
+enum {
+	WCThemesMonitorIconSizeLarge			= 1,
+	WCThemesMonitorIconSizeSmall			= 0
+};
+
+extern NSString * const						WCThemesMonitorAlternateRows;
 
 extern NSString * const						WCMessageConversations;
 extern NSString * const						WCBroadcastConversations;
@@ -111,6 +119,7 @@ extern NSString * const						WCIgnoresNick;
 
 extern NSString * const						WCEvents;
 extern NSString * const						WCEventsEvent;
+
 enum {
 	WCEventsServerConnected					= 1,
 	WCEventsServerDisconnected				= 2,
@@ -128,6 +137,7 @@ enum {
 	WCEventsHighlightedChatReceived			= 14,
 	WCEventsChatInvitationReceived			= 15
 };
+
 extern NSString * const						WCEventsPlaySound;
 extern NSString * const						WCEventsSound;
 extern NSString * const						WCEventsBounceInDock;

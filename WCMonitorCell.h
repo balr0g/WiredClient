@@ -37,6 +37,9 @@ extern NSString * const					WCMonitorCellStatusKey;
 
 	NSMutableDictionary					*_statusAttributes;
 	NSMutableDictionary					*_transferStatusAttributes;
+	
+	NSMutableParagraphStyle				*_truncatingHeadParagraphStyle;
+	NSMutableParagraphStyle				*_truncatingMiddleParagraphStyle;
 }
 
 @end
