@@ -1457,6 +1457,15 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		return;
 	
 	[self _invalidatePlacesForConnection:connection];
+	
+	if([_currentDirectory connection] == connection) {
+		[_currentDirectory release];
+		
+		_currentDirectory = NULL;
+
+		[_filesOutlineView reloadData];
+		[_filesTreeView reloadData];
+	}
 
 	[_servers removeObject:connection];
 	[_sourceOutlineView reloadData];
