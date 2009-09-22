@@ -81,6 +81,10 @@ extern NSString * const					WCPlacePboardType;
 	NSMutableArray						*_selectFiles;
 	BOOL								_selectFilesWhenOpening;
 	
+	BOOL								_searching;
+	NSUInteger							_styleBeforeSearch;
+	WCFile								*_directoryBeforeSearch;
+	
 	NSMutableArray						*_history;
 	NSUInteger							_historyPosition;
 	
@@ -89,10 +93,9 @@ extern NSString * const					WCPlacePboardType;
 	
 	WIDateFormatter						*_dateFormatter;
 	
-	Class								_quickLookPanelClass;
+	NSMutableParagraphStyle				*_truncatingTailParagraphStyle;
 	
-	BOOL								_searching;
-	NSUInteger							_styleBeforeSearch;
+	Class								_quickLookPanelClass;
 }
 
 + (id)filesWithConnection:(WCServerConnection *)connection file:(WCFile *)file;
@@ -119,5 +122,6 @@ extern NSString * const					WCPlacePboardType;
 - (IBAction)reload:(id)sender;
 - (IBAction)deleteDocument:(id)sender;
 - (IBAction)delete:(id)sender;
+- (IBAction)search:(id)sender;
 
 @end
