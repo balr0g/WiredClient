@@ -72,7 +72,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 - (void)_themeDidChange;
 - (void)_reload;
 
-- (void)_presentError:(WCError *)error forConnection:(WCServerConnection *)connection;
+- (void)_presentError:(WCError *)error forConnection:(WCServerConnection *)connection transfer:(WCTransfer *)transfer;
 
 - (WCTransfer *)_selectedTransfer;
 - (WCTransfer *)_unfinishedTransferWithPath:(NSString *)path;
@@ -247,13 +247,13 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 #pragma mark -
 
-- (void)_presentError:(WCError *)error forConnection:(WCServerConnection *)connection {
+- (void)_presentError:(WCError *)error forConnection:(WCServerConnection *)connection transfer:(WCTransfer *)transfer {
 	if(![[self window] isVisible])
 		[self showWindow:self];
 	
 	[connection triggerEvent:WCEventsError info1:error];
 	
-	[[error alert] runNonModal];
+	[_errorQueue showError:error withIdentifier:[transfer identifier]];
 }
 
 
@@ -376,7 +376,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 	if([self _unfinishedTransferWithPath:[file path]]) {
 		error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientTransferExists argument:[file path]];
-		[self _presentError:error forConnection:[file connection]];
+		[self _presentError:error forConnection:[file connection] transfer:NULL];
 		
 		return NO;
 	}
@@ -464,7 +464,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 	if([self _unfinishedTransferWithPath:remotePath]) {
 		error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientTransferExists argument:remotePath];
-		[self _presentError:error forConnection:[destination connection]];
+		[self _presentError:error forConnection:[destination connection] transfer:NULL];
 		
 		return NO;
 	}
@@ -559,7 +559,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 									argument:[NSNumber numberWithInt:resourceForks]];
 		}
 		
-		[self _presentError:error forConnection:[destination connection]];
+		[self _presentError:error forConnection:[destination connection] transfer:NULL];
 	}
 	
 	return YES;
@@ -598,6 +598,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	NSString		*path;
 	WIP7Message		*message;
 	NSUInteger		transaction;
+
+	[_errorQueue dismissErrorWithIdentifier:[transfer identifier]];
 	
 	if([transfer isFolder]) {
 		[transfer setState:WCTransferListing];
@@ -815,7 +817,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 
 - (void)_finishTransfer:(WCTransfer *)transfer withError:(WCError *)error {
-	[self _presentError:error forConnection:[transfer connection]];
+	[self _presentError:error forConnection:[transfer connection] transfer:transfer];
 	[self _finishTransfer:transfer];
 }
 

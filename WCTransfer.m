@@ -44,7 +44,7 @@
 
 - (id)_initWithConnection:(WCServerConnection *)connection {
 	self = [self initWithConnection:connection];
-
+	
 	[self setState:WCTransferWaiting];
 
 	_untransferredFilesList		= [[NSMutableArray alloc] init];
@@ -137,6 +137,8 @@
 - (id)init {
 	self = [super init];
 	
+	_identifier = [[NSString UUIDString] retain];
+
 	_progressIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0.0, 0.0, 10.0, 10.0)];
 	[_progressIndicator setUsesThreadedAnimation:YES];
 	[_progressIndicator setMinValue:0.0];
@@ -152,6 +154,8 @@
 
 
 - (id)initWithCoder:(NSCoder *)coder {
+	NSString		*identifier;
+	
     self = [super initWithCoder:coder];
 	
 	if(!self)
@@ -162,6 +166,13 @@
 		
         return NULL;
     }
+	
+	identifier					= [coder decodeObjectForKey:@"WCTransferIdentifier"];
+	
+	if(identifier) {
+		[_identifier release];
+		_identifier = identifier;
+	}
 	
 	_state						= [coder decodeIntForKey:@"WCTransferState"];
 	_folder						= [coder decodeBoolForKey:@"WCTransferFolder"];
@@ -199,6 +210,7 @@
 - (void)encodeWithCoder:(NSCoder *)coder {
     [coder encodeInt:[[self class] version] forKey:@"WCTransferVersion"];
 	
+	[coder encodeObject:_identifier forKey:@"WCTransferIdentifier"];
 	[coder encodeInt:_state forKey:@"WCTransferState"];
 	[coder encodeBool:_folder forKey:@"WCTransferFolder"];
 	[coder encodeObject:_name forKey:@"WCTransferName"];
@@ -271,6 +283,14 @@
 	[_createdDirectoriesSet makeObjectsPerformSelector:@selector(setConnection:) withObject:connection];
 
 	[super setConnection:connection];
+}
+
+
+
+#pragma mark -
+
+- (NSString *)identifier {
+	return _identifier;
 }
 
 

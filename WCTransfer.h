@@ -50,6 +50,8 @@ typedef enum _WCTransferState		WCTransferState;
 @class WCFile, WCServerConnection, WCTransferConnection;
 
 @interface WCTransfer : WCServerConnectionObject <NSCoding> {
+	NSString						*_identifier;
+	
 	WCTransferState					_state;
 	NSUInteger						_queuePosition;
 	NSUInteger						_transaction;
@@ -86,6 +88,8 @@ typedef enum _WCTransferState		WCTransferState;
 
 + (id)transferWithConnection:(WCServerConnection *)connection;
 + (id)transferWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection;
+
+- (NSString *)identifier;
 
 - (void)setState:(WCTransferState)state;
 - (WCTransferState)state;

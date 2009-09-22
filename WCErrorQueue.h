@@ -34,6 +34,7 @@
 	IBOutlet NSSegmentedControl			*_historyControl;
 
 	NSMutableArray						*_errors;
+	NSMutableArray						*_identifiers;
 	NSWindow							*_window;
 	
 	NSRect								_titleFrame;
@@ -47,6 +48,8 @@
 - (id)initWithWindow:(NSWindow *)window;
 
 - (void)showError:(NSError *)error;
+- (void)showError:(NSError *)error withIdentifier:(NSString *)identifier;
+- (void)dismissErrorWithIdentifier:(NSString *)identifier;
 
 - (IBAction)history:(id)sender;
 

@@ -65,8 +65,13 @@
 	previousFrame		= [_descriptionTextField frame];
 	frame.size.width	= previousFrame.size.width;
 	frame.size.height	= [[_descriptionTextField cell] cellSizeForBounds:NSMakeRect(0.0, 0.0, previousFrame.size.width, 10000.0)].height;
+
+	if(frame.size.height < 28.0)
+		frame.size.height = 28.0;
+	
 	frame.origin		= previousFrame.origin;
 	frame.origin.y		= previousFrame.origin.y + (previousFrame.size.height - frame.size.height) - difference;
+	
 	difference			+= frame.size.height - previousFrame.size.height;
 	
 	[_descriptionTextField setFrame:frame];
@@ -99,8 +104,9 @@
 - (id)initWithWindow:(NSWindow *)window {
 	self = [self init];
 	
-	_window				= [window retain];
-	_errors				= [[NSMutableArray alloc] init];
+	_window			= [window retain];
+	_errors			= [[NSMutableArray alloc] init];
+	_identifiers	= [[NSMutableArray alloc] init];
 	
 	return self;
 }
@@ -110,6 +116,7 @@
 - (void)dealloc {
 	[_window release];
 	[_errors release];
+	[_identifiers release];
 	
 	[super dealloc];
 }
@@ -119,13 +126,23 @@
 #pragma mark -
 
 - (void)showError:(NSError *)error {
+	[self showError:error withIdentifier:@""];
+}
+
+
+
+- (void)showError:(NSError *)error withIdentifier:(NSString *)identifier {
 	if(!_errorPanel)
 		[NSBundle loadNibNamed:@"Error" owner:self];
 	
 	[_errors addObject:error];
+	[_identifiers addObject:identifier];
 
 	if(_showingPanel) {
+		_shownError++;
+		
 		[self _validate];
+		[self _updateForError:error];
 	} else {
 		_shownError = 0;
 	
@@ -149,10 +166,37 @@
 
 - (void)errorPanelDidEnd:(NSWindow *)window returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
 	[_errors removeAllObjects];
+	[_identifiers removeAllObjects];
 	
 	[_errorPanel close];
 	
 	_showingPanel = NO;
+}
+
+
+
+- (void)dismissErrorWithIdentifier:(NSString *)identifier {
+	WCError			*error;
+	NSUInteger		index;
+	
+	index = [_identifiers indexOfObject:identifier];
+	
+	if(index != NSNotFound) {
+		[_errors removeObjectAtIndex:index];
+		[_identifiers removeObjectAtIndex:index];
+		
+		if([_errors count] == 0) {
+			[NSApp endSheet:_errorPanel];
+		} else {
+			if(_shownError > index)
+				_shownError--;
+			
+			error = [_errors objectAtIndex:_shownError];
+			
+			[self _validate];
+			[self _updateForError:error];
+		}
+	}
 }
 
 
