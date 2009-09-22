@@ -823,13 +823,6 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		[self search:self];
 	}
 	
-	if(_initialDirectory) {
-		file = [[_initialDirectory retain] autorelease];
-		
-		[_initialDirectory release];
-		_initialDirectory = NULL;
-	}
-	
 	file = [self _existingFileForFile:file];
 	
 	if(_currentDirectory) {
@@ -866,9 +859,14 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	
 	[self _updateWindowTitle];
 	
-	if(forceSelection)
+	if(_initialDirectory)
+		[_selectFiles setArray:[NSArray arrayWithObject:_initialDirectory]];
+	else if(forceSelection)
 		[_selectFiles setArray:[NSArray arrayWithObject:_currentDirectory]];
 	
+	[_initialDirectory release];
+	_initialDirectory = NULL;
+
 	if(_selectFilesWhenOpening || forceSelection)
 		reselectFiles = YES;
 	
@@ -1123,30 +1121,16 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	NSEnumerator			*enumerator;
 	NSMutableArray			*directory;
 	NSMutableIndexSet		*indexes;
-	NSString				*path, *component;
 	WCFile					*file;
 	NSUInteger				index;
 	BOOL					complete, first;
 	
 	if([_selectFiles count] > 0) {
-		enumerator		= [[[_currentDirectory path] pathComponents] objectEnumerator];
-		path			= @"/";
-		complete		= YES;
-		
-		while((component = [enumerator nextObject])) {
-			path = [path stringByAppendingPathComponent:component];
-			
-			if(![[self _directoriesForConnection:[self _selectedConnection]] objectForKey:path]) {
-				complete = NO;
-				
-				break;
-			}
-		}
-		
 		directory		= [[self _directoriesForConnection:[self _selectedConnection]] objectForKey:[_currentDirectory path]];
 		indexes			= [NSMutableIndexSet indexSet];
 		enumerator		= [_selectFiles objectEnumerator];
 		first			= YES;
+		complete		= YES;
 		
 		while((file = [enumerator nextObject])) {
 			index = [directory indexOfObject:file];
@@ -1155,6 +1139,9 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 				[indexes addIndex:index];
 
 			[_filesTreeView selectPath:[file path] byExtendingSelection:!first];
+			
+			if(![[_currentDirectory path] isEqualToString:[file path]])
+				complete = NO;
 			
 			first = NO;
 		}
