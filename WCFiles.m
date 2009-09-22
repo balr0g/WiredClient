@@ -207,8 +207,6 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	if(i != NSNotFound)
 		[_sourceOutlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:i + 1] byExtendingSelection:NO];
 	
-	[_filesTreeView setRootPath:[file path]];
-
 	[self showWindow:self];
 	[self retain];
 
