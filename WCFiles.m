@@ -247,6 +247,8 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	[_createFolderButton setEnabled:[self _validateCreateFolder]];
 	[_reloadButton setEnabled:[self _validateConnected]];
 	[_deleteButton setEnabled:[self _validateDelete]];
+	
+	[_filesTreeView validate];
 }
 
 
@@ -3239,6 +3241,18 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	}
 	
 	return names;
+}
+
+
+
+- (BOOL)treeView:(WITreeView *)tree validateMoreInfoButtonForPath:(NSString *)path {
+	return [self _validateGetInfo];
+}
+
+
+
+- (void)treeView:(WITreeView *)tree showMoreInfoForPath:(NSString *)path {
+	[self getInfo:self];
 }
 
 
