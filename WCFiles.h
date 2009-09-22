@@ -88,6 +88,8 @@ extern NSString * const					WCPlacePboardType;
 	NSMutableArray						*_history;
 	NSUInteger							_historyPosition;
 	
+	NSMutableSet						*_subscribedFiles;
+	
 	WCFile								*_initialDirectory;
 	WCFile								*_currentDirectory;
 	
@@ -108,6 +110,7 @@ extern NSString * const					WCPlacePboardType;
 
 - (IBAction)open:(id)sender;
 - (IBAction)enclosingFolder:(id)sender;
+- (IBAction)label:(id)sender;
 
 - (IBAction)history:(id)sender;
 - (IBAction)style:(id)sender;

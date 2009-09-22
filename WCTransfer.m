@@ -102,7 +102,7 @@
 @implementation WCTransfer
 
 + (NSInteger)version {
-	return 1;
+	return 2;
 }
 
 
@@ -154,24 +154,18 @@
 
 
 - (id)initWithCoder:(NSCoder *)coder {
-	NSString		*identifier;
+	NSInteger		version;
 	
     self = [super initWithCoder:coder];
 	
 	if(!self)
 		return NULL;
 	
-    if([coder decodeIntForKey:@"WCTransferVersion"] != [[self class] version]) {
-        [self release];
-		
-        return NULL;
-    }
+	version = [coder decodeIntForKey:@"WCTransferVersion"];
 	
-	identifier					= [coder decodeObjectForKey:@"WCTransferIdentifier"];
-	
-	if(identifier) {
+	if(version > 1) {
 		[_identifier release];
-		_identifier = identifier;
+		_identifier = [[coder decodeObjectForKey:@"WCTransferIdentifier"] retain];
 	}
 	
 	_state						= [coder decodeIntForKey:@"WCTransferState"];

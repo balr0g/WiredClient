@@ -67,6 +67,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 - (BOOL)_validateQuickLook;
 - (BOOL)_validateCreateFolder;
 - (BOOL)_validateDelete;
+- (BOOL)_validateSetLabel;
 
 - (BOOL)_canPreviewFile:(WCFile *)file;
 
@@ -132,6 +133,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	_places				= [[NSMutableArray alloc] init];
 	_initialDirectory	= [file retain];
 	_history			= [[NSMutableArray alloc] init];
+	_subscribedFiles	= [[NSMutableSet alloc] init];
 	_quickLookFiles		= [[NSMutableArray alloc] init];
 	_selectFiles		= [[NSMutableArray alloc] init];
 	
@@ -283,7 +285,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	account = [self _selectedAccount];
 	
 	if(![account transferDownloadFiles]) {
-		if(![account fileAccessAllDropboxes] && ![self _existingDirectoryTreeIsReadableForFile:_currentDirectory])
+		if(![self _existingDirectoryTreeIsReadableForFile:_currentDirectory])
 			return NO;
 	}
 	
@@ -304,7 +306,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	account = [self _selectedAccount];
 	
 	if(![account transferUploadFiles] || ![account transferUploadDirectories]) {
-		if(![account fileAccessAllDropboxes] && ![self _existingDirectoryTreeIsWritableForFile:directory])
+		if(![self _existingDirectoryTreeIsWritableForFile:directory])
 			return NO;
 	}
 	
@@ -325,7 +327,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	account = [self _selectedAccount];
 	
 	if(![account fileGetInfo]) {
-		if(![account fileAccessAllDropboxes] && ![self _existingDirectoryTreeIsReadableForFile:_currentDirectory])
+		if(![self _existingDirectoryTreeIsReadableForFile:_currentDirectory])
 			return NO;
 	}
 	
@@ -346,7 +348,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	account = [self _selectedAccount];
 	
 	if(![account transferDownloadFiles]) {
-		if(![account fileAccessAllDropboxes] && ![self _existingDirectoryTreeIsReadableForFile:_currentDirectory])
+		if(![self _existingDirectoryTreeIsReadableForFile:_currentDirectory])
 			return NO;
 	}
 	
@@ -376,7 +378,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	account = [self _selectedAccount];
 	
 	if(![account fileCreateDirectories]) {
-		if(![account fileAccessAllDropboxes] && ![self _existingDirectoryTreeIsWritableForFile:_currentDirectory])
+		if(![self _existingDirectoryTreeIsWritableForFile:_currentDirectory])
 			return NO;
 	}
 	
@@ -394,7 +396,25 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	account = [self _selectedAccount];
 	
 	if(![account fileDeleteFiles]) {
-		if(![account fileAccessAllDropboxes] && ![self _existingDirectoryTreeIsWritableForFile:_currentDirectory])
+		if(![self _existingDirectoryTreeIsWritableForFile:_currentDirectory])
+			return NO;
+	}
+	
+	return ([[self _selectedFiles] count] > 0);
+}
+
+
+
+- (BOOL)_validateSetLabel {
+	WCAccount		*account;
+	
+	if(![self _validateConnected])
+		return NO;
+	
+	account = [self _selectedAccount];
+	
+	if(![account fileSetLabel]) {
+		if(![self _existingDirectoryTreeIsWritableForFile:_currentDirectory])
 			return NO;
 	}
 	
@@ -787,6 +807,10 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 #pragma mark -
 
 - (void)_changeCurrentDirectory:(WCFile *)file reselectFiles:(BOOL)reselectFiles forceSelection:(BOOL)forceSelection addToHistory:(BOOL)addToHistory {
+	NSEnumerator	*enumerator;
+	NSMutableSet	*unsubscribedFiles;
+	WCFile			*subscribedFile;
+	
 	if(_searching) {
 		[_searchField setStringValue:@""];
 		
@@ -809,7 +833,18 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		if([file isEqual:_currentDirectory])
 			return;
 	
-		[self _unsubscribeFromDirectory:_currentDirectory];
+		unsubscribedFiles	= [NSMutableSet set];
+		enumerator			= [_subscribedFiles objectEnumerator];
+		
+		while((subscribedFile = [enumerator nextObject])) {
+			if(![[file path] hasPrefix:[subscribedFile path]]) {
+				[self _unsubscribeFromDirectory:subscribedFile];
+				
+				[unsubscribedFiles addObject:subscribedFile];
+			}
+		}
+		
+		[_subscribedFiles minusSet:unsubscribedFiles];
 	}
 	
 	if(addToHistory) {
@@ -835,7 +870,12 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		reselectFiles = YES;
 	
 	[self _loadFilesAtDirectory:file reselectFiles:reselectFiles];
-	[self _subscribeToDirectory:_currentDirectory];
+	
+	if(![_subscribedFiles containsObject:_currentDirectory]) {
+		[self _subscribeToDirectory:_currentDirectory];
+		
+		[_subscribedFiles addObject:_currentDirectory];
+	}
 	
 	[self _validate];
 }
@@ -1195,6 +1235,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	[_places release];
 	[_quickLookFiles release];
 	[_history release];
+	[_subscribedFiles release];
 	[_selectFiles release];
 	[_initialDirectory release];
 	
@@ -1490,8 +1531,13 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 - (void)wiredFileDirectoryChanged:(WIP7Message *)message {
-	if([[message stringForName:@"wired.file.path"] isEqualToString:[_currentDirectory path]])
-		[self performSelectorOnce:@selector(_reloadFilesAtDirectory:) withObject:_currentDirectory afterDelay:0.1];
+	WCFile		*file;
+	
+	file = [self _existingFileForFile:[WCFile fileWithDirectory:[message stringForName:@"wired.file.path"]
+													 connection:[message contextInfo]]];
+	
+	if(file)
+		[self performSelectorOnce:@selector(_reloadFilesAtDirectory:) withObject:file afterDelay:0.1];
 }
 
 
@@ -1607,7 +1653,6 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 - (void)wiredFileSubscribeDirectoryReply:(WIP7Message *)message {
 	WCServerConnection		*connection;
-	WCError					*error;
 	
 	connection = [message contextInfo];
 	
@@ -1615,10 +1660,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		[connection removeObserver:self message:message];
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
-		error = [WCError errorWithWiredMessage:message];
-		
-		if([error code] != WCWiredProtocolAlreadySubscribed)
-			[_errorQueue showError:error];
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 		
 		[connection removeObserver:self message:message];
 	}
@@ -1628,7 +1670,6 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 - (void)wiredFileUnsubscribeDirectoryReply:(WIP7Message *)message {
 	WCServerConnection		*connection;
-	WCError					*error;
 	
 	connection = [message contextInfo];
 	
@@ -1636,10 +1677,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		[connection removeObserver:self message:message];
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
-		error = [WCError errorWithWiredMessage:message];
-		
-		if([error code] != WCWiredProtocolNotSubscribed)
-			[_errorQueue showError:[WCError errorWithWiredMessage:message]];
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 		
 		[connection removeObserver:self message:message];
 	}
@@ -1729,6 +1767,23 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 
+- (void)wiredFileSetLabelReply:(WIP7Message *)message {
+	WCServerConnection		*connection;
+	
+	connection = [message contextInfo];
+	
+	if([[message name] isEqualToString:@"wired.okay"]) {
+		[connection removeObserver:self message:message];
+	}
+	else if([[message name] isEqualToString:@"wired.error"]) {
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
+		
+		[connection removeObserver:self message:message];
+	}
+}
+
+
+
 - (void)controlTextDidChange:(NSNotification *)notification {
 	NSControl		*control;
 	WCFileType		type;
@@ -1765,6 +1820,8 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		return YES;
 	else if(selector == @selector(quickLook:))
 		return [self _validateQuickLook];
+	else if(selector == @selector(label:))
+		return [self _validateSetLabel];
 	
 	return YES;
 }
@@ -1865,6 +1922,28 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		file = [self _existingParentFileForFile:_currentDirectory];
 		
 		[self _openFile:file overrideNewWindow:([self _selectedStyle] == WCFilesStyleTree)];
+	}
+}
+
+
+
+- (IBAction)label:(id)sender {
+	NSEnumerator	*enumerator;
+	WIP7Message		*message;
+	WCFile			*file;
+	WCFileLabel		label;
+	
+	if(![self _validateSetLabel])
+		return;
+
+	label		= [sender tag];
+	enumerator	= [[self _selectedFiles] objectEnumerator];
+	
+	while((file = [enumerator nextObject])) {
+		message = [WIP7Message messageWithName:@"wired.file.set_label" spec:WCP7Spec];
+		[message setString:[file path] forName:@"wired.file.path"];
+		[message setEnum:label forName:@"wired.file.label"];
+		[[file connection] sendMessage:message fromObserver:self selector:@selector(wiredFileSetLabelReply:)];
 	}
 }
 
