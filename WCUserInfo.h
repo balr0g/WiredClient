@@ -40,8 +40,6 @@
 	IBOutlet NSTextField			*_loginTitleTextField;
 	IBOutlet NSTextField			*_groupsTextField;
 	IBOutlet NSTextField			*_groupsTitleTextField;
-	IBOutlet NSTextField			*_idTextField;
-	IBOutlet NSTextField			*_idTitleTextField;
 	IBOutlet NSTextField			*_addressTextField;
 	IBOutlet NSTextField			*_addressTitleTextField;
 	IBOutlet NSTextField			*_hostTextField;

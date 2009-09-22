@@ -97,7 +97,6 @@
 		[_groupsTextField setStringValue:[groups componentsJoinedByString:@", "]];
 	}
 
-	[_idTextField setStringValue:[NSSWF:@"%u", [_user userID]]];
 	[_addressTextField setStringValue:[_user address]];
 	[_hostTextField setStringValue:[_user host]];
 	[_versionTextField setStringValue:[_user version]];
@@ -132,7 +131,6 @@
 	[self resizeTitleTextField:_versionTitleTextField withTextField:_versionTextField];
 	[self resizeTitleTextField:_hostTitleTextField withTextField:_hostTextField];
 	[self resizeTitleTextField:_addressTitleTextField withTextField:_addressTextField];
-	[self resizeTitleTextField:_idTitleTextField withTextField:_idTextField];
 	[self resizeTitleTextField:_groupsTitleTextField withTextField:_groupsTextField];
 	
 	[self resizeTitleTextField:_loginTitleTextField withTextField:_loginTextField];
