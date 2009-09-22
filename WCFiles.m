@@ -1211,6 +1211,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	return [NSArray arrayWithObjects:
 		@"History",
 		@"Style",
+		NSToolbarSpaceItemIdentifier,
 		@"Download",
 		@"Upload",
 		@"GetInfo",
@@ -2974,7 +2975,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 			index = [directory indexOfObject:item];
 			
 			if(index != NSNotFound) {
-				frame			= [_filesTreeView convertRect:[_filesTreeView frameOfRow:index inPath:path] toView:NULL];
+				frame			= [_filesTreeView frameOfRow:index inPath:path];
 				frame.origin	= [[self window] convertBaseToScreen:frame.origin];
 
 				return NSMakeRect(frame.origin.x, frame.origin.y, frame.size.height, frame.size.height);
