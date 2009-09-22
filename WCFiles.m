@@ -528,14 +528,20 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	directories		= [self _directoriesForConnection:connection];
 		
 	if(!files || !directories) {
-		files			= [[NSMutableDictionary alloc] init];
-		directories		= [[NSMutableDictionary alloc] init];
+		files			= [NSMutableDictionary dictionary];
+		directories		= [NSMutableDictionary dictionary];
 
-		[_files setObject:[NSDictionary dictionaryWithObjectsAndKeys:files, WCFilesFiles, directories, WCFilesDirectories, NULL]
+		[_files setObject:[NSDictionary dictionaryWithObjectsAndKeys:
+								files,
+									WCFilesFiles,
+								directories,
+									WCFilesDirectories,
+								[NSMutableDictionary dictionary],
+									WCFilesListedFiles,
+								[NSMutableDictionary dictionary],
+									WCFilesSearchedFiles,
+								NULL]
 				   forKey:[connection identifier]];
-
-		[directories release];
-		[files release];
 	}
 		
 	directory = [directories objectForKey:path];
@@ -826,9 +832,6 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	
 	file = [self _existingFileForFile:file];
 	
-	if(!file)
-		return;
-	
 	if(_currentDirectory) {
 		if([file isEqual:_currentDirectory])
 			return;
@@ -871,10 +874,10 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	
 	[self _loadFilesAtDirectory:file reselectFiles:reselectFiles];
 	
-	if(![_subscribedFiles containsObject:_currentDirectory]) {
-		[self _subscribeToDirectory:_currentDirectory];
+	if(![_subscribedFiles containsObject:file]) {
+		[self _subscribeToDirectory:file];
 		
-		[_subscribedFiles addObject:_currentDirectory];
+		[_subscribedFiles addObject:file];
 	}
 	
 	[self _validate];
@@ -1317,6 +1320,18 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 
+- (void)windowWillClose:(NSNotification *)notification {
+	NSEnumerator		*enumerator;
+	WCFile				*subscribedFile;
+	
+	enumerator = [_subscribedFiles objectEnumerator];
+	
+	while((subscribedFile = [enumerator nextObject]))
+		[self _unsubscribeFromDirectory:subscribedFile];
+}
+
+
+
 - (NSToolbarItem *)toolbar:(NSToolbar *)toolbar itemForItemIdentifier:(NSString *)identifier willBeInsertedIntoToolbar:(BOOL)willBeInsertedIntoToolbar {
 	NSToolbarItem	*item;
 	
@@ -1466,7 +1481,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	[self _addConnection:connection];
 	[self _validate];
 	
-	if(!_searching)
+	if(!_searching && _currentDirectory)
 		[self _subscribeToDirectory:_currentDirectory];
 }
 
@@ -1490,7 +1505,10 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 - (void)linkConnectionDidTerminate:(NSNotification *)notification {
+	NSEnumerator			*enumerator;
+	NSMutableSet			*unsubscribedFiles;
 	WCServerConnection		*connection;
+	WCFile					*subscribedFile;
 
 	connection = [notification object];
 
@@ -1507,6 +1525,18 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		[_filesOutlineView reloadData];
 		[_filesTreeView reloadData];
 	}
+	
+	unsubscribedFiles	= [NSMutableSet set];
+	enumerator			= [_subscribedFiles objectEnumerator];
+	
+	while((subscribedFile = [enumerator nextObject])) {
+		if([subscribedFile connection] == connection)
+			[unsubscribedFiles addObject:subscribedFile];
+	}
+	
+	[_subscribedFiles minusSet:unsubscribedFiles];
+	
+	[_files removeObjectForKey:[connection identifier]];
 
 	[_servers removeObject:connection];
 	[_sourceOutlineView reloadData];
@@ -1536,8 +1566,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	file = [self _existingFileForFile:[WCFile fileWithDirectory:[message stringForName:@"wired.file.path"]
 													 connection:[message contextInfo]]];
 	
-	if(file)
-		[self performSelectorOnce:@selector(_reloadFilesAtDirectory:) withObject:file afterDelay:0.1];
+	[self performSelectorOnce:@selector(_reloadFilesAtDirectory:) withObject:file afterDelay:0.1];
 }
 
 
@@ -2999,14 +3028,16 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	
 	if([self _selectedStyle] == WCFilesStyleTree) {
 		file = [[self _filesForConnection:[self _selectedConnection]] objectForKey:path];
-			
-		if(![file isFolder]) {
-			file = [self _existingFileForFile:[WCFile fileWithDirectory:[[file path] stringByDeletingLastPathComponent]
-															 connection:[file connection]]];
-		}
 		
-		[self _changeCurrentDirectory:file reselectFiles:YES forceSelection:NO addToHistory:YES];
-		[self _validate];
+		if(file) {
+			if(![file isFolder]) {
+				file = [self _existingFileForFile:[WCFile fileWithDirectory:[[file path] stringByDeletingLastPathComponent]
+																 connection:[file connection]]];
+			}
+			
+			[self _changeCurrentDirectory:file reselectFiles:YES forceSelection:NO addToHistory:YES];
+			[self _validate];
+		}
 	}
 }
 
