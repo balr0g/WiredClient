@@ -996,8 +996,11 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		
 		name = [message name];
 		
-		if([name isEqualToString:messageName])
+		if([name isEqualToString:messageName]) {
+			*error = NULL;
+			
 			return message;
+		}
 
 		if([name isEqualToString:@"wired.transfer.queue"]) {
 			[message getUInt32:&queue forName:@"wired.transfer.queue_position"];
