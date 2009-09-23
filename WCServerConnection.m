@@ -37,7 +37,6 @@
 #import "WCPreferences.h"
 #import "WCPublicChat.h"
 #import "WCPublicChatController.h"
-#import "WCSearch.h"
 #import "WCServer.h"
 #import "WCServerConnection.h"
 #import "WCServerInfo.h"

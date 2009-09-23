@@ -12,7 +12,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="81"/>
+			<integer value="24"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -819,15 +819,6 @@
 									<reference key="NSOnImage" ref="393497551"/>
 									<reference key="NSMixedImage" ref="410793182"/>
 								</object>
-								<object class="NSMenuItem" id="20237485">
-									<reference key="NSMenu" ref="498709328"/>
-									<string key="NSTitle">Search</string>
-									<string key="NSKeyEquiv">F</string>
-									<int key="NSKeyEquivModMask">1048576</int>
-									<int key="NSMnemonicLoc">2147483647</int>
-									<reference key="NSOnImage" ref="393497551"/>
-									<reference key="NSMixedImage" ref="410793182"/>
-								</object>
 								<object class="NSMenuItem" id="534083971">
 									<reference key="NSMenu" ref="498709328"/>
 									<bool key="NSIsDisabled">YES</bool>
@@ -1505,14 +1496,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label">search:</string>
-						<reference key="source" ref="569324035"/>
-						<reference key="destination" ref="20237485"/>
-					</object>
-					<int key="connectionID">877</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
 						<string key="label">newDocument:</string>
 						<reference key="source" ref="672801163"/>
 						<reference key="destination" ref="524910367"/>
@@ -1688,7 +1671,6 @@
 							<reference ref="424161984"/>
 							<reference ref="266035572"/>
 							<reference ref="672589693"/>
-							<reference ref="20237485"/>
 						</object>
 						<reference key="parent" ref="344634899"/>
 					</object>
@@ -2304,11 +2286,6 @@
 						<reference key="parent" ref="764705616"/>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">876</int>
-						<reference key="object" ref="20237485"/>
-						<reference key="parent" ref="498709328"/>
-					</object>
-					<object class="IBObjectRecord">
 						<int key="objectID">878</int>
 						<reference key="object" ref="397040073"/>
 						<reference key="parent" ref="905514725"/>
@@ -2545,8 +2522,6 @@
 					<string>867.ImportedFromIB2</string>
 					<string>873.IBPluginDependency</string>
 					<string>873.ImportedFromIB2</string>
-					<string>876.IBPluginDependency</string>
-					<string>876.ImportedFromIB2</string>
 					<string>878.IBPluginDependency</string>
 					<string>879.IBPluginDependency</string>
 					<string>880.IBPluginDependency</string>
@@ -2618,7 +2593,7 @@
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
-					<string>{{701, 563}, {239, 273}}</string>
+					<string>{{529, 570}, {225, 253}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<integer value="1"/>
@@ -2737,8 +2712,6 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<string>{{663, 585}, {64, 6}}</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -3265,12 +3238,16 @@
 							<string>newDocument:</string>
 							<string>quote:</string>
 							<string>renameBoard:</string>
+							<string>saveDocument:</string>
+							<string>saveThread:</string>
 							<string>search:</string>
 							<string>underline:</string>
 							<string>url:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -3414,6 +3391,7 @@
 							<string>ignore:</string>
 							<string>kick:</string>
 							<string>saveChat:</string>
+							<string>saveDocument:</string>
 							<string>sendPrivateMessage:</string>
 							<string>setTopic:</string>
 							<string>stats:</string>
@@ -3421,6 +3399,7 @@
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -3524,6 +3503,7 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>allServers:</string>
 							<string>createFolder:</string>
 							<string>delete:</string>
 							<string>deleteDocument:</string>
@@ -3531,12 +3511,15 @@
 							<string>enclosingFolder:</string>
 							<string>getInfo:</string>
 							<string>history:</string>
+							<string>label:</string>
 							<string>newDocument:</string>
 							<string>open:</string>
 							<string>quickLook:</string>
 							<string>reload:</string>
 							<string>reloadDocument:</string>
+							<string>search:</string>
 							<string>style:</string>
+							<string>thisServer:</string>
 							<string>type:</string>
 							<string>upload:</string>
 						</object>
@@ -3557,12 +3540,17 @@
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="outlets">
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>_allServersButton</string>
 							<string>_createFolderButton</string>
 							<string>_createFolderPanel</string>
 							<string>_createdTableColumn</string>
@@ -3570,6 +3558,7 @@
 							<string>_downloadButton</string>
 							<string>_everyonePermissionsPopUpButton</string>
 							<string>_filesOutlineView</string>
+							<string>_filesScrollView</string>
 							<string>_filesTabView</string>
 							<string>_filesTreeView</string>
 							<string>_groupPermissionsPopUpButton</string>
@@ -3585,17 +3574,21 @@
 							<string>_progressIndicator</string>
 							<string>_quickLookButton</string>
 							<string>_reloadButton</string>
+							<string>_searchBarView</string>
+							<string>_searchField</string>
 							<string>_serverTableColumn</string>
 							<string>_sizeTableColumn</string>
 							<string>_sourceOutlineView</string>
 							<string>_sourceTableColumn</string>
 							<string>_statusTextField</string>
 							<string>_styleControl</string>
+							<string>_thisServerButton</string>
 							<string>_typePopUpButton</string>
 							<string>_uploadButton</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSButton</string>
 							<string>NSButton</string>
 							<string>NSPanel</string>
 							<string>NSTableColumn</string>
@@ -3603,6 +3596,7 @@
 							<string>NSButton</string>
 							<string>NSPopUpButton</string>
 							<string>WIOutlineView</string>
+							<string>NSScrollView</string>
 							<string>NSTabView</string>
 							<string>WITreeView</string>
 							<string>NSPopUpButton</string>
@@ -3618,12 +3612,15 @@
 							<string>NSProgressIndicator</string>
 							<string>NSButton</string>
 							<string>NSButton</string>
+							<string>WCFilterView</string>
+							<string>NSSearchField</string>
 							<string>NSTableColumn</string>
 							<string>NSTableColumn</string>
 							<string>WIOutlineView</string>
 							<string>NSTableColumn</string>
 							<string>NSTextField</string>
 							<string>NSSegmentedControl</string>
+							<string>NSButton</string>
 							<string>NSPopUpButton</string>
 							<string>NSButton</string>
 						</object>
@@ -3634,38 +3631,11 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
-					<string key="className">WCFilesController</string>
-					<string key="superclassName">WIObject</string>
-					<object class="NSMutableDictionary" key="outlets">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>_createdTableColumn</string>
-							<string>_filesOutlineView</string>
-							<string>_kindTableColumn</string>
-							<string>_modifiedTableColumn</string>
-							<string>_nameTableColumn</string>
-							<string>_serverTableColumn</string>
-							<string>_sizeTableColumn</string>
-							<string>_statusTextField</string>
-							<string>delegate</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>NSTableColumn</string>
-							<string>WIOutlineView</string>
-							<string>NSTableColumn</string>
-							<string>NSTableColumn</string>
-							<string>NSTableColumn</string>
-							<string>NSTableColumn</string>
-							<string>NSTableColumn</string>
-							<string>NSTextField</string>
-							<string>id</string>
-						</object>
-					</object>
+					<string key="className">WCFilterView</string>
+					<string key="superclassName">NSView</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">WCFilesController.h</string>
+						<string key="minorKey">WCFilterView.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -3923,6 +3893,8 @@
 							<string>_themesMessagesFontButton</string>
 							<string>_themesMessagesFontTextField</string>
 							<string>_themesMessagesTextColorWell</string>
+							<string>_themesMonitorAlternateRowsButton</string>
+							<string>_themesMonitorIconSizeMatrix</string>
 							<string>_themesNameTableColumn</string>
 							<string>_themesShowSmileysButton</string>
 							<string>_themesTableView</string>
@@ -4018,6 +3990,8 @@
 							<string>NSButton</string>
 							<string>NSTextField</string>
 							<string>NSColorWell</string>
+							<string>NSButton</string>
+							<string>NSMatrix</string>
 							<string>NSTableColumn</string>
 							<string>NSButton</string>
 							<string>NSTableView</string>
@@ -4049,10 +4023,12 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>getInfo:</string>
 							<string>saveChat:</string>
+							<string>saveDocument:</string>
 							<string>setTopic:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -4086,6 +4062,7 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>accounts:</string>
 							<string>addBookmark:</string>
 							<string>administration:</string>
 							<string>broadcast:</string>
@@ -4093,15 +4070,20 @@
 							<string>disconnect:</string>
 							<string>files:</string>
 							<string>getInfo:</string>
+							<string>monitor:</string>
 							<string>nextConnection:</string>
 							<string>previousConnection:</string>
 							<string>reconnect:</string>
 							<string>saveChat:</string>
+							<string>saveDocument:</string>
 							<string>serverInfo:</string>
 							<string>setTopic:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -4133,56 +4115,6 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">WCPublicChat.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">WCSearch</string>
-					<string key="superclassName">WIWindowController</string>
-					<object class="NSMutableDictionary" key="actions">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>download:</string>
-							<string>getInfo:</string>
-							<string>open:</string>
-							<string>revealInFiles:</string>
-							<string>search:</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="outlets">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>_allServersMenuItem</string>
-							<string>_filesController</string>
-							<string>_kindPopUpButton</string>
-							<string>_progressIndicator</string>
-							<string>_searchButton</string>
-							<string>_searchTextField</string>
-							<string>_serversPopUpButton</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>NSMenuItem</string>
-							<string>WCFilesController</string>
-							<string>NSPopUpButton</string>
-							<string>NSProgressIndicator</string>
-							<string>NSButton</string>
-							<string>NSTextField</string>
-							<string>NSPopUpButton</string>
-						</object>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">WCSearch.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

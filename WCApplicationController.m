@@ -41,7 +41,6 @@
 #import "WCPreferences.h"
 #import "WCPublicChat.h"
 #import "WCPublicChatController.h"
-#import "WCSearch.h"
 #import "WCServerConnection.h"
 #import "WCServers.h"
 #import "WCStats.h"
@@ -583,7 +582,6 @@ static WCApplicationController		*sharedController;
 	[WCTransfers transfers];
 	[WCMessages messages];
 	[WCBoards boards];
-	[WCSearch search];
 }
 
 
@@ -1076,14 +1074,6 @@ static WCApplicationController		*sharedController;
 	
 	[attachment release];
 	[wrapper release];
-}
-
-
-
-#pragma mark -
-
-- (IBAction)search:(id)sender {
-	[[WCSearch search] showWindow:sender];
 }
 
 

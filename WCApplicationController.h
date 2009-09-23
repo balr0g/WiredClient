@@ -72,8 +72,6 @@ extern NSString * const						WCExceptionHandlerReceivedExceptionNotification;
 - (IBAction)deleteDocument:(id)sender;
 - (IBAction)changePassword:(id)sender;
 
-- (IBAction)search:(id)sender;
-
 - (IBAction)console:(id)sender;
 
 - (IBAction)chat:(id)sender;

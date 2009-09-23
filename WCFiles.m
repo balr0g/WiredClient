@@ -66,6 +66,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 - (BOOL)_validateGetInfo;
 - (BOOL)_validateQuickLook;
 - (BOOL)_validateCreateFolder;
+- (BOOL)_validateReload;
 - (BOOL)_validateDelete;
 - (BOOL)_validateSetLabel;
 
@@ -110,6 +111,8 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 - (void)_unsubscribeFromDirectory:(WCFile *)file;
 
 - (void)_reloadSearch;
+- (void)_showSearchBar;
+- (void)_hideSearchBar;
 
 - (void)_openFile:(WCFile *)file overrideNewWindow:(BOOL)override;
 - (void)_quickLook;
@@ -128,14 +131,15 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	
 	self = [super initWithWindowNibName:@"Files"];
 
-	_files				= [[NSMutableDictionary alloc] init];
-	_servers			= [[NSMutableArray alloc] init];
-	_places				= [[NSMutableArray alloc] init];
-	_initialDirectory	= [file retain];
-	_history			= [[NSMutableArray alloc] init];
-	_subscribedFiles	= [[NSMutableSet alloc] init];
-	_quickLookFiles		= [[NSMutableArray alloc] init];
-	_selectFiles		= [[NSMutableArray alloc] init];
+	_files					= [[NSMutableDictionary alloc] init];
+	_servers				= [[NSMutableArray alloc] init];
+	_places					= [[NSMutableArray alloc] init];
+	_initialDirectory		= [file retain];
+	_history				= [[NSMutableArray alloc] init];
+	_subscribedFiles		= [[NSMutableSet alloc] init];
+	_quickLookFiles			= [[NSMutableArray alloc] init];
+	_searchTransactions		= [[NSMutableSet alloc] init];
+	_selectFiles			= [[NSMutableArray alloc] init];
 	
 	if(selectFile) {
 		[_selectFiles addObject:selectFile];
@@ -241,9 +245,9 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	[_downloadButton setEnabled:[self _validateDownload]];
 	[_uploadButton setEnabled:[self _validateUploadToDirectory:_currentDirectory]];
 	[_infoButton setEnabled:[self _validateGetInfo]];
-	[_quickLookButton setEnabled:[self _validateUploadToDirectory:_currentDirectory]];
+	[_quickLookButton setEnabled:[self _validateQuickLook]];
 	[_createFolderButton setEnabled:[self _validateCreateFolder]];
-	[_reloadButton setEnabled:[self _validateConnected]];
+	[_reloadButton setEnabled:[self _validateReload]];
 	[_deleteButton setEnabled:[self _validateDelete]];
 	
 	[_filesTreeView validate];
@@ -372,7 +376,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 - (BOOL)_validateCreateFolder {
 	WCAccount		*account;
 	
-	if(![self _validateConnected])
+	if(![self _validateConnected] || _searching)
 		return NO;
 	
 	account = [self _selectedAccount];
@@ -381,6 +385,15 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		if(![self _existingDirectoryTreeIsWritableForFile:_currentDirectory])
 			return NO;
 	}
+	
+	return YES;
+}
+
+
+
+- (BOOL)_validateReload {
+	if(![self _validateConnected] || _searching)
+		return NO;
 	
 	return YES;
 }
@@ -971,20 +984,24 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 #pragma mark -
 
 - (void)_reloadSearch {
+	NSEnumerator			*enumerator;
+	NSArray					*connections;
 	WIP7Message				*message;
 	WCServerConnection		*connection;
+	WIP7UInt32				transaction;
 	
 	if([[_searchField stringValue] length] > 0) {
-		connection = [[self _selectedSource] connection];
+		if([_thisServerButton state] == NSOnState)
+			connections = [NSArray arrayWithObject:[[self _selectedSource] connection]];
+		else
+			connections = _servers;
 		
 		if(!_searching) {
-			_styleBeforeSearch		= [self _selectedStyle];
-			_directoryBeforeSearch	= [_currentDirectory copy];
+			_styleBeforeSearch = [self _selectedStyle];
+			_directoryBeforeSearch = [_currentDirectory retain];
 			
 			[_currentDirectory release];
-			_currentDirectory		= [[WCFile fileWithDirectory:@"<search>" connection:connection] retain];
-			
-			[self _createDirectoryStructureForConnection:connection path:[_currentDirectory path]];
+			_currentDirectory = [[WCFile fileWithDirectory:@"<search>" connection:NULL] retain];
 			
 			[self _selectStyle:WCFilesStyleList];
 			
@@ -994,25 +1011,37 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 			_searching = YES;
 			
 			[self _updateWindowTitle];
+			[self _showSearchBar];
 		}
 		
-		[_progressIndicator startAnimation:self];
+		enumerator = [connections objectEnumerator];
 		
-		[[[self _directoriesForConnection:connection] objectForKey:@"<search>"] removeAllObjects];
+		while((connection = [enumerator nextObject])) {
+			[self _createDirectoryStructureForConnection:connection path:[_currentDirectory path]];
+			
+			[[[self _directoriesForConnection:connection] objectForKey:@"<search>"] removeAllObjects];
+			
+			if([[_searchField stringValue] length] > 2) {
+				[_progressIndicator startAnimation:self];
 		
-		message = [WIP7Message messageWithName:@"wired.file.search" spec:WCP7Spec];
-		[message setString:[_searchField stringValue] forName:@"wired.file.query"];
-		[connection sendMessage:message fromObserver:self selector:@selector(wiredFileSearchListReply:)];
+				message = [WIP7Message messageWithName:@"wired.file.search" spec:WCP7Spec];
+				[message setString:[_searchField stringValue] forName:@"wired.file.query"];
+				transaction = [connection sendMessage:message fromObserver:self selector:@selector(wiredFileSearchListReply:)];
+				
+				[_searchTransactions addObject:[NSNumber numberWithUnsignedInteger:transaction]];
+			}
+		}
+		
+		[_filesOutlineView reloadData];
 		
 		[self _validate];
 		[self _reloadStatus];
-			
-		[_filesOutlineView reloadData];
 	} else {
 		if(_searching) {
 			[_currentDirectory release];
-			_currentDirectory		= _directoryBeforeSearch;
-			_directoryBeforeSearch	= NULL;
+			_currentDirectory = _directoryBeforeSearch;
+			
+			_directoryBeforeSearch = NULL;
 			
 			[self _selectStyle:_styleBeforeSearch];
 
@@ -1023,10 +1052,44 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 			
 			[self _validate];
 			[self _updateWindowTitle];
+			[self _hideSearchBar];
 			
 			[_filesOutlineView reloadData];
 		}
 	}
+}
+
+
+
+- (void)_showSearchBar {
+	NSRect		scrollFrame, thisServerFrame, allServersFrame;
+	
+	[_thisServerButton setTitle:[NSSWF:NSLS(@"\u201c%@\u201d", @"Search bar button"), [[[self _selectedSource] connection] name]]];
+	[_thisServerButton sizeToFit];
+	
+	thisServerFrame				= [_thisServerButton frame];
+	allServersFrame				= [_allServersButton frame];
+	allServersFrame.origin.x	= thisServerFrame.origin.x + thisServerFrame.size.width + 8.0;
+	
+	[_allServersButton setFrame:allServersFrame];
+	
+	scrollFrame					= [_filesScrollView frame];
+	scrollFrame.size.height		-= [_searchBarView frame].size.height + 1.0;
+	
+	[_filesScrollView setFrame:scrollFrame];
+	[_searchBarView setHidden:NO];
+}
+
+
+
+- (void)_hideSearchBar {
+	NSRect		scrollFrame;
+
+	scrollFrame					= [_filesScrollView frame];
+	scrollFrame.size.height		+= [_searchBarView frame].size.height + 1.0;
+	
+	[_filesScrollView setFrame:scrollFrame];
+	[_searchBarView setHidden:YES];
 }
 
 
@@ -1121,6 +1184,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	NSEnumerator			*enumerator;
 	NSMutableArray			*directory;
 	NSMutableIndexSet		*indexes;
+	NSString				*path;
 	WCFile					*file;
 	NSUInteger				index;
 	BOOL					complete, first;
@@ -1137,10 +1201,15 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 			
 			if(index != NSNotFound)
 				[indexes addIndex:index];
-
+			
 			[_filesTreeView selectPath:[file path] byExtendingSelection:!first];
 			
-			if(![[_currentDirectory path] isEqualToString:[file path]])
+			if([file isFolder])
+				path = [file path];
+			else
+				path = [[file path] stringByDeletingLastPathComponent];
+
+			if(![[_currentDirectory path] isEqualToString:path])
 				complete = NO;
 			
 			first = NO;
@@ -1224,6 +1293,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	[_servers release];
 	[_places release];
 	[_quickLookFiles release];
+	[_searchTransactions release];
 	[_history release];
 	[_subscribedFiles release];
 	[_selectFiles release];
@@ -1292,6 +1362,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 	[_styleControl selectSegmentWithTag:[[WCSettings settings] integerForKey:WCFilesStyle]];
 	
+	[self _hideSearchBar];
 	[self _selectStyle:[self _selectedStyle]];
 	[self _reloadStatus];
 	[self _themeDidChange];
@@ -1626,6 +1697,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	NSMutableArray			*searchedFiles, *directory;
 	WCServerConnection		*connection;
 	WCFile					*file;
+	WIP7UInt32				transaction;
 	
 	connection = [message contextInfo];
 	
@@ -1636,8 +1708,6 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		[searchedFiles addObject:file];
 	}
 	if([[message name] isEqualToString:@"wired.file.search_list.done"]) {
-		[_progressIndicator stopAnimation:self];
-		
 		searchedFiles	= [self _searchedFilesForConnection:connection message:message];
 		directory		= [[self _directoriesForConnection:connection] objectForKey:@"<search>"];
 		
@@ -1654,10 +1724,20 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		
 		[self _reloadStatus];
 		
+		if([message getUInt32:&transaction forName:@"wired.transaction"])
+			[_searchTransactions removeObject:[NSNumber numberWithUnsignedInteger:transaction]];
+		
+		if([_searchTransactions count] == 0)
+			[_progressIndicator stopAnimation:self];
+		
 		[connection removeObserver:self message:message];
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
-		[_progressIndicator stopAnimation:self];
+		if([message getUInt32:&transaction forName:@"wired.transaction"])
+			[_searchTransactions removeObject:[NSNumber numberWithUnsignedInteger:transaction]];
+		
+		if([_searchTransactions count] == 0)
+			[_progressIndicator stopAnimation:self];
 		
 		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 		
@@ -2350,6 +2430,24 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 - (IBAction)search:(id)sender {
+	[self _reloadSearch];
+}
+
+
+
+#pragma mark -
+
+- (IBAction)thisServer:(id)sender {
+	[_allServersButton setState:NSOffState];
+
+	[self _reloadSearch];
+}
+
+
+
+- (IBAction)allServers:(id)sender {
+	[_thisServerButton setState:NSOffState];
+
 	[self _reloadSearch];
 }
 

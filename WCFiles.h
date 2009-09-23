@@ -30,7 +30,7 @@ extern NSString * const					WCFilePboardType;
 extern NSString * const					WCPlacePboardType;
 
 
-@class WCFile, WCErrorQueue;
+@class WCFilterView, WCFile, WCErrorQueue;
 
 @interface WCFiles : WIWindowController {
 	IBOutlet NSSegmentedControl			*_historyControl;
@@ -44,11 +44,16 @@ extern NSString * const					WCPlacePboardType;
 	IBOutlet NSButton					*_deleteButton;
 	IBOutlet NSSearchField				*_searchField;
 	
+	IBOutlet WCFilterView				*_searchBarView;
+	IBOutlet NSButton					*_thisServerButton;
+	IBOutlet NSButton					*_allServersButton;
+	
 	IBOutlet WIOutlineView				*_sourceOutlineView;
 	IBOutlet NSTableColumn				*_sourceTableColumn;
 
 	IBOutlet NSTabView					*_filesTabView;
 
+	IBOutlet NSScrollView				*_filesScrollView;
 	IBOutlet WIOutlineView				*_filesOutlineView;
 	IBOutlet NSTableColumn				*_nameTableColumn;
 	IBOutlet NSTableColumn				*_kindTableColumn;
@@ -84,6 +89,7 @@ extern NSString * const					WCPlacePboardType;
 	BOOL								_searching;
 	NSUInteger							_styleBeforeSearch;
 	WCFile								*_directoryBeforeSearch;
+	NSMutableSet						*_searchTransactions;
 	
 	NSMutableArray						*_history;
 	NSUInteger							_historyPosition;
@@ -126,5 +132,8 @@ extern NSString * const					WCPlacePboardType;
 - (IBAction)deleteDocument:(id)sender;
 - (IBAction)delete:(id)sender;
 - (IBAction)search:(id)sender;
+
+- (IBAction)thisServer:(id)sender;
+- (IBAction)allServers:(id)sender;
 
 @end

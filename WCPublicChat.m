@@ -321,13 +321,6 @@ typedef enum _WCChatActivity				WCChatActivity;
 												 target:self
 												 action:@selector(files:)];
 	}
-	else if([identifier isEqualToString:@"Search"]) {
-		return [NSToolbarItem toolbarItemWithIdentifier:identifier
-												   name:NSLS(@"Search", @"Search toolbar item")
-												content:[NSImage imageNamed:@"Search"]
-												 target:[WCApplicationController sharedController]
-												 action:@selector(search:)];
-	}
 	else if([identifier isEqualToString:@"Transfers"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
 												   name:NSLS(@"Transfers", @"Transfers toolbar item")
@@ -390,7 +383,6 @@ typedef enum _WCChatActivity				WCChatActivity;
 		@"Boards",
 		@"Messages",
 		@"Files",
-		@"Search",
 		@"Transfers",
 		@"Administration",
 		NSToolbarFlexibleSpaceItemIdentifier,
@@ -407,7 +399,6 @@ typedef enum _WCChatActivity				WCChatActivity;
 		@"Boards",
 		@"Messages",
 		@"Files",
-		@"Search",
 		@"Transfers",
 		@"Administration",
 		@"Monitor",
