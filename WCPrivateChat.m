@@ -106,6 +106,8 @@
 	message = [WIP7Message messageWithName:@"wired.chat.leave_chat" spec:WCP7Spec];
 	[message setUInt32:[_chatController chatID] forName:@"wired.chat.id"];
 	[[self connection] sendMessage:message];
+	
+	[_chatController saveWindowProperties];
 }
 
 

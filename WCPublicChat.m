@@ -284,6 +284,11 @@ typedef enum _WCChatActivity				WCChatActivity;
 
 
 
+- (void)windowWillClose:(NSNotification *)notification {
+	[[self selectedChatController] saveWindowProperties];
+}
+
+
 
 - (NSToolbarItem *)toolbar:(NSToolbar *)toolbar itemForItemIdentifier:(NSString *)identifier willBeInsertedIntoToolbar:(BOOL)willBeInsertedIntoToolbar {
 	NSButton		*button;
