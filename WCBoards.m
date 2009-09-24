@@ -1728,6 +1728,8 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 		[thread setBoard:board];
 	}
 	
+	[[connection console] log:@"Added post %@ to thread %@ in board %@", post, thread, board];
+	
 	if(board == [self _selectedBoard]) {
 		[_boardsOutlineView setNeedsDisplay:YES];
 		[_threadsTableView reloadData];

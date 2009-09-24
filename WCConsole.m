@@ -171,8 +171,14 @@
 
 #pragma mark -
 
-- (void)log:(NSString *)string {
-	[self _log:string color:[NSColor redColor]];
+- (void)log:(NSString *)format, ... {
+	va_list		ap;
+	
+	va_start(ap, format);
+
+	[self _log:[NSString stringWithFormat:format arguments:ap] color:[NSColor redColor]];
+	
+	va_end(ap);
 }
 
 @end

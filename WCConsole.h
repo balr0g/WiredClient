@@ -35,6 +35,6 @@
 
 + (id)consoleWithConnection:(WCServerConnection *)connection;
 
-- (void)log:(NSString *)string;
+- (void)log:(NSString *)format, ...;
 
 @end
