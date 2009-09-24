@@ -237,7 +237,6 @@
 												   NSResizableWindowMask
 										   backing:NSBackingStoreBuffered
 											 defer:YES];
-	[window setShowsToolbarButton:NO];
 	[window setDelegate:self];
 	[self setWindow:window];
 	[window release];
@@ -246,8 +245,8 @@
 
 	toolbar = [[NSToolbar alloc] initWithIdentifier:@"Administration"];
 	[toolbar setDelegate:self];
-	[toolbar setAllowsUserCustomization:NO];
-	[toolbar setAutosavesConfiguration:NO];
+	[toolbar setAllowsUserCustomization:YES];
+	[toolbar setAutosavesConfiguration:YES];
 	[[self window] setToolbar:toolbar];
 	[toolbar release];
 	
