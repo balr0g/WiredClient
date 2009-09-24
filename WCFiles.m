@@ -103,10 +103,10 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 - (void)_updateWindowTitle;
 
-- (void)_changeCurrentDirectory:(WCFile *)file reselectFiles:(BOOL)reselectFiles forceSelection:(BOOL)forceSelection addToHistory:(BOOL)addToHistory;
-- (void)_loadFilesAtDirectory:(WCFile *)file reselectFiles:(BOOL)reselectFiles;
+- (void)_changeCurrentDirectory:(WCFile *)file selectFiles:(BOOL)selectFiles forceSelection:(BOOL)forceSelection addToHistory:(BOOL)addToHistory;
+- (void)_loadFilesAtDirectory:(WCFile *)file selectFiles:(BOOL)selectFiles;
 - (void)_reloadFilesAtDirectory:(WCFile *)file;
-- (void)_reloadFilesAtDirectory:(WCFile *)file reselectFiles:(BOOL)reselectFiles;
+- (void)_reloadFilesAtDirectory:(WCFile *)file selectFiles:(BOOL)selectFiles;
 - (void)_subscribeToDirectory:(WCFile *)file;
 - (void)_unsubscribeFromDirectory:(WCFile *)file;
 
@@ -117,7 +117,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 - (void)_openFile:(WCFile *)file overrideNewWindow:(BOOL)override;
 - (void)_quickLook;
 - (void)_reloadStatus;
-- (void)_reselectFiles;
+- (void)_selectFiles;
 - (void)_sortFiles;
 - (SEL)_sortSelector;
 
@@ -825,7 +825,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 #pragma mark -
 
-- (void)_changeCurrentDirectory:(WCFile *)file reselectFiles:(BOOL)reselectFiles forceSelection:(BOOL)forceSelection addToHistory:(BOOL)addToHistory {
+- (void)_changeCurrentDirectory:(WCFile *)file selectFiles:(BOOL)selectFiles forceSelection:(BOOL)forceSelection addToHistory:(BOOL)addToHistory {
 	NSEnumerator	*enumerator;
 	NSMutableSet	*unsubscribedFiles;
 	WCFile			*subscribedFile;
@@ -839,8 +839,11 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	file = [self _existingFileForFile:file];
 	
 	if(_currentDirectory) {
-		if([file isEqual:_currentDirectory])
+		if([file isEqual:_currentDirectory]) {
+			[_selectFiles removeAllObjects];
+			
 			return;
+		}
 	
 		unsubscribedFiles	= [NSMutableSet set];
 		enumerator			= [_subscribedFiles objectEnumerator];
@@ -881,9 +884,9 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	_initialDirectory = NULL;
 
 	if(_selectFilesWhenOpening || forceSelection)
-		reselectFiles = YES;
+		selectFiles = YES;
 	
-	[self _loadFilesAtDirectory:file reselectFiles:reselectFiles];
+	[self _loadFilesAtDirectory:file selectFiles:selectFiles];
 	
 	if(![_subscribedFiles containsObject:file]) {
 		[self _subscribeToDirectory:file];
@@ -896,7 +899,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 
-- (void)_loadFilesAtDirectory:(WCFile *)file reselectFiles:(BOOL)reselectFiles {
+- (void)_loadFilesAtDirectory:(WCFile *)file selectFiles:(BOOL)selectFiles {
 	NSMutableArray			*directory;
 	WCServerConnection		*connection;
 	
@@ -912,12 +915,12 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		
 		[self _reloadStatus];
 		
-		if(reselectFiles)
-			[self _reselectFiles];
+		if(selectFiles)
+			[self _selectFiles];
 		else
 			[_selectFiles removeAllObjects];
 	} else {
-		[self _reloadFilesAtDirectory:file reselectFiles:reselectFiles];
+		[self _reloadFilesAtDirectory:file selectFiles:selectFiles];
 	}
 	
 	_selectFilesWhenOpening = NO;
@@ -926,12 +929,12 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 - (void)_reloadFilesAtDirectory:(WCFile *)file {
-	[self _reloadFilesAtDirectory:file reselectFiles:YES];
+	[self _reloadFilesAtDirectory:file selectFiles:YES];
 }
 
 
 
-- (void)_reloadFilesAtDirectory:(WCFile *)file reselectFiles:(BOOL)reselectFiles {
+- (void)_reloadFilesAtDirectory:(WCFile *)file selectFiles:(BOOL)selectFiles {
 	NSMutableArray			*directory;
 	WIP7Message				*message;
 	WCServerConnection		*connection;
@@ -949,7 +952,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 	[_progressIndicator startAnimation:self];
 	
-	if(!reselectFiles)
+	if(!selectFiles)
 		[_selectFiles removeAllObjects];
 	
 	[self _createDirectoryStructureForConnection:connection path:[file path]];
@@ -1109,7 +1112,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 			if(override || (newWindows && !optionKey) || (!newWindows && optionKey))
 				[WCFiles filesWithConnection:[file connection] file:file];
 			else
-				[self _changeCurrentDirectory:file reselectFiles:YES forceSelection:NO addToHistory:YES];
+				[self _changeCurrentDirectory:file selectFiles:YES forceSelection:NO addToHistory:YES];
 			break;
 
 		case WCFileFile:
@@ -1180,7 +1183,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 
-- (void)_reselectFiles {
+- (void)_selectFiles {
 	NSEnumerator			*enumerator;
 	NSMutableArray			*directory;
 	NSMutableIndexSet		*indexes;
@@ -1678,7 +1681,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		[file setFreeSpace:free];
 		
 		[self _reloadStatus];
-		[self _reselectFiles];
+		[self _selectFiles];
 		
 		[connection removeObserver:self message:message];
 	}
@@ -2060,7 +2063,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		}
 		else if(_historyPosition > 0) {
 			[self _changeCurrentDirectory:[_history objectAtIndex:_historyPosition - 1]
-							reselectFiles:NO
+							  selectFiles:NO
 						   forceSelection:YES
 							 addToHistory:NO];
 			
@@ -2069,7 +2072,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	} else {
 		if(_historyPosition < [_history count] - 1) {
 			[self _changeCurrentDirectory:[_history objectAtIndex:_historyPosition + 1]
-							reselectFiles:NO
+							  selectFiles:NO
 						   forceSelection:YES
 							 addToHistory:NO];
 			
@@ -2090,7 +2093,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	style = [self _selectedStyle];
 	
 	[self _selectStyle:style];
-	[self _loadFilesAtDirectory:_currentDirectory reselectFiles:NO];
+	[self _loadFilesAtDirectory:_currentDirectory selectFiles:NO];
 	
 	[[WCSettings settings] setInteger:style forKey:WCFilesStyle];
 }
@@ -2414,7 +2417,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 			path = [[file path] stringByDeletingLastPathComponent];
 			
 			[self _changeCurrentDirectory:[WCFile fileWithDirectory:path connection:[file connection]]
-							reselectFiles:YES
+							  selectFiles:YES
 						   forceSelection:NO
 							 addToHistory:NO];
 		}
@@ -2653,7 +2656,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	if([notification object] == _filesOutlineView) {
 		file = [[notification userInfo] objectForKey:@"NSObject"];
 		
-		[self _loadFilesAtDirectory:file reselectFiles:NO];
+		[self _loadFilesAtDirectory:file selectFiles:NO];
 	}
 }
 
@@ -2665,7 +2668,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	outlineView = [notification object];
 	
 	if(outlineView == _sourceOutlineView)
-		[self _changeCurrentDirectory:[self _selectedSource] reselectFiles:NO forceSelection:YES addToHistory:YES];
+		[self _changeCurrentDirectory:[self _selectedSource] selectFiles:NO forceSelection:YES addToHistory:YES];
 	else if(outlineView == _filesOutlineView)
 		[self _validate];
 }
@@ -3120,7 +3123,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 																 connection:[file connection]]];
 			}
 			
-			[self _changeCurrentDirectory:file reselectFiles:YES forceSelection:NO addToHistory:YES];
+			[self _changeCurrentDirectory:file selectFiles:YES forceSelection:NO addToHistory:YES];
 			[self _validate];
 		}
 	}
