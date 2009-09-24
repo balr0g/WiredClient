@@ -40,7 +40,7 @@
 
 - (id)_initAdministrationWithConnection:(WCServerConnection *)connection;
 
-- (void)_addAdministrationView:(NSView *)view name:(NSString *)name image:(NSImage *)image controller:(id)controller;
+- (void)_addAdministrationView:(NSView *)view name:(NSString *)name image:(NSImage *)image identifier:(NSString *)identifier controller:(id)controller;
 - (void)_selectAdministrationViewWithIdentifier:(NSString *)identifier animate:(BOOL)animate;
 - (NSString *)_identifierForController:(id)controller;
 
@@ -68,9 +68,8 @@
 
 #pragma mark -
 
-- (void)_addAdministrationView:(NSView *)view name:(NSString *)name image:(NSImage *)image controller:(id)controller {
+- (void)_addAdministrationView:(NSView *)view name:(NSString *)name image:(NSImage *)image identifier:(NSString *)identifier controller:(id)controller {
 	NSMutableDictionary			*dictionary;
-	NSString					*identifier;
 	
 	[view setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable | NSViewMaxXMargin | NSViewMaxYMargin];
 	
@@ -79,8 +78,6 @@
 	[dictionary setObject:name forKey:WCAdministrationNameKey];
 	[dictionary setObject:image forKey:WCAdministrationImageKey];
 	[dictionary setObject:controller forKey:WCAdministrationControllerKey];
-	
-	identifier = [NSString UUIDString];
 	
 	[_identifiers addObject:identifier];
 	[_views setObject:dictionary forKey:identifier];
@@ -208,26 +205,31 @@
 	[self _addAdministrationView:_monitorView
 							name:NSLS(@"Monitor", @"Monitor toolbar item")
 						   image:[NSImage imageNamed:@"Monitor"]
+					  identifier:@"Monitor"
 					  controller:_monitorController];
 	
 	[self _addAdministrationView:_logView
 							name:NSLS(@"Log", @"Log toolbar item")
 						   image:[NSImage imageNamed:@"Log"]
+					  identifier:@"Log"
 					  controller:_logController];
 	
 	[self _addAdministrationView:_settingsView
 							name:NSLS(@"Settings", @"Settings toolbar item")
 						   image:[NSImage imageNamed:@"Settings"]
+					  identifier:@"Settings"
 					  controller:_settingsController];
 	
 	[self _addAdministrationView:_accountsView
 							name:NSLS(@"Accounts", @"Accounts toolbar item")
 						   image:[NSImage imageNamed:@"Accounts"]
+					  identifier:@"Accounts"
 					  controller:_accountsController];
 	
 	[self _addAdministrationView:_banlistView
 							name:NSLS(@"Banlist", @"Banlist toolbar item")
 						   image:[NSImage imageNamed:@"Banlist"]
+					  identifier:@"Banlist"
 					  controller:_banlistController];
 	
 	window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0.0, 0.0, 100.0, 100.0)

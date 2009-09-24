@@ -96,7 +96,10 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 - (void)_addPlaces;
 - (void)_revalidatePlacesForConnection:(WCServerConnection *)connection;
 - (void)_invalidatePlacesForConnection:(WCServerConnection *)connection;
+- (void)_revalidateFilesForConnection:(WCServerConnection *)connection;
 - (void)_revalidateFiles:(NSArray *)files;
+- (void)_invalidateFilesForConnection:(WCServerConnection *)connection;
+- (void)_removeSubscriptionsForConnection:(WCServerConnection *)connection;
 
 - (NSUInteger)_selectedStyle;
 - (void)_selectStyle:(NSUInteger)style;
@@ -539,25 +542,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	
 	files			= [self _filesForConnection:connection];
 	directories		= [self _directoriesForConnection:connection];
-		
-	if(!files || !directories) {
-		files			= [NSMutableDictionary dictionary];
-		directories		= [NSMutableDictionary dictionary];
-
-		[_files setObject:[NSDictionary dictionaryWithObjectsAndKeys:
-								files,
-									WCFilesFiles,
-								directories,
-									WCFilesDirectories,
-								[NSMutableDictionary dictionary],
-									WCFilesListedFiles,
-								[NSMutableDictionary dictionary],
-									WCFilesSearchedFiles,
-								NULL]
-				   forKey:[connection identifier]];
-	}
-		
-	directory = [directories objectForKey:path];
+	directory		= [directories objectForKey:path];
 		
 	if(!directory) {
 		directory = [[NSMutableArray alloc] init];
@@ -766,6 +751,20 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 
+- (void)_revalidateFilesForConnection:(WCServerConnection *)connection {
+	NSEnumerator			*enumerator;
+	WCFile					*file;
+	
+	enumerator = [[[self _filesForConnection:connection] allValues] objectEnumerator];
+	
+	while((file = [enumerator nextObject])) {
+		if([file belongsToConnection:connection])
+			[file setConnection:connection];
+	}
+}
+
+
+
 - (void)_revalidateFiles:(NSArray *)files {
 	NSEnumerator			*enumerator;
 	WCFile					*file;
@@ -788,6 +787,38 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 
+- (void)_invalidateFilesForConnection:(WCServerConnection *)connection {
+	NSEnumerator			*enumerator;
+	WCFile					*file;
+	
+	enumerator = [[[self _filesForConnection:connection] allValues] objectEnumerator];
+	
+	while((file = [enumerator nextObject])) {
+		if([file connection] == connection)
+			[file setConnection:NULL];
+	}
+}
+
+
+
+- (void)_removeSubscriptionsForConnection:(WCServerConnection *)connection {
+	NSEnumerator		*enumerator;
+	NSMutableSet		*unsubscribedFiles;
+	WCFile				*file;
+	
+	unsubscribedFiles	= [NSMutableSet set];
+	enumerator			= [_subscribedFiles objectEnumerator];
+	
+	while((file = [enumerator nextObject])) {
+		if([file connection] == connection)
+			[unsubscribedFiles addObject:file];
+	}
+	
+	[_subscribedFiles minusSet:unsubscribedFiles];
+}
+
+
+	
 #pragma mark -
 
 - (NSUInteger)_selectedStyle {
@@ -1532,6 +1563,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		return;
 	
 	[self _revalidatePlacesForConnection:connection];
+	[self _revalidateFilesForConnection:connection];
 	
 	if(![connection isReconnecting]) {
 		[_servers addObject:connection];
@@ -1557,6 +1589,8 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		return;
 	
 	[self _invalidatePlacesForConnection:connection];
+	[self _invalidateFilesForConnection:connection];
+	[self _removeSubscriptionsForConnection:connection];
 	
 	[connection removeObserver:self];
 	
@@ -1566,10 +1600,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 - (void)linkConnectionDidTerminate:(NSNotification *)notification {
-	NSEnumerator			*enumerator;
-	NSMutableSet			*unsubscribedFiles;
 	WCServerConnection		*connection;
-	WCFile					*subscribedFile;
 
 	connection = [notification object];
 
@@ -1577,6 +1608,8 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		return;
 	
 	[self _invalidatePlacesForConnection:connection];
+	[self _invalidateFilesForConnection:connection];
+	[self _removeSubscriptionsForConnection:connection];
 	
 	if([_currentDirectory connection] == connection) {
 		[_currentDirectory release];
@@ -1587,18 +1620,6 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		[_filesTreeView reloadData];
 	}
 	
-	unsubscribedFiles	= [NSMutableSet set];
-	enumerator			= [_subscribedFiles objectEnumerator];
-	
-	while((subscribedFile = [enumerator nextObject])) {
-		if([subscribedFile connection] == connection)
-			[unsubscribedFiles addObject:subscribedFile];
-	}
-	
-	[_subscribedFiles minusSet:unsubscribedFiles];
-	
-	[_files removeObjectForKey:[connection identifier]];
-
 	[_servers removeObject:connection];
 	[_sourceOutlineView reloadData];
 	
