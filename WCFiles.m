@@ -77,14 +77,17 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 - (WCAccount *)_selectedAccount;
 - (NSArray *)_selectedFiles;
 
-- (void)_createDirectoryStructureForConnection:(WCServerConnection *)connection path:(NSString *)path;
+- (NSMutableDictionary *)_structureForConnection:(WCServerConnection *)connection;
 - (NSMutableDictionary *)_filesForConnection:(WCServerConnection *)connection;
 - (NSMutableDictionary *)_directoriesForConnection:(WCServerConnection *)connection;
+- (NSMutableArray *)_directoryForConnection:(WCServerConnection *)connection path:(NSString *)path;
 - (WCFile *)_existingFileForFile:(WCFile *)file;
 - (WCFile *)_existingParentFileForFile:(WCFile *)file;
-- (void)_removeDirectoryAtPath:(NSString *)path connection:(WCServerConnection *)connection;
+- (void)_removeDirectoryForConnection:(WCServerConnection *)connection path:(NSString *)path;
+- (NSMutableDictionary *)_listedFilesForConnection:(WCServerConnection *)connection;
 - (NSMutableArray *)_listedFilesForConnection:(WCServerConnection *)connection message:(WIP7Message *)message;
 - (void)_removeListedFilesForConnection:(WCServerConnection *)connection message:(WIP7Message *)message;
+- (NSMutableDictionary *)_searchedFilesForConnection:(WCServerConnection *)connection;
 - (NSMutableArray *)_searchedFilesForConnection:(WCServerConnection *)connection message:(WIP7Message *)message;
 - (void)_removeSearchedFilesForConnection:(WCServerConnection *)connection message:(WIP7Message *)message;
 
@@ -130,7 +133,8 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 @implementation WCFiles(Private)
 
 - (id)_initFilesWithConnection:(WCServerConnection *)connection file:(WCFile *)file selectFile:(WCFile *)selectFile {
-	NSUInteger		i;
+	NSMutableDictionary		*files;
+	NSUInteger				i;
 	
 	self = [super initWithWindowNibName:@"Files"];
 
@@ -149,18 +153,6 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		
 		_selectFilesWhenOpening = YES;
 	}
-	
-	[_files setObject:[NSDictionary dictionaryWithObjectsAndKeys:
-							[NSMutableDictionary dictionary],
-								WCFilesFiles,
-							[NSMutableDictionary dictionary],
-								WCFilesDirectories,
-							[NSMutableDictionary dictionary],
-								WCFilesListedFiles,
-							[NSMutableDictionary dictionary],
-								WCFilesSearchedFiles,
-							NULL]
-			   forKey:[connection identifier]];
 	
 	_dateFormatter = [[WIDateFormatter alloc] init];
 	[_dateFormatter setTimeStyle:NSDateFormatterShortStyle];
@@ -204,8 +196,10 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	
 	[self _addPlaces];
 	[self _addConnections];
-
-	[[[_files objectForKey:[connection identifier]] objectForKey:WCFilesFiles] setObject:file forKey:[file path]];
+	
+	files = [self _filesForConnection:connection];
+	
+	[files setObject:file forKey:[file path]];
 	
 	[self window];
 	
@@ -536,11 +530,69 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 #pragma mark -
 
-- (void)_createDirectoryStructureForConnection:(WCServerConnection *)connection path:(NSString *)path {
-	NSMutableDictionary		*files, *directories;
+- (NSMutableDictionary *)_structureForConnection:(WCServerConnection *)connection {
+	NSMutableDictionary		*structure;
+	NSString				*identifier;
+	
+	identifier = [connection identifier];
+	
+	if(!identifier)
+		identifier = @"<all>";
+	
+	structure = [_files objectForKey:identifier];
+	
+	if(!structure) {
+		structure = [[NSMutableDictionary alloc] init];
+		[_files setObject:structure forKey:identifier];
+		[structure release];
+	}
+	
+	return structure;
+}
+
+
+
+- (NSMutableDictionary *)_filesForConnection:(WCServerConnection *)connection {
+	NSMutableDictionary		*structure, *files;
+	
+	structure		= [self _structureForConnection:connection];
+	files			= [structure objectForKey:WCFilesFiles];
+	
+	if(!files) {
+		files = [[NSMutableDictionary alloc] init];
+		[structure setObject:files forKey:WCFilesFiles];
+		[files release];
+	}
+	
+	return files;
+}
+
+
+
+- (NSMutableDictionary *)_directoriesForConnection:(WCServerConnection *)connection {
+	NSMutableDictionary		*structure, *directories;
+	
+	structure		= [self _structureForConnection:connection];
+	directories		= [structure objectForKey:WCFilesDirectories];
+	
+	if(!directories) {
+		directories = [[NSMutableDictionary alloc] init];
+		[structure setObject:directories forKey:WCFilesDirectories];
+		[directories release];
+	}
+	
+	return directories;
+}
+
+
+
+- (NSMutableArray *)_directoryForConnection:(WCServerConnection *)connection path:(NSString *)path {
+	NSMutableDictionary		*directories;
 	NSMutableArray			*directory;
 	
-	files			= [self _filesForConnection:connection];
+	if(!path)
+		return NULL;
+	
 	directories		= [self _directoriesForConnection:connection];
 	directory		= [directories objectForKey:path];
 		
@@ -549,18 +601,8 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		[directories setObject:directory forKey:path];
 		[directory release];
 	}
-}	
-
-
-
-- (NSMutableDictionary *)_filesForConnection:(WCServerConnection *)connection {
-	return [[_files objectForKey:[connection identifier]] objectForKey:WCFilesFiles];
-}
-
-
-
-- (NSMutableDictionary *)_directoriesForConnection:(WCServerConnection *)connection {
-	return [[_files objectForKey:[connection identifier]] objectForKey:WCFilesDirectories];
+	
+	return directory;
 }
 
 
@@ -585,7 +627,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 
-- (void)_removeDirectoryAtPath:(NSString *)path connection:(WCServerConnection *)connection {
+- (void)_removeDirectoryForConnection:(WCServerConnection *)connection path:(NSString *)path {
 	NSMutableDictionary		*directories;
 	
 	directories = [self _directoriesForConnection:connection];
@@ -595,17 +637,36 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 
-- (NSMutableArray *)_listedFilesForConnection:(WCServerConnection *)connection message:(WIP7Message *)message {
-	NSMutableArray			*listedFiles;
-	NSNumber				*messageID;
+- (NSMutableDictionary *)_listedFilesForConnection:(WCServerConnection *)connection {
+	NSMutableDictionary		*structure, *listedFiles;
 	
-	messageID		= [message numberForName:@"wired.transaction"];
-	listedFiles		= [[[_files objectForKey:[connection identifier]] objectForKey:WCFilesListedFiles] objectForKey:messageID];
+	structure		= [self _structureForConnection:connection];
+	listedFiles		= [structure objectForKey:WCFilesListedFiles];
 	
 	if(!listedFiles) {
-		listedFiles = [NSMutableArray array];
+		listedFiles = [[NSMutableDictionary alloc] init];
+		[structure setObject:listedFiles forKey:WCFilesListedFiles];
+		[listedFiles release];
+	}
+	
+	return listedFiles;
+}
 
-		[[[_files objectForKey:[connection identifier]] objectForKey:WCFilesListedFiles] setObject:listedFiles forKey:messageID];
+
+
+- (NSMutableArray *)_listedFilesForConnection:(WCServerConnection *)connection message:(WIP7Message *)message {
+	NSMutableDictionary		*files;
+	NSMutableArray			*listedFiles;
+	NSNumber				*transaction;
+	
+	files			= [self _listedFilesForConnection:connection];
+	transaction		= [message numberForName:@"wired.transaction"];
+	listedFiles		= [files objectForKey:transaction];
+	
+	if(!listedFiles) {
+		listedFiles = [[NSMutableArray alloc] init];
+		[files setObject:listedFiles forKey:transaction];
+		[listedFiles release];
 	}
 	
 	return listedFiles;
@@ -614,26 +675,47 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 - (void)_removeListedFilesForConnection:(WCServerConnection *)connection message:(WIP7Message *)message {
-	NSNumber		*messageID;
+	NSMutableDictionary		*files;
+	NSNumber				*transaction;
+	
+	files			= [self _listedFilesForConnection:connection];
+	transaction		= [message numberForName:@"wired.transaction"];
+	
+	[files removeObjectForKey:transaction];
+}
 
-	messageID = [message numberForName:@"wired.transaction"];
 
-	[[[_files objectForKey:[connection identifier]] objectForKey:WCFilesListedFiles] removeObjectForKey:messageID];
+
+- (NSMutableDictionary *)_searchedFilesForConnection:(WCServerConnection *)connection {
+	NSMutableDictionary		*structure, *searchedFiles;
+	
+	structure		= [self _structureForConnection:connection];
+	searchedFiles	= [structure objectForKey:WCFilesSearchedFiles];
+	
+	if(!searchedFiles) {
+		searchedFiles = [[NSMutableDictionary alloc] init];
+		[structure setObject:searchedFiles forKey:WCFilesSearchedFiles];
+		[searchedFiles release];
+	}
+	
+	return searchedFiles;
 }
 
 
 
 - (NSMutableArray *)_searchedFilesForConnection:(WCServerConnection *)connection message:(WIP7Message *)message {
+	NSMutableDictionary		*files;
 	NSMutableArray			*searchedFiles;
-	NSNumber				*messageID;
+	NSNumber				*transaction;
 	
-	messageID		= [message numberForName:@"wired.transaction"];
-	searchedFiles	= [[[_files objectForKey:[connection identifier]] objectForKey:WCFilesSearchedFiles] objectForKey:messageID];
+	files			= [self _searchedFilesForConnection:connection];
+	transaction		= [message numberForName:@"wired.transaction"];
+	searchedFiles	= [files objectForKey:transaction];
 	
 	if(!searchedFiles) {
-		searchedFiles = [NSMutableArray array];
-
-		[[[_files objectForKey:[connection identifier]] objectForKey:WCFilesSearchedFiles] setObject:searchedFiles forKey:messageID];
+		searchedFiles = [[NSMutableArray alloc] init];
+		[files setObject:searchedFiles forKey:transaction];
+		[searchedFiles release];
 	}
 	
 	return searchedFiles;
@@ -642,11 +724,13 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 - (void)_removeSearchedFilesForConnection:(WCServerConnection *)connection message:(WIP7Message *)message {
-	NSNumber		*messageID;
-
-	messageID = [message numberForName:@"wired.transaction"];
-
-	[[[_files objectForKey:[connection identifier]] objectForKey:WCFilesSearchedFiles] removeObjectForKey:messageID];
+	NSMutableDictionary		*files;
+	NSNumber				*transaction;
+	
+	files			= [self _searchedFilesForConnection:connection];
+	transaction		= [message numberForName:@"wired.transaction"];
+	
+	[files removeObjectForKey:transaction];
 }
 
 
@@ -974,7 +1058,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		[_selectFiles setArray:[self _selectedFiles]];
 	
 	connection		= [file connection];
-	directory		= [[self _directoriesForConnection:connection] objectForKey:[file path]];
+	directory		= [self _directoryForConnection:connection path:[file path]];
 	
 	[directory removeAllObjects];
 	
@@ -985,8 +1069,6 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	
 	if(!selectFiles)
 		[_selectFiles removeAllObjects];
-	
-	[self _createDirectoryStructureForConnection:connection path:[file path]];
 	
 	message = [WIP7Message messageWithName:@"wired.file.list_directory" spec:WCP7Spec];
 	[message setString:[file path] forName:@"wired.file.path"];
@@ -1048,12 +1130,11 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 			[self _showSearchBar];
 		}
 		
+		[self _removeDirectoryForConnection:NULL path:@"<search>"];
+		
 		enumerator = [connections objectEnumerator];
 		
 		while((connection = [enumerator nextObject])) {
-			[self _createDirectoryStructureForConnection:connection path:[_currentDirectory path]];
-			
-			[[[self _directoriesForConnection:connection] objectForKey:@"<search>"] removeAllObjects];
 			
 			if([[_searchField stringValue] length] > 2) {
 				[_progressIndicator startAnimation:self];
@@ -1195,7 +1276,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	WCFile					*file;
 	WIFileOffset			size = 0;
 
-	directory		= [[self _directoriesForConnection:[_currentDirectory connection]] objectForKey:[_currentDirectory path]];
+	directory		= [self _directoryForConnection:[_currentDirectory connection] path:[_currentDirectory path]];
 	enumerator		= [directory objectEnumerator];
 
 	while((file = [enumerator nextObject]))
@@ -1224,7 +1305,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	BOOL					complete, first;
 	
 	if([_selectFiles count] > 0) {
-		directory		= [[self _directoriesForConnection:[self _selectedConnection]] objectForKey:[_currentDirectory path]];
+		directory		= [self _directoryForConnection:[self _selectedConnection] path:[_currentDirectory path]];
 		indexes			= [NSMutableIndexSet indexSet];
 		enumerator		= [_selectFiles objectEnumerator];
 		first			= YES;
@@ -1676,7 +1757,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		path			= [message stringForName:@"wired.file.path"];
 		files			= [self _filesForConnection:connection];
 		file			= [files objectForKey:path];
-		directory		= [[self _directoriesForConnection:connection] objectForKey:path];
+		directory		= [self _directoryForConnection:connection path:path];
 		listedFiles		= [self _listedFilesForConnection:connection message:message];
 		enumerator		= [listedFiles objectEnumerator];
 		
@@ -1718,6 +1799,8 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 - (void)wiredFileSearchListReply:(WIP7Message *)message {
+	NSEnumerator			*enumerator;
+	NSMutableDictionary		*files;
 	NSMutableArray			*searchedFiles, *directory;
 	WCServerConnection		*connection;
 	WCFile					*file;
@@ -1731,11 +1814,16 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		
 		[searchedFiles addObject:file];
 	}
-	if([[message name] isEqualToString:@"wired.file.search_list.done"]) {
+	else if([[message name] isEqualToString:@"wired.file.search_list.done"]) {
+		files			= [self _filesForConnection:NULL];
+		directory		= [self _directoryForConnection:NULL path:@"<search>"];
 		searchedFiles	= [self _searchedFilesForConnection:connection message:message];
-		directory		= [[self _directoriesForConnection:connection] objectForKey:@"<search>"];
+		enumerator		= [searchedFiles objectEnumerator];
 		
-		[directory setArray:searchedFiles];
+		while((file = [enumerator nextObject])) {
+			[files setObject:file forKey:[file path]];
+			[directory addObject:file];
+		}
 		
 		[self _removeSearchedFilesForConnection:connection message:message];
 		
@@ -2480,8 +2568,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 #pragma mark -
 
 - (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item {
-	NSMutableDictionary		*directories;
-	NSMutableArray			*directory;
+	WCFile		*file;
 	
 	if(outlineView == _sourceOutlineView) {
 		if(!item)
@@ -2495,14 +2582,12 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		}
 	}
 	else if(outlineView == _filesOutlineView) {
-		directories = [self _directoriesForConnection:[self _selectedConnection]];
-		
-		if(!item)
-			directory = [directories objectForKey:[_currentDirectory path]];
+		if(item)
+			file = item;
 		else
-			directory = [directories objectForKey:[item path]];
+			file = _currentDirectory;
 		
-		return [directory count];
+		return [[self _directoryForConnection:[file connection] path:[file path]] count];
 	}
 	
 	return 0;
@@ -2511,8 +2596,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 - (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(id)item {
-	NSMutableDictionary		*directories;
-	NSMutableArray			*directory;
+	WCFile		*file;
 	
 	if(outlineView == _sourceOutlineView) {
 		if(!item)
@@ -2526,14 +2610,12 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		}
 	}
 	else if(outlineView == _filesOutlineView) {
-		directories = [self _directoriesForConnection:[self _selectedConnection]];
-		
-		if(!item)
-			directory = [directories objectForKey:[_currentDirectory path]];
+		if(item)
+			file = item;
 		else
-			directory = [directories objectForKey:[item path]];
+			file = _currentDirectory;
 		
-		return [directory objectAtIndex:index];
+		return [[self _directoryForConnection:[file connection] path:[file path]] objectAtIndex:index];
 	}
 	
 	return NULL;
@@ -2950,14 +3032,14 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 				[self _revalidateFiles:sources];
 				
 				if(!link) {
-					[self _removeDirectoryAtPath:destinationPath connection:[destinationFile connection]];
+					[self _removeDirectoryForConnection:[destinationFile connection] path:destinationPath];
 					[self performSelectorOnce:@selector(_reloadFilesAtDirectory:) withObject:destinationFile afterDelay:0.1];
 				}
 				
 				while((sourceFile = [enumerator nextObject])) {
 					parentFile = [self _existingParentFileForFile:sourceFile];
 					
-					[self _removeDirectoryAtPath:[parentFile path] connection:[parentFile connection]];
+					[self _removeDirectoryForConnection:[parentFile connection] path:[parentFile path]];
 					[self performSelectorOnce:@selector(_reloadFilesAtDirectory:) withObject:parentFile afterDelay:0.1];
 					
 					message = [WIP7Message messageWithName:link ? @"wired.file.link" : @"wired.file.move" spec:WCP7Spec];
@@ -3004,14 +3086,14 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 			[self _revalidateFiles:sources];
 
 			if(!link) {
-				[self _removeDirectoryAtPath:destinationPath connection:[destinationFile connection]];
+				[self _removeDirectoryForConnection:[destinationFile connection] path:destinationPath];
 				[self performSelectorOnce:@selector(_reloadFilesAtDirectory:) withObject:destinationFile afterDelay:0.1];
 			}
 			
 			while((sourceFile = [enumerator nextObject])) {
 				parentFile = [self _existingParentFileForFile:sourceFile];
 				
-				[self _removeDirectoryAtPath:[parentFile path] connection:[parentFile connection]];
+				[self _removeDirectoryForConnection:[parentFile connection] path:[parentFile path]];
 				[self performSelectorOnce:@selector(_reloadFilesAtDirectory:) withObject:parentFile afterDelay:0.1];
 				
 				message = [WIP7Message messageWithName:link ? @"wired.file.link" : @"wired.file.move" spec:WCP7Spec];
@@ -3112,7 +3194,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 - (NSUInteger)treeView:(WITreeView *)tree numberOfItemsForPath:(NSString *)path {
 	NSMutableArray		*directory;
 	
-	directory = [[self _directoriesForConnection:[self _selectedConnection]] objectForKey:path];
+	directory = [self _directoryForConnection:[self _selectedConnection] path:path];
 	
 	return [directory count];
 }
@@ -3122,7 +3204,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 - (NSString *)treeView:(WITreeView *)tree nameForRow:(NSUInteger)row inPath:(NSString *)path {
 	NSMutableArray		*directory;
 	
-	directory = [[self _directoriesForConnection:[self _selectedConnection]] objectForKey:path];
+	directory = [self _directoryForConnection:[self _selectedConnection] path:path];
 	
 	if(row >= [directory count])
 		return @"";
@@ -3309,14 +3391,14 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		[self _revalidateFiles:sources];
 		
 		if(!link) {
-			[self _removeDirectoryAtPath:destinationPath connection:[destinationFile connection]];
+			[self _removeDirectoryForConnection:[destinationFile connection] path:destinationPath];
 			[self performSelectorOnce:@selector(_reloadFilesAtDirectory:) withObject:destinationFile afterDelay:0.1];
 		}
 		
 		while((sourceFile = [enumerator nextObject])) {
 			parentFile = [self _existingParentFileForFile:sourceFile];
 			
-			[self _removeDirectoryAtPath:[parentFile path] connection:[destinationFile connection]];
+			[self _removeDirectoryForConnection:[destinationFile connection] path:[parentFile path]];
 			[self performSelectorOnce:@selector(_reloadFilesAtDirectory:) withObject:parentFile afterDelay:0.1];
 			
 			message = [WIP7Message messageWithName:link ? @"wired.file.link" : @"wired.file.move" spec:WCP7Spec];
@@ -3440,17 +3522,14 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		}
 	} else {
 		path		= [[item path] stringByDeletingLastPathComponent];
-		directory	= [[self _directoriesForConnection:[(WCFile *) item connection]] objectForKey:path];
-		
-		if(directory) {
-			index = [directory indexOfObject:item];
+		directory	= [self _directoryForConnection:[(WCFile *) item connection] path:path];
+		index		= [directory indexOfObject:item];
 			
-			if(index != NSNotFound) {
-				frame			= [_filesTreeView frameOfRow:index inPath:path];
-				frame.origin	= [[self window] convertBaseToScreen:frame.origin];
+		if(index != NSNotFound) {
+			frame			= [_filesTreeView frameOfRow:index inPath:path];
+			frame.origin	= [[self window] convertBaseToScreen:frame.origin];
 
-				return NSMakeRect(frame.origin.x, frame.origin.y, frame.size.height, frame.size.height);
-			}
+			return NSMakeRect(frame.origin.x, frame.origin.y, frame.size.height, frame.size.height);
 		}
 	}
 
