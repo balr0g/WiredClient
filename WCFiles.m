@@ -2656,7 +2656,20 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	if([notification object] == _filesOutlineView) {
 		file = [[notification userInfo] objectForKey:@"NSObject"];
 		
+		[self _subscribeToDirectory:file];
 		[self _loadFilesAtDirectory:file selectFiles:NO];
+	}
+}
+
+
+
+- (void)outlineViewItemDidCollapse:(NSNotification *)notification {
+	WCFile		*file;
+	
+	if([notification object] == _filesOutlineView) {
+		file = [[notification userInfo] objectForKey:@"NSObject"];
+		
+		[self _unsubscribeFromDirectory:file];
 	}
 }
 
