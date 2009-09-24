@@ -1588,9 +1588,9 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	if(![connection isKindOfClass:[WCServerConnection class]])
 		return;
 	
+	[self _removeSubscriptionsForConnection:connection];
 	[self _invalidatePlacesForConnection:connection];
 	[self _invalidateFilesForConnection:connection];
-	[self _removeSubscriptionsForConnection:connection];
 	
 	[connection removeObserver:self];
 	
@@ -1607,9 +1607,9 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	if(![connection isKindOfClass:[WCServerConnection class]])
 		return;
 	
+	[self _removeSubscriptionsForConnection:connection];
 	[self _invalidatePlacesForConnection:connection];
 	[self _invalidateFilesForConnection:connection];
-	[self _removeSubscriptionsForConnection:connection];
 	
 	if([_currentDirectory connection] == connection) {
 		[_currentDirectory release];
