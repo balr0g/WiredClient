@@ -14,8 +14,8 @@
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<integer value="190"/>
 			<integer value="3"/>
-			<integer value="265"/>
 			<integer value="58"/>
+			<integer value="265"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1574,6 +1574,7 @@
 							</object>
 							<string key="NSRecentsAutosaveName">Files</string>
 							<int key="NSMaximumRecents">255</int>
+							<bool key="NSSendsWholeSearchString">YES</bool>
 						</object>
 					</object>
 					<object class="NSButton" id="1072473847">
