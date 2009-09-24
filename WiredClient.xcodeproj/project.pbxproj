@@ -152,6 +152,8 @@
 		77CFBCBD0E66EFD500F2D5F8 /* Sparkle.framework in Copy Files (Frameworks) */ = {isa = PBXBuildFile; fileRef = 77CFBCB30E66EFCF00F2D5F8 /* Sparkle.framework */; };
 		77E361A40F80EC070065329A /* Files.xib in Resources */ = {isa = PBXBuildFile; fileRef = 77E361A20F80EC070065329A /* Files.xib */; };
 		77E36EEE0F82414F0065329A /* WCFilesSourceOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 77E36EED0F82414F0065329A /* WCFilesSourceOutlineView.m */; };
+		77EF17F4106C19BA00883C96 /* WiredSettings.icns in Resources */ = {isa = PBXBuildFile; fileRef = 77EF17F3106C19BA00883C96 /* WiredSettings.icns */; };
+		77EFFBF5106C12F300883C96 /* WiredServer.icns in Resources */ = {isa = PBXBuildFile; fileRef = 77EFFBF4106C12F300883C96 /* WiredServer.icns */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		A509A96305F3B8F000E6AE2D /* WiredClient.icns in Resources */ = {isa = PBXBuildFile; fileRef = A509A96205F3B8F000E6AE2D /* WiredClient.icns */; };
@@ -571,6 +573,8 @@
 		77E361A30F80EC070065329A /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Files.xib; sourceTree = "<group>"; };
 		77E36EEC0F82414F0065329A /* WCFilesSourceOutlineView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCFilesSourceOutlineView.h; sourceTree = "<group>"; };
 		77E36EED0F82414F0065329A /* WCFilesSourceOutlineView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCFilesSourceOutlineView.m; sourceTree = "<group>"; };
+		77EF17F3106C19BA00883C96 /* WiredSettings.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = WiredSettings.icns; sourceTree = "<group>"; };
+		77EFFBF4106C12F300883C96 /* WiredServer.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = WiredServer.icns; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A509A96205F3B8F000E6AE2D /* WiredClient.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = WiredClient.icns; sourceTree = "<group>"; };
 		A509A98305F4A6D300E6AE2D /* WiredTransfer.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = WiredTransfer.icns; sourceTree = "<group>"; };
@@ -916,6 +920,8 @@
 				7777C7951063D8B800248834 /* WiredBookmarks.icns */,
 				A509A96205F3B8F000E6AE2D /* WiredClient.icns */,
 				A509A98F05F4EB9D00E6AE2D /* WiredScheme.icns */,
+				77EFFBF4106C12F300883C96 /* WiredServer.icns */,
+				77EF17F3106C19BA00883C96 /* WiredSettings.icns */,
 				7777C7E81063DE8700248834 /* WiredTheme.icns */,
 				A509A98305F4A6D300E6AE2D /* WiredTransfer.icns */,
 			);
@@ -1792,9 +1798,11 @@
 				A5326A910F37981C004180AA /* Post.html in Resources */,
 				7777C7961063D8B800248834 /* WiredBookmarks.icns in Resources */,
 				A509A96305F3B8F000E6AE2D /* WiredClient.icns in Resources */,
+				A509A99005F4EB9D00E6AE2D /* WiredScheme.icns in Resources */,
+				77EFFBF5106C12F300883C96 /* WiredServer.icns in Resources */,
+				77EF17F4106C19BA00883C96 /* WiredSettings.icns in Resources */,
 				7777C7E91063DE8700248834 /* WiredTheme.icns in Resources */,
 				A509A98405F4A6D300E6AE2D /* WiredTransfer.icns in Resources */,
-				A509A99005F4EB9D00E6AE2D /* WiredScheme.icns in Resources */,
 				A54AF98C0F13AED000AFD50E /* AliasBadge.icns in Resources */,
 				A54AF98D0F13AED000AFD50E /* Folder.icns in Resources */,
 				A54AF98E0F13AED000AFD50E /* Executable.icns in Resources */,

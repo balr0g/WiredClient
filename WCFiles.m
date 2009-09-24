@@ -2630,19 +2630,32 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 - (void)outlineView:(NSOutlineView *)outlineView willDisplayCell:(id)cell forTableColumn:(NSTableColumn *)tableColumn item:(id)item {
+	NSImage		*image;
+	
 	if(outlineView == _sourceOutlineView) {
-		if([item isKindOfClass:[NSNumber class]])
+		if([item isKindOfClass:[WCFile class]]) {
+			image = [item iconWithWidth:16.0 open:NO];
+			
+			[cell setImage:image];
+		}
+		else if([item isKindOfClass:[NSString class]]) {
+			image = [NSImage imageNamed:@"WiredServer"];
+			
+			[image setSize:NSMakeSize(16.0, 16.0)];
+			[cell setImage:image];
+		}
+		else {
 			[cell setImage:NULL];
-		else if([item isKindOfClass:[WCFile class]])
-			[cell setImage:[item iconWithWidth:16.0 open:NO]];
-		else if([item isKindOfClass:[NSString class]])
-			[cell setImage:NULL];
+		}
 		
 		[cell setVerticalTextOffset:3.0];
 	}
 	else if(outlineView == _filesOutlineView) {
-		if(tableColumn == _nameTableColumn)
-			[cell setImage:[item iconWithWidth:16.0 open:[_filesOutlineView isItemExpanded:item]]];
+		if(tableColumn == _nameTableColumn) {
+			image = [item iconWithWidth:16.0 open:[_filesOutlineView isItemExpanded:item]];
+			
+			[cell setImage:image];
+		}
 	}
 }
 
