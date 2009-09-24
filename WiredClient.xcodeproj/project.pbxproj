@@ -433,8 +433,8 @@
 				77CFBABF0E66EEDD00F2D5F8 /* Growl.framework in Copy Files (Frameworks) */,
 				77A1AF340F15001F00F7D24B /* PSMTabBarControl.framework in Copy Files (Frameworks) */,
 				77CFBCBD0E66EFD500F2D5F8 /* Sparkle.framework in Copy Files (Frameworks) */,
-				7739D4A90E7FFC6400D76C47 /* WiredFoundation.framework in Copy Files (Frameworks) */,
 				7739D4AA0E7FFC6400D76C47 /* WiredAppKit.framework in Copy Files (Frameworks) */,
+				7739D4A90E7FFC6400D76C47 /* WiredFoundation.framework in Copy Files (Frameworks) */,
 				7739D4AB0E7FFC6400D76C47 /* WiredNetworking.framework in Copy Files (Frameworks) */,
 			);
 			name = "Copy Files (Frameworks)";

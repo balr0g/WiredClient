@@ -12,10 +12,10 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="58"/>
 			<integer value="190"/>
 			<integer value="3"/>
 			<integer value="265"/>
+			<integer value="58"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1589,7 +1589,7 @@
 							<reference key="NSSupport" ref="910864519"/>
 							<reference key="NSControlView" ref="1072473847"/>
 							<int key="NSButtonFlags">-2033958657</int>
-							<int key="NSButtonFlags2">35</int>
+							<int key="NSButtonFlags2">163</int>
 							<object class="NSCustomResource" key="NSNormalImage">
 								<string key="NSClassName">NSImage</string>
 								<string key="NSResourceName">DeleteFile</string>
@@ -1612,7 +1612,7 @@
 							<reference key="NSSupport" ref="910864519"/>
 							<reference key="NSControlView" ref="547706532"/>
 							<int key="NSButtonFlags">-2033958657</int>
-							<int key="NSButtonFlags2">35</int>
+							<int key="NSButtonFlags2">163</int>
 							<object class="NSCustomResource" key="NSNormalImage">
 								<string key="NSClassName">NSImage</string>
 								<string key="NSResourceName">QuickLook</string>
@@ -1636,7 +1636,7 @@
 							<reference key="NSSupport" ref="910864519"/>
 							<reference key="NSControlView" ref="929943931"/>
 							<int key="NSButtonFlags">-2033958657</int>
-							<int key="NSButtonFlags2">35</int>
+							<int key="NSButtonFlags2">163</int>
 							<object class="NSCustomResource" key="NSNormalImage">
 								<string key="NSClassName">NSImage</string>
 								<string key="NSResourceName">ReloadFiles</string>
@@ -1659,7 +1659,7 @@
 							<reference key="NSSupport" ref="910864519"/>
 							<reference key="NSControlView" ref="22409882"/>
 							<int key="NSButtonFlags">-2032926465</int>
-							<int key="NSButtonFlags2">35</int>
+							<int key="NSButtonFlags2">163</int>
 							<object class="NSCustomResource" key="NSNormalImage">
 								<string key="NSClassName">NSImage</string>
 								<string key="NSResourceName">NewFolder</string>
@@ -1683,7 +1683,7 @@
 							<reference key="NSSupport" ref="910864519"/>
 							<reference key="NSControlView" ref="157737507"/>
 							<int key="NSButtonFlags">-2033958657</int>
-							<int key="NSButtonFlags2">402653219</int>
+							<int key="NSButtonFlags2">402653347</int>
 							<object class="NSCustomResource" key="NSNormalImage">
 								<string key="NSClassName">NSImage</string>
 								<string key="NSResourceName">FileInfo</string>
@@ -1707,7 +1707,7 @@
 							<reference key="NSSupport" ref="910864519"/>
 							<reference key="NSControlView" ref="458867561"/>
 							<int key="NSButtonFlags">-2033958657</int>
-							<int key="NSButtonFlags2">35</int>
+							<int key="NSButtonFlags2">163</int>
 							<object class="NSCustomResource" key="NSNormalImage">
 								<string key="NSClassName">NSImage</string>
 								<string key="NSResourceName">Upload</string>
@@ -1730,7 +1730,7 @@
 							<reference key="NSSupport" ref="910864519"/>
 							<reference key="NSControlView" ref="94826532"/>
 							<int key="NSButtonFlags">-2033958657</int>
-							<int key="NSButtonFlags2">35</int>
+							<int key="NSButtonFlags2">163</int>
 							<object class="NSCustomResource" key="NSNormalImage">
 								<string key="NSClassName">NSImage</string>
 								<string key="NSResourceName">Download</string>
@@ -1762,7 +1762,7 @@
 									<string key="NSSegmentItemLabel"/>
 									<string key="NSSegmentItemTooltip">List View</string>
 									<bool key="NSSegmentItemSelected">YES</bool>
-									<int key="NSSegmentItemImageScaling">2</int>
+									<int key="NSSegmentItemImageScaling">0</int>
 								</object>
 								<object class="NSSegmentItem">
 									<double key="NSSegmentItemWidth">24</double>
@@ -1772,7 +1772,7 @@
 									</object>
 									<string key="NSSegmentItemTooltip">Column View</string>
 									<int key="NSSegmentItemTag">1</int>
-									<int key="NSSegmentItemImageScaling">2</int>
+									<int key="NSSegmentItemImageScaling">0</int>
 								</object>
 							</object>
 							<int key="NSSegmentStyle">2</int>
@@ -1799,7 +1799,7 @@
 									</object>
 									<string key="NSSegmentItemLabel"/>
 									<string key="NSSegmentItemTooltip">Back</string>
-									<int key="NSSegmentItemImageScaling">2</int>
+									<int key="NSSegmentItemImageScaling">0</int>
 								</object>
 								<object class="NSSegmentItem">
 									<double key="NSSegmentItemWidth">24</double>
@@ -1810,7 +1810,7 @@
 									<string key="NSSegmentItemLabel"/>
 									<string key="NSSegmentItemTooltip">Forward</string>
 									<int key="NSSegmentItemTag">1</int>
-									<int key="NSSegmentItemImageScaling">2</int>
+									<int key="NSSegmentItemImageScaling">0</int>
 								</object>
 							</object>
 							<int key="NSTrackingMode">2</int>
@@ -3402,9 +3402,11 @@
 					<string>191.IBPluginDependency</string>
 					<string>191.ImportedFromIB2</string>
 					<string>192.IBPluginDependency</string>
+					<string>192.IBSegmentedControlInspectorSelectedSegmentMetadataKey</string>
 					<string>195.IBPluginDependency</string>
 					<string>195.ImportedFromIB2</string>
 					<string>196.IBPluginDependency</string>
+					<string>196.IBSegmentedControlInspectorSelectedSegmentMetadataKey</string>
 					<string>199.IBAttributePlaceholdersKey</string>
 					<string>199.IBPluginDependency</string>
 					<string>199.ImportedFromIB2</string>
@@ -3651,9 +3653,11 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<integer value="1"/>
 					<object class="NSMutableDictionary">
 						<string key="NS.key.0">ToolTip</string>
 						<object class="IBToolTipAttribute" key="NS.object.0">
