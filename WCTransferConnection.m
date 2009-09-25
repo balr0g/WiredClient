@@ -62,6 +62,7 @@
 - (void)dealloc {
 	[_socket release];
 	[_p7Socket release];
+	[_transfer release];
 	
 	[super dealloc];
 }

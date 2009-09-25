@@ -232,6 +232,8 @@
 
 
 - (void)dealloc {
+	[_identifier release];
+	
 	[_transferConnection release];
 	[_name release];
 	[_localPath release];

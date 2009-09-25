@@ -1128,9 +1128,14 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 			[transfer signalTerminated];
 		}
 		
-		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
-							   withObject:transfer
-							   withObject:error];
+		if(error) {
+			[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
+								   withObject:transfer
+								   withObject:error];
+		} else {
+			[self performSelectorOnMainThread:@selector(_finishTransfer:)
+								   withObject:transfer];
+		}
 		
 		return;
 	}
@@ -1272,7 +1277,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 							   withObject:transfer
 							   withObject:error];
 	} else {
-		[self performSelectorOnMainThread:@selector(_finishTransfer:) withObject:transfer];
+		[self performSelectorOnMainThread:@selector(_finishTransfer:)
+							   withObject:transfer];
 	}
 	
 	[pool release];
@@ -1373,9 +1379,14 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 			[transfer signalTerminated];
 		}
 		
-		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
-							   withObject:transfer
-							   withObject:error];
+		if(error) {
+			[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
+								   withObject:transfer
+								   withObject:error];
+		} else {
+			[self performSelectorOnMainThread:@selector(_finishTransfer:)
+								   withObject:transfer];
+		}
 		
 		return;
 	}
@@ -1528,7 +1539,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 							   withObject:transfer
 							   withObject:error];
 	} else {
-		[self performSelectorOnMainThread:@selector(_finishTransfer:) withObject:transfer];
+		[self performSelectorOnMainThread:@selector(_finishTransfer:)
+							   withObject:transfer];
 	}
 	
 	[pool release];

@@ -1213,6 +1213,9 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 - (void)_openFile:(WCFile *)file overrideNewWindow:(BOOL)override {
 	BOOL	optionKey, newWindows;
+	
+	if(![file connection] || ![[file connection] isConnected])
+		return;
 
 	optionKey = (([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask) != 0);
 	newWindows = [[WCSettings settings] boolForKey:WCOpenFoldersInNewWindows];
