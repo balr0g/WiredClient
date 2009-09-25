@@ -1041,7 +1041,6 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	NSAutoreleasePool			*pool;
 	NSProgressIndicator			*progressIndicator;
 	NSString					*dataPath, *rsrcPath;
-	NSFileHandle				*dataFileHandle, *rsrcFileHandle;
 	NSData						*finderInfo;
 	WIP7Socket					*socket;
 	WIP7Message					*message;
@@ -1139,21 +1138,28 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	[message getUInt64:&dataLength forName:@"wired.transfer.data"];
 	[message getUInt64:&rsrcLength forName:@"wired.transfer.rsrc"];
 	
-	if((![[NSFileManager defaultManager] fileExistsAtPath:dataPath] &&
-		![[NSFileManager defaultManager] createFileAtPath:dataPath]) ||
-	   (![[NSFileManager defaultManager] fileExistsAtPath:rsrcPath] &&
-		![[NSFileManager defaultManager] createFileAtPath:rsrcPath])) {
-		error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientCreateFailed argument:dataPath];
+	dataFD = open([dataPath fileSystemRepresentation], O_WRONLY | O_APPEND | O_CREAT, 0666);
+	rsrcFD = open([rsrcPath fileSystemRepresentation], O_WRONLY | O_APPEND | O_CREAT, 0666);
+	
+	if((dataFD < 0 || lseek(dataFD, [file dataTransferred], SEEK_SET) < 0) ||
+	   (rsrcFD < 0 || lseek(rsrcFD, [file rsrcTransferred], SEEK_SET) < 0)) {
+		error = [NSError errorWithDomain:NSPOSIXErrorDomain code:errno];
 		
 		if(![transfer isTerminating]) {
 			[transfer setState:WCTransferStopping];
 			[transfer signalTerminated];
 		}
+		
+		if(dataFD >= 0)
+			close(dataFD);
+		
+		if(rsrcFD >= 0)
+			close(rsrcFD);
 
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 							   withObject:transfer
 							   withObject:error];
-		   
+		
 		return;
 	}
 	
@@ -1162,35 +1168,11 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	if([finderInfo length] > 0)
 		[[NSFileManager defaultManager] setFinderInfo:finderInfo atPath:dataPath];
 	
-	dataFileHandle = [NSFileHandle fileHandleForUpdatingAtPath:dataPath];
-	rsrcFileHandle = [NSFileHandle fileHandleForUpdatingAtPath:rsrcPath];
-	
-	if(!dataFileHandle || !rsrcFileHandle) {
-		error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientOpenFailed argument:dataPath];
-		
-		if(![transfer isTerminating]) {
-			[transfer setState:WCTransferStopping];
-			[transfer signalTerminated];
-		}
-
-		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
-							   withObject:transfer
-							   withObject:error];
-		
-		return;
-	}
-	
-	[dataFileHandle seekToFileOffset:[file dataTransferred]];
-	[rsrcFileHandle seekToFileOffset:[file rsrcTransferred]];
-	
 	if(![transfer isTerminating]) {
 		[transfer setState:WCTransferRunning];
 		
 		[self performSelectorOnMainThread:@selector(_validate)];
 	}
-	
-	dataFD = [dataFileHandle fileDescriptor];
-	rsrcFD = [rsrcFileHandle fileDescriptor];
 	
 	wi_speed_calculator_add_bytes_at_time(transfer->_speedCalculator, 0, speedTime);
 	
@@ -1270,6 +1252,9 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		}
 	}
 	
+	close(dataFD);
+	close(rsrcFD);
+	
 	wi_speed_calculator_add_bytes_at_time(transfer->_speedCalculator, speedBytes, speedTime);
 	
 	transfer->_speed = wi_speed_calculator_speed(transfer->_speedCalculator);
@@ -1299,7 +1284,6 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	NSAutoreleasePool			*pool;
 	NSProgressIndicator			*progressIndicator;
 	NSString					*dataPath, *rsrcPath;
-	NSFileHandle				*dataFileHandle, *rsrcFileHandle;
 	WIP7Socket					*socket;
 	WIP7Message					*message;
 	WCTransferConnection		*connection;
@@ -1415,16 +1399,23 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		return;
 	}
 	
-	dataFileHandle = [NSFileHandle fileHandleForReadingAtPath:dataPath];
-	rsrcFileHandle = [NSFileHandle fileHandleForReadingAtPath:rsrcPath];
+	dataFD = open([dataPath fileSystemRepresentation], O_RDONLY, 0666);
+	rsrcFD = open([rsrcPath fileSystemRepresentation], O_RDONLY, 0666);
 	
-	if(!dataFileHandle || !rsrcFileHandle) {
-		error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientOpenFailed argument:dataPath];
+	if((dataFD < 0 || lseek(dataFD, [file dataTransferred], SEEK_SET) < 0) ||
+	   (rsrcFD < 0 || lseek(rsrcFD, [file rsrcTransferred], SEEK_SET) < 0)) {
+		error = [WCError errorWithDomain:NSPOSIXErrorDomain code:errno];
 		
 		if(![transfer isTerminating]) {
 			[transfer setState:WCTransferStopping];
 			[transfer signalTerminated];
 		}
+		
+		if(dataFD >= 0)
+			close(dataFD);
+		
+		if(rsrcFD >= 0)
+			close(rsrcFD);
 		
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 							   withObject:transfer
@@ -1433,17 +1424,11 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		return;
 	}
 
-	[dataFileHandle seekToFileOffset:dataOffset];
-	[rsrcFileHandle seekToFileOffset:rsrcOffset];
-	
 	if(![transfer isTerminating]) {
 		[transfer setState:WCTransferRunning];
 		
 		[self performSelectorOnMainThread:@selector(_validate)];
 	}
-	
-	dataFD = [dataFileHandle fileDescriptor];
-	rsrcFD = [rsrcFileHandle fileDescriptor];
 	
 	wi_speed_calculator_add_bytes_at_time(transfer->_speedCalculator, 0, speedTime);
 
@@ -1522,6 +1507,9 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 			pool = NULL;
 		}
 	}
+	
+	close(dataFD);
+	close(rsrcFD);
 	
 	wi_speed_calculator_add_bytes_at_time(transfer->_speedCalculator, speedBytes, speedTime);
 	
