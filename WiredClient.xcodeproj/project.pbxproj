@@ -153,6 +153,7 @@
 		77E361A40F80EC070065329A /* Files.xib in Resources */ = {isa = PBXBuildFile; fileRef = 77E361A20F80EC070065329A /* Files.xib */; };
 		77E36EEE0F82414F0065329A /* WCFilesSourceOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 77E36EED0F82414F0065329A /* WCFilesSourceOutlineView.m */; };
 		77EF17F4106C19BA00883C96 /* WiredSettings.icns in Resources */ = {isa = PBXBuildFile; fileRef = 77EF17F3106C19BA00883C96 /* WiredSettings.icns */; };
+		77EF3740106E605400883C96 /* WCBan.m in Sources */ = {isa = PBXBuildFile; fileRef = A558A4ED0E8526F7004C724C /* WCBan.m */; };
 		77EFFBF5106C12F300883C96 /* WiredServer.icns in Resources */ = {isa = PBXBuildFile; fileRef = 77EFFBF4106C12F300883C96 /* WiredServer.icns */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -264,7 +265,6 @@
 		A54AF98E0F13AED000AFD50E /* Executable.icns in Resources */ = {isa = PBXBuildFile; fileRef = A54AF9890F13AED000AFD50E /* Executable.icns */; };
 		A54AF98F0F13AED000AFD50E /* DropBoxBadge.icns in Resources */ = {isa = PBXBuildFile; fileRef = A54AF98A0F13AED000AFD50E /* DropBoxBadge.icns */; };
 		A54AF9900F13AED000AFD50E /* UploadsBadge.icns in Resources */ = {isa = PBXBuildFile; fileRef = A54AF98B0F13AED000AFD50E /* UploadsBadge.icns */; };
-		A558A4EF0E8526F7004C724C /* WCBan.m in Sources */ = {isa = PBXBuildFile; fileRef = A558A4ED0E8526F7004C724C /* WCBan.m */; };
 		A55C73440F268087006E8568 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A55C73430F268087006E8568 /* libicucore.dylib */; };
 		A55C7C060F2E4F8A006E8568 /* PrivateChatInvitation.xib in Resources */ = {isa = PBXBuildFile; fileRef = A55C7C040F2E4F8A006E8568 /* PrivateChatInvitation.xib */; };
 		A55C7C0D0F2E500A006E8568 /* WCPrivateChatInvitation.m in Sources */ = {isa = PBXBuildFile; fileRef = A55C7C0C0F2E500A006E8568 /* WCPrivateChatInvitation.m */; };
@@ -2050,7 +2050,7 @@
 				A5AAD12B0D86EA9C0072FFA1 /* WCAdministration.m in Sources */,
 				A5DC7FCE057AB0F200736BBF /* WCApplication.m in Sources */,
 				A5DC7EC8057AAEAD00736BBF /* WCApplicationController.m in Sources */,
-				A558A4EF0E8526F7004C724C /* WCBan.m in Sources */,
+				77EF3740106E605400883C96 /* WCBan.m in Sources */,
 				A5D409770D897771007851BD /* WCBanlistController.m in Sources */,
 				77CED3A50EC068F500123164 /* WCBoard.m in Sources */,
 				77CED3A60EC068F500123164 /* WCBoardPost.m in Sources */,

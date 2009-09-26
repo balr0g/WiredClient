@@ -952,6 +952,13 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		[self search:self];
 	}
 	
+	if([self _selectedStyle] == WCFilesStyleList && _initialDirectory) {
+		file = [[_initialDirectory retain] autorelease];
+		
+		[_initialDirectory release];
+		_initialDirectory = NULL;
+	}
+	
 	file = [self _existingFileForFile:file];
 	
 	if(_currentDirectory) {
