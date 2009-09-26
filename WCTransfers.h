@@ -61,6 +61,7 @@
 - (NSString *)quickLookMenuItemTitle;
 
 - (BOOL)addTransferAtPath:(NSString *)path;
+- (BOOL)downloadFiles:(NSArray *)files;
 - (BOOL)downloadFile:(WCFile *)file;
 - (BOOL)downloadFile:(WCFile *)file toFolder:(NSString *)destination;
 - (BOOL)uploadPath:(NSString *)path toFolder:(WCFile *)destination;

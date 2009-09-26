@@ -33,6 +33,7 @@
 #import "WCFileInfo.h"
 #import "WCFiles.h"
 #import "WCPreferences.h"
+#import "WCPublicChat.h"
 #import "WCServer.h"
 #import "WCServerConnection.h"
 #import "WCServerInfo.h"
@@ -75,7 +76,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 - (void)_presentError:(WCError *)error forConnection:(WCServerConnection *)connection transfer:(WCTransfer *)transfer;
 
 - (WCTransfer *)_selectedTransfer;
-- (WCTransfer *)_unfinishedTransferWithPath:(NSString *)path;
+- (WCTransfer *)_unfinishedTransferWithPath:(NSString *)path connection:(WCServerConnection *)connection;
 - (WCTransfer *)_transferWithState:(WCTransferState)state;
 - (WCTransfer *)_transferWithState:(WCTransferState)state class:(Class)class;
 - (WCTransfer *)_transferWithTransaction:(NSUInteger)transaction;
@@ -91,6 +92,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 - (void)_finishTransfer:(WCTransfer *)transfer;
 - (void)_removeTransfer:(WCTransfer *)transfer;
 
+- (BOOL)_downloadFiles:(NSArray *)file toFolder:(NSString *)destination;
 - (BOOL)_downloadFile:(WCFile *)file toFolder:(NSString *)destination;
 - (BOOL)_uploadPath:(NSString *)path toFolder:(WCFile *)destination;
 
@@ -273,7 +275,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 
 
-- (WCTransfer *)_unfinishedTransferWithPath:(NSString *)path {
+- (WCTransfer *)_unfinishedTransferWithPath:(NSString *)path connection:(WCServerConnection *)connection {
 	NSEnumerator		*enumerator;
 	WCTransfer			*transfer;
 
@@ -286,7 +288,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 				   [path hasPrefix:[[transfer remotePath] stringByAppendingString:@"/"]])
 					return transfer;
 			} else {
-				if([transfer containsUntransferredFile:[WCFile fileWithFile:path connection:NULL]])
+				if([transfer containsUntransferredFile:[WCFile fileWithFile:path connection:connection]])
 					return transfer;
 			}
 		}
@@ -366,38 +368,84 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 #pragma mark -
 
+- (BOOL)_downloadFiles:(NSArray *)files toFolder:(NSString *)destination {
+	NSEnumerator		*enumerator;
+	NSMutableArray		*existingFiles;
+	NSAlert				*alert;
+	NSString			*path, *title, *description;
+	WCFile				*file;
+	BOOL				isDirectory;
+	
+	existingFiles		= [NSMutableArray array];
+	enumerator			= [files objectEnumerator];
+	
+	while((file = [enumerator nextObject])) {
+		path = [destination stringByAppendingPathComponent:[file name]];
+		
+		if([[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isDirectory]) {
+			if(!(isDirectory && [file isFolder])) {
+				[existingFiles addObject:path];
+				
+				continue;
+			}
+		}
+	}
+	
+	if([existingFiles count] > 0) {
+		if([existingFiles count] == 1) {
+			title = [NSSWF:NSLS(@"Overwrite \u201c%@\u201d?", @"Transfers overwrite alert title (name)"),
+				[[existingFiles objectAtIndex:0] lastPathComponent]];
+			description = NSLS(@"The file already exists on disk. Overwrite to delete it.",
+				@"Transfers overwrite alert description");
+		} else {
+			title = [NSSWF:NSLS(@"Overwrite %u files?", @"Transfers overwrite alert title (count)"),
+				[existingFiles count]];
+			description = NSLS(@"Some files already exist on disk. Overwrite to delete them.",
+				@"Transfers overwrite alert description");
+		}
+		
+		alert = [[[NSAlert alloc] init] autorelease];
+		[alert setMessageText:title];
+		[alert setInformativeText:description];
+		[alert addButtonWithTitle:NSLS(@"Cancel", @"Transfers overwrite alert button")];
+		[alert addButtonWithTitle:NSLS(@"Overwrite", @"Transfers overwrite alert button")];
+		
+		if([alert runModal] == NSAlertFirstButtonReturn)
+			return NO;
+		
+		enumerator = [existingFiles objectEnumerator];
+		
+		while((path = [enumerator nextObject]))
+			[[NSFileManager defaultManager] removeFileAtPath:path handler:NULL];
+	}
+	
+	enumerator = [files objectEnumerator];
+	
+	while((file = [enumerator nextObject])) {
+		if(![self _downloadFile:file toFolder:destination])
+			return NO;
+	}
+	
+	return YES;
+}
+
+
+
 - (BOOL)_downloadFile:(WCFile *)file toFolder:(NSString *)destination {
-	NSAlert					*alert;
 	NSString				*path;
 	WCDownloadTransfer		*transfer;
 	WCError					*error;
-	BOOL					isDirectory;
 	NSUInteger				count;
 
-	if([self _unfinishedTransferWithPath:[file path]]) {
+	if([self _unfinishedTransferWithPath:[file path] connection:[file connection]]) {
 		error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientTransferExists argument:[file path]];
+		
 		[self _presentError:error forConnection:[file connection] transfer:NULL];
 		
 		return NO;
 	}
-
-	path = [destination stringByAppendingPathComponent:[file name]];
 	
-	if([[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isDirectory]) {
-		if(!(isDirectory && [file isFolder])) {
-			alert = [[[NSAlert alloc] init] autorelease];
-			[alert setMessageText:NSLS(@"File Exists", @"Transfers overwrite alert title")];
-			[alert setInformativeText:[NSSWF:NSLS(@"The file \u201c%@\u201d already exists. Overwrite?",
-												  @"Transfers overwrite alert title"), path]];
-			[alert addButtonWithTitle:NSLS(@"Cancel", @"Transfers overwrite alert button")];
-			[alert addButtonWithTitle:NSLS(@"Overwrite", @"Transfers overwrite alert button")];
-			
-			if([alert runModal] == NSAlertFirstButtonReturn)
-				return NO;
-			
-			[[NSFileManager defaultManager] removeFileAtPath:path handler:NULL];
-		}
-	}
+	path = [destination stringByAppendingPathComponent:[file name]];
 	
 	transfer = [WCDownloadTransfer transferWithConnection:[file connection]];
 	[transfer setDestinationPath:destination];
@@ -462,7 +510,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	
 	remotePath = [[destination path] stringByAppendingPathComponent:[path lastPathComponent]];
 
-	if([self _unfinishedTransferWithPath:remotePath]) {
+	if([self _unfinishedTransferWithPath:remotePath connection:[destination connection]]) {
 		error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientTransferExists argument:remotePath];
 		[self _presentError:error forConnection:[destination connection] transfer:NULL];
 		
@@ -1001,7 +1049,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 			
 			return message;
 		}
-
+		
 		if([name isEqualToString:@"wired.transfer.queue"]) {
 			[message getUInt32:&queue forName:@"wired.transfer.queue_position"];
 			
@@ -2126,9 +2174,11 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 #pragma mark -
 
 - (BOOL)addTransferAtPath:(NSString *)path {
-	NSData			*data;
-	WCTransfer		*transfer, *existingTransfer;
-	NSUInteger		index;
+	NSEnumerator			*enumerator;
+	NSData					*data;
+	WCServerConnection		*connection;
+	WCTransfer				*transfer, *existingTransfer;
+	NSUInteger				index;
 	
 	[self showWindow:self];
 	
@@ -2142,7 +2192,21 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	if(!transfer || ![transfer isKindOfClass:[WCTransfer class]])
 		return NO;
 	
-	existingTransfer = [self _unfinishedTransferWithPath:[[transfer firstUntransferredFile] path]];
+	enumerator = [[[WCPublicChat publicChat] chatControllers] objectEnumerator];
+	
+	while((connection = [enumerator nextObject])) {
+		if([transfer belongsToConnection:connection]) {
+			[transfer setConnection:connection];
+			
+			break;
+		}
+	}
+	
+	if(![transfer connection])
+		return NO;
+	
+	existingTransfer = [self _unfinishedTransferWithPath:[[transfer firstUntransferredFile] path]
+											  connection:[transfer connection]];
 	
 	if(existingTransfer) {
 		index = [_transfers indexOfObject:existingTransfer];
@@ -2163,14 +2227,22 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 
 
+- (BOOL)downloadFiles:(NSArray *)files {
+	return [self _downloadFiles:files
+					   toFolder:[[[WCSettings settings] objectForKey:WCDownloadFolder] stringByStandardizingPath]];
+}
+
+
+
 - (BOOL)downloadFile:(WCFile *)file {
-	return [self _downloadFile:file toFolder:[[[WCSettings settings] objectForKey:WCDownloadFolder] stringByStandardizingPath]];
+	return [self _downloadFiles:[NSArray arrayWithObject:file]
+					   toFolder:[[[WCSettings settings] objectForKey:WCDownloadFolder] stringByStandardizingPath]];
 }
 
 
 
 - (BOOL)downloadFile:(WCFile *)file toFolder:(NSString *)destination {
-	return [self _downloadFile:file toFolder:destination];
+	return [self _downloadFiles:[NSArray arrayWithObject:file] toFolder:destination];
 }
 
 

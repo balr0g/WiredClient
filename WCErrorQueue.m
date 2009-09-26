@@ -126,7 +126,7 @@
 #pragma mark -
 
 - (void)showError:(NSError *)error {
-	[self showError:error withIdentifier:@""];
+	[self showError:error withIdentifier:NULL];
 }
 
 
@@ -136,7 +136,7 @@
 		[NSBundle loadNibNamed:@"Error" owner:self];
 	
 	[_errors addObject:error];
-	[_identifiers addObject:identifier];
+	[_identifiers addObject:identifier ? identifier : @""];
 
 	if(_showingPanel) {
 		_shownError++;

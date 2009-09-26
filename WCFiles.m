@@ -120,7 +120,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 - (void)_showSearchBar;
 - (void)_hideSearchBar;
 
-- (void)_openFile:(WCFile *)file overrideNewWindow:(BOOL)override;
+- (void)_openFiles:(NSArray *)files overrideNewWindow:(BOOL)override;
 - (void)_quickLook;
 - (void)_reloadStatus;
 - (void)_selectFiles;
@@ -1211,29 +1211,39 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 #pragma mark -
 
-- (void)_openFile:(WCFile *)file overrideNewWindow:(BOOL)override {
-	BOOL	optionKey, newWindows;
+- (void)_openFiles:(NSArray *)files overrideNewWindow:(BOOL)override {
+	NSEnumerator		*enumerator;
+	NSMutableArray		*downloadFiles;
+	WCFile				*file;
+	BOOL				optionKey, newWindows;
 	
-	if(![file connection] || ![[file connection] isConnected])
-		return;
+	downloadFiles		= [NSMutableArray array];
+	optionKey			= [[NSApp currentEvent] alternateKeyModifier];
+	newWindows			= [[WCSettings settings] boolForKey:WCOpenFoldersInNewWindows];
+	enumerator			= [files objectEnumerator];
+	
+	while((file = [enumerator nextObject])) {
+		if([file connection] && [[file connection] isConnected]) {
+			switch([file type]) {
+				case WCFileDirectory:
+				case WCFileUploads:
+				case WCFileDropBox:
+					if(override || (newWindows && !optionKey) || (!newWindows && optionKey))
+						[WCFiles filesWithConnection:[file connection] file:file];
+					else
+						[self _changeCurrentDirectory:file selectFiles:YES forceSelection:NO addToHistory:YES];
+					break;
 
-	optionKey = (([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask) != 0);
-	newWindows = [[WCSettings settings] boolForKey:WCOpenFoldersInNewWindows];
-
-	switch([file type]) {
-		case WCFileDirectory:
-		case WCFileUploads:
-		case WCFileDropBox:
-			if(override || (newWindows && !optionKey) || (!newWindows && optionKey))
-				[WCFiles filesWithConnection:[file connection] file:file];
-			else
-				[self _changeCurrentDirectory:file selectFiles:YES forceSelection:NO addToHistory:YES];
-			break;
-
-		case WCFileFile:
-			[[WCTransfers transfers] downloadFile:file];
-			break;
+				case WCFileFile:
+					[downloadFiles addObject:file];
+					break;
+			}
+		}
 	}
+	
+	
+	if([downloadFiles count] > 0)
+		[[WCTransfers transfers] downloadFiles:files];
 }
 
 
@@ -2100,20 +2110,16 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 #pragma mark -
 
 - (IBAction)open:(id)sender {
-	NSEnumerator	*enumerator;
 	NSArray			*files;
-	WCFile			*file;
 	NSUInteger		style;
 	
 	if([self _selectedStyle] == WCFilesStyleList && [_filesOutlineView clickedHeader])
 		return;
 
-	style		= [self _selectedStyle];
-	files		= [self _selectedFiles];
-	enumerator	= [files objectEnumerator];
+	style = [self _selectedStyle];
+	files = [self _selectedFiles];
 	
-	while((file = [enumerator nextObject]))
-		[self _openFile:file overrideNewWindow:(style == WCFilesStyleTree || [files count] > 1 || _searching)];
+	[self _openFiles:files overrideNewWindow:(style == WCFilesStyleTree || [files count] > 1 || _searching)];
 }
 
 
@@ -2132,7 +2138,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		
 		file = [self _existingParentFileForFile:_currentDirectory];
 		
-		[self _openFile:file overrideNewWindow:([self _selectedStyle] == WCFilesStyleTree)];
+		[self _openFiles:[NSArray arrayWithObject:file] overrideNewWindow:([self _selectedStyle] == WCFilesStyleTree)];
 	}
 }
 
@@ -2213,16 +2219,10 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 - (IBAction)download:(id)sender {
-	NSEnumerator	*enumerator;
-	WCFile			*file;
-
 	if(![self _validateDownload])
 		return;
 
-	enumerator = [[self _selectedFiles] objectEnumerator];
-
-	while((file = [enumerator nextObject]))
-		[[WCTransfers transfers] downloadFile:file];
+	[[WCTransfers transfers] downloadFiles:[self _selectedFiles]];
 }
 
 

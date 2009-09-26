@@ -127,14 +127,23 @@
 	
 	message = [_p7Socket readMessageWithTimeout:timeout error:error];
 	
-	if(message) {
+	if(!message)
+		return NULL;
+	
+	if([_p7Socket verifyMessage:message error:error]) {
 		if([[message name] isEqualToString:@"wired.error"])
 			[[_transfer connection] postNotificationName:WCLinkConnectionReceivedErrorMessageNotification object:message];
 		else
 			[[_transfer connection] postNotificationName:WCLinkConnectionReceivedMessageNotification object:message];
+		
+		return message;
+	} else {
+		[[_transfer connection] postNotificationName:WCLinkConnectionReceivedInvalidMessageNotification
+											  object:message
+											userInfo:[NSDictionary dictionaryWithObject:*error forKey:@"WCError"]];
+		
+		return NULL;
 	}
-	
-	return message;
 }
 
 
