@@ -28,6 +28,7 @@
 
 #import "WCAccount.h"
 #import "WCChatWindow.h"
+#import "WCErrorQueue.h"
 #import "WCPrivateChat.h"
 #import "WCPrivateChatInvitation.h"
 #import "WCPublicChat.h"
@@ -101,6 +102,19 @@
 	[[WCPublicChat publicChat] showWindow:self];
 	
 	[super linkConnectionLoggedIn:notification];
+}
+
+
+
+- (void)wiredUserBanUserReply:(WIP7Message *)message {
+	if([[message name] isEqualToString:@"wired.okay"]) {
+		[[self connection] removeObserver:self message:message];
+	}
+	else if([[message name] isEqualToString:@"wired.error"]) {
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
+		
+		[[self connection] removeObserver:self message:message];
+	}
 }
 
 
@@ -218,7 +232,7 @@
 	WIP7Message		*message;
 	WCUser			*user = contextInfo;
 
-	if(returnCode == NSAlertDefaultReturn) {
+	if(returnCode == NSOKButton) {
 		message = [WIP7Message messageWithName:@"wired.user.ban_user" spec:WCP7Spec];
 		[message setUInt32:[user userID] forName:@"wired.user.id"];
 		[message setString:[_banMessageTextField stringValue] forName:@"wired.user.disconnect_message"];
@@ -228,7 +242,7 @@
 					 forName:@"wired.banlist.expiration_date"];
 		}
 		
-		[[self connection] sendMessage:message];
+		[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredUserBanUserReply:)];
 	}
 
 	[user release];

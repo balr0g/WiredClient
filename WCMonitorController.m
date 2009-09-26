@@ -37,6 +37,10 @@
 
 @interface WCMonitorController(Private)
 
+- (void)_validate;
+- (BOOL)_validateGetInfo;
+- (BOOL)_validateDisconnect;
+
 - (void)_reloadUsers;
 - (void)_requestUsers;
 - (BOOL)_filterIncludesUser:(WCUser *)user;
@@ -50,6 +54,30 @@
 
 @implementation WCMonitorController(Private)
 
+- (void)_validate {
+	[_disconnectButton setEnabled:[self _validateDisconnect]];
+}
+
+
+
+- (BOOL)_validateGetInfo {
+	return ([self _selectedUser] != NULL &&
+			[[_administration connection] isConnected] &&
+			[[[_administration connection] account] userGetInfo]);
+}
+
+
+
+- (BOOL)_validateDisconnect {
+	return ([self _selectedUser] != NULL &&
+			[[_administration connection] isConnected] &&
+			[[[_administration connection] account] userDisconnectUsers]);
+}
+
+
+
+#pragma mark -
+
 - (void)_reloadUsers {
 	if([[_administration window] isVisible] && [_administration selectedController] == self)
 		[self _requestUsers];
@@ -61,8 +89,6 @@
 	WIP7Message		*message;
 	
 	if([[_administration connection] isConnected] && [[[_administration connection] account] userGetUsers]) {
-		[_allUsers removeAllObjects];
-		
 		message = [WIP7Message messageWithName:@"wired.user.get_users" spec:WCP7Spec];
 		[[_administration connection] sendMessage:message fromObserver:self selector:@selector(wiredUserGetUsersReply:)];
 	}
@@ -139,8 +165,9 @@
 - (id)init {
 	self = [super init];
 	
-	_allUsers = [[NSMutableArray alloc] init];
-	_shownUsers = [[NSMutableArray alloc] init];
+	_listedUsers	= [[NSMutableArray alloc] init];
+	_allUsers		= [[NSMutableArray alloc] init];
+	_shownUsers		= [[NSMutableArray alloc] init];
 	
 	_dateFormatter = [[WIDateFormatter alloc] init];
 	[_dateFormatter setTimeStyle:NSDateFormatterShortStyle];
@@ -153,6 +180,7 @@
 
 
 - (void)dealloc {
+	[_listedUsers release];
 	[_allUsers release];
 	[_shownUsers release];
 	
@@ -191,6 +219,7 @@
 
 
 - (void)serverConnectionPrivilegesDidChange:(NSNotification *)notification {
+	[self _validate];
 	[self _reloadUsers];
 }
 
@@ -198,17 +227,37 @@
 
 - (void)wiredUserGetUsersReply:(WIP7Message *)message {
 	if([[message name] isEqualToString:@"wired.user.user_list"]) {
-		[_allUsers addObject:[WCUser userWithMessage:message connection:[_administration connection]]];
+		[_listedUsers addObject:[WCUser userWithMessage:message connection:[_administration connection]]];
 	}
 	else if([[message name] isEqualToString:@"wired.user.user_list.done"]) {
+		[_allUsers setArray:_listedUsers];
+		[_listedUsers removeAllObjects];
+		
 		[self _reloadFilter];
 		
 		[_usersTableView reloadData];
 		
 		[self performSelectorOnce:@selector(_reloadUsers) afterDelay:1.0];
+		
+		[[_administration connection] removeObserver:self message:message];
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
 		[_administration showError:[WCError errorWithWiredMessage:message]];
+		
+		[[_administration connection] removeObserver:self message:message];
+	}
+}
+
+
+
+- (void)wiredUserDisconnectUserReply:(WIP7Message *)message {
+	if([[message name] isEqualToString:@"wired.okay"]) {
+		[[_administration connection] removeObserver:self message:message];
+	}
+	else if([[message name] isEqualToString:@"wired.error"]) {
+		[_administration showError:[WCError errorWithWiredMessage:message]];
+		
+		[[_administration connection] removeObserver:self message:message];
 	}
 }
 
@@ -226,7 +275,9 @@
 	connected	= [[_administration connection] isConnected];
 	
 	if(selector == @selector(getInfo:))
-		return ([account userGetInfo] && connected);
+		return [self _validateGetInfo];
+	else if(selector == @selector(disconnect:))
+		return [self _validateDisconnect];
 	
 	return YES;
 }
@@ -284,6 +335,38 @@
 
 
 
+- (IBAction)disconnect:(id)sender {
+	if(![self _validateDisconnect])
+		return;
+	
+	[NSApp beginSheet:_disconnectMessagePanel
+	   modalForWindow:[_administration window]
+		modalDelegate:self
+	   didEndSelector:@selector(disconnectSheetDidEnd:returnCode:contextInfo:)
+		  contextInfo:[[self _selectedUser] retain]];
+}
+
+
+
+- (void)disconnectSheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+	WIP7Message		*message;
+	WCUser			*user = contextInfo;
+
+	if(returnCode == NSOKButton) {
+		message = [WIP7Message messageWithName:@"wired.user.disconnect_user" spec:WCP7Spec];
+		[message setUInt32:[user userID] forName:@"wired.user.id"];
+		[message setString:[_disconnectMessageTextField stringValue] forName:@"wired.user.disconnect_message"];
+		[[_administration connection] sendMessage:message fromObserver:self selector:@selector(wiredUserDisconnectUserReply:)];
+	}
+
+	[user release];
+	
+	[_disconnectMessagePanel close];
+	[_disconnectMessageTextField setStringValue:@""];
+}
+
+
+
 - (IBAction)search:(id)sender {
 	[_userFilter release];
 	
@@ -300,6 +383,9 @@
 
 
 - (IBAction)getInfo:(id)sender {
+	if(![self _validateGetInfo])
+		return;
+	
 	[WCUserInfo userInfoWithConnection:[_administration connection] user:[self _selectedUser]];
 }
 
@@ -356,5 +442,13 @@
 		[cell setIgnored:[user isIgnored]];
 	}
 }
+
+
+
+- (void)tableViewSelectionDidChange:(NSNotification *)notification {
+	[self _validate];
+}
+
+
 
 @end

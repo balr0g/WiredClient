@@ -141,12 +141,16 @@ NSString * const WCServerConnectionEventInfo2Key						= @"WCServerConnectionEven
 			   name:WCBookmarkDidChangeNotification];
 
 	[self addObserver:self
-			 selector:@selector(chatSelfWasKicked:)
-				 name:WCChatSelfWasKickedNotification];
+			 selector:@selector(chatSelfWasKickedFromPublicChat:)
+				 name:WCChatSelfWasKickedFromPublicChatNotification];
 
 	[self addObserver:self
 			 selector:@selector(chatSelfWasBanned:)
 				 name:WCChatSelfWasBannedNotification];
+
+	[self addObserver:self
+			 selector:@selector(chatSelfWasDisconnected:)
+				 name:WCChatSelfWasDisconnectedNotification];
 
 	[self addObserver:self selector:@selector(wiredServerInfo:) messageName:@"wired.server_info"];
 	[self addObserver:self selector:@selector(wiredAccountPrivileges:) messageName:@"wired.account.privileges"];
@@ -265,7 +269,7 @@ NSString * const WCServerConnectionEventInfo2Key						= @"WCServerConnectionEven
 	
 	[super linkConnectionDidClose:notification];
 	
-	if(_hasConnected) {
+	if(_hasConnected && [[[WCPublicChat publicChat] chatControllers] containsObject:_chatController]) {
 		[self triggerEvent:WCEventsServerDisconnected];
 		
 		reason = [_error localizedFailureReason];
@@ -369,13 +373,21 @@ NSString * const WCServerConnectionEventInfo2Key						= @"WCServerConnectionEven
 
 
 
-- (void)chatSelfWasKicked:(NSNotification *)notification {
+- (void)chatSelfWasKickedFromPublicChat:(NSNotification *)notification {
 	_shouldAutoReconnect = NO;
+	
+	[self disconnect];
 }
 
 
 
 - (void)chatSelfWasBanned:(NSNotification *)notification {
+	_shouldAutoReconnect = NO;
+}
+
+
+
+- (void)chatSelfWasDisconnected:(NSNotification *)notification {
 	_shouldAutoReconnect = NO;
 }
 

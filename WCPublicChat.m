@@ -638,6 +638,7 @@ typedef enum _WCChatActivity				WCChatActivity;
 										 didEndSelector:@selector(disconnectSheetDidEnd:returnCode:contextInfo:)
 											contextInfo:[connection retain]]) {
 		[connection disconnect];
+		[connection release];
 	}
 }
 

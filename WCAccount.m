@@ -554,8 +554,8 @@ NSString * const WCAccountFieldToolTip				= @"WCAccountFieldToolTip";
 
 
 
-- (BOOL)userKickUsers {
-	return [[self valueForKey:@"wired.account.user.kick_users"] boolValue];
+- (BOOL)userDisconnectUsers {
+	return [[self valueForKey:@"wired.account.user.disconnect_users"] boolValue];
 }
 
 
@@ -580,6 +580,12 @@ NSString * const WCAccountFieldToolTip				= @"WCAccountFieldToolTip";
 
 - (BOOL)chatSetTopic {
 	return [[self valueForKey:@"wired.account.chat.set_topic"] boolValue];
+}
+
+
+
+- (BOOL)chatKickUsers {
+	return [[self valueForKey:@"wired.account.chat.kick_users"] boolValue];
 }
 
 

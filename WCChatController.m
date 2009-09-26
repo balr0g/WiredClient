@@ -52,8 +52,9 @@
 NSString * const WCChatUserAppearedNotification					= @"WCChatUserAppearedNotification";
 NSString * const WCChatUserDisappearedNotification				= @"WCChatUserDisappearedNotification";
 NSString * const WCChatUserNickDidChangeNotification			= @"WCChatUserNickDidChangeNotification";
-NSString * const WCChatSelfWasKickedNotification				= @"WCChatSelfWasKickedNotification";
+NSString * const WCChatSelfWasKickedFromPublicChatNotification	= @"WCChatSelfWasKickedFromPublicChatNotification";
 NSString * const WCChatSelfWasBannedNotification				= @"WCChatSelfWasBannedNotification";
+NSString * const WCChatSelfWasDisconnectedNotification			= @"WCChatSelfWasDisconnectedNotification";
 NSString * const WCChatRegularChatDidAppearNotification			= @"WCChatRegularChatDidAppearNotification";
 NSString * const WCChatHighlightedChatDidAppearNotification		= @"WCChatHighlightedChatDidAppearNotification";
 NSString * const WCChatEventDidAppearNotification				= @"WCChatEventDidAppearNotification";
@@ -86,7 +87,8 @@ typedef enum _WCChatFormat					WCChatFormat;
 - (void)_printUserChange:(WCUser *)user nick:(NSString *)nick;
 - (void)_printUserChange:(WCUser *)user status:(NSString *)status;
 - (void)_printUserKick:(WCUser *)victim by:(WCUser *)killer message:(NSString *)message;
-- (void)_printUserBan:(WCUser *)victim by:(WCUser *)killer message:(NSString *)message;
+- (void)_printUserBan:(WCUser *)victim message:(NSString *)message;
+- (void)_printUserDisconnect:(WCUser *)victim message:(NSString *)message;
 - (void)_printChat:(NSString *)chat by:(WCUser *)user;
 - (void)_printActionChat:(NSString *)chat by:(WCUser *)user;
 
@@ -233,28 +235,28 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 
 - (void)_printUserJoin:(WCUser *)user {
-	[self printEvent:[NSSWF:NSLS(@"%@ has joined", @"Client has joined message (nick)"),
+	[self printEvent:[NSSWF:NSLS(@"%@ has joined", @"User has joined message (nick)"),
 		[user nick]]];
 }
 
 
 
 - (void)_printUserLeave:(WCUser *)user {
-	[self printEvent:[NSSWF:NSLS(@"%@ has left", @"Client has left message (nick)"),
+	[self printEvent:[NSSWF:NSLS(@"%@ has left", @"User has left message (nick)"),
 		[user nick]]];
 }
 
 
 
 - (void)_printUserChange:(WCUser *)user nick:(NSString *)nick {
-	[self printEvent:[NSSWF:NSLS(@"%@ is now known as %@", @"Client rename message (oldnick, newnick)"),
+	[self printEvent:[NSSWF:NSLS(@"%@ is now known as %@", @"User rename message (oldnick, newnick)"),
 		[user nick], nick]];
 }
 
 
 
 - (void)_printUserChange:(WCUser *)user status:(NSString *)status {
-	[self printEvent:[NSSWF:NSLS(@"%@ changed status to %@", @"Client status changed message (nick, status)"),
+	[self printEvent:[NSSWF:NSLS(@"%@ changed status to %@", @"User status changed message (nick, status)"),
 		[user nick], status]];
 }
 
@@ -262,23 +264,35 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 - (void)_printUserKick:(WCUser *)victim by:(WCUser *)killer message:(NSString *)message {
 	if([message length] > 0) {
-		[self printEvent:[NSSWF:NSLS(@"%@ was kicked by %@ (%@)", @"Client kicked message (victim, killer, message)"),
+		[self printEvent:[NSSWF:NSLS(@"%@ was kicked by %@ (%@)", @"User kicked message (victim, killer, message)"),
 			[victim nick], [killer nick], message]];
 	} else {
-		[self printEvent:[NSSWF:NSLS(@"%@ was kicked by %@", @"Client kicked message (victim, killer)"),
+		[self printEvent:[NSSWF:NSLS(@"%@ was kicked by %@", @"User kicked message (victim, killer)"),
 			[victim nick], [killer nick]]];
 	}
 }
 
 
 
-- (void)_printUserBan:(WCUser *)victim by:(WCUser *)killer message:(NSString *)message {
+- (void)_printUserBan:(WCUser *)victim message:(NSString *)message {
 	if([message length] > 0) {
-		[self printEvent:[NSSWF:NSLS(@"%@ was banned by %@ (%@)", @"Client banned message (victim, killer, message)"),
-			[victim nick], [killer nick], message]];
+		[self printEvent:[NSSWF:NSLS(@"%@ was banned (%@)", @"User banned message (victim, message)"),
+			[victim nick], message]];
 	} else {
-		[self printEvent:[NSSWF:NSLS(@"%@ was banned by %@", @"Client banned message (victim, killer)"),
-			[victim nick], [killer nick]]];
+		[self printEvent:[NSSWF:NSLS(@"%@ was banned", @"User banned message (victim)"),
+			[victim nick]]];
+	}
+}
+
+
+
+- (void)_printUserDisconnect:(WCUser *)victim message:(NSString *)message {
+	if([message length] > 0) {
+		[self printEvent:[NSSWF:NSLS(@"%@ was disconnected (%@)", @"User disconnected message (victim, message)"),
+			[victim nick], message]];
+	} else {
+		[self printEvent:[NSSWF:NSLS(@"%@ was disconnected", @"User disconnected message (victim)"),
+			[victim nick]]];
 	}
 }
 
@@ -1195,6 +1209,8 @@ typedef enum _WCChatFormat					WCChatFormat;
 		topic = [WCTopic topicWithMessage:message];
 		
 		[self _setTopic:topic];
+		
+		[[self connection] removeObserver:self message:message];
 	}
 }
 
@@ -1207,9 +1223,26 @@ typedef enum _WCChatFormat					WCChatFormat;
 		user = [WCUser userWithMessage:message connection:[self connection]];
 	
 		[[[[self connection] administration] accountsController] editUserAccountWithName:[user login]];
+		
+		[[self connection] removeObserver:self message:message];
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
 		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
+		
+		[[self connection] removeObserver:self message:message];
+	}
+}
+
+
+
+- (void)wiredChatKickUserReply:(WIP7Message *)message {
+	if([[message name] isEqualToString:@"wired.okay"]) {
+		[[self connection] removeObserver:self message:message];
+	}
+	else if([[message name] isEqualToString:@"wired.error"]) {
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
+		
+		[[self connection] removeObserver:self message:message];
 	}
 }
 
@@ -1360,7 +1393,77 @@ typedef enum _WCChatFormat					WCChatFormat;
 	[self _printUserKick:victim by:killer message:disconnectMessage];
 	
 	if(cid == WCPublicChatID && [victim userID] == [[self connection] userID])
-		[[self connection] postNotificationName:WCChatSelfWasKickedNotification object:[self connection]];
+		[[self connection] postNotificationName:WCChatSelfWasKickedFromPublicChatNotification object:[self connection]];
+	
+	[[self connection] postNotificationName:WCChatUserDisappearedNotification object:victim];
+	
+	[_shownUsers removeObject:victim];
+	[_users removeObjectForKey:[NSNumber numberWithInt:victimUserID]];
+	
+	[_userListTableView reloadData];
+}
+
+
+
+- (void)wiredChatUserDisconnect:(WIP7Message *)message {
+	NSString		*disconnectMessage;
+	WIP7UInt32		victimUserID;
+	WCUser			*victim;
+	WIP7UInt32		cid;
+	
+	[message getUInt32:&cid forName:@"wired.chat.id"];
+	
+	if(cid != [self chatID])
+		return;
+	
+	[message getUInt32:&victimUserID forName:@"wired.user.disconnected_id"];
+	
+	victim = [self userWithUserID:victimUserID];
+	
+	if(!victim)
+		return;
+	
+	disconnectMessage = [message stringForName:@"wired.user.disconnect_message"];
+	
+	[self _printUserDisconnect:victim message:disconnectMessage];
+	
+	if(cid == WCPublicChatID && [victim userID] == [[self connection] userID])
+		[[self connection] postNotificationName:WCChatSelfWasDisconnectedNotification object:[self connection]];
+	
+	[[self connection] postNotificationName:WCChatUserDisappearedNotification object:victim];
+	
+	[_shownUsers removeObject:victim];
+	[_users removeObjectForKey:[NSNumber numberWithInt:victimUserID]];
+	
+	[_userListTableView reloadData];
+}
+
+
+
+- (void)wiredChatUserBan:(WIP7Message *)message {
+	NSString		*disconnectMessage;
+	WIP7UInt32		victimUserID;
+	WCUser			*victim;
+	WIP7UInt32		cid;
+	
+	[message getUInt32:&cid forName:@"wired.chat.id"];
+	
+	if(cid != [self chatID])
+		return;
+	
+	[message getUInt32:&victimUserID forName:@"wired.user.disconnected_id"];
+	
+	victim = [self userWithUserID:victimUserID];
+	
+	if(!victim)
+		return;
+	
+	disconnectMessage = [message stringForName:@"wired.user.disconnect_message"];
+	
+	[self _printUserBan:victim message:disconnectMessage];
+	
+	if(cid == WCPublicChatID && [victim userID] == [[self connection] userID])
+		[[self connection] postNotificationName:WCChatSelfWasBannedNotification object:[self connection]];
 	
 	[[self connection] postNotificationName:WCChatUserDisappearedNotification object:victim];
 	
@@ -1447,42 +1550,6 @@ typedef enum _WCChatFormat					WCChatFormat;
 	[image release];
 	
 	[_userListTableView setNeedsDisplay:YES];
-}
-
-
-
-- (void)wiredUserUserDisconnect:(WIP7Message *)message {
-}
-
-
-
-- (void)wiredUserUserBan:(WIP7Message *)message {
-	NSString		*disconnectMessage;
-	WIP7UInt32		killerUserID, victimUserID;
-	WCUser			*killer, *victim;
-	
-	[message getUInt32:&killerUserID forName:@"wired.user.id"];
-	[message getUInt32:&victimUserID forName:@"wired.user.disconnected_id"];
-	
-	killer = [self userWithUserID:killerUserID];
-	victim = [self userWithUserID:victimUserID];
-	
-	if(!killer || !victim)
-		return;
-	
-	disconnectMessage = [message stringForName:@"wired.user.disconnect_message"];
-	
-	[self _printUserBan:victim by:killer message:disconnectMessage];
-	
-	if([victim userID] == [[self connection] userID])
-		[[self connection] postNotificationName:WCChatSelfWasBannedNotification object:[self connection]];
-	
-	[[self connection] postNotificationName:WCChatUserDisappearedNotification object:victim];
-	
-	[_shownUsers removeObject:victim];
-	[_users removeObjectForKey:[NSNumber numberWithInt:victimUserID]];
-	
-	[_userListTableView reloadData];
 }
 
 
@@ -1731,7 +1798,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 	} else {
 		[_infoButton setEnabled:([[[self connection] account] userGetInfo] && connected)];
 		[_privateMessageButton setEnabled:connected];
-		[_kickButton setEnabled:(([self chatID] != WCPublicChatID || [[[self connection] account] userKickUsers]) && connected)];
+		[_kickButton setEnabled:(([self chatID] != WCPublicChatID || [[[self connection] account] chatKickUsers]) && connected)];
 	}
 }
 
@@ -1749,7 +1816,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 	else if(selector == @selector(getInfo:))
 		return ([[[self connection] account] userGetInfo] && [self selectedUser] != NULL && connected);
 	else if(selector == @selector(kick:))
-		return (([self chatID] != WCPublicChatID || [[[self connection] account] userKickUsers]) && connected);
+		return (([self chatID] != WCPublicChatID || [[[self connection] account] chatKickUsers]) && connected);
 	else if(selector == @selector(editAccount:))
 		return ([[[self connection] account] userGetInfo] && [[[self connection] account] accountEditUsers] && connected);
 	
@@ -1780,10 +1847,10 @@ typedef enum _WCChatFormat					WCChatFormat;
 	[_connection addObserver:self selector:@selector(wiredChatSayOrMe:) messageName:@"wired.chat.say"];
 	[_connection addObserver:self selector:@selector(wiredChatSayOrMe:) messageName:@"wired.chat.me"];
 	[_connection addObserver:self selector:@selector(wiredChatUserKick:) messageName:@"wired.chat.user_kick"];
+	[_connection addObserver:self selector:@selector(wiredChatUserDisconnect:) messageName:@"wired.chat.user_disconnect"];
+	[_connection addObserver:self selector:@selector(wiredChatUserBan:) messageName:@"wired.chat.user_ban"];
 	[_connection addObserver:self selector:@selector(wiredChatUserStatus:) messageName:@"wired.chat.user_status"];
 	[_connection addObserver:self selector:@selector(wiredChatUserIcon:) messageName:@"wired.chat.user_icon"];
-	[_connection addObserver:self selector:@selector(wiredUserUserDisconnect:) messageName:@"wired.user.user_disconnect"];
-	[_connection addObserver:self selector:@selector(wiredUserUserBan:) messageName:@"wired.user.user_ban"];
 	
 	[self themeDidChange:[_connection theme]];
 }
@@ -2117,7 +2184,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 		[message setUInt32:[user userID] forName:@"wired.user.id"];
 		[message setUInt32:[self chatID] forName:@"wired.chat.id"];
 		[message setString:[_kickMessageTextField stringValue] forName:@"wired.user.disconnect_message"];
-		[[self connection] sendMessage:message];
+		[[self connection] sendMessage:message fromObserver:self selector:@selector(wiredChatKickUserReply:)];
 	}
 	
 	[user release];

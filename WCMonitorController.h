@@ -32,6 +32,7 @@
 	IBOutlet NSButton					*_allFilterButton;
 	IBOutlet NSButton					*_downloadingFilterButton;
 	IBOutlet NSButton					*_uploadingFilterButton;
+	IBOutlet NSButton					*_disconnectButton;
 	IBOutlet NSSearchField				*_filterSearchField;
 
 	IBOutlet WITableView				*_usersTableView;
@@ -39,6 +40,10 @@
 	IBOutlet NSTableColumn				*_nickTableColumn;
 	IBOutlet NSTableColumn				*_statusTableColumn;
 	
+	IBOutlet NSPanel					*_disconnectMessagePanel;
+	IBOutlet NSTextField				*_disconnectMessageTextField;
+	
+	NSMutableArray						*_listedUsers;
 	NSMutableArray						*_allUsers;
 	NSMutableArray						*_shownUsers;
 
@@ -51,6 +56,7 @@
 - (IBAction)all:(id)sender;
 - (IBAction)downloading:(id)sender;
 - (IBAction)uploading:(id)sender;
+- (IBAction)disconnect:(id)sender;
 - (IBAction)search:(id)sender;
 - (IBAction)getInfo:(id)sender;
 

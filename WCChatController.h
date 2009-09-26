@@ -29,8 +29,9 @@
 extern NSString * const WCChatUserAppearedNotification;
 extern NSString * const WCChatUserDisappearedNotification;
 extern NSString * const WCChatUserNickDidChangeNotification;
-extern NSString * const WCChatSelfWasKickedNotification;
+extern NSString * const WCChatSelfWasKickedFromPublicChatNotification;
 extern NSString * const WCChatSelfWasBannedNotification;
+extern NSString * const WCChatSelfWasDisconnectedNotification;
 extern NSString * const WCChatRegularChatDidAppearNotification;
 extern NSString * const WCChatHighlightedChatDidAppearNotification;
 extern NSString * const WCChatEventDidAppearNotification;
