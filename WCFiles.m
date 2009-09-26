@@ -1021,7 +1021,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	connection		= [file connection];
 	directory		= [[self _directoriesForConnection:connection] objectForKey:[file path]];
 	
-	if(directory) {
+	if([directory count] > 0) {
 		if([_selectFiles count] == 0)
 			[_selectFiles setArray:[self _selectedFiles]];
 		
@@ -2789,6 +2789,8 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		file = [[notification userInfo] objectForKey:@"NSObject"];
 		
 		[self _unsubscribeFromDirectory:file];
+		
+		[_filesOutlineView setNeedsDisplay:YES];
 	}
 }
 
