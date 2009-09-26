@@ -1415,6 +1415,14 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 - (void)dealloc {
+	NSEnumerator			*enumerator;
+	WCServerConnection		*connection;
+	
+	enumerator = [_servers objectEnumerator];
+	
+	while((connection = [enumerator nextObject]))
+		[connection removeObserver:self];
+	
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
 	[_errorQueue release];
@@ -1516,6 +1524,8 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	
 	while((subscribedFile = [enumerator nextObject]))
 		[self _unsubscribeFromDirectory:subscribedFile];
+	
+	[self autorelease];
 }
 
 
