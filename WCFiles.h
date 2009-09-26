@@ -98,6 +98,7 @@ extern NSString * const					WCPlacePboardType;
 	
 	WCFile								*_initialDirectory;
 	WCFile								*_currentDirectory;
+	BOOL								_currentDirectoryDeleted;
 	
 	WIDateFormatter						*_dateFormatter;
 	

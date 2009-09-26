@@ -988,6 +988,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	[_currentDirectory release];
 	
 	_currentDirectory = file;
+	_currentDirectoryDeleted = NO;
 	
 	[self _updateWindowTitle];
 	
@@ -1669,7 +1670,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	[self _addConnection:connection];
 	[self _validate];
 	
-	if(!_searching && _currentDirectory)
+	if(!_searching && _currentDirectory && !_currentDirectoryDeleted)
 		[self _subscribeToDirectory:_currentDirectory];
 }
 
@@ -1756,7 +1757,8 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	
 	[_subscribedFiles removeObject:file];
 	
-	NSLog(@"removed %@", file);
+	if(file == _currentDirectory)
+		_currentDirectoryDeleted = YES;
 }
 
 
