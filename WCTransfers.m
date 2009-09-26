@@ -1141,7 +1141,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	
 	if(![self _createRemainingDirectoriesOnConnection:connection forTransfer:transfer error:&error]) {
 		if(![transfer isTerminating]) {
-			[transfer setState:WCTransferStopping];
+			[transfer setState:WCTransferDisconnecting];
 			[transfer signalTerminated];
 		}
 		
@@ -1154,7 +1154,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	
 	if(![self _sendDownloadFileMessageOnConnection:connection forFile:file error:&error]) {
 		if(![transfer isTerminating]) {
-			[transfer setState:WCTransferStopping];
+			[transfer setState:WCTransferDisconnecting];
 			[transfer signalTerminated];
 		}
 		
@@ -1172,7 +1172,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	
 	if(!message) {
 		if(![transfer isTerminating]) {
-			[transfer setState:WCTransferStopping];
+			[transfer setState:WCTransferDisconnecting];
 			[transfer signalTerminated];
 		}
 		
@@ -1199,7 +1199,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		error = [NSError errorWithDomain:NSPOSIXErrorDomain code:errno];
 		
 		if(![transfer isTerminating]) {
-			[transfer setState:WCTransferStopping];
+			[transfer setState:WCTransferDisconnecting];
 			[transfer signalTerminated];
 		}
 		
@@ -1361,7 +1361,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		
 		if(![self _connectConnection:connection forTransfer:transfer error:&error]) {
 			if(![transfer isTerminating]) {
-				[transfer setState:WCTransferStopping];
+				[transfer setState:WCTransferDisconnecting];
 				[transfer signalTerminated];
 			}
 			
@@ -1392,7 +1392,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	
 	if(![self _createRemainingDirectoriesOnConnection:connection forTransfer:transfer error:&error]) {
 		if(![transfer isTerminating]) {
-			[transfer setState:WCTransferStopping];
+			[transfer setState:WCTransferDisconnecting];
 			[transfer signalTerminated];
 		}
 
@@ -1405,7 +1405,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 	if(![self _sendUploadFileMessageOnConnection:connection forFile:file error:&error]) {
 		if(![transfer isTerminating]) {
-			[transfer setState:WCTransferStopping];
+			[transfer setState:WCTransferDisconnecting];
 			[transfer signalTerminated];
 		}
 		
@@ -1423,7 +1423,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	
 	if(!message) {
 		if(![transfer isTerminating]) {
-			[transfer setState:WCTransferStopping];
+			[transfer setState:WCTransferDisconnecting];
 			[transfer signalTerminated];
 		}
 		
@@ -1447,7 +1447,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	
 	if(![self _sendUploadMessageOnConnection:connection forFile:file dataLength:dataLength rsrcLength:rsrcLength error:&error]) {
 		if(![transfer isTerminating]) {
-			[transfer setState:WCTransferStopping];
+			[transfer setState:WCTransferDisconnecting];
 			[transfer signalTerminated];
 		}
 		
@@ -1466,7 +1466,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		error = [WCError errorWithDomain:NSPOSIXErrorDomain code:errno];
 		
 		if(![transfer isTerminating]) {
-			[transfer setState:WCTransferStopping];
+			[transfer setState:WCTransferDisconnecting];
 			[transfer signalTerminated];
 		}
 		
@@ -1507,7 +1507,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 				error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientTransferFailed argument:[transfer name]];
 
 			if(![transfer isTerminating])
-				[transfer setState:WCTransferStopping];
+				[transfer setState:WCTransferDisconnecting];
 			
 			break;
 		}
