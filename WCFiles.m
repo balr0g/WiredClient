@@ -792,6 +792,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 - (void)_addConnection:(WCServerConnection *)connection {
 	[connection addObserver:self selector:@selector(wiredFileDirectoryChanged:) messageName:@"wired.file.directory_changed"];
+	[connection addObserver:self selector:@selector(wiredFileDirectoryDeleted:) messageName:@"wired.file.directory_deleted"];
 }
 
 
@@ -1743,6 +1744,19 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 													 connection:[message contextInfo]]];
 	
 	[self performSelectorOnce:@selector(_reloadFilesAtDirectory:) withObject:file afterDelay:0.1];
+}
+
+
+
+- (void)wiredFileDirectoryDeleted:(WIP7Message *)message {
+	WCFile		*file;
+	
+	file = [self _existingFileForFile:[WCFile fileWithDirectory:[message stringForName:@"wired.file.path"]
+													 connection:[message contextInfo]]];
+	
+	[_subscribedFiles removeObject:file];
+	
+	NSLog(@"removed %@", file);
 }
 
 
