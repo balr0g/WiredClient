@@ -2098,10 +2098,24 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	
 	selector = [item action];
 	
-	if(selector == @selector(deleteDocument:))
+	if(selector == @selector(start:))
+		return [self _validateStart];
+	else if(selector == @selector(pause:))
+		return [self _validatePause];
+	else if(selector == @selector(stop:))
+		return [self _validateStop];
+	else if(selector == @selector(remove:) || selector == @selector(deleteDocument:))
 		return [self _validateRemove];
+	else if(selector == @selector(clear:))
+		return [self _validateClear];
+	else if(selector == @selector(connect:))
+		return [self _validateConnect];
 	else if(selector == @selector(quickLook:))
 		return [self _validateQuickLook];
+	else if(selector == @selector(revealInFinder:))
+		return [self _validateRevealInFinder];
+	else if(selector == @selector(revealInFiles:))
+		return [self _validateRevealInFiles];
 	
 	return YES;
 }

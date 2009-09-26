@@ -44,46 +44,46 @@ enum _WCTransferState {
 	WCTransferRemoving,
 	WCTransferFinished
 };
-typedef enum _WCTransferState		WCTransferState;
+typedef enum _WCTransferState			WCTransferState;
 
 
 @class WCFile, WCServerConnection, WCTransferConnection;
 
 @interface WCTransfer : WCServerConnectionObject <NSCoding> {
-	NSString						*_identifier;
+	NSString							*_identifier;
 	
-	WCTransferState					_state;
-	NSUInteger						_queuePosition;
-	NSUInteger						_transaction;
-	BOOL							_folder;
-	BOOL							_secure;
-	WCTransferConnection			*_transferConnection;
-	NSString						*_name;
-	NSString						*_localPath;
-	NSString						*_remotePath;
-	NSString						*_destinationPath;
-	WCFile							*_file;
-	NSProgressIndicator				*_progressIndicator;
-	NSImage							*_icon;
+	WCTransferState						_state;
+	NSUInteger							_queuePosition;
+	NSUInteger							_transaction;
+	BOOL								_folder;
+	BOOL								_secure;
+	WCTransferConnection				*_transferConnection;
+	NSString							*_name;
+	NSString							*_localPath;
+	NSString							*_remotePath;
+	NSString							*_destinationPath;
+	WCFile								*_file;
+	WIUnclickableProgressIndicator		*_progressIndicator;
+	NSImage								*_icon;
 
-	NSDate							*_startDate;
-	NSTimeInterval					_accumulatedTime;
-	NSUInteger						_speedLimit;
+	NSDate								*_startDate;
+	NSTimeInterval						_accumulatedTime;
+	NSUInteger							_speedLimit;
 	
-	NSMutableArray					*_untransferredFilesList, *_transferredFilesList;
-	NSMutableSet					*_untransferredFilesSet, *_transferredFilesSet;
-	NSMutableArray					*_uncreatedDirectoriesList, *_createdDirectoriesList;
-	NSMutableSet					*_uncreatedDirectoriesSet, *_createdDirectoriesSet;
+	NSMutableArray						*_untransferredFilesList, *_transferredFilesList;
+	NSMutableSet						*_untransferredFilesSet, *_transferredFilesSet;
+	NSMutableArray						*_uncreatedDirectoriesList, *_createdDirectoriesList;
+	NSMutableSet						*_uncreatedDirectoriesSet, *_createdDirectoriesSet;
 	
-	NSConditionLock					*_terminationLock;
+	NSConditionLock						*_terminationLock;
 	
 @public
-	wi_speed_calculator_t			*_speedCalculator;
-	double							_speed;
-	WIFileOffset					_dataTransferred;
-	WIFileOffset					_rsrcTransferred;
-	WIFileOffset					_actualTransferred;
-	WIFileOffset					_size;
+	wi_speed_calculator_t				*_speedCalculator;
+	double								_speed;
+	WIFileOffset						_dataTransferred;
+	WIFileOffset						_rsrcTransferred;
+	WIFileOffset						_actualTransferred;
+	WIFileOffset						_size;
 }
 
 + (id)transferWithConnection:(WCServerConnection *)connection;
@@ -123,8 +123,8 @@ typedef enum _WCTransferState		WCTransferState;
 - (NSString *)destinationPath;
 - (void)setFile:(WCFile *)file;
 - (WCFile *)file;
-- (void)setProgressIndicator:(NSProgressIndicator *)progressIndicator;
-- (NSProgressIndicator *)progressIndicator;
+- (void)setProgressIndicator:(WIUnclickableProgressIndicator *)progressIndicator;
+- (WIUnclickableProgressIndicator *)progressIndicator;
 
 - (NSURL *)previewItemURL;
 
