@@ -43,6 +43,12 @@
 
 @implementation WCLogEntry
 
+- (NSString *)description {
+	return [NSSWF:@"%@ %@", _time, _message];
+}
+
+
+
 - (void)dealloc {
 	[_time release];
 	[_message release];
@@ -130,7 +136,7 @@
 	count = [_receivedEntries count];
 	
 	for(i = 0; i < count; i++) {
-		entry = [_allEntries objectAtIndex:i];
+		entry = [_receivedEntries objectAtIndex:i];
 
 		if([self _filterIncludesEntry:entry])
 			[_shownEntries addObject:entry];
@@ -191,12 +197,6 @@
 - (void)linkConnectionLoggedIn:(NSNotification *)notification {
 	_requested		= NO;
 	_subscribed		= NO;
-
-	[_allEntries removeAllObjects];
-	[_listedEntries removeAllObjects];
-	[_shownEntries removeAllObjects];
-	
-	[_logTableView reloadData];
 }
 
 
@@ -269,7 +269,7 @@
 
 
 - (void)wiredLogSubscribeReply:(WIP7Message *)message {
-	if([[message name] isEqualToString:@"wired.error"]) {
+	if([[message name] isEqualToString:@"wired.okay"]) {
 		[[_administration connection] removeObserver:self message:message];
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
