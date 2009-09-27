@@ -68,6 +68,9 @@
 	server		= [[self connection] server];
 	url			= [[[[self connection] URL] copy] autorelease];
 	
+	if(![socket remoteProtocolName])
+		return;
+	
 	[url setUser:NULL];
 	[url setPassword:NULL];
 
