@@ -726,6 +726,16 @@ typedef enum _WCChatActivity				WCChatActivity;
 
 
 
+- (IBAction)console:(id)sender {
+	WCServerConnection		*connection;
+	
+	connection = [[self selectedChatController] connection];
+	
+	[[connection console] showWindow:self];
+}
+
+
+
 - (IBAction)getInfo:(id)sender {
 	[[self selectedChatController] getInfo:sender];
 }
