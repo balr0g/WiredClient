@@ -3012,8 +3012,10 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 			enumerator	= [sources reverseObjectEnumerator];
 			copy		= NO;
 			
+			[self _revalidateFiles:sources];
+			
 			while((sourceFile = [enumerator nextObject])) {
-				if([sourceFile connection] == [destinationFile connection])
+				if([sourceFile connection] != [destinationFile connection])
 					return NSDragOperationNone;
 				
 				if([sourceFile volume] != [destinationFile volume])

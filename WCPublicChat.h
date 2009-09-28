@@ -52,6 +52,7 @@
 - (IBAction)monitor:(id)sender;
 - (IBAction)accounts:(id)sender;
 - (IBAction)log:(id)sender;
+- (IBAction)console:(id)sender;
 - (IBAction)getInfo:(id)sender;
 - (IBAction)saveChat:(id)sender;
 - (IBAction)setTopic:(id)sender;
