@@ -250,6 +250,28 @@
 
 
 - (void)setPath:(NSString *)path {
+	NSMutableString		*childPath;
+	WCBoard				*board;
+	NSRange				range;
+	NSUInteger			i, count;
+	
+	count = [_boards count];
+	
+	for(i = 0; i < count; i++) {
+		board = [_boards objectAtIndex:i];
+		
+		if(![board isKindOfClass:[WCSmartBoard class]]) {
+			childPath	= [[[board path] mutableCopy] autorelease];
+			range		= [childPath rangeOfString:_path];
+			
+			if(range.location == 0) {
+				[childPath replaceCharactersInRange:range withString:path];
+				
+				[board setPath:childPath];
+			}
+		}
+	}
+	
 	[path retain];
 	[_path release];
 	
@@ -465,6 +487,26 @@
 
 
 
+- (void)sortBoardsUsingSelector:(SEL)selector includeChildBoards:(BOOL)includeChildBoards {
+	WCBoard			*board;
+	NSUInteger		i, count;
+	
+	[_boards sortUsingSelector:selector];
+
+	if(includeChildBoards) {
+		count = [_boards count];
+		
+		for(i = 0; i < count; i++) {
+			board = [_boards objectAtIndex:i];
+			
+			if(![board isKindOfClass:[WCSmartBoard class]])
+				[board sortBoardsUsingSelector:selector includeChildBoards:includeChildBoards];
+		}
+	}
+}
+
+
+
 #pragma mark -
 
 - (NSUInteger)numberOfThreads {
@@ -474,8 +516,8 @@
 
 
 - (NSUInteger)numberOfThreadsIncludingChildBoards:(BOOL)includeChildBoards {
-	WCBoard				*board;
-	NSUInteger			i, count, number = 0;
+	WCBoard			*board;
+	NSUInteger		i, count, number = 0;
 	
 	number = [_threadsArray count];
 	

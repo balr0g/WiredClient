@@ -1525,17 +1525,33 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 - (void)wiredBoardBoardRenamed:(WIP7Message *)message {
 	NSString			*oldPath, *newPath;
 	WCServerConnection	*connection;
-	WCBoard				*board;
+	WCBoard				*board, *selectedBoard;
+	WCBoardThread		*selectedThread;
+	NSUInteger			index;
 	
-	connection	= [message contextInfo];
-	oldPath		= [message stringForName:@"wired.board.board"];
-	newPath		= [message stringForName:@"wired.board.new_board"];
-	board		= [[_boards boardForConnection:connection] boardForPath:oldPath];
+	connection		= [message contextInfo];
+	oldPath			= [message stringForName:@"wired.board.board"];
+	newPath			= [message stringForName:@"wired.board.new_board"];
+	board			= [[_boards boardForConnection:connection] boardForPath:oldPath];
+	selectedBoard	= [self _selectedBoard];
 	
 	[board setPath:newPath];
 	[board setName:[newPath lastPathComponent]];
 	
+	[_boards sortBoardsUsingSelector:@selector(compareBoard:) includeChildBoards:YES];
+	
 	[_boardsOutlineView reloadData];
+	
+	if(selectedBoard) {
+		index = [_boardsOutlineView rowForItem:selectedBoard];
+		
+		[_boardsOutlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
+		
+		if(selectedThread)
+			[self _reselectThread:selectedThread];
+		
+		[self _reloadThreadAndRememberPosition:YES];
+	}
 	
 	[self _reloadBoardListsSelectingBoard:NULL];
 	[self _validate];
