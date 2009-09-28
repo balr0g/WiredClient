@@ -51,14 +51,13 @@
 - (IBAction)administration:(id)sender;
 - (IBAction)monitor:(id)sender;
 - (IBAction)accounts:(id)sender;
+- (IBAction)log:(id)sender;
 - (IBAction)getInfo:(id)sender;
 - (IBAction)saveChat:(id)sender;
 - (IBAction)setTopic:(id)sender;
 - (IBAction)broadcast:(id)sender;
 
 - (IBAction)addBookmark:(id)sender;
-
-- (IBAction)console:(id)sender;
 
 - (IBAction)nextConnection:(id)sender;
 - (IBAction)previousConnection:(id)sender;

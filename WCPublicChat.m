@@ -354,12 +354,12 @@ typedef enum _WCChatActivity				WCChatActivity;
 												 target:self
 												 action:@selector(accounts:)];
 	}
-	else if([identifier isEqualToString:@"Console"]) {
+	else if([identifier isEqualToString:@"Log"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
-												   name:NSLS(@"Console", @"Console toolbar item")
-												content:[NSImage imageNamed:@"Console"]
+												   name:NSLS(@"Log", @"Log toolbar item")
+												content:[NSImage imageNamed:@"Log"]
 												 target:self
-												 action:@selector(console:)];
+												 action:@selector(log:)];
 	}
 	else if([identifier isEqualToString:@"Reconnect"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
@@ -408,9 +408,7 @@ typedef enum _WCChatActivity				WCChatActivity;
 		@"Administration",
 		@"Monitor",
 		@"Accounts",
-#ifndef WCConfigurationRelease
-		@"Console",
-#endif
+		@"Log",
 		@"Reconnect",
 		@"Disconnect",
 		NSToolbarSeparatorItemIdentifier,
@@ -603,7 +601,7 @@ typedef enum _WCChatActivity				WCChatActivity;
 	else if(selector == @selector(files:))
 		return (connection != NULL && [connection isConnected] && [[connection account] fileListFiles]);
 	else if(selector == @selector(serverInfo:) || selector == @selector(administration:) ||
-			selector == @selector(console:))
+			selector == @selector(monitor:) || selector == @selector(accounts:) || selector == @selector(log:))
 		return (connection != NULL);
 	
 	return YES;
@@ -717,6 +715,17 @@ typedef enum _WCChatActivity				WCChatActivity;
 
 
 
+- (IBAction)log:(id)sender {
+	WCServerConnection		*connection;
+	
+	connection = [[self selectedChatController] connection];
+	
+	[[connection administration] selectController:[[connection administration] logController]];
+	[[connection administration] showWindow:self];
+}
+
+
+
 - (IBAction)getInfo:(id)sender {
 	[[self selectedChatController] getInfo:sender];
 }
@@ -782,18 +791,6 @@ typedef enum _WCChatActivity				WCChatActivity;
 		
 		[[NSNotificationCenter defaultCenter] postNotificationName:WCBookmarksDidChangeNotification];
 	}
-}
-
-
-
-#pragma mark -
-
-- (IBAction)console:(id)sender {
-	WCServerConnection		*connection;
-	
-	connection = [[self selectedChatController] connection];
-	
-	[[connection console] showWindow:self];
 }
 
 

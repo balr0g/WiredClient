@@ -63,6 +63,7 @@
 
 - (WCMonitorController *)monitorController;
 - (WCAccountsController *)accountsController;
+- (WCLogController *)logController;
 
 - (void)showError:(WCError *)error;
 

@@ -460,6 +460,12 @@
 
 
 
+- (WCLogController *)logController {
+	return _logController;
+}
+
+
+
 #pragma mark -
 
 - (void)showError:(WCError *)error {
