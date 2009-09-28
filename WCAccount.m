@@ -698,6 +698,12 @@ NSString * const WCAccountFieldToolTip				= @"WCAccountFieldToolTip";
 
 
 
+- (BOOL)fileSearchFiles {
+	return [[self valueForKey:@"wired.account.file.search_files"] boolValue];
+}
+
+
+
 - (BOOL)fileGetInfo {
 	return [[self valueForKey:@"wired.account.file.get_info"] boolValue];
 }

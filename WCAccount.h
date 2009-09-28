@@ -103,6 +103,7 @@ extern NSString * const						WCAccountFieldToolTip;
 - (BOOL)boardDeleteOwnPosts;
 - (BOOL)boardDeleteAllPosts;
 - (BOOL)fileListFiles;
+- (BOOL)fileSearchFiles;
 - (BOOL)fileGetInfo;
 - (BOOL)fileCreateDirectories;
 - (BOOL)fileCreateLinks;

@@ -68,6 +68,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 - (BOOL)_validateCreateFolder;
 - (BOOL)_validateReload;
 - (BOOL)_validateDelete;
+- (BOOL)_validateSearch;
 - (BOOL)_validateSetLabel;
 
 - (BOOL)_canPreviewFile:(WCFile *)file;
@@ -246,6 +247,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	[_createFolderButton setEnabled:[self _validateCreateFolder]];
 	[_reloadButton setEnabled:[self _validateReload]];
 	[_deleteButton setEnabled:[self _validateDelete]];
+	[_searchField setEnabled:[self _validateSearch]];
 	
 	[_filesTreeView validate];
 }
@@ -393,6 +395,15 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		return NO;
 	
 	return YES;
+}
+
+
+
+- (BOOL)_validateSearch {
+	if(![self _validateConnected])
+		return NO;
+	
+	return [[self _selectedAccount] fileSearchFiles];
 }
 
 
