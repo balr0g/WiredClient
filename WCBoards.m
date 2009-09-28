@@ -1135,6 +1135,8 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	
 	[[_unreadThreadTableColumn headerCell] setImage:[NSImage imageNamed:@"UnreadHeader"]];
 	
+	[_postTextView setContinuousSpellCheckingEnabled:[[WCSettings settings] boolForKey:WCBoardPostContinuousSpellChecking]];
+	
 	_dateFormatter = [[WIDateFormatter alloc] init];
 	[_dateFormatter setTimeStyle:NSDateFormatterShortStyle];
 	[_dateFormatter setDateStyle:NSDateFormatterMediumStyle];
@@ -2353,6 +2355,8 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	
 	[_postPanel close];
 	[array release];
+	
+	[[WCSettings settings] setBool:[_postTextView isContinuousSpellCheckingEnabled] forKey:WCBoardPostContinuousSpellChecking];
 }
 
 
@@ -2409,6 +2413,8 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	
 	[_postPanel close];
 	[array release];
+	
+	[[WCSettings settings] setBool:[_postTextView isContinuousSpellCheckingEnabled] forKey:WCBoardPostContinuousSpellChecking];
 }
 
 
@@ -2815,6 +2821,8 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	}
 
 	[_postPanel close];
+	
+	[[WCSettings settings] setBool:[_postTextView isContinuousSpellCheckingEnabled] forKey:WCBoardPostContinuousSpellChecking];
 }
 
 

@@ -165,6 +165,7 @@ NSString * const WCWindowProperties						= @"WCWindowProperties";
 NSString * const WCCollapsedBoards						= @"WCCollapsedBoards";
 NSString * const WCReadBoardPosts						= @"WCReadBoardPosts";
 NSString * const WCBoardFilters							= @"WCBoardFilters";
+NSString * const WCBoardPostContinuousSpellChecking		= @"WCBoardPostContinuousSpellChecking";
 
 NSString * const WCPlaces								= @"WCPlaces";
 
@@ -769,6 +770,8 @@ NSString * const WCDebug								= @"WCDebug";
 			
 			[NSArray array],
 				WCReadBoardPosts,
+			[NSNumber numberWithBool:NO],
+				WCBoardPostContinuousSpellChecking,
 			
 			[NSNumber numberWithBool:NO],
 				WCDebug,

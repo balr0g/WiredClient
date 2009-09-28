@@ -171,6 +171,7 @@ extern NSString * const						WCWindowProperties;
 extern NSString * const						WCCollapsedBoards;
 extern NSString * const						WCReadBoardPosts;
 extern NSString * const						WCBoardFilters;
+extern NSString * const						WCBoardPostContinuousSpellChecking;
 
 extern NSString * const						WCPlaces;
 
