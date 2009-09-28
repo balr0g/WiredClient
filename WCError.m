@@ -88,9 +88,6 @@
 				
 			case WCWiredClientClientNotFound: 
 				return NSLS(@"Client Not Found", @"WCWiredClientClientNotFound title"); 
-				break; 
-
-			default:
 				break;
 		}
 	}
@@ -168,6 +165,10 @@
 				return NSLS(@"Account Exists", @"Wired protocol error title");
 				break;
 			
+			case WCWiredProtocolAccountInUse:
+				return NSLS(@"Account In Use", @"Wired protocol error title");
+				break;
+			
 			case WCWiredProtocolTrackerNotEnabled:
 				return NSLS(@"Tracker Not Enabled", @"Wired protocol error title");
 				break;
@@ -195,11 +196,9 @@
 			case WCWiredProtocolRsrcNotSupported:
 				return NSLS(@"Resource Fork Not Supported.", @"Wired protocol error title");
 				break;
-				
-			default:
-				return NSLS(@"Unknown Error", @"Wired protocol error title");
-				break;
 		}
+		
+		return NSLS(@"Unknown Error", @"Wired protocol error title");
 	}
 	
 	return [super localizedDescription];
@@ -271,9 +270,6 @@
 			case WCWiredClientClientNotFound: 
 				return NSLS(@"Could not find the client you referred to. Perhaps that client left before the command could be completed.", @"WCWiredClientClientNotFound description"); 
 				break; 
-				
-			default:
-				break;
 		}
 	}
 	else if([[self domain] isEqualToString:WCWiredProtocolErrorDomain]) {
@@ -355,6 +351,10 @@
 				return NSLS(@"The account you tried to create already exists on the server.", @"Wired protocol error description");
 				break;
 			
+			case WCWiredProtocolAccountInUse:
+				return NSLS(@"The account you tried to delete is currently used by a logged in user.", @"Wired protocol error description");
+				break;
+			
 			case WCWiredProtocolTrackerNotEnabled:
 				return NSLS(@"This server does not function as a tracker.", @"Wired protocol error description");
 				break;
@@ -382,11 +382,9 @@
 			case WCWiredProtocolRsrcNotSupported:
 				return NSLS(@"This server does not support resource fork transfers.", @"Wired protocol error description");
 				break;
-			
-			default:
-                return [NSSWF:NSLS(@"An unknown server error occured. The error received from the server was %u.", @"Wired protocol error description (code)"), [self code]];
-                break;
 		}
+			
+		return [NSSWF:NSLS(@"An unknown server error occured. The error received from the server was %u.", @"Wired protocol error description (code)"), [self code]];
 	}
 	
 	return [super localizedFailureReason];

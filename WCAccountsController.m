@@ -758,6 +758,7 @@
 	_groupImage				= [[NSImage imageNamed:@"Group"] retain];
 	_accounts				= [[NSMutableArray alloc] init];
 	_selectAccounts			= [[NSMutableArray alloc] init];
+	_deletedAccounts		= [[NSMutableDictionary alloc] init];
 
 	basicsSettings			= [NSMutableArray array];
 	filesSettings			= [NSMutableArray array];
@@ -886,6 +887,8 @@
 	
 	[_dateFormatter release];
 	[_accountFilter release];
+	
+	[_deletedAccounts release];
 
 	[super dealloc];
 }
@@ -1053,8 +1056,68 @@
 
 
 - (void)wiredAccountDeleteAccountReply:(WIP7Message *)message {
-	if([[message name] isEqualToString:@"wired.error"])
-		[_administration showError:[WCError errorWithWiredMessage:message]];
+	NSEnumerator	*enumerator;
+	NSArray			*accounts;
+	NSAlert			*alert;
+	NSNumber		*key;
+	NSString		*title, *description;
+	WCError			*error;
+	NSUInteger		lastTransaction;
+	WIP7UInt32		transaction;
+	
+	if([[message name] isEqualToString:@"wired.okay"] || [[message name] isEqualToString:@"wired.error"]) {
+		if([[message name] isEqualToString:@"wired.error"])
+			error = [WCError errorWithWiredMessage:message];
+		else
+			error = NULL;
+		
+		if([message getUInt32:&transaction forName:@"wired.transaction"]) {
+			if([[message name] isEqualToString:@"wired.okay"] || [error code] != WCWiredProtocolAccountInUse)
+				[_deletedAccounts removeObjectForKey:[NSNumber numberWithUnsignedInteger:transaction]];
+			
+			lastTransaction		= 0;
+			enumerator			= [_deletedAccounts keyEnumerator];
+			
+			while((key = [enumerator nextObject])) {
+				if([key unsignedIntegerValue] > lastTransaction)
+					lastTransaction = [key unsignedIntegerValue];
+			}
+			
+			if(lastTransaction > 0 && lastTransaction <= transaction) {
+				accounts = [_deletedAccounts allValues];
+				
+				if([accounts count] == 1) {
+					title = [NSSWF:
+						NSLS(@"Are you sure you want to delete \u201c%@\u201d?", @"Delete account dialog title (filename)"),
+						[[accounts objectAtIndex:0] name]];
+					description = NSLS(@"The account is currently used by a logged in user. Deleting it will disconnect the affected user. This cannot be undone.",
+									   @"Delete and disconnect account dialog description");
+				} else {
+					title = [NSSWF:
+						NSLS(@"Are you sure you want to delete %lu items?", @"Delete and disconnect account dialog title (count)"),
+						[accounts count]];
+					description = NSLS(@"The accounts are currently used by logged in users. Deleting them will disconnect the affected users. This cannot be undone.",
+									   @"Delete and disconnect account dialog description");
+				}
+				
+				alert = [[NSAlert alloc] init];
+				[alert setMessageText:title];
+				[alert setInformativeText:description];
+				[alert addButtonWithTitle:NSLS(@"Delete & Disconnect", @"Delete and disconnect account dialog button title")];
+				[alert addButtonWithTitle:NSLS(@"Cancel", @"Delete and disconnect account dialog button title")];
+				[alert beginSheetModalForWindow:[_administration window]
+								  modalDelegate:self
+								 didEndSelector:@selector(deleteAndDisconnectSheetDidEnd:returnCode:contextInfo:)
+									contextInfo:NULL];
+				[alert release];
+			}
+		}
+		
+		if(error && [error code] != WCWiredProtocolAccountInUse)
+			[_administration showError:error];
+
+		[[_administration connection] removeObserver:self message:message];
+	}
 }
 
 
@@ -1404,20 +1467,57 @@
 	NSEnumerator	*enumerator;
 	WIP7Message		*message;
 	WCAccount		*account;
+	NSUInteger		transaction;
 
 	if(returnCode == NSAlertFirstButtonReturn) {
 		enumerator = [[self _selectedAccounts] objectEnumerator];
 
 		while((account = [enumerator nextObject])) {
-			if([account isKindOfClass:[WCUserAccount class]])
+			if([account isKindOfClass:[WCUserAccount class]]) {
 				message = [WIP7Message messageWithName:@"wired.account.delete_user" spec:WCP7Spec];
-			else
+				[message setBool:NO forName:@"wired.account.disconnect_users"];
+			} else {
 				message = [WIP7Message messageWithName:@"wired.account.delete_group" spec:WCP7Spec];
+			}
 			
 			[message setString:[account name] forName:@"wired.account.name"];
-			[[_administration connection] sendMessage:message fromObserver:self selector:@selector(wiredAccountDeleteAccountReply:)];
+			
+			transaction = [[_administration connection] sendMessage:message
+													   fromObserver:self
+														   selector:@selector(wiredAccountDeleteAccountReply:)];
+			
+			[_deletedAccounts setObject:account forKey:[NSNumber numberWithUnsignedInteger:transaction]];
 		}
 	}
+}
+
+
+
+- (void)deleteAndDisconnectSheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+	NSEnumerator	*enumerator;
+	WIP7Message		*message;
+	WCAccount		*account;
+	
+	if(returnCode == NSAlertFirstButtonReturn) {
+		enumerator = [_deletedAccounts objectEnumerator];
+
+		while((account = [enumerator nextObject])) {
+			if([account isKindOfClass:[WCUserAccount class]]) {
+				message = [WIP7Message messageWithName:@"wired.account.delete_user" spec:WCP7Spec];
+				[message setBool:YES forName:@"wired.account.disconnect_users"];
+			} else {
+				message = [WIP7Message messageWithName:@"wired.account.delete_group" spec:WCP7Spec];
+			}
+			
+			[message setString:[account name] forName:@"wired.account.name"];
+			
+			[[_administration connection] sendMessage:message
+										 fromObserver:self
+											 selector:@selector(wiredAccountDeleteAccountReply:)];
+		}
+	}
+	
+	[_deletedAccounts removeAllObjects];
 }
 
 

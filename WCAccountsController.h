@@ -95,6 +95,8 @@
 
 	NSString							*_accountFilter;
 	WIDateFormatter						*_dateFormatter;
+	
+	NSMutableDictionary					*_deletedAccounts;
 }
 
 - (NSString *)newDocumentMenuItemTitle;

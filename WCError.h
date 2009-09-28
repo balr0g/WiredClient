@@ -64,13 +64,14 @@ enum _WCWiredProtocolError {
 	WCWiredProtocolFileExists					= 15,
 	WCWiredProtocolAccountNotFound				= 16,
 	WCWiredProtocolAccountExists				= 17,
-	WCWiredProtocolTrackerNotEnabled			= 18,
-	WCWiredProtocolNotRegistered				= 19,
-	WCWiredProtocolBanNotFound					= 20,
-	WCWiredProtocolBanExists					= 21,
-	WCWiredProtocolBoardNotFound				= 22,
-	WCWiredProtocolBoardExists					= 23,
-	WCWiredProtocolRsrcNotSupported				= 24
+	WCWiredProtocolAccountInUse					= 18,
+	WCWiredProtocolTrackerNotEnabled			= 19,
+	WCWiredProtocolNotRegistered				= 20,
+	WCWiredProtocolBanNotFound					= 21,
+	WCWiredProtocolBanExists					= 22,
+	WCWiredProtocolBoardNotFound				= 23,
+	WCWiredProtocolBoardExists					= 24,
+	WCWiredProtocolRsrcNotSupported				= 25
 };
 typedef enum _WCWiredProtocolError				WCWiredProtocolError;
 
