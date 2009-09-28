@@ -2082,7 +2082,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	else if(selector == @selector(deleteDocument:))
 		return [self _validateDelete];
 	else if(selector == @selector(reloadDocument:))
-		return YES;
+		return [self _validateReload];
 	else if(selector == @selector(quickLook:))
 		return [self _validateQuickLook];
 	else if(selector == @selector(label:))
@@ -2124,6 +2124,9 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 - (NSString *)reloadDocumentMenuItemTitle {
+	if(_searching)
+		return NULL;
+	
 	return [NSSWF:NSLS(@"Reload \u201c%@\u201d", @"Reload menu item (file)"), [_currentDirectory name]];
 }
 
