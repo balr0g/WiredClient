@@ -30,6 +30,7 @@
 #import "WCErrorQueue.h"
 #import "WCServerConnection.h"
 
+#define WCAdministrationIdentifierKey		@"WCAdministrationIdentifierKey"
 #define WCAdministrationViewKey				@"WCAdministrationViewKey"
 #define WCAdministrationNameKey				@"WCAdministrationNameKey"
 #define WCAdministrationImageKey			@"WCAdministrationImageKey"
@@ -74,6 +75,7 @@
 	[view setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable | NSViewMaxXMargin | NSViewMaxYMargin];
 	
 	dictionary = [NSMutableDictionary dictionary];
+	[dictionary setObject:identifier forKey:WCAdministrationIdentifierKey];
 	[dictionary setObject:view forKey:WCAdministrationViewKey];
 	[dictionary setObject:name forKey:WCAdministrationNameKey];
 	[dictionary setObject:image forKey:WCAdministrationImageKey];
@@ -201,6 +203,7 @@
 	NSWindow		*window;
 	NSToolbar		*toolbar;
 	NSDictionary	*dictionary;
+	NSString		*key, *string;
 	
 	[self _addAdministrationView:_monitorView
 							name:NSLS(@"Monitor", @"Monitor toolbar item")
@@ -255,12 +258,20 @@
 	[[self window] center];
 	
 	[self setShouldCascadeWindows:NO];
+	[self setShouldSaveWindowFrameOriginOnly:YES];
 	[self setWindowFrameAutosaveName:@"Administration"];
 
 	enumerator = [_views objectEnumerator];
 	
-	while((dictionary = [enumerator nextObject]))
+	while((dictionary = [enumerator nextObject])) {
+		key		= [NSSWF:@"%@ %@ Frame", [self class], [dictionary objectForKey:WCAdministrationIdentifierKey]];
+		string	= [[WCSettings settings] objectForKey:key];
+		
+		if(string)
+			[[dictionary objectForKey:WCAdministrationViewKey] setFrame:NSRectFromString(string)];
+		
 		[[dictionary objectForKey:WCAdministrationControllerKey] windowDidLoad];
+	}
 	
 	[self _selectAdministrationViewWithIdentifier:[_identifiers objectAtIndex:0] animate:NO];
 
@@ -282,6 +293,20 @@
 
 
 - (void)windowWillClose:(NSNotification *)notification {
+	NSEnumerator		*enumerator;
+	NSDictionary		*dictionary;
+	NSView				*view;
+	NSString			*key;
+	
+	enumerator = [_views objectEnumerator];
+	
+	while((dictionary = [enumerator nextObject])) {
+		key		= [NSSWF:@"%@ %@ Frame", [self class], [dictionary objectForKey:WCAdministrationIdentifierKey]];
+		view	= [dictionary objectForKey:WCAdministrationViewKey];
+		
+		[[WCSettings settings] setObject:NSStringFromRect([view frame]) forKey:key];
+	}
+	
 	[_shownController controllerWindowWillClose];
 }
 
