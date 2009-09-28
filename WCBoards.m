@@ -1536,6 +1536,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	newPath			= [message stringForName:@"wired.board.new_board"];
 	board			= [[_boards boardForConnection:connection] boardForPath:oldPath];
 	selectedBoard	= [self _selectedBoard];
+	selectedThread	= [self _selectedThread];
 	
 	[board setPath:newPath];
 	[board setName:[newPath lastPathComponent]];
