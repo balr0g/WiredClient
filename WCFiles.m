@@ -751,6 +751,9 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 - (BOOL)_existingDirectoryTreeIsWritableForFile:(WCFile *)file {
 	WCFile		*parentFile;
 	
+	if(_searching)
+		return NO;
+	
 	parentFile = file;
 	
 	do {
@@ -765,6 +768,9 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 - (BOOL)_existingDirectoryTreeIsReadableForFile:(WCFile *)file {
 	WCFile		*parentFile;
+	
+	if(_searching)
+		return NO;
 	
 	parentFile = file;
 	
