@@ -188,7 +188,7 @@
 		if([_errors count] == 0) {
 			[NSApp endSheet:_errorPanel];
 		} else {
-			if(_shownError > index)
+			if(_shownError >= index)
 				_shownError--;
 			
 			error = [_errors objectAtIndex:_shownError];
