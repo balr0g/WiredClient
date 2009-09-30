@@ -333,12 +333,12 @@ typedef enum _WCChatActivity				WCChatActivity;
 												 target:[WCApplicationController sharedController]
 												 action:@selector(transfers:)];
 	}
-	else if([identifier isEqualToString:@"Administration"]) {
+	else if([identifier isEqualToString:@"Settings"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
-												   name:NSLS(@"Administration", @"Administration toolbar item")
+												   name:NSLS(@"Settings", @"Settings toolbar item")
 												content:[NSImage imageNamed:@"Settings"]
 												 target:self
-												 action:@selector(administration:)];
+												 action:@selector(settings:)];
 	}
 	else if([identifier isEqualToString:@"Monitor"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
@@ -347,6 +347,13 @@ typedef enum _WCChatActivity				WCChatActivity;
 												 target:self
 												 action:@selector(monitor:)];
 	}
+	else if([identifier isEqualToString:@"Log"]) {
+		return [NSToolbarItem toolbarItemWithIdentifier:identifier
+												   name:NSLS(@"Log", @"Log toolbar item")
+												content:[NSImage imageNamed:@"Log"]
+												 target:self
+												 action:@selector(log:)];
+	}
 	else if([identifier isEqualToString:@"Accounts"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
 												   name:NSLS(@"Accounts", @"Accounts toolbar item")
@@ -354,12 +361,12 @@ typedef enum _WCChatActivity				WCChatActivity;
 												 target:self
 												 action:@selector(accounts:)];
 	}
-	else if([identifier isEqualToString:@"Log"]) {
+	else if([identifier isEqualToString:@"Banlist"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
-												   name:NSLS(@"Log", @"Log toolbar item")
-												content:[NSImage imageNamed:@"Log"]
+												   name:NSLS(@"Banlist", @"Banlist toolbar item")
+												content:[NSImage imageNamed:@"Banlist"]
 												 target:self
-												 action:@selector(log:)];
+												 action:@selector(banlist:)];
 	}
 	else if([identifier isEqualToString:@"Reconnect"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
@@ -389,7 +396,7 @@ typedef enum _WCChatActivity				WCChatActivity;
 		@"Messages",
 		@"Files",
 		@"Transfers",
-		@"Administration",
+		@"Settings",
 		NSToolbarFlexibleSpaceItemIdentifier,
 		@"Reconnect",
 		@"Disconnect",
@@ -405,10 +412,11 @@ typedef enum _WCChatActivity				WCChatActivity;
 		@"Messages",
 		@"Files",
 		@"Transfers",
-		@"Administration",
+		@"Settings",
 		@"Monitor",
-		@"Accounts",
 		@"Log",
+		@"Accounts",
+		@"Banlist",
 		@"Reconnect",
 		@"Disconnect",
 		NSToolbarSeparatorItemIdentifier,
@@ -693,12 +701,34 @@ typedef enum _WCChatActivity				WCChatActivity;
 
 
 
+- (IBAction)settings:(id)sender {
+	WCServerConnection		*connection;
+	
+	connection = [[self selectedChatController] connection];
+	
+	[[connection administration] selectController:[[connection administration] settingsController]];
+	[[connection administration] showWindow:self];
+}
+
+
+
 - (IBAction)monitor:(id)sender {
 	WCServerConnection		*connection;
 	
 	connection = [[self selectedChatController] connection];
 	
 	[[connection administration] selectController:[[connection administration] monitorController]];
+	[[connection administration] showWindow:self];
+}
+
+
+
+- (IBAction)log:(id)sender {
+	WCServerConnection		*connection;
+	
+	connection = [[self selectedChatController] connection];
+	
+	[[connection administration] selectController:[[connection administration] logController]];
 	[[connection administration] showWindow:self];
 }
 
@@ -715,12 +745,12 @@ typedef enum _WCChatActivity				WCChatActivity;
 
 
 
-- (IBAction)log:(id)sender {
+- (IBAction)banlist:(id)sender {
 	WCServerConnection		*connection;
 	
 	connection = [[self selectedChatController] connection];
 	
-	[[connection administration] selectController:[[connection administration] logController]];
+	[[connection administration] selectController:[[connection administration] banlistController]];
 	[[connection administration] showWindow:self];
 }
 

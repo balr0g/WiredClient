@@ -49,9 +49,11 @@
 - (IBAction)serverInfo:(id)sender;
 - (IBAction)files:(id)sender;
 - (IBAction)administration:(id)sender;
+- (IBAction)settings:(id)sender;
 - (IBAction)monitor:(id)sender;
-- (IBAction)accounts:(id)sender;
 - (IBAction)log:(id)sender;
+- (IBAction)accounts:(id)sender;
+- (IBAction)banlist:(id)sender;
 - (IBAction)console:(id)sender;
 - (IBAction)getInfo:(id)sender;
 - (IBAction)saveChat:(id)sender;

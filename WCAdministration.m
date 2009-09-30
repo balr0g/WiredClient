@@ -129,12 +129,12 @@
 			[view setHidden:NO];
 		}
 
-		[[self window] setTitle:[dictionary objectForKey:WCAdministrationNameKey]];
-		
 		[[[self window] toolbar] setSelectedItemIdentifier:identifier];
 
 		_shownView = view;
 		_shownController = controller;
+
+		[[self window] setTitle:[[self connection] name] withSubtitle:[self name]];
 
 		[controller controllerDidSelect];
 	}
@@ -205,6 +205,12 @@
 	NSDictionary	*dictionary;
 	NSString		*key, *string;
 	
+	[self _addAdministrationView:_settingsView
+							name:NSLS(@"Settings", @"Settings toolbar item")
+						   image:[NSImage imageNamed:@"Settings"]
+					  identifier:@"Settings"
+					  controller:_settingsController];
+	
 	[self _addAdministrationView:_monitorView
 							name:NSLS(@"Monitor", @"Monitor toolbar item")
 						   image:[NSImage imageNamed:@"Monitor"]
@@ -216,12 +222,6 @@
 						   image:[NSImage imageNamed:@"Log"]
 					  identifier:@"Log"
 					  controller:_logController];
-	
-	[self _addAdministrationView:_settingsView
-							name:NSLS(@"Settings", @"Settings toolbar item")
-						   image:[NSImage imageNamed:@"Settings"]
-					  identifier:@"Settings"
-					  controller:_settingsController];
 	
 	[self _addAdministrationView:_accountsView
 							name:NSLS(@"Accounts", @"Accounts toolbar item")
@@ -448,14 +448,14 @@
 
 #pragma mark -
 
-- (WCMonitorController *)monitorController {
-	return _monitorController;
+- (WCSettingsController *)settingsController {
+	return _settingsController;
 }
 
 
 
-- (WCAccountsController *)accountsController {
-	return _accountsController;
+- (WCMonitorController *)monitorController {
+	return _monitorController;
 }
 
 
@@ -466,12 +466,35 @@
 
 
 
+- (WCAccountsController *)accountsController {
+	return _accountsController;
+}
+
+
+
+- (WCBanlistController *)banlistController {
+	return _banlistController;
+}
+
+
+
 #pragma mark -
 
 - (void)showError:(WCError *)error {
 	[_errorQueue showError:error];
 }
 
+
+
+#pragma mark -
+
+- (NSString *)name {
+	NSString		*identifier;
+	
+	identifier = [self _identifierForController:_shownController];
+	
+	return [[_views objectForKey:identifier] objectForKey:WCAdministrationNameKey];
+}
 
 
 #pragma mark -

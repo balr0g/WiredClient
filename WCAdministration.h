@@ -61,9 +61,11 @@
 - (void)selectController:(id)controller;
 - (id)selectedController;
 
+- (WCSettingsController *)settingsController;
 - (WCMonitorController *)monitorController;
-- (WCAccountsController *)accountsController;
 - (WCLogController *)logController;
+- (WCAccountsController *)accountsController;
+- (WCBanlistController *)banlistController;
 
 - (void)showError:(WCError *)error;
 
