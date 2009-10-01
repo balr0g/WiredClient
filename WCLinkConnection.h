@@ -45,15 +45,14 @@ extern NSString * const WCLinkConnectionLoggedInNotification;
 @class WCLink, WCNotificationCenter;
 
 @interface WCLinkConnection : WCConnection {
-	WCLink													*_link;
-	NSNotificationCenter									*_notificationCenter;
-	WIP7NotificationCenter									*_linkNotificationCenter;
-	WIP7UInt32												_transaction;
+	WCLink								*_link;
+	NSNotificationCenter				*_notificationCenter;
+	WIP7NotificationCenter				*_linkNotificationCenter;
+	WIP7UInt32							_transaction;
 	
-	NSDate													*_connectDate;
-	WCError													*_error;
+	WCError								*_error;
 	
-	BOOL													_disconnecting;
+	BOOL								_disconnecting;
 }
 
 - (void)linkConnectionDidTerminate:(NSNotification *)notification;
@@ -80,7 +79,6 @@ extern NSString * const WCLinkConnectionLoggedInNotification;
 
 - (BOOL)isConnected;
 - (BOOL)isDisconnecting;
-- (NSDate *)connectDate;
 - (WCError *)error;
 
 @end

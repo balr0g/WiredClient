@@ -53,28 +53,28 @@ extern NSString * const WCServerConnectionEventInfo2Key;
 @class WCAdministration, WCPublicChatController, WCConsole, WCServerInfo;
 
 @interface WCServerConnection : WCLinkConnection {
-	NSString													*_identifier;
-	NSDictionary												*_theme;
+	NSString								*_identifier;
+	NSDictionary							*_theme;
 	
-	NSUInteger													_userID;
+	NSUInteger								_userID;
 	
-	WCServer													*_server;
-	WCCache														*_cache;
+	WCServer								*_server;
+	WCCache									*_cache;
 	
-	WCAdministration											*_administration;
-	WCPublicChatController										*_chatController;
-	WCConsole													*_console;
-	WCServerInfo												*_serverInfo;
+	WCAdministration						*_administration;
+	WCPublicChatController					*_chatController;
+	WCConsole								*_console;
+	WCServerInfo							*_serverInfo;
 	
-	NSMutableArray												*_connectionControllers;
+	NSMutableArray							*_connectionControllers;
 	
-	BOOL														_manuallyReconnecting;
-	BOOL														_shouldAutoReconnect;
-	BOOL														_autoReconnecting;
+	BOOL									_manuallyReconnecting;
+	BOOL									_shouldAutoReconnect;
+	BOOL									_autoReconnecting;
 	
-	BOOL														_hasConnected;
+	BOOL									_hasConnected;
 	
-	NSUInteger													_autoReconnectAttempts;
+	NSUInteger								_autoReconnectAttempts;
 }
 
 - (void)reconnect;

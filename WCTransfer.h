@@ -65,7 +65,6 @@ typedef enum _WCTransferState			WCTransferState;
 	WCFile								*_file;
 	WIUnclickableProgressIndicator		*_progressIndicator;
 	NSImage								*_icon;
-	NSDate								*_requestDate;
 
 	NSDate								*_startDate;
 	NSTimeInterval						_accumulatedTime;
@@ -108,8 +107,6 @@ typedef enum _WCTransferState			WCTransferState;
 - (WIFileOffset)rsrcTransferred;
 - (void)setActualTransferred:(WIFileOffset)actualTransferred;
 - (WIFileOffset)actualTransferred;
-- (void)setRequestDate:(NSDate *)date;
-- (NSDate *)requestDate;
 
 - (void)setFolder:(BOOL)value;
 - (BOOL)isFolder;
