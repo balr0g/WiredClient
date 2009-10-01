@@ -50,6 +50,7 @@ extern NSString * const WCLinkConnectionLoggedInNotification;
 	WIP7NotificationCenter									*_linkNotificationCenter;
 	WIP7UInt32												_transaction;
 	
+	NSDate													*_connectDate;
 	WCError													*_error;
 	
 	BOOL													_disconnecting;
@@ -79,6 +80,7 @@ extern NSString * const WCLinkConnectionLoggedInNotification;
 
 - (BOOL)isConnected;
 - (BOOL)isDisconnecting;
+- (NSDate *)connectDate;
 - (WCError *)error;
 
 @end

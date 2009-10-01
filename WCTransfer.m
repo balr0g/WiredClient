@@ -102,7 +102,7 @@
 @implementation WCTransfer
 
 + (NSInteger)version {
-	return 2;
+	return 3;
 }
 
 
@@ -188,6 +188,7 @@
 	_actualTransferred			= [coder decodeInt64ForKey:@"WCTransferActualTransferred"];
 	_size						= [coder decodeInt64ForKey:@"WCTransferSize"];
 	_accumulatedTime			= [coder decodeDoubleForKey:@"WCTransferAccumulatedTime"];
+	_requestDate				= [[coder decodeObjectForKey:@"WCTransferRequestDate"] retain];
 	
 	if(_dataTransferred > 0 || _rsrcTransferred > 0) {
 		[_progressIndicator setIndeterminate:NO];
@@ -225,6 +226,7 @@
 	[coder encodeInt64:_actualTransferred forKey:@"WCTransferActualTransferred"];
 	[coder encodeInt64:_size forKey:@"WCTransferSize"];
 	[coder encodeDouble:_accumulatedTime forKey:@"WCTransferAccumulatedTime"];
+	[coder encodeObject:_requestDate forKey:@"WCTransferRequestDate"];
 
 	[super encodeWithCoder:coder];
 }
@@ -242,6 +244,7 @@
 	[_startDate release];
 	[_file release];
 	[_icon release];
+	[_requestDate release];
 	
 	[_progressIndicator removeFromSuperview];
 	[_progressIndicator release];
@@ -401,6 +404,21 @@
 
 - (WIFileOffset)actualTransferred {
 	return _actualTransferred;
+}
+
+
+
+- (void)setRequestDate:(NSDate *)date {
+	[date retain];
+	[_requestDate release];
+	
+	_requestDate = date;
+}
+
+
+
+- (NSDate *)requestDate {
+	return _requestDate;
 }
 
 

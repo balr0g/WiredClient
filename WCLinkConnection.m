@@ -77,8 +77,12 @@ NSString * const WCLinkConnectionLoggedInNotification					= @"WCLinkConnectionLo
 - (void)dealloc {
 	[self removeObserver:self];
 	
+	[_link release];
 	[_notificationCenter release];
 	[_linkNotificationCenter release];
+
+	[_error release];
+	[_connectDate release];
 	
 	[super dealloc];
 }
@@ -298,6 +302,9 @@ NSString * const WCLinkConnectionLoggedInNotification					= @"WCLinkConnectionLo
 	_link = [[WCLink alloc] initLinkWithURL:[self URL]];
 	[_link setDelegate:self];
 	[_link connect];
+	
+	[_connectDate release];
+	_connectDate = [[NSDate date] retain];
 }
 
 
@@ -337,6 +344,12 @@ NSString * const WCLinkConnectionLoggedInNotification					= @"WCLinkConnectionLo
 
 - (BOOL)isDisconnecting {
 	return _disconnecting;
+}
+
+
+
+- (NSDate *)connectDate {
+	return _connectDate;
 }
 
 

@@ -649,6 +649,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 	[_errorQueue dismissErrorWithIdentifier:[transfer identifier]];
 	
+	[transfer setRequestDate:[NSDate date]];
+	
 	if([transfer isFolder]) {
 		[transfer setState:WCTransferListing];
 		
@@ -867,6 +869,9 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 - (void)_finishTransfer:(WCTransfer *)transfer withError:(WCError *)error {
 	[self _presentError:error forConnection:[transfer connection] transfer:transfer];
 	[self _finishTransfer:transfer];
+	
+	if([[[transfer connection] connectDate] compare:[transfer requestDate]] == NSOrderedDescending)
+		[self _requestTransfer:transfer];
 }
 
 
