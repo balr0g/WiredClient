@@ -2187,6 +2187,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	WCFile		*file;
 	
 	if(![[_currentDirectory path] isEqualToString:@"/"]) {
+		[_selectFiles removeAllObjects];
 		[_selectFiles addObject:_currentDirectory];
 		
 		file = [self _existingParentFileForFile:_currentDirectory];

@@ -1142,7 +1142,7 @@ NSString * const WCMessagesDidChangeUnreadCountNotification		= @"WCMessagesDidCh
 		[[[conversation connection] chatController] selectUser:user];
 		[[WCPublicChat publicChat] showWindow:self];
 	} else { 
-		error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientClientNotFound]; 
+		error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientUserNotFound]; 
 		[[conversation connection] triggerEvent:WCEventsError info1:error]; 
 		[[error alert] beginSheetModalForWindow:[self window]]; 
 	}

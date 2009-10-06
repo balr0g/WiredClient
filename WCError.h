@@ -26,22 +26,18 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define WCWiredClientErrorDomain			@"WCWiredClientErrorDomain"
-#define WCWiredProtocolErrorDomain			@"WCWiredProtocolErrorDomain"
+extern NSString * const							WCWiredClientErrorDomain;
+extern NSString * const							WCWiredProtocolErrorDomain;
 
 
 enum _WCWiredClientError {
 	WCWiredClientServerDisconnected,
-	WCWiredClientNotConnected,
 	WCWiredClientBanned,
-	WCWiredClientOpenFailed,
-	WCWiredClientCreateFailed,
-	WCWiredClientFileExists,
-	WCWiredClientFolderExists,
+	WCWiredClientTransferDownloadDirectoryNotFound,
 	WCWiredClientTransferExists,
 	WCWiredClientTransferWithResourceFork,
 	WCWiredClientTransferFailed,
-	WCWiredClientClientNotFound,
+	WCWiredClientUserNotFound,
 };
 typedef enum _WCWiredClientError				WCWiredClientError;
 

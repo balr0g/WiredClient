@@ -374,7 +374,17 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	NSAlert				*alert;
 	NSString			*path, *title, *description;
 	WCFile				*file;
+	WCError				*error;
 	BOOL				isDirectory;
+	
+	if(![[NSFileManager defaultManager] directoryExistsAtPath:destination]) {
+		error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientTransferDownloadDirectoryNotFound argument:destination];
+		file = [files objectAtIndex:0];
+		
+		[self _presentError:error forConnection:[file connection] transfer:NULL];
+		
+		return NO;
+	}
 	
 	existingFiles		= [NSMutableArray array];
 	enumerator			= [files objectEnumerator];
@@ -868,7 +878,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	[self _presentError:error forConnection:[transfer connection] transfer:transfer];
 	[self _finishTransfer:transfer];
 	
-	if([[WCSettings settings] boolForKey:WCAutoReconnect] && [[transfer connection] isConnected])
+	if([[WCSettings settings] boolForKey:WCAutoReconnect] && [[transfer connection] isConnected] && [transfer actualTransferred] > 0)
 		[self _requestTransfer:transfer];
 }
 

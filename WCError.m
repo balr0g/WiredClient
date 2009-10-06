@@ -26,6 +26,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+NSString * const WCWiredClientErrorDomain		= @"WCWiredClientErrorDomain";
+NSString * const WCWiredProtocolErrorDomain		= @"WCWiredProtocolErrorDomain";
+
+
 @implementation WCError
 
 + (id)errorWithWiredMessage:(WIP7Message *)message {
@@ -50,28 +54,12 @@
 				return NSLS(@"Server Disconnected", @"WCWiredClientServerDisconnected title");
 				break;
 			
-			case WCWiredClientNotConnected:
-				return NSLS(@"Not Connected", @"WCWiredClientNotConnected title");
-				break;
-			
 			case WCWiredClientBanned:
 				return NSLS(@"Banned", @"WCWiredClientBanned title");
 				break;
-				
-			case WCWiredClientOpenFailed:
-				return NSLS(@"Open Failed", @"WCWiredClientOpenFailed title");
-				break;
-				
-			case WCWiredClientCreateFailed:
-				return NSLS(@"Create Failed", @"WCWiredClientCreateFailed title");
-				break;
-				
-			case WCWiredClientFileExists:
-				return NSLS(@"File Exists", @"WCWiredClientFileExists title");
-				break;
-				
-			case WCWiredClientFolderExists:
-				return NSLS(@"Folder Exists", @"WCWiredClientFolderExists title");
+			
+			case WCWiredClientTransferDownloadDirectoryNotFound:
+				return NSLS(@"Transfer Destination Not Found", @"WCWiredClientTransferDownloadDirectoryNotFound title");
 				break;
 				
 			case WCWiredClientTransferExists:
@@ -86,8 +74,8 @@
 				return NSLS(@"Transfer Failed", @"WCWiredClientTransferFailed title");
 				break;
 				
-			case WCWiredClientClientNotFound: 
-				return NSLS(@"Client Not Found", @"WCWiredClientClientNotFound title"); 
+			case WCWiredClientUserNotFound: 
+				return NSLS(@"User Not Found", @"WCWiredClientUserNotFound title"); 
 				break;
 		}
 	}
@@ -217,37 +205,17 @@
 				return NSLS(@"The server has unexpectedly disconnected.", @"WCWiredClientServerDisconnected description");
 				break;
 				
-			case WCWiredClientNotConnected:
-				return [NSSWF:NSLS(@"This operation can't proceed until you connect to the server \u201c%@\u201d.", @"WCWiredClientNotConnected description (server name]"),
-					argument];
-				break;
-				
 			case WCWiredClientBanned:
 				return NSLS(@"You have been banned from this server.", @"WCWiredClientBanned description");
 				break;
 			
-			case WCWiredClientOpenFailed:
-				return [NSSWF:NSLS(@"Could not open the file \u201c%@\u201d.", @"WCWiredClientOpenFailed description (path)"),
-					argument];
-				break;
-				
-			case WCWiredClientCreateFailed:
-				return [NSSWF:NSLS(@"Could not create the file \u201c%@\u201d.", @"WCWiredClientCreateFailed description (path)"),
-					argument];
-				break;
-				
-			case WCWiredClientFileExists:
-				return [NSSWF:NSLS(@"The file \u201c%@\u201d already exists.", @"WCWiredClientFileExists description (path)"),
-					argument];
-				break;
-				
-			case WCWiredClientFolderExists:
-				return [NSSWF:NSLS(@"The folder \u201c%@\u201d already exists.", @"WCWiredClientFolderExists description (path)"),
+			case WCWiredClientTransferDownloadDirectoryNotFound:
+				return [NSSWF:NSLS(@"The transfer destination \u201c%@\u201d could not be found.", @"WCWiredClientTransferDownloadDirectoryNotFound description (path)"),
 					argument];
 				break;
 				
 			case WCWiredClientTransferExists:
-				return [NSSWF:NSLS(@"You are already transferring \u201c%@\u201d.", @"WCWiredClientTransferExists description (path)"),
+				return [NSSWF:NSLS(@"The transfer of \u201c%@\u201d failed.", @"WCWiredClientTransferFailed description (name)"),
 					argument];
 				break;
 				
@@ -267,8 +235,8 @@
 					argument];
 				break;
 				
-			case WCWiredClientClientNotFound: 
-				return NSLS(@"Could not find the client you referred to. Perhaps that client left before the command could be completed.", @"WCWiredClientClientNotFound description"); 
+			case WCWiredClientUserNotFound: 
+				return NSLS(@"Could not find the user you referred to. Perhaps that user left before the command could be completed.", @"WCWiredClientUserNotFound description"); 
 				break; 
 		}
 	}
