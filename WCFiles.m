@@ -1338,10 +1338,10 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	NSEnumerator			*enumerator;
 	NSMutableArray			*directory;
 	NSMutableIndexSet		*indexes;
-	NSString				*path;
 	WCFile					*file;
-	NSUInteger				index;
+	NSUInteger				i, count;
 	BOOL					complete, first;
+	id						item;
 	
 	if([_selectFiles count] > 0) {
 		directory		= [self _directoryForConnection:[self _selectedConnection] path:[_currentDirectory path]];
@@ -1351,19 +1351,32 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		complete		= YES;
 		
 		while((file = [enumerator nextObject])) {
-			index = [directory indexOfObject:file];
+			count = [_filesOutlineView numberOfRows];
 			
-			if(index != NSNotFound)
-				[indexes addIndex:index];
+			for(i = 0; i < count; i++) {
+				item = [_filesOutlineView itemAtRow:i];
+				
+				if([[item path] isEqualToString:[file path]]) {
+					[indexes addIndex:i];
+					
+					break;
+				}
+			}
 			
 			[_filesTreeView selectPath:[file path] byExtendingSelection:!first];
 			
-			if([file isFolder])
-				path = [file path];
-			else
-				path = [[file path] stringByDeletingLastPathComponent];
-
-			if(![[_currentDirectory path] isEqualToString:path])
+			if([self _selectedStyle] == WCFilesStyleList) {
+				if(![[_currentDirectory path] isEqualToString:[file path]]) {
+					do {
+						file = [self _existingParentFileForFile:file];
+					} while([_filesOutlineView isItemExpanded:file]);
+				}
+			} else {
+				if(![file isFolder])
+					file = [self _existingParentFileForFile:file];
+			}
+			
+			if(![[_currentDirectory path] isEqualToString:[file path]])
 				complete = NO;
 			
 			first = NO;
@@ -2518,7 +2531,27 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 - (IBAction)reload:(id)sender {
-	[self _reloadFilesAtDirectory:_currentDirectory];
+	NSEnumerator	*enumerator;
+	NSArray			*files;
+	WCFile			*file;
+	
+	if(![self _validateReload])
+		return;
+	
+	files = [self _selectedFiles];
+	
+	if([self _selectedStyle] == WCFilesStyleList && [files count] > 0) {
+		enumerator = [files objectEnumerator];
+		
+		while((file = [enumerator nextObject])) {
+			if(![_filesOutlineView isItemExpanded:file])
+				file = [self _existingParentFileForFile:file];
+			
+			[self _reloadFilesAtDirectory:file];
+		}
+	} else {
+		[self _reloadFilesAtDirectory:_currentDirectory];
+	}
 }
 
 
