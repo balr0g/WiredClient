@@ -66,10 +66,6 @@ NSString * const WCWiredProtocolErrorDomain		= @"WCWiredProtocolErrorDomain";
 				return NSLS(@"Transfer Exists", @"WCWiredClientTransferExists title");
 				break;
 				
-			case WCWiredClientTransferWithResourceFork:
-				return NSLS(@"Transfer Not Supported", @"WCWiredClientTransferWithResourceFork title");
-				break;
-				
 			case WCWiredClientTransferFailed:
 				return NSLS(@"Transfer Failed", @"WCWiredClientTransferFailed title");
 				break;
@@ -219,17 +215,6 @@ NSString * const WCWiredProtocolErrorDomain		= @"WCWiredProtocolErrorDomain";
 					argument];
 				break;
 				
-			case WCWiredClientTransferWithResourceFork:
-				if([argument isKindOfClass:[NSString class]]) {
-					return [NSSWF:NSLS(@"The file \u201c%@\u201d has a resource fork, which is not handled by this server.\n\nOnly the data part will be uploaded, possibly resulting in a corrupted file. Please use an archiver to ensure the file will be uploaded correctly.", @"WCWiredClientTransferWithResourceFork description (path)"),
-						argument];
-				}
-				else if([argument isKindOfClass:[NSNumber class]]) {
-					return [NSSWF:NSLS(@"The folder contains %lu files with resource forks, which are not handled by this server.\n\nOnly the data parts will be uploaded, possibly resulting in corrupted files. Please use an archiver to ensure the files will be uploaded correctly.", @"WCWiredClientTransferWithResourceFork description (number)"),
-						[argument unsignedIntegerValue]];
-				}
-				break;
-
 			case WCWiredClientTransferFailed:
 				return [NSSWF:NSLS(@"The transfer of \u201c%@\u201d failed.", @"WCWiredClientTransferFailed description (name)"),
 					argument];

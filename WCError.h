@@ -35,7 +35,6 @@ enum _WCWiredClientError {
 	WCWiredClientBanned,
 	WCWiredClientTransferDownloadDirectoryNotFound,
 	WCWiredClientTransferExists,
-	WCWiredClientTransferWithResourceFork,
 	WCWiredClientTransferFailed,
 	WCWiredClientUserNotFound,
 };

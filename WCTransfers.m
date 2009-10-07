@@ -94,6 +94,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 - (BOOL)_downloadFiles:(NSArray *)file toFolder:(NSString *)destination;
 - (BOOL)_downloadFile:(WCFile *)file toFolder:(NSString *)destination;
+- (BOOL)_uploadPaths:(NSArray *)paths toFolder:(WCFile *)destination;
 - (BOOL)_uploadPath:(NSString *)path toFolder:(WCFile *)destination;
 
 - (WCTransferConnection *)_transferConnectionForTransfer:(WCTransfer *)transfer;
@@ -508,14 +509,82 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 
 
+- (BOOL)_uploadPaths:(NSArray *)paths toFolder:(WCFile *)destination {
+	NSDirectoryEnumerator	*directoryEnumerator;
+	NSEnumerator			*enumerator;
+	NSAlert					*alert;
+	NSString				*path, *eachPath, *fullPath, *resourceForkPath, *title, *description;
+	NSUInteger				resourceForks;
+	BOOL					isDirectory;
+	
+	if([[WCSettings settings] boolForKey:WCCheckForResourceForks] && ![[destination connection] supportsResourceForks]) {
+		resourceForks		= 0;
+		resourceForkPath	= NULL;
+		enumerator			= [paths objectEnumerator];
+		
+		while((path = [enumerator nextObject])) {
+			isDirectory				= [[NSFileManager defaultManager] directoryExistsAtPath:path];
+			directoryEnumerator		= [[NSFileManager defaultManager] enumeratorWithFileAtPath:path];
+
+			while((eachPath = [directoryEnumerator nextObject])) {
+				if([[eachPath lastPathComponent] hasPrefix:@"."]) {
+					[directoryEnumerator skipDescendents];
+					
+					continue;
+				}
+				
+				if(isDirectory)
+					fullPath = [path stringByAppendingPathComponent:eachPath];
+				else
+					fullPath = path;
+				
+				if([[NSFileManager defaultManager] resourceForkSizeAtPath:fullPath] > 0) {
+					resourceForks++;
+					resourceForkPath = fullPath;
+				}
+			}
+		}
+	
+		if(resourceForks > 0) {
+			if(resourceForks == 1) {
+				title = [NSSWF:NSLS(@"Upload \u201c%@\u201d without resource fork?", @"Transfers resource fork alert title (name)"),
+					[resourceForkPath lastPathComponent]];
+				description = NSLS(@"The file has a resource fork, which is not handled by this server. Only the data part will be uploaded, possibly resulting in a corrupted file. You may need to use an archiver to ensure the file are uploaded correctly.", @"Transfers resource fork alert description");
+			} else {
+				title = NSLS(@"Upload files without resource forks?", @"Transfers resource fork alert title");
+				description = NSLS(@"Some files have resource forks, which are not handled by this server. Only the data parts will be uploaded, possibly resulting in corrupted files. You may need to use an archiver to ensure the files are uploaded correctly.", @"Transfers resource fork alert description");
+			}
+			
+			alert = [[[NSAlert alloc] init] autorelease];
+			[alert setMessageText:title];
+			[alert setInformativeText:description];
+			[alert addButtonWithTitle:NSLS(@"Cancel", @"Transfers resource fork alert button")];
+			[alert addButtonWithTitle:NSLS(@"Upload", @"Transfers resource fork alert button")];
+			
+			if([alert runModal] == NSAlertFirstButtonReturn)
+				return NO;
+		}
+	}
+	
+	enumerator = [paths objectEnumerator];
+	
+	while((path = [enumerator nextObject])) {
+		if(![self _uploadPath:path toFolder:destination])
+			return NO;
+	}
+	
+	return YES;
+}
+
+
+
 - (BOOL)_uploadPath:(NSString *)path toFolder:(WCFile *)destination {
 	NSDirectoryEnumerator	*enumerator;
-	NSString				*eachPath, *remotePath, *localPath, *serverPath, *resourceForkPath;
+	NSString				*eachPath, *remotePath, *localPath, *serverPath;
 	WCTransfer				*transfer;
 	WCFile					*file;
 	WCError					*error;
-	WIFileOffset			size;
-	NSUInteger				count, resourceForks;
+	NSUInteger				count;
 	BOOL					isDirectory;
 	
 	remotePath = [[destination path] stringByAppendingPathComponent:[path lastPathComponent]];
@@ -538,9 +607,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		[transfer setState:WCTransferListing];
 	}
 	
-	enumerator			= [[NSFileManager defaultManager] enumeratorWithFileAtPath:path];
-	resourceForks		= 0;
-	resourceForkPath	= NULL;
+	enumerator = [[NSFileManager defaultManager] enumeratorWithFileAtPath:path];
 
 	while((eachPath = [enumerator nextObject])) {
 		if([[eachPath lastPathComponent] hasPrefix:@"."]) {
@@ -564,16 +631,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 				file = [WCFile fileWithFile:serverPath connection:[destination connection]];
 				[file setUploadDataSize:[[NSFileManager defaultManager] fileSizeAtPath:localPath]];
 				
-				size = [[NSFileManager defaultManager] resourceForkSizeAtPath:localPath];
-				
-				if(size > 0) {
-					if([[destination connection] supportsResourceForks]) {
-						[file setUploadRsrcSize:size];
-					} else {
-						resourceForkPath = localPath;
-						resourceForks++;
-					}
-				}
+				if([[destination connection] supportsResourceForks])
+					[file setUploadRsrcSize:[[NSFileManager defaultManager] resourceForkSizeAtPath:localPath]];
 				
 				[file setTransferLocalPath:localPath];
 				
@@ -605,20 +664,6 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		[self _requestTransfer:transfer];
 	
 	[_transfersTableView reloadData];
-	
-	if(resourceForks > 0 && [[WCSettings settings] boolForKey:WCCheckForResourceForks]) {
-		if(resourceForks == 1) {
-			error = [WCError errorWithDomain:WCWiredClientErrorDomain
-										code:WCWiredClientTransferWithResourceFork
-									argument:resourceForkPath];
-		} else {
-			error = [WCError errorWithDomain:WCWiredClientErrorDomain
-										code:WCWiredClientTransferWithResourceFork
-									argument:[NSNumber numberWithInt:resourceForks]];
-		}
-		
-		[self _presentError:error forConnection:[destination connection] transfer:NULL];
-	}
 	
 	return YES;
 }
@@ -2261,21 +2306,14 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 
 
-- (BOOL)downloadFile:(WCFile *)file {
-	return [self _downloadFiles:[NSArray arrayWithObject:file]
-					   toFolder:[[[WCSettings settings] objectForKey:WCDownloadFolder] stringByStandardizingPath]];
+- (BOOL)downloadFiles:(NSArray *)files toFolder:(NSString *)destination {
+	return [self _downloadFiles:files toFolder:destination];
 }
 
 
 
-- (BOOL)downloadFile:(WCFile *)file toFolder:(NSString *)destination {
-	return [self _downloadFiles:[NSArray arrayWithObject:file] toFolder:destination];
-}
-
-
-
-- (BOOL)uploadPath:(NSString *)path toFolder:(WCFile *)destination {
-	return [self _uploadPath:path toFolder:destination];
+- (BOOL)uploadPaths:(NSArray *)paths toFolder:(WCFile *)destination {
+	return [self _uploadPaths:paths toFolder:destination];
 }
 
 

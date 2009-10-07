@@ -62,9 +62,8 @@
 
 - (BOOL)addTransferAtPath:(NSString *)path;
 - (BOOL)downloadFiles:(NSArray *)files;
-- (BOOL)downloadFile:(WCFile *)file;
-- (BOOL)downloadFile:(WCFile *)file toFolder:(NSString *)destination;
-- (BOOL)uploadPath:(NSString *)path toFolder:(WCFile *)destination;
+- (BOOL)downloadFiles:(NSArray *)files toFolder:(NSString *)destination;
+- (BOOL)uploadPaths:(NSArray *)paths toFolder:(WCFile *)destination;
 
 - (IBAction)deleteDocument:(id)sender;
 - (IBAction)start:(id)sender;

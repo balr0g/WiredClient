@@ -2305,16 +2305,12 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 - (void)uploadOpenPanelDidEnd:(NSOpenPanel *)openPanel returnCode:(NSInteger)returnCode contextInfo:(void  *)contextInfo {
-	NSEnumerator	*enumerator;
-	NSArray			*files;
-	NSString		*path;
+	NSArray			*paths;
 
 	if(returnCode == NSOKButton) {
-		files = [openPanel filenames];
-		enumerator = [[files sortedArrayUsingSelector:@selector(compare:)] objectEnumerator];
+		paths = [[openPanel filenames] sortedArrayUsingSelector:@selector(compare:)];
 
-		while((path = [enumerator nextObject]))
-			[[WCTransfers transfers] uploadPath:path toFolder:_currentDirectory];
+		[[WCTransfers transfers] uploadPaths:paths toFolder:_currentDirectory];
 	}
 }
 
@@ -3054,7 +3050,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	NSEnumerator		*enumerator;
 	NSEvent				*event;
 	NSArray				*types, *sources;
-	NSString			*destinationPath, *sourcePath;
+	NSString			*destinationPath;
 	WIP7Message			*message;
 	WCFile				*sourceFile, *destinationFile, *parentFile;
 	NSUInteger			oldIndex;
@@ -3168,15 +3164,9 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 			return YES;
 		}
 		else if([types containsObject:NSFilenamesPboardType]) {
-			sources			= [pasteboard propertyListForType:NSFilenamesPboardType];
-			enumerator		= [[sources sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)] objectEnumerator];
+			sources = [[pasteboard propertyListForType:NSFilenamesPboardType] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
 			
-			while((sourcePath = [enumerator nextObject])) {
-				if(![[WCTransfers transfers] uploadPath:sourcePath toFolder:destinationFile])
-					return NO;
-			}
-			
-			return YES;
+			return [[WCTransfers transfers] uploadPaths:sources toFolder:destinationFile];
 		}
 	}
 	
@@ -3234,18 +3224,24 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 - (NSArray *)outlineView:(NSOutlineView *)outlineView namesOfPromisedFilesDroppedAtDestination:(NSURL *)destination forDraggedItems:(NSArray *)items {
 	NSEnumerator		*enumerator;
-	NSMutableArray		*names;
+	NSMutableArray		*files, *names;
 	WCFile				*file;
 	
-	names		= [NSMutableArray array];
-	enumerator	= [items objectEnumerator];
-	
+	files			= [NSMutableArray array];
+	names			= [NSMutableArray array];
+	enumerator		= [items objectEnumerator];
+
 	while((file = [enumerator nextObject])) {
-		if([[WCTransfers transfers] downloadFile:file toFolder:[destination path]])
+		if([file connection] && [[file connection] isConnected]) {
+			[files addObject:file];
 			[names addObject:[file name]];
+		}
 	}
+
+	if([[WCTransfers transfers] downloadFiles:files toFolder:[destination path]])
+		return names;
 	
-	return names;
+	return NULL;
 }
 
 
@@ -3424,13 +3420,12 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 
-
 - (BOOL)treeView:(WITreeView *)treeView acceptDrop:(id <NSDraggingInfo>)info path:(NSString *)path {
 	NSPasteboard		*pasteboard;
 	NSEnumerator		*enumerator;
 	NSEvent				*event;
 	NSArray				*types, *sources;
-	NSString			*destinationPath, *sourcePath;
+	NSString			*destinationPath;
 	WIP7Message			*message;
 	WCFile				*sourceFile, *destinationFile, *parentFile;
 	BOOL				link;
@@ -3473,15 +3468,9 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		return YES;
 	}
 	else if([types containsObject:NSFilenamesPboardType]) {
-		sources			= [pasteboard propertyListForType:NSFilenamesPboardType];
-		enumerator		= [[sources sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)] objectEnumerator];
+		sources = [[pasteboard propertyListForType:NSFilenamesPboardType] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
 		
-		while((sourcePath = [enumerator nextObject])) {
-			if(![[WCTransfers transfers] uploadPath:sourcePath toFolder:destinationFile])
-				return NO;
-		}
-		
-		return YES;
+		return [[WCTransfers transfers] uploadPaths:sources toFolder:destinationFile];
 	}
 	
 	return NO;
@@ -3497,26 +3486,29 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 - (NSArray *)treeView:(WITreeView *)treeView namesOfPromisedFilesDroppedAtDestination:(NSURL *)destination forDraggedPaths:(NSArray *)paths {
 	NSEnumerator			*enumerator;
-	NSMutableDictionary		*files;
-	NSMutableArray			*names;
+	NSMutableDictionary		*allFiles;
+	NSMutableArray			*files, *names;
 	NSString				*path;
 	WCFile					*file;
 	
-	files		= [self _filesForConnection:[self _selectedConnection]];
-	names		= [NSMutableArray array];
-	enumerator	= [paths objectEnumerator];
+	allFiles		= [self _filesForConnection:[self _selectedConnection]];
+	files			= [NSMutableArray array];
+	names			= [NSMutableArray array];
+	enumerator		= [paths objectEnumerator];
 	
 	while((path = [enumerator nextObject])) {
-		file = [files objectForKey:path];
+		file = [allFiles objectForKey:path];
 		
-		if(!file || ![file connection] || ![[file connection] isConnected])
-			continue;
-		
-		if([[WCTransfers transfers] downloadFile:file toFolder:[destination path]])
+		if(file && [file connection] && [[file connection] isConnected]) {
+			[files addObject:file];
 			[names addObject:[file name]];
+		}
 	}
+
+	if([[WCTransfers transfers] downloadFiles:files toFolder:[destination path]])
+		return names;
 	
-	return names;
+	return NULL;
 }
 
 
