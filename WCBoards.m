@@ -1067,6 +1067,9 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	[_backgroundColor release];
 	[_dateFormatter release];
 	
+	[_receivedBoards release];
+	[_readPosts release];
+	
 	[_headerTemplate release];
 	[_footerTemplate release];
 	[_postTemplate release];
@@ -1274,8 +1277,12 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 
 	board = [_boards boardForConnection:connection];
 	
-	if(!board)
-		[_boards addBoard:[WCBoard boardWithConnection:connection]];
+	if(board)
+		[_boards removeBoard:board];
+	
+	[_boards addBoard:[WCBoard boardWithConnection:connection]];
+	
+	[_receivedBoards removeObject:[connection URL]];
 
 	[connection addObserver:self selector:@selector(wiredBoardBoardAdded:) messageName:@"wired.board.board_added"];
 	[connection addObserver:self selector:@selector(wiredBoardBoardRenamed:) messageName:@"wired.board.board_renamed"];
@@ -1320,9 +1327,6 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	
 	[_boards invalidateForConnection:[notification object]];
 	
-	if([connection URL])
-		[_receivedBoards removeObject:[connection URL]];
-
 	[connection removeObserver:self];
 
 	[self _validate];
@@ -1746,8 +1750,6 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 		[board addThread:thread sortedUsingSelector:[self _sortSelector]];
 		[thread setBoard:board];
 	}
-	
-	[[connection console] log:@"Added post %@ to thread %@ in board %@", post, thread, board];
 	
 	if(board == [self _selectedBoard]) {
 		[_boardsOutlineView setNeedsDisplay:YES];
