@@ -2276,6 +2276,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	[self _reloadBoardListsSelectingBoard:board];
 	
 	[_postLocationPopUpButton setEnabled:NO];
+	[_subjectTextField setEnabled:NO];
 	[_subjectTextField setStringValue:subject];
 	[_postTextView setString:@""];
 	[_postButton setTitle:NSLS(@"Reply", @"Reply post button title")];
@@ -2323,6 +2324,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	[self _reloadBoardListsSelectingBoard:board];
 
 	[_postLocationPopUpButton setEnabled:NO];
+	[_subjectTextField setEnabled:NO];
 	[_subjectTextField setStringValue:subject];
 	[_postTextView setString:[NSSWF:@"[quote=%@]%@[/quote]\n\n", [post nick], text]];
 	[_postButton setTitle:NSLS(@"Reply", @"Reply post button title")];
@@ -2379,6 +2381,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	[self _reloadBoardListsSelectingBoard:board];
 
 	[_postLocationPopUpButton setEnabled:NO];
+	[_subjectTextField setEnabled:NO];
 	[_subjectTextField setStringValue:[post subject]];
 	[_postTextView setString:[post text]];
 	[_postButton setTitle:NSLS(@"Edit", @"Edit post button title")];
@@ -2792,6 +2795,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	[self _reloadBoardListsSelectingBoard:board];
 
 	[_postLocationPopUpButton setEnabled:YES];
+	[_subjectTextField setEnabled:YES];
 	[_subjectTextField setStringValue:@""];
 	[_postTextView setString:@""];
 	[_postButton setTitle:NSLS(@"Create", @"New thread button title")];
@@ -3032,19 +3036,19 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 #pragma mark -
 
 - (IBAction)bold:(id)sender {
-	[self _insertBBCodeWithStartTag:@"[B]" endTag:@"[/B]"];
+	[self _insertBBCodeWithStartTag:@"[b]" endTag:@"[/b]"];
 }
 
 
 
 - (IBAction)italic:(id)sender {
-	[self _insertBBCodeWithStartTag:@"[I]" endTag:@"[/I]"];
+	[self _insertBBCodeWithStartTag:@"[i]" endTag:@"[/i]"];
 }
 
 
 
 - (IBAction)underline:(id)sender {
-	[self _insertBBCodeWithStartTag:@"[U]" endTag:@"[/U]"];
+	[self _insertBBCodeWithStartTag:@"[u]" endTag:@"[/u]"];
 }
 
 
@@ -3056,25 +3060,25 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	tag		= [sender tagOfSelectedItem];
 	color	= [NSSWF:@"#%02X%02X%02X", (tag & 0xFF0000) >> 16, (tag & 0x00FF00) >> 8, (tag & 0x0000FF)];
 	
-	[self _insertBBCodeWithStartTag:[NSSWF:@"[COLOR=%@]", color] endTag:@"[/COLOR]"];
+	[self _insertBBCodeWithStartTag:[NSSWF:@"[color=%@]", color] endTag:@"[/color]"];
 }
 
 
 
 - (IBAction)center:(id)sender {
-	[self _insertBBCodeWithStartTag:@"[CENTER]" endTag:@"[/CENTER]"];
+	[self _insertBBCodeWithStartTag:@"[center]" endTag:@"[/center]"];
 }
 
 
 
 - (IBAction)quote:(id)sender {
-	[self _insertBBCodeWithStartTag:@"[QUOTE]" endTag:@"[/QUOTE]"];
+	[self _insertBBCodeWithStartTag:@"[quote]" endTag:@"[/quote]"];
 }
 
 
 
 - (IBAction)code:(id)sender {
-	[self _insertBBCodeWithStartTag:@"[CODE]" endTag:@"[/CODE]"];
+	[self _insertBBCodeWithStartTag:@"[code]" endTag:@"[/code]"];
 }
 
 
@@ -3082,7 +3086,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 - (IBAction)url:(id)sender {
 	NSRange		range;
 	
-	[self _insertBBCodeWithStartTag:@"[URL=]" endTag:@"[/URL]"];
+	[self _insertBBCodeWithStartTag:@"[url=]" endTag:@"[/url]"];
 	
 	range = [_postTextView selectedRange];
 
@@ -3095,7 +3099,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 
 
 - (IBAction)image:(id)sender {
-	[self _insertBBCodeWithStartTag:@"[IMG]" endTag:@"[/IMG]"];
+	[self _insertBBCodeWithStartTag:@"[img]" endTag:@"[/img]"];
 }
 
 
