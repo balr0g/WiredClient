@@ -164,6 +164,8 @@ NSString * const WCAccountFieldToolTip				= @"WCAccountFieldToolTip";
 		WCAccountFieldDictionary(WCAccountFieldNone,
 			@"wired.account.full_name", @"", WCAccountFieldString, NO, @""),
 		WCAccountFieldDictionary(WCAccountFieldNone,
+			@"wired.account.comment", @"", WCAccountFieldString, NO, @""),
+		WCAccountFieldDictionary(WCAccountFieldNone,
 			@"wired.account.creation_time", @"", WCAccountFieldDate, YES, @""),
 		WCAccountFieldDictionary(WCAccountFieldNone,
 			@"wired.account.modification_time", @"", WCAccountFieldDate, YES, @""),
@@ -518,14 +520,26 @@ NSString * const WCAccountFieldToolTip				= @"WCAccountFieldToolTip";
 
 
 
-- (NSDate *)modificationDate {
-	return [self valueForKey:@"wired.account.modification_time"];
+- (void)setComment:(NSString *)comment {
+	[self setValue:comment forKey:@"wired.account.comment"];
+}
+
+
+
+- (NSString *)comment {
+	return [self valueForKey:@"wired.account.comment"];
 }
 
 
 
 - (NSDate *)creationDate {
 	return [self valueForKey:@"wired.account.creation_time"];
+}
+
+
+
+- (NSDate *)modificationDate {
+	return [self valueForKey:@"wired.account.modification_time"];
 }
 
 

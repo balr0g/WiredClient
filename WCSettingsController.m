@@ -291,6 +291,20 @@
 
 #pragma mark -
 
+- (NSSize)maximumWindowSize {
+	return NSMakeSize(712.0, 619.0);
+}
+
+
+
+- (NSSize)minimumWindowSize {
+	return [self maximumWindowSize];
+}
+
+
+
+#pragma mark -
+
 - (IBAction)addTracker:(id)sender {
 	NSInteger		row;
 	

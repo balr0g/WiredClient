@@ -73,6 +73,8 @@ extern NSString * const						WCAccountFieldToolTip;
 - (NSString *)name;
 - (void)setNewName:(NSString *)newName;
 - (NSString *)newName;
+- (void)setComment:(NSString *)comment;
+- (NSString *)comment;
 - (NSDate *)creationDate;
 - (NSDate *)modificationDate;
 - (NSString *)editedBy;

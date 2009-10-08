@@ -90,10 +90,12 @@
 - (void)controllerWindowDidBecomeKey;
 - (BOOL)controllerWindowShouldClose;
 - (void)controllerWindowWillClose;
-- (NSSize)controllerWindowWillResizeToSize:(NSSize)proposedFrameSize;
 - (void)controllerDidSelect;
 - (BOOL)controllerShouldUnselect;
 - (void)controllerDidUnselect;
+
+- (NSSize)maximumWindowSize;
+- (NSSize)minimumWindowSize;
 
 - (NSString *)newDocumentMenuItemTitle;
 - (NSString *)deleteDocumentMenuItemTitle;

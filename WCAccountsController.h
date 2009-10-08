@@ -59,6 +59,7 @@
 	IBOutlet NSPopUpButton				*_groupPopUpButton;
 	IBOutlet NSMenuItem					*_noneMenuItem;
 	IBOutlet NSTokenField				*_groupsTokenField;
+	IBOutlet NSTextView					*_commentTextView;
 	IBOutlet NSTextField				*_creationTimeTextField;
 	IBOutlet NSTextField				*_modificationTimeTextField;
 	IBOutlet NSTextField				*_loginTimeTextField;

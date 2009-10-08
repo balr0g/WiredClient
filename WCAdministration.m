@@ -94,6 +94,7 @@
 	NSView				*view;
 	id					controller;
 	NSRect				frame;
+	NSSize				size;
 	
 	dictionary	= [_views objectForKey:identifier];
 	view		= [dictionary objectForKey:WCAdministrationViewKey];
@@ -107,6 +108,27 @@
 		
 		frame = [[self window] frame];
 		frame.size = [[self window] frameRectForContentRect:[view frame]].size;
+		
+		size = [controller maximumWindowSize];
+		
+		if(!NSEqualSizes(size, NSZeroSize)) {
+			if(frame.size.width > size.width)
+				frame.size.width = size.width;
+			
+			if(frame.size.height > size.height)
+				frame.size.height = size.height;
+		}
+		
+		size = [controller minimumWindowSize];
+		
+		if(!NSEqualSizes(size, NSZeroSize)) {
+			if(frame.size.width < size.width)
+				frame.size.width = size.width;
+			
+			if(frame.size.height < size.height)
+				frame.size.height = size.height;
+		}
+		
 		frame.origin.y -= frame.size.height - [[self window] frame].size.height;
 		[[self window] setFrame:frame display:YES animate:animate];
 		
@@ -312,8 +334,30 @@
 
 
 
-- (NSSize)windowWillResize:(NSWindow *)window toSize:(NSSize)proposedFrameSize {
-	return [_shownController controllerWindowWillResizeToSize:proposedFrameSize];
+- (NSSize)windowWillResize:(NSWindow *)window toSize:(NSSize)proposedSize {
+	NSSize		size;
+	
+	size = [_shownController maximumWindowSize];
+	
+	if(!NSEqualSizes(size, NSZeroSize)) {
+		if(proposedSize.width > size.width)
+			proposedSize.width = size.width;
+		
+		if(proposedSize.height > size.height)
+			proposedSize.height = size.height;
+	}
+	
+	size = [_shownController minimumWindowSize];
+	
+	if(!NSEqualSizes(size, NSZeroSize)) {
+		if(proposedSize.width < size.width)
+			proposedSize.width = size.width;
+		
+		if(proposedSize.height < size.height)
+			proposedSize.height = size.height;
+	}
+		
+	return proposedSize;
 }
 
 
@@ -578,12 +622,6 @@
 
 
 
-- (NSSize)controllerWindowWillResizeToSize:(NSSize)proposedFrameSize {
-	return proposedFrameSize;
-}
-
-
-
 - (void)controllerDidSelect {
 }
 
@@ -604,6 +642,20 @@
 
 - (BOOL)validateMenuItem:(NSMenuItem *)item {
 	return YES;
+}
+
+
+
+#pragma mark -
+
+- (NSSize)maximumWindowSize {
+	return NSZeroSize;
+}
+
+
+
+- (NSSize)minimumWindowSize {
+	return NSZeroSize;
 }
 
 

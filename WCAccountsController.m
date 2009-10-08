@@ -417,6 +417,7 @@
 			}
 			
 			[_nameTextField setStringValue:[account name]];
+			[_commentTextView setString:[account comment]];
 
 			if([account creationDate] && ![[account creationDate] isAtBeginningOfAnyEpoch])
 				[_creationTimeTextField setStringValue:[_dateFormatter stringFromDate:[account creationDate]]];
@@ -440,6 +441,7 @@
 		[_passwordTextField setStringValue:@""];
 		[_groupPopUpButton selectItem:_noneMenuItem];
 		[_groupsTokenField setStringValue:@""];
+		[_commentTextView setString:@""];
 		[_creationTimeTextField setStringValue:@""];
 		[_modificationTimeTextField setStringValue:@""];
 		[_loginTimeTextField setStringValue:@""];
@@ -487,6 +489,7 @@
 			[_groupsTokenField setEnabled:NO];
 		}
 
+		[_commentTextView setEditable:editable];
 		[_selectAllButton setEnabled:YES];
 	}
 	else if([_accounts count] == 0) {
@@ -496,6 +499,7 @@
 		[_passwordTextField setEnabled:NO];
 		[_groupPopUpButton setEnabled:NO];
 		[_groupsTokenField setEnabled:NO];
+		[_commentTextView setEditable:NO];
 		[_selectAllButton setEnabled:NO];
 	}
 	else {
@@ -505,6 +509,7 @@
 		[_passwordTextField setEnabled:NO];
 		[_groupPopUpButton setEnabled:NO];
 		[_groupsTokenField setEnabled:NO];
+		[_commentTextView setEditable:NO];
 		[_selectAllButton setEnabled:YES];
 	}
 	
@@ -521,6 +526,8 @@
 		[account setNewName:[_nameTextField stringValue]];
 	else
 		[account setName:[_nameTextField stringValue]];
+	
+	[account setComment:[_commentTextView string]];
 	
 	if([account isKindOfClass:[WCUserAccount class]]) {
 		[(WCUserAccount *) account setFullName:[_fullNameTextField stringValue]];
@@ -1129,6 +1136,12 @@
 
 
 
+- (void)textDidChange:(NSNotification *)notification {
+	[self touch:self];
+}
+
+
+
 - (void)controlTextDidChange:(NSNotification *)notification {
 	[self touch:self];
 }
@@ -1178,18 +1191,6 @@
 
 
 
-- (NSSize)controllerWindowWillResizeToSize:(NSSize)proposedFrameSize {
-	if(proposedFrameSize.width < 678.0)
-		proposedFrameSize.width = 678.0;
-
-	if(proposedFrameSize.height < 520.0)
-		proposedFrameSize.height = 520.0;
-	
-	return proposedFrameSize;
-}
-
-
-
 - (void)controllerDidSelect {
 	[[_administration window] makeFirstResponder:_accountsTableView];
 }
@@ -1198,6 +1199,14 @@
 
 - (BOOL)controllerShouldUnselect {
 	return [self _verifyUnsavedAndSelectRow:-1];
+}
+
+
+
+#pragma mark -
+
+- (NSSize)minimumWindowSize {
+	return NSMakeSize(678.0, 571.0);
 }
 
 
