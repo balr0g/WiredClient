@@ -32,34 +32,42 @@
 
 @implementation WCBoardsTextView
 
-- (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)info {
-	if([[[info draggingPasteboard] types] containsObject:WCFilePboardType])
-		return NSDragOperationCopy;
+- (NSArray *)acceptableDragTypes {
+	NSArray		*acceptableDragTypes;
 	
-	return [super draggingEntered:info];
+	acceptableDragTypes = [super acceptableDragTypes];
+	
+	return [acceptableDragTypes arrayByAddingObject:WCFilePboardType];
 }
 
 
 
-- (NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)info {
-	if([[[info draggingPasteboard] types] containsObject:WCFilePboardType])
-		return NSDragOperationCopy;
+- (NSArray *)readablePasteboardTypes {
+	NSArray		*readablePasteboardTypes;
 	
-	return [super draggingUpdated:info];
+	readablePasteboardTypes = [super readablePasteboardTypes];
+	
+	return [readablePasteboardTypes arrayByAddingObject:WCFilePboardType];
 }
 
 
 
-- (BOOL)performDragOperation:(id <NSDraggingInfo>)info {
+- (NSDragOperation)dragOperationForDraggingInfo:(id <NSDraggingInfo>)info type:(NSString *)type {
+	if([type isEqualToString:WCFilePboardType])
+		return NSDragOperationCopy;
+	
+	return [super dragOperationForDraggingInfo:info type:type];
+}
+
+
+
+- (BOOL)readSelectionFromPasteboard:(NSPasteboard *)pasteboard type:(NSString *)type {
 	NSEnumerator		*enumerator;
 	NSMutableArray		*array;
-	NSPasteboard		*pasteboard;
 	NSArray				*sources;
 	WCFile				*file;
 	
-	pasteboard = [info draggingPasteboard];
-	
-	if([[pasteboard types] containsObject:WCFilePboardType]) {
+	if([type isEqualToString:WCFilePboardType]) {
 		array		= [NSMutableArray array];
 		sources		= [NSKeyedUnarchiver unarchiveObjectWithData:[pasteboard dataForType:WCFilePboardType]];
 		enumerator	= [sources objectEnumerator];
@@ -70,10 +78,13 @@
 				[file isFolder] ? @"/" : @""]];
 		}
 		
-		[pasteboard setString:[array componentsJoinedByString:@", "] forType:NSStringPboardType];
+		[[self window] makeFirstResponder:self];
+		[self insertText:[array componentsJoinedByString:@", "]];
+		
+		return YES;
 	}
 	
-	return [super performDragOperation:info];
+	return [super readSelectionFromPasteboard:pasteboard type:type];
 }
 
 @end
