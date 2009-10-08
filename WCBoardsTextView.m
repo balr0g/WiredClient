@@ -65,6 +65,11 @@
 	NSEnumerator		*enumerator;
 	NSMutableArray		*array;
 	NSArray				*sources;
+	NSString			*path, *string;
+	NSBitmapImageRep	*imageRep;
+	NSFileWrapper		*fileWrapper;
+	NSData				*data;
+	WITextAttachment	*attachment;
 	WCFile				*file;
 	
 	if([type isEqualToString:WCFilePboardType]) {
@@ -80,6 +85,44 @@
 		
 		[[self window] makeFirstResponder:self];
 		[self insertText:[array componentsJoinedByString:@", "]];
+		
+		return YES;
+	}
+	else if([type isEqualToString:NSFilenamesPboardType]) {
+		array		= [NSMutableArray array];
+		sources		= [[pasteboard propertyListForType:NSFilenamesPboardType] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
+		enumerator	= [sources objectEnumerator];
+		
+		while((path = [enumerator nextObject])) {
+			data = [NSData dataWithContentsOfFile:path];
+			
+			if(data) {
+				imageRep = [NSBitmapImageRep imageRepWithData:data];
+				
+				if(imageRep) {
+					fileWrapper = [[NSFileWrapper alloc] initWithPath:path];
+					
+					if(fileWrapper) {
+						data = [imageRep representationUsingType:NSPNGFileType properties:NULL];
+						string = [NSSWF:@"[img]data:image/png;base64,%@[/img]", [data base64EncodedString]];
+						
+						attachment = [[WITextAttachment alloc] initWithFileWrapper:fileWrapper string:string];
+						
+						[array addObject:attachment];
+						
+						[attachment release];
+						[fileWrapper release];
+					}
+				}
+			}
+		}
+		
+		[[self window] makeFirstResponder:self];
+		
+		enumerator = [array objectEnumerator];
+		
+		while((attachment = [enumerator nextObject]))
+			[self insertText:[NSAttributedString attributedStringWithAttachment:attachment]];
 		
 		return YES;
 	}

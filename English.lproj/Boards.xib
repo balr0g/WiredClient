@@ -21,9 +21,9 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
+			<integer value="432"/>
 			<integer value="229"/>
 			<integer value="186"/>
-			<integer value="432"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -849,27 +849,15 @@
 															<bool key="EncodedWithXMLCoder">YES</bool>
 															<object class="NSArray" key="dict.sortedKeys">
 																<bool key="EncodedWithXMLCoder">YES</bool>
-																<string>WebKitAllowAnimatedImageLoopingPreferenceKey</string>
-																<string>WebKitAllowAnimatedImagesPreferenceKey</string>
 																<string>WebKitDefaultFixedFontSize</string>
 																<string>WebKitDefaultFontSize</string>
-																<string>WebKitJavaEnabled</string>
-																<string>WebKitJavaScriptCanOpenWindowsAutomatically</string>
-																<string>WebKitJavaScriptEnabled</string>
 																<string>WebKitMinimumFontSize</string>
-																<string>WebKitPluginsEnabled</string>
 															</object>
 															<object class="NSMutableArray" key="dict.values">
 																<bool key="EncodedWithXMLCoder">YES</bool>
-																<boolean value="NO"/>
-																<boolean value="NO"/>
 																<integer value="12"/>
 																<integer value="12"/>
-																<boolean value="NO"/>
-																<boolean value="NO"/>
-																<boolean value="NO"/>
 																<integer value="1"/>
-																<boolean value="NO"/>
 															</object>
 														</object>
 													</object>
@@ -2002,7 +1990,7 @@
 												<int key="NSTCFlags">1</int>
 											</object>
 											<object class="NSTextViewSharedData" key="NSSharedData">
-												<int key="NSFlags">12131</int>
+												<int key="NSFlags">12143</int>
 												<int key="NSTextCheckingTypes">0</int>
 												<nil key="NSMarkedAttributes"/>
 												<reference key="NSBackgroundColor" ref="76857678"/>

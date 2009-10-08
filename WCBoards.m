@@ -683,7 +683,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 						 withString:@"<a href=\"mailto:$1\">$1</a>"
 							options:RKLCaseless];
 	[text replaceOccurrencesOfRegex:@"\\[img](.+?)\\[/img\\]"
-						 withString:@"<img src=\"$1\" alt=\"$1\" />"
+						 withString:@"<img src=\"$1\" alt=\"\" />"
 							options:RKLCaseless];
 
 	[text replaceOccurrencesOfRegex:@"\\[quote=(.+?)\\](.+?)\\[/quote\\]"
