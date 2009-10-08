@@ -106,11 +106,14 @@
 						data = [imageRep representationUsingType:NSPNGFileType properties:NULL];
 						string = [NSSWF:@"[img]data:image/png;base64,%@[/img]", [data base64EncodedString]];
 						
-						attachment = [[WITextAttachment alloc] initWithFileWrapper:fileWrapper string:string];
-						
-						[array addObject:attachment];
-						
-						[attachment release];
+						if([string length] < 512 * 1024) {
+							attachment = [[WITextAttachment alloc] initWithFileWrapper:fileWrapper string:string];
+							
+							[array addObject:attachment];
+							
+							[attachment release];
+						}
+
 						[fileWrapper release];
 					}
 				}
