@@ -49,14 +49,13 @@ typedef enum _WCTransferState			WCTransferState;
 
 @class WCFile, WCServerConnection, WCTransferConnection;
 
-@interface WCTransfer : WCServerConnectionObject <NSCoding> {
+@interface WCTransfer : WCServerConnectionObject <NSCoding, NSCopying> {
 	NSString							*_identifier;
 	
 	WCTransferState						_state;
 	NSUInteger							_queuePosition;
 	NSUInteger							_transaction;
 	BOOL								_folder;
-	BOOL								_secure;
 	WCTransferConnection				*_transferConnection;
 	NSString							*_name;
 	NSString							*_localPath;

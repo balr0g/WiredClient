@@ -12,7 +12,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="6"/>
+			<integer value="7"/>
 			<integer value="144"/>
 			<integer value="113"/>
 		</object>
@@ -469,7 +469,7 @@ IEluYy4sIDIwMDkAA</bytes>
 												</object>
 											</object>
 											<double key="NSRowHeight">46</double>
-											<int key="NSTvFlags">306216960</int>
+											<int key="NSTvFlags">440434688</int>
 											<reference key="NSDelegate"/>
 											<reference key="NSDataSource"/>
 											<int key="NSColumnAutoresizingStyle">1</int>

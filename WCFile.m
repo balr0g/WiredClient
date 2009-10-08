@@ -459,15 +459,6 @@
 	
 	file = [[[self class] allocWithZone:zone] init];
 
-	file->_type				= _type;
-	file->_dataSize			= _dataSize;
-	file->_rsrcSize			= _rsrcSize;
-	file->_directoryCount	= _directoryCount;
-	file->_free				= _free;
-	file->_path				= [_path copy];
-	file->_modificationDate	= [_modificationDate copy];
-	file->_comment			= [_comment copy];
-
 	return file;
 }
 

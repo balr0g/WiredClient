@@ -75,7 +75,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 - (void)_presentError:(WCError *)error forConnection:(WCServerConnection *)connection transfer:(WCTransfer *)transfer;
 
-- (WCTransfer *)_selectedTransfer;
+- (NSArray *)_selectedTransfers;
 - (WCTransfer *)_unfinishedTransferWithPath:(NSString *)path connection:(WCServerConnection *)connection;
 - (WCTransfer *)_transferWithState:(WCTransferState)state;
 - (WCTransfer *)_transferWithState:(WCTransferState)state class:(Class)class;
@@ -130,57 +130,65 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 
 - (BOOL)_validateStart {
+	NSEnumerator	*enumerator;
+	NSArray			*transfers;
 	WCTransfer		*transfer;
 	
-	transfer = [self _selectedTransfer];
+	transfers = [self _selectedTransfers];
 	
-	if(!transfer || ![transfer connection] || ![[transfer connection] isConnected])
+	if([transfers count] == 0)
 		return NO;
 	
-	switch([transfer state]) {
-		case WCTransferLocallyQueued:
-		case WCTransferPaused:
-		case WCTransferStopped:
-		case WCTransferDisconnected:
-			return YES;
-			break;
-			
-		default:
+	enumerator = [transfers objectEnumerator];
+	
+	while((transfer = [enumerator nextObject])) {
+		if(![transfer connection] || ![[transfer connection] isConnected])
 			return NO;
-			break;
+	
+		if([transfer state] != WCTransferLocallyQueued && [transfer state] != WCTransferPaused &&
+		   [transfer state] != WCTransferStopped && [transfer state] != WCTransferDisconnected) {
+			return NO;
+		}
 	}
+	
+	return YES;
 }
 
 
 
 - (BOOL)_validatePause {
+	NSEnumerator	*enumerator;
+	NSArray			*transfers;
 	WCTransfer		*transfer;
 	
-	transfer = [self _selectedTransfer];
+	transfers = [self _selectedTransfers];
 	
-	if(!transfer || ![transfer connection] || ![[transfer connection] isConnected])
+	if([transfers count] == 0)
 		return NO;
 	
-	return ([transfer state] == WCTransferRunning);
+	enumerator = [transfers objectEnumerator];
+	
+	while((transfer = [enumerator nextObject])) {
+		if(![transfer connection] || ![[transfer connection] isConnected])
+			return NO;
+	
+		if([transfer state] != WCTransferRunning)
+			return NO;
+	}
+	
+	return YES;
 }
 
 
 
 - (BOOL)_validateStop {
-	WCTransfer		*transfer;
-	
-	transfer = [self _selectedTransfer];
-	
-	if(!transfer || ![transfer connection] || ![[transfer connection] isConnected])
-		return NO;
-	
-	return ([transfer state] == WCTransferRunning);
+	return [self _validatePause];
 }
 
 
 
 - (BOOL)_validateRemove {
-	return ([self _selectedTransfer] != NULL);
+	return ([[self _selectedTransfers] count] > 0);
 }
 
 
@@ -192,33 +200,57 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 
 - (BOOL)_validateConnect {
+	NSEnumerator	*enumerator;
+	NSArray			*transfers;
 	WCTransfer		*transfer;
 	
-	transfer = [self _selectedTransfer];
+	transfers = [self _selectedTransfers];
 	
-	return (transfer != NULL && [transfer connection] == NULL);
+	if([transfers count] == 0)
+		return NO;
+	
+	enumerator = [transfers objectEnumerator];
+	
+	while((transfer = [enumerator nextObject])) {
+		if([transfer connection])
+			return NO;
+	}
+	
+	return YES;
 }
 
 
 
 - (BOOL)_validateQuickLook {
-	return ([self _selectedTransfer] != NULL && _quickLookPanelClass != NULL);
+	return ([[self _selectedTransfers] count] > 0 && _quickLookPanelClass != NULL);
 }
 
 
 
 - (BOOL)_validateRevealInFinder {
-	return ([self _selectedTransfer] != NULL);
+	return ([[self _selectedTransfers] count] > 0);
 }
 
 
 
 - (BOOL)_validateRevealInFiles {
+	NSEnumerator	*enumerator;
+	NSArray			*transfers;
 	WCTransfer		*transfer;
 	
-	transfer = [self _selectedTransfer];
+	transfers = [self _selectedTransfers];
 	
-	return (transfer != NULL && [transfer connection] != NULL && [[transfer connection] isConnected]);
+	if([transfers count] == 0)
+		return NO;
+	
+	enumerator = [transfers objectEnumerator];
+	
+	while((transfer = [enumerator nextObject])) {
+		if(![transfer connection] || ![[transfer connection] isConnected])
+			return NO;
+	}
+	
+	return YES;
 }
 
 
@@ -263,15 +295,22 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 #pragma mark -
 
-- (WCTransfer *)_selectedTransfer {
-	NSInteger		row;
+- (NSArray *)_selectedTransfers {
+	NSMutableArray		*array;
+	NSIndexSet			*indexes;
+	NSUInteger			index;
 	
-	row = [_transfersTableView selectedRow];
+	array	= [NSMutableArray array];
+	indexes	= [_transfersTableView selectedRowIndexes];
+	index	= [indexes firstIndex];
 	
-	if(row < 0)
-		return NULL;
+	while(index != NSNotFound) {
+		[array addObject:[_transfers objectAtIndex:index]];
+		
+		index = [indexes indexGreaterThanIndex:index];
+	}
 	
-	return [_transfers objectAtIndex:row];
+	return array;
 }
 
 
@@ -2218,27 +2257,31 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 #pragma mark -
 
 - (NSString *)deleteDocumentMenuItemTitle {
-	WCTransfer		*transfer;
+	NSArray			*transfers;
 	
-	transfer = [self _selectedTransfer];
+	transfers = [self _selectedTransfers];
 	
-	if(transfer)
-		return [NSSWF:NSLS(@"Remove \u201c%@\u201d", @"Delete menu item (transfer"), [transfer name]];
-	
-	return NSLS(@"Delete", @"Delete menu item");
+	if([transfers count] == 1)
+		return [NSSWF:NSLS(@"Remove \u201c%@\u201d", @"Delete menu item (transfer"), [[transfers objectAtIndex:0] name]];
+	else if([transfers count] > 1)
+		return [NSSWF:NSLS(@"Remove %u Items", @"Delete menu item (count"), [transfers count]];
+	else
+		return NSLS(@"Delete", @"Delete menu item");
 }
 
 
 
 - (NSString *)quickLookMenuItemTitle {
-	WCTransfer		*transfer;
+	NSArray			*transfers;
 	
-	transfer = [self _selectedTransfer];
+	transfers = [self _selectedTransfers];
 	
-	if(transfer)
-		return [NSSWF:NSLS(@"Quick Look \u201c%@\u201d", @"Quick Look menu item (transfer"), [transfer name]];
-	
-	return NSLS(@"Quick Look", @"Quick Look menu item");
+	if([transfers count] == 1)
+		return [NSSWF:NSLS(@"Quick Look \u201c%@\u201d", @"Quick Look menu item (transfer"), [[transfers objectAtIndex:0] name]];
+	else if([transfers count] > 1)
+		return [NSSWF:NSLS(@"Quick Look %u Items", @"Quick Look menu item (count"), [transfers count]];
+	else
+		return NSLS(@"Quick Look", @"Quick Look menu item");
 }
 
 
@@ -2327,14 +2370,15 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 
 - (IBAction)start:(id)sender {
+	NSEnumerator	*enumerator;
 	WCTransfer		*transfer;
 	
 	if(![self _validateStart])
 		return;
 	
-	transfer = [self _selectedTransfer];
+	enumerator = [[self _selectedTransfers] objectEnumerator];
 	
-	if([transfer state] != WCTransferRunning) {
+	while((transfer = [enumerator nextObject])) {
 		[transfer setState:WCTransferWaiting];
 		
 		[self _requestTransfer:transfer];
@@ -2348,14 +2392,15 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 
 - (IBAction)pause:(id)sender {
+	NSEnumerator	*enumerator;
 	WCTransfer		*transfer;
 	
 	if(![self _validatePause])
 		return;
 	
-	transfer = [self _selectedTransfer];
+	enumerator = [[self _selectedTransfers] objectEnumerator];
 	
-	if([transfer state] == WCTransferRunning)
+	while((transfer = [enumerator nextObject]))
 		[transfer setState:WCTransferPausing];
 	
 	[_transfersTableView setNeedsDisplay:YES];
@@ -2366,10 +2411,16 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 
 - (IBAction)stop:(id)sender {
+	NSEnumerator	*enumerator;
+	WCTransfer		*transfer;
+	
 	if(![self _validateStop])
 		return;
 	
-	[[self _selectedTransfer] setState:WCTransferStopping];
+	enumerator = [[self _selectedTransfers] objectEnumerator];
+	
+	while((transfer = [enumerator nextObject]))
+		[transfer setState:WCTransferStopping];
 
 	[_transfersTableView setNeedsDisplay:YES];
 
@@ -2379,17 +2430,20 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 
 - (IBAction)remove:(id)sender {
+	NSEnumerator	*enumerator;
 	WCTransfer		*transfer;
 	
 	if(![self _validateRemove])
 		return;
 
-	transfer = [self _selectedTransfer];
+	enumerator = [[self _selectedTransfers] objectEnumerator];
 	
-	if([transfer isWorking])
-		[transfer setState:WCTransferRemoving];
-	else
-		[self _removeTransfer:transfer];
+	while((transfer = [enumerator nextObject])) {
+		if([transfer isWorking])
+			[transfer setState:WCTransferRemoving];
+		else
+			[self _removeTransfer:transfer];
+	}
 
 	[_transfersTableView setNeedsDisplay:YES];
 	[_transfersTableView reloadData];
@@ -2417,30 +2471,38 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 
 - (IBAction)quickLook:(id)sender {
-	WCTransfer		*transfer;
-	id				quickLookPanel;
+	NSEnumerator		*enumerator;
+	NSMutableArray		*urls;
+	WCTransfer			*transfer;
+	id					quickLookPanel;
 	
 	if(![self _validateQuickLook])
 		return;
 	
-	transfer = [self _selectedTransfer];
+	[_quickLookTransfers removeAllObjects];
 	
-	[_quickLookTransfers setArray:[NSArray arrayWithObject:transfer]];
+	urls			= [NSMutableArray array];
+	enumerator		= [[self _selectedTransfers] objectEnumerator];
+	
+	while((transfer = [enumerator nextObject])) {
+		[_quickLookTransfers addObject:transfer];
+		[urls addObject:[transfer previewItemURL]];
+	}
 	
 	quickLookPanel = [_quickLookPanelClass performSelector:@selector(sharedPreviewPanel)];
-	
+
 	if([quickLookPanel isVisible])
 		[quickLookPanel orderOut:self];
 	else
 		[quickLookPanel makeKeyAndOrderFront:self];
-
+	
 	if(NSAppKitVersionNumber >= 1038.0) {
 		if([quickLookPanel respondsToSelector:@selector(reloadData)])
 			[quickLookPanel performSelector:@selector(reloadData)];
 	} else {
 		if([quickLookPanel respondsToSelector:@selector(setURLs:)]) {
 			[quickLookPanel performSelector:@selector(setURLs:)
-								 withObject:[NSArray arrayWithObject:[[_quickLookTransfers objectAtIndex:0] previewItemURL]]];
+								 withObject:urls];
 		}
 	}
 }
@@ -2448,53 +2510,63 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 
 - (IBAction)connect:(id)sender {
+	NSEnumerator	*enumerator;
 	WCConnect		*connect;
 	WCTransfer		*transfer;
 	
 	if(![self _validateConnect])
 		return;
 	
-	transfer = [self _selectedTransfer];
+	enumerator = [[self _selectedTransfers] objectEnumerator];
 	
-	connect = [WCConnect connectWithURL:[transfer URL] bookmark:[transfer bookmark]];
-	[connect showWindow:self];
-	[connect connect:self];
+	while((transfer = [enumerator nextObject])) {
+		connect = [WCConnect connectWithURL:[transfer URL] bookmark:[transfer bookmark]];
+		[connect showWindow:self];
+		[connect connect:self];
+	}
 }
 
 
 
 - (IBAction)revealInFinder:(id)sender {
+	NSEnumerator	*enumerator;
 	NSString		*path;
 	WCTransfer		*transfer;
 	
 	if(![self _validateRevealInFinder])
 		return;
 	
-	transfer = [self _selectedTransfer];
+	enumerator = [[self _selectedTransfers] objectEnumerator];
 	
-	if([transfer isFolder])
-		path = [[transfer destinationPath] stringByAppendingPathComponent:[transfer name]];
-	else
-		path = [transfer localPath];
-	
-	[[NSWorkspace sharedWorkspace] selectFile:path inFileViewerRootedAtPath:NULL];
+	while((transfer = [enumerator nextObject])) {
+		if([transfer isFolder])
+			path = [[transfer destinationPath] stringByAppendingPathComponent:[transfer name]];
+		else
+			path = [transfer localPath];
+		
+		[[NSWorkspace sharedWorkspace] selectFile:path inFileViewerRootedAtPath:NULL];
+	}
 }
 
 
 
 - (IBAction)revealInFiles:(id)sender {
-	WCTransfer		*transfer;
+	NSEnumerator	*enumerator;
 	NSString		*path;
+	WCTransfer		*transfer;
 	
 	if(![self _validateRevealInFiles])
 		return;
 	
-	transfer = [self _selectedTransfer];
-	path = [transfer remotePath];
+	enumerator = [[self _selectedTransfers] objectEnumerator];
 	
-	[WCFiles filesWithConnection:[transfer connection]
-							file:[WCFile fileWithDirectory:[path stringByDeletingLastPathComponent] connection:[transfer connection]]
-					  selectFile:[WCFile fileWithDirectory:path connection:[transfer connection]]];
+	while((transfer = [enumerator nextObject])) {
+		path = [transfer remotePath];
+		
+		[WCFiles filesWithConnection:[transfer connection]
+								file:[WCFile fileWithDirectory:[path stringByDeletingLastPathComponent] connection:[transfer connection]]
+						  selectFile:[WCFile fileWithDirectory:path connection:[transfer connection]]];
+	}
 }
 
 
@@ -2541,16 +2613,18 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 
 - (void)tableViewShouldCopyInfo:(NSTableView *)tableView {
-	NSPasteboard	*pasteboard;
-	NSString		*string;
-	WCTransfer		*transfer;
+	NSEnumerator		*enumerator;
+	NSPasteboard		*pasteboard;
+	NSMutableString		*string;
+	WCTransfer			*transfer;
 
-	transfer = [self _selectedTransfer];
+	string			= [NSMutableString string];
+	enumerator		= [[self _selectedTransfers] objectEnumerator];
 	
-	if(!transfer)
-		return;
-
-	string = [NSSWF:@"%@ - %@", [transfer name], [transfer status]];
+	while((transfer = [enumerator nextObject]))
+		[string appendFormat:[NSSWF:@"%@ - %@\n", [transfer name], [transfer status]]];
+	
+	[string trimCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 
 	pasteboard = [NSPasteboard generalPasteboard];
 	[pasteboard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, NULL] owner:NULL];

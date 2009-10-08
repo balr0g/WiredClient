@@ -938,9 +938,22 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		770966D1107E8994005F357B /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				A5DC7FB4057AB0D000736BBF /* WCError.m */,
+				A5DC7FB3057AB0D000736BBF /* WCError.h */,
+				A51474A80F487ECD00DBE395 /* WCErrorQueue.m */,
+				A51474A70F487ECD00DBE395 /* WCErrorQueue.h */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
 		772F6CE90F1E1A8E00CB8001 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				A509ADAA05F7FF8400E6AE2D /* WCAboutWindow.m */,
+				A509ADA905F7FF8400E6AE2D /* WCAboutWindow.h */,
 				A51B4FE40F4222AF00EAB0E1 /* WCFilterButtonCell.m */,
 				A51B4FE30F4222AF00EAB0E1 /* WCFilterButtonCell.h */,
 				A5AAD2DD0D879B250072FFA1 /* WCFilterView.m */,
@@ -1240,22 +1253,16 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
-		A52B1C3806C4061F0033D317 /* Main */ = {
+		A52B1C3806C4061F0033D317 /* Application */ = {
 			isa = PBXGroup;
 			children = (
 				A52B1C3C06C406AC0033D317 /* Resources */,
-				A509ADAA05F7FF8400E6AE2D /* WCAboutWindow.m */,
-				A509ADA905F7FF8400E6AE2D /* WCAboutWindow.h */,
 				A5DC7FC6057AB0F200736BBF /* WCApplication.m */,
 				A5DC7FC7057AB0F200736BBF /* WCApplication.h */,
 				A5DC7EC0057AAEAD00736BBF /* WCApplicationController.m */,
 				A5DC7EBD057AAEAD00736BBF /* WCApplicationController.h */,
-				A5DC7FB4057AB0D000736BBF /* WCError.m */,
-				A5DC7FB3057AB0D000736BBF /* WCError.h */,
-				A51474A80F487ECD00DBE395 /* WCErrorQueue.m */,
-				A51474A70F487ECD00DBE395 /* WCErrorQueue.h */,
 			);
-			name = Main;
+			name = Application;
 			sourceTree = "<group>";
 		};
 		A52B1C3C06C406AC0033D317 /* Resources */ = {
@@ -1293,6 +1300,7 @@
 			isa = PBXGroup;
 			children = (
 				A55C73330F26800B006E8568 /* Classes */,
+				770966D1107E8994005F357B /* Classes */,
 				772F6CE90F1E1A8E00CB8001 /* Views */,
 				29B97315FDCFA39411CA2CEA /* Sources */,
 				A5E8BABF08748D6D0010F2A4 /* Config */,
@@ -1465,7 +1473,7 @@
 		A55C73330F26800B006E8568 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				A52B1C3806C4061F0033D317 /* Main */,
+				A52B1C3806C4061F0033D317 /* Application */,
 				A52B1C3E06C407190033D317 /* Preferences */,
 				A57D22F707D0C444002C306E /* Connection */,
 				A52B1C1206C4033B0033D317 /* Chat */,

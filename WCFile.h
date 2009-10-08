@@ -59,7 +59,7 @@ enum _WCFileLabel {
 typedef enum _WCFileLabel			WCFileLabel;
 
 
-@interface WCFile : WCServerConnectionObject <NSCoding> {
+@interface WCFile : WCServerConnectionObject <NSCoding, NSCopying> {
 	WCFileType						_type;
 	WIFileOffset					_dataSize;
 	WIFileOffset					_rsrcSize;

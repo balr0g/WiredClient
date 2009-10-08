@@ -153,6 +153,42 @@
 
 
 
+- (void)dealloc {
+	[_identifier release];
+	
+	[_transferConnection release];
+	[_name release];
+	[_localPath release];
+	[_remotePath release];
+	[_destinationPath release];
+	[_startDate release];
+	[_file release];
+	[_icon release];
+	
+	[_progressIndicator removeFromSuperview];
+	[_progressIndicator release];
+
+	[_untransferredFilesList release];
+	[_transferredFilesList release];
+	[_untransferredFilesSet release];
+	[_transferredFilesSet release];
+
+	[_uncreatedDirectoriesList release];
+	[_createdDirectoriesList release];
+	[_uncreatedDirectoriesSet release];
+	[_createdDirectoriesSet release];
+	
+	[_terminationLock release];
+	
+	wi_release(_speedCalculator);
+
+	[super dealloc];
+}
+
+
+
+#pragma mark -
+
 - (id)initWithCoder:(NSCoder *)coder {
 	NSInteger		version;
 	
@@ -231,36 +267,14 @@
 
 
 
-- (void)dealloc {
-	[_identifier release];
-	
-	[_transferConnection release];
-	[_name release];
-	[_localPath release];
-	[_remotePath release];
-	[_destinationPath release];
-	[_startDate release];
-	[_file release];
-	[_icon release];
-	
-	[_progressIndicator removeFromSuperview];
-	[_progressIndicator release];
+#pragma mark -
 
-	[_untransferredFilesList release];
-	[_transferredFilesList release];
-	[_untransferredFilesSet release];
-	[_transferredFilesSet release];
-
-	[_uncreatedDirectoriesList release];
-	[_createdDirectoriesList release];
-	[_uncreatedDirectoriesSet release];
-	[_createdDirectoriesSet release];
+- (id)copyWithZone:(NSZone *)zone {
+	WCTransfer		*transfer;
 	
-	[_terminationLock release];
-	
-	wi_release(_speedCalculator);
+	transfer = [[[self class] allocWithZone:zone] init];
 
-	[super dealloc];
+	return transfer;
 }
 
 
@@ -415,18 +429,6 @@
 
 - (BOOL)isFolder {
 	return _folder;
-}
-
-
-
-- (void)setSecure:(BOOL)secure {
-	_secure = secure;
-}
-
-
-
-- (BOOL)isSecure {
-	return _secure;
 }
 
 
