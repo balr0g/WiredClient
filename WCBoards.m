@@ -2381,7 +2381,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	[self _reloadBoardListsSelectingBoard:board];
 
 	[_postLocationPopUpButton setEnabled:NO];
-	[_subjectTextField setEnabled:NO];
+	[_subjectTextField setEnabled:[post isEqual:[thread firstPost]]];
 	[_subjectTextField setStringValue:[post subject]];
 	[_postTextView setString:[post text]];
 	[_postButton setTitle:NSLS(@"Edit", @"Edit post button title")];
