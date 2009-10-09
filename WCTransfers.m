@@ -659,7 +659,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 			localPath	= [[transfer localPath] stringByAppendingPathComponent:eachPath];
 			serverPath	= [remotePath stringByAppendingPathComponent:eachPath];
 		} else {
-			localPath	= eachPath;
+			localPath	= path;
 			serverPath	= remotePath;
 		}
 
