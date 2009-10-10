@@ -28,9 +28,74 @@
 
 #import "WCAccount.h"
 #import "WCAdministration.h"
-#import "WCBan.h"
 #import "WCBanlistController.h"
 #import "WCServerConnection.h"
+
+@interface WCBan : WIObject {
+@public
+	NSString			*_ip;
+	NSDate				*_expirationDate;
+}
+
++ (id)banWithMessage:(WIP7Message *)message;
+
+- (NSComparisonResult)compareIP:(WCBan *)ban;
+- (NSComparisonResult)compareExpirationDate:(WCBan *)ban;
+
+@end
+
+
+@implementation WCBan
+
++ (id)banWithMessage:(WIP7Message *)message {
+	WCBan		*ban;
+	
+	ban = [[self alloc] init];
+	
+	ban->_ip					= [[message stringForName:@"wired.banlist.ip"] retain];
+	ban->_expirationDate		= [[message dateForName:@"wired.banlist.expiration_date"] retain];
+
+	return [ban autorelease];
+}
+
+
+
+- (void)dealloc {
+	[_ip release];
+	[_expirationDate release];
+
+	[super dealloc];
+}
+
+
+
+#pragma mark -
+
+- (NSComparisonResult)compareIP:(WCBan *)ban {
+	return [self->_ip compare:ban->_ip options:NSCaseInsensitiveSearch | NSNumericSearch];
+}
+
+
+
+- (NSComparisonResult)compareExpirationDate:(WCBan *)ban {
+	NSComparisonResult		result;
+	
+	if(!self->_expirationDate && ban->_expirationDate)
+		return NSOrderedAscending;
+	else if(self->_expirationDate && !ban->_expirationDate)
+		return NSOrderedDescending;
+	
+	result = [self->_expirationDate compare:ban->_expirationDate];
+	
+	if(result == NSOrderedSame)
+		result = [self compareIP:ban];
+	
+	return result;
+}
+
+@end
+
+
 
 @interface WCBanlistController(Private)
 
@@ -38,8 +103,7 @@
 - (BOOL)_validateAddBan;
 - (BOOL)_validateDeleteBan;
 
-- (void)_reloadBans;
-- (void)_getBans;
+- (void)_requestBans;
 
 - (WCBan *)_banAtIndex:(NSUInteger)index;
 - (NSArray *)_selectedBans;
@@ -77,14 +141,7 @@
 
 #pragma mark -
 
-- (void)_reloadBans {
-	if([[_administration window] isVisible] && [_administration selectedController] == self)
-		[self _getBans];
-}
-
-
-
-- (void)_getBans {
+- (void)_requestBans {
 	WIP7Message		*message;
 	
 	[_bans removeAllObjects];
@@ -192,7 +249,9 @@
 
 
 - (void)serverConnectionPrivilegesDidChange:(NSNotification *)notification {
-	[self _reloadBans];
+	if([[_administration window] isVisible] && [_administration selectedController] == self)
+		[self _requestBans];
+	
 	[self _validate];
 }
 
@@ -200,7 +259,7 @@
 
 - (void)wiredBanlistGetBansReply:(WIP7Message *)message {
 	if([[message name] isEqualToString:@"wired.banlist.list"]) {
-		[_bans addObject:[WCBan banWithMessage:message connection:[_administration connection]]];
+		[_bans addObject:[WCBan banWithMessage:message]];
 	}
 	else if([[message name] isEqualToString:@"wired.banlist.list.done"]) {
 		[_shownBans setArray:_bans];
@@ -250,7 +309,7 @@
 #pragma mark -
 
 - (void)controllerWindowDidBecomeKey {
-	[self _reloadBans];
+	[self _requestBans];
 }
 
 
@@ -264,7 +323,7 @@
 
 
 - (void)controllerDidSelect {
-	[self _reloadBans];
+	[self _requestBans];
 
 	[[_administration window] makeFirstResponder:_banlistTableView];
 }
@@ -304,7 +363,7 @@
 			break;
 		
 		case 1:
-			return [NSSWF:NSLS(@"Delete \u201c%@\u201d\u2026", @"Delete menu item (IP)"), [[bans objectAtIndex:0] IP]];
+			return [NSSWF:NSLS(@"Delete \u201c%@\u201d\u2026", @"Delete menu item (IP)"), ((WCBan *) [bans objectAtIndex:0])->_ip];
 			break;
 		
 		default:
@@ -376,7 +435,7 @@
 	if([bans count] == 1) {
 		title = [NSSWF:
 			NSLS(@"Are you sure you want to delete \u201c%@\u201d?", @"Delete ban dialog title (IP)"),
-			[[bans objectAtIndex:0] IP]];
+			((WCBan *) [bans objectAtIndex:0])->_ip];
 	} else {
 		title = [NSSWF:
 			NSLS(@"Are you sure you want to delete %lu items?", @"Delete ban dialog title (count)"),
@@ -407,15 +466,15 @@
 		
 		while((ban = [enumerator nextObject])) {
 			message = [WIP7Message messageWithName:@"wired.banlist.delete_ban" spec:WCP7Spec];
-			[message setString:[ban IP] forName:@"wired.banlist.ip"];
+			[message setString:ban->_ip forName:@"wired.banlist.ip"];
 			
-			if([ban expirationDate])
-				[message setDate:[ban expirationDate] forName:@"wired.banlist.expiration_date"];
+			if(ban->_expirationDate)
+				[message setDate:ban->_expirationDate forName:@"wired.banlist.expiration_date"];
 			
 			[[_administration connection] sendMessage:message fromObserver:self selector:@selector(wiredBanlistDeleteBanReply:)];
 		}
 		
-		[self _reloadBans];
+		[self _requestBans];
 	}
 }
 
@@ -435,9 +494,9 @@
 	ban = [self _banAtIndex:row];
 	
 	if(tableColumn == _ipTableColumn)
-		return [ban IP];
+		return ban->_ip;
 	else if(tableColumn == _expiresTableColumn)
-		return [ban expirationDate] ? [_dateFormatter stringFromDate:[ban expirationDate]] : NSLS(@"Never", @"Banlist expiration");
+		return ban->_expirationDate ? [_dateFormatter stringFromDate:ban->_expirationDate] : NSLS(@"Never", @"Banlist expiration");
 	
 	return NULL;
 }

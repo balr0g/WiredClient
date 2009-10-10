@@ -239,6 +239,12 @@
 					  identifier:@"Monitor"
 					  controller:_monitorController];
 	
+	[self _addAdministrationView:_eventsView
+							name:NSLS(@"Events", @"Events toolbar item")
+						   image:[NSImage imageNamed:@"Events"]
+					  identifier:@"Events"
+					  controller:_eventsController];
+	
 	[self _addAdministrationView:_logView
 							name:NSLS(@"Log", @"Log toolbar item")
 						   image:[NSImage imageNamed:@"Log"]
@@ -500,6 +506,12 @@
 
 - (WCMonitorController *)monitorController {
 	return _monitorController;
+}
+
+
+
+- (WCEventsController *)eventsController {
+	return _eventsController;
 }
 
 

@@ -363,6 +363,9 @@ NSString * const WCAccountFieldToolTip				= @"WCAccountFieldToolTip";
 			@"wired.account.user.get_users", NSLS(@"Monitor Users", @"Account field name"),
 			@"TBD"),
 		WCAccountFieldBooleanDictionary(WCAccountFieldAdministration,
+			@"wired.account.events.view_events", NSLS(@"View Events", @"Account field name"),
+			@"TBD"),
+		WCAccountFieldBooleanDictionary(WCAccountFieldAdministration,
 			@"wired.account.log.view_log", NSLS(@"View Log", @"Account field name"),
 			@"TBD"),
 		WCAccountFieldBooleanDictionary(WCAccountFieldAdministration,
@@ -906,6 +909,12 @@ NSString * const WCAccountFieldToolTip				= @"WCAccountFieldToolTip";
 
 - (BOOL)logViewLog {
 	return [[self valueForKey:@"wired.account.log.view_log"] boolValue];
+}
+
+
+
+- (BOOL)eventsViewEvents {
+	return [[self valueForKey:@"wired.account.events.view_events"] boolValue];
 }
 
 

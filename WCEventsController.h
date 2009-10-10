@@ -1,7 +1,7 @@
 /* $Id$ */
 
 /*
- *  Copyright (c) 2008-2009 Axel Andersson
+ *  Copyright (c) 2009 Axel Andersson
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -26,19 +26,23 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WCServerConnectionObject.h"
+#import "WCAdministration.h"
 
-@interface WCBan : WCServerConnectionObject {
-	NSString			*_ip;
-	NSDate				*_expirationDate;
+@interface WCEventsController : WCAdministrationController {
+	IBOutlet WITableView				*_eventsTableView;
+	IBOutlet NSTableColumn				*_timeTableColumn;
+	IBOutlet NSTableColumn				*_nickTableColumn;
+	IBOutlet NSTableColumn				*_loginTableColumn;
+	IBOutlet NSTableColumn				*_ipTableColumn;
+	IBOutlet NSTableColumn				*_messageTableColumn;
+	
+	NSMutableArray						*_allEvents;
+	NSMutableArray						*_listedEvents;
+	NSMutableArray						*_receivedEvents;
+	NSMutableArray						*_shownEvents;
+	WIDateFormatter						*_dateFormatter;
+	
+	BOOL								_requested;
 }
-
-+ (id)banWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection;
-
-- (NSString *)IP;
-- (NSDate *)expirationDate;
-
-- (NSComparisonResult)compareIP:(WCBan *)ban;
-- (NSComparisonResult)compareExpirationDate:(WCBan *)ban;
 
 @end

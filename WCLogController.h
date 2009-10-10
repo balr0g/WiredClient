@@ -58,7 +58,6 @@ typedef enum _WCLogLevel				WCLogLevel;
 	NSString							*_messageFilter;
 	
 	BOOL								_requested;
-	BOOL								_subscribed;
 }
 
 - (IBAction)all:(id)sender;

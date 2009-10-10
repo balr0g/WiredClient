@@ -67,6 +67,8 @@
 - (void)_reloadFilter;
 - (void)_refreshReceivedEntries;
 
+- (void)_requestLog;
+
 @end
 
 
@@ -148,6 +150,24 @@
 	[_logTableView scrollRowToVisible:[_shownEntries count] - 1];
 }
 
+
+
+#pragma mark -
+
+- (void)_requestLog {
+	WIP7Message		*message;
+	
+	if(!_requested && [[_administration connection] isConnected] && [[[_administration connection] account] logViewLog]) {
+		message = [WIP7Message messageWithName:@"wired.log.get_log" spec:WCP7Spec];
+		[[_administration connection] sendMessage:message fromObserver:self selector:@selector(wiredLogGetLogReply:)];
+		
+		message = [WIP7Message messageWithName:@"wired.log.subscribe" spec:WCP7Spec];
+		[[_administration connection] sendMessage:message fromObserver:self selector:@selector(wiredLogSubscribeReply:)];
+		
+		_requested = YES;
+	}
+}
+
 @end
 
 
@@ -195,32 +215,17 @@
 
 
 - (void)linkConnectionLoggedIn:(NSNotification *)notification {
-	_requested		= NO;
-	_subscribed		= NO;
+	_requested = NO;
 }
 
 
 
 - (void)serverConnectionPrivilegesDidChange:(NSNotification *)notification {
-	WIP7Message		*message;
-	
 	if([[[_administration connection] account] logViewLog]) {
-		if(!_requested) {
-			message = [WIP7Message messageWithName:@"wired.log.get_log" spec:WCP7Spec];
-			[[_administration connection] sendMessage:message fromObserver:self selector:@selector(wiredLogGetLogReply:)];
-
-			_requested = YES;
-		}
-		
-		if(!_subscribed) {
-			message = [WIP7Message messageWithName:@"wired.log.subscribe" spec:WCP7Spec];
-			[[_administration connection] sendMessage:message fromObserver:self selector:@selector(wiredLogSubscribeReply:)];
-
-			_subscribed = YES;
-		}
+		if([[_administration window] isVisible] && [_administration selectedController] == self)
+			[self _requestLog];
 	} else {
-		_requested		= NO;
-		_subscribed		= NO;
+		_requested = NO;
 	}
 }
 
@@ -305,6 +310,8 @@
 #pragma mark -
 
 - (void)controllerDidSelect {
+	[self _requestLog];
+
 	[[_administration window] makeFirstResponder:_logTableView];
 }
 

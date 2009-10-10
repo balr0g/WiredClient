@@ -33,6 +33,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		77096732107EBB1A005F357B /* WCEventsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 77096731107EBB1A005F357B /* WCEventsController.m */; };
 		7712242D0F27421D00984433 /* UnreadThread.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 7712242B0F27421D00984433 /* UnreadThread.tiff */; };
 		7712242E0F27421D00984433 /* UnreadHeader.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 7712242C0F27421D00984433 /* UnreadHeader.tiff */; };
 		771E6D510755F506000F9195 /* WCConversation.m in Sources */ = {isa = PBXBuildFile; fileRef = 771E6D4F0755F506000F9195 /* WCConversation.m */; };
@@ -153,7 +154,6 @@
 		77E361A40F80EC070065329A /* Files.xib in Resources */ = {isa = PBXBuildFile; fileRef = 77E361A20F80EC070065329A /* Files.xib */; };
 		77E36EEE0F82414F0065329A /* WCFilesSourceOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 77E36EED0F82414F0065329A /* WCFilesSourceOutlineView.m */; };
 		77EF17F4106C19BA00883C96 /* WiredSettings.icns in Resources */ = {isa = PBXBuildFile; fileRef = 77EF17F3106C19BA00883C96 /* WiredSettings.icns */; };
-		77EF3740106E605400883C96 /* WCBan.m in Sources */ = {isa = PBXBuildFile; fileRef = A558A4ED0E8526F7004C724C /* WCBan.m */; };
 		77EFFBF5106C12F300883C96 /* WiredServer.icns in Resources */ = {isa = PBXBuildFile; fileRef = 77EFFBF4106C12F300883C96 /* WiredServer.icns */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -450,6 +450,8 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32CA4F630368D1EE00C91783 /* prefix.pch */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = prefix.pch; sourceTree = "<group>"; };
+		77096730107EBB1A005F357B /* WCEventsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCEventsController.h; sourceTree = "<group>"; };
+		77096731107EBB1A005F357B /* WCEventsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCEventsController.m; sourceTree = "<group>"; };
 		7712242B0F27421D00984433 /* UnreadThread.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = UnreadThread.tiff; sourceTree = "<group>"; };
 		7712242C0F27421D00984433 /* UnreadHeader.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = UnreadHeader.tiff; sourceTree = "<group>"; };
 		771E6D4E0755F506000F9195 /* WCConversation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCConversation.h; sourceTree = "<group>"; };
@@ -697,8 +699,6 @@
 		A54AF9890F13AED000AFD50E /* Executable.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Executable.icns; sourceTree = "<group>"; };
 		A54AF98A0F13AED000AFD50E /* DropBoxBadge.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = DropBoxBadge.icns; sourceTree = "<group>"; };
 		A54AF98B0F13AED000AFD50E /* UploadsBadge.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = UploadsBadge.icns; sourceTree = "<group>"; };
-		A558A4ED0E8526F7004C724C /* WCBan.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCBan.m; sourceTree = "<group>"; };
-		A558A4EE0E8526F7004C724C /* WCBan.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCBan.h; sourceTree = "<group>"; };
 		A55C73430F268087006E8568 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = /usr/lib/libicucore.dylib; sourceTree = "<absolute>"; };
 		A55C7C050F2E4F8A006E8568 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/PrivateChatInvitation.xib; sourceTree = "<group>"; };
 		A55C7C0B0F2E500A006E8568 /* WCPrivateChatInvitation.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCPrivateChatInvitation.h; sourceTree = "<group>"; };
@@ -1547,10 +1547,10 @@
 				77ACA8560F4AF26E00577FA1 /* WCAccountsController.h */,
 				A5AAD12A0D86EA9C0072FFA1 /* WCAdministration.m */,
 				A5AAD1290D86EA9C0072FFA1 /* WCAdministration.h */,
-				A558A4ED0E8526F7004C724C /* WCBan.m */,
-				A558A4EE0E8526F7004C724C /* WCBan.h */,
 				A5D409760D897770007851BD /* WCBanlistController.m */,
 				A5D409750D897770007851BD /* WCBanlistController.h */,
+				77096731107EBB1A005F357B /* WCEventsController.m */,
+				77096730107EBB1A005F357B /* WCEventsController.h */,
 				A5AAD14A0D86F1980072FFA1 /* WCLogController.m */,
 				A5AAD1490D86F1980072FFA1 /* WCLogController.h */,
 				A5F802970D8E378300A84685 /* WCMonitorCell.m */,
@@ -2058,7 +2058,6 @@
 				A5AAD12B0D86EA9C0072FFA1 /* WCAdministration.m in Sources */,
 				A5DC7FCE057AB0F200736BBF /* WCApplication.m in Sources */,
 				A5DC7EC8057AAEAD00736BBF /* WCApplicationController.m in Sources */,
-				77EF3740106E605400883C96 /* WCBan.m in Sources */,
 				A5D409770D897771007851BD /* WCBanlistController.m in Sources */,
 				77CED3A50EC068F500123164 /* WCBoard.m in Sources */,
 				77CED3A60EC068F500123164 /* WCBoardPost.m in Sources */,
@@ -2077,6 +2076,7 @@
 				771E6D510755F506000F9195 /* WCConversation.m in Sources */,
 				A5DC7FBC057AB0D000736BBF /* WCError.m in Sources */,
 				A51474A90F487ECD00DBE395 /* WCErrorQueue.m in Sources */,
+				77096732107EBB1A005F357B /* WCEventsController.m in Sources */,
 				A5DC7FA4057AB0A600736BBF /* WCFile.m in Sources */,
 				A5DC7F0C057AAF6C00736BBF /* WCFileInfo.m in Sources */,
 				A5DC7F0E057AAF6C00736BBF /* WCFiles.m in Sources */,

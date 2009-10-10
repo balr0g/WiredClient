@@ -138,6 +138,7 @@ extern NSString * const						WCAccountFieldToolTip;
 - (BOOL)accountDeleteGroups;
 - (BOOL)accountRaiseAccountPrivileges;
 - (BOOL)logViewLog;
+- (BOOL)eventsViewEvents;
 - (BOOL)settingsGetSettings;
 - (BOOL)settingsSetSettings;
 - (BOOL)banlistGetBans;

@@ -940,7 +940,13 @@
 
 
 - (void)serverConnectionPrivilegesDidChange:(NSNotification *)notification {
-	[self _requestAccounts];
+	if([[[_administration connection] account] accountListAccounts]) {
+		if([[_administration window] isVisible] && [_administration selectedController] == self)
+			[self _requestAccounts];
+	} else {
+		_requested = NO;
+	}
+	
 	[self _validate];
 	[self _validateForAccounts];
 }
@@ -1192,6 +1198,8 @@
 
 
 - (void)controllerDidSelect {
+	[self _requestAccounts];
+	
 	[[_administration window] makeFirstResponder:_accountsTableView];
 }
 
