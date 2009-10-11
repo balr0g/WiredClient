@@ -56,15 +56,25 @@
 @implementation WCEvent
 
 + (WCEvent *)eventWithMessage:(WIP7Message *)message {
-	WCEvent		*event;
+	NSString		*name, *string;
+	WCEvent			*event;
 	
 	event = [[self alloc] init];
+	
+	name					= [message enumNameForName:@"wired.events.event"];
+	string					= [message stringForName:@"wired.events.string"];
+	
+	if([name hasSuffix:@"logged_in"])
+		event->_message		= [[NSSWF:NSLS(@"Logged in using \u201c%@\u201d", @"Event message (client)"), string] retain];
+	else if([name hasSuffix:@"login_failed"])
+		event->_message		= [NSLS(@"Login failed", @"Event message") retain];
+	else if([name hasSuffix:@"changed_nick"])
+		event->_message		= [[NSSWF:NSLS(@"Changed nick from \u201c%@\u201d", @"Event message (nick)"), string] retain];
 	
 	event->_time			= [[message dateForName:@"wired.events.time"] retain];
 	event->_nick			= [[message stringForName:@"wired.user.nick"] retain];
 	event->_login			= [[message stringForName:@"wired.user.login"] retain];
 	event->_ip				= [[message stringForName:@"wired.user.ip"] retain];
-	event->_message			= [[message stringForName:@"wired.events.string"] retain];
 	
 	return [event autorelease];
 }
