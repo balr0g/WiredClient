@@ -12,10 +12,10 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="816"/>
-			<integer value="566"/>
 			<integer value="329"/>
 			<integer value="791"/>
+			<integer value="566"/>
+			<integer value="816"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1548,6 +1548,14 @@ AAAAAAAAAAAAAAAAAAAAAHRleHQAAAAAQ29weXJpZ2h0IEFwcGxlLCBJbmMuLCAyMDA5AA</bytes>
 							<string key="NSResourceName">NSMenuMixedState</string>
 						</object>
 					</object>
+					<object class="NSMenuItem" id="634724818">
+						<reference key="NSMenu" ref="50764731"/>
+						<string key="NSTitle">Reveal In Files</string>
+						<string key="NSKeyEquiv"/>
+						<int key="NSMnemonicLoc">2147483647</int>
+						<reference key="NSOnImage" ref="304067448"/>
+						<reference key="NSMixedImage" ref="747616888"/>
+					</object>
 					<object class="NSMenuItem" id="358993363">
 						<reference key="NSMenu" ref="50764731"/>
 						<bool key="NSIsDisabled">YES</bool>
@@ -1690,13 +1698,13 @@ AAAAAAAAAAAAAAAAAAAAAHRleHQAAAAAQ29weXJpZ2h0IEFwcGxlLCBJbmMuLCAyMDA5AA</bytes>
 									<object class="NSTableView" id="241047688">
 										<reference key="NSNextResponder" ref="55752052"/>
 										<int key="NSvFlags">256</int>
-										<string key="NSFrameSize">{1065, 531}</string>
+										<string key="NSFrameSize">{837, 531}</string>
 										<reference key="NSSuperview" ref="55752052"/>
 										<bool key="NSEnabled">YES</bool>
 										<object class="NSTableHeaderView" key="NSHeaderView" id="761532496">
 											<reference key="NSNextResponder" ref="457538087"/>
 											<int key="NSvFlags">256</int>
-											<string key="NSFrameSize">{1065, 17}</string>
+											<string key="NSFrameSize">{837, 17}</string>
 											<reference key="NSSuperview" ref="457538087"/>
 											<reference key="NSTableView" ref="241047688"/>
 										</object>
@@ -1830,7 +1838,7 @@ AAAAAAAAAAAAAAAAAAAAAHRleHQAAAAAQ29weXJpZ2h0IEFwcGxlLCBJbmMuLCAyMDA5AA</bytes>
 											</object>
 											<object class="NSTableColumn" id="416544402">
 												<string key="NSIdentifier">Message</string>
-												<double key="NSWidth">661</double>
+												<double key="NSWidth">433</double>
 												<double key="NSMinWidth">40</double>
 												<double key="NSMaxWidth">1000</double>
 												<object class="NSTableHeaderCell" key="NSHeaderCell">
@@ -1891,7 +1899,6 @@ AAAAAAAAAAAAAAAAAAAAAHRleHQAAAAAQ29weXJpZ2h0IEFwcGxlLCBJbmMuLCAyMDA5AA</bytes>
 								<int key="NSvFlags">-2147483392</int>
 								<string key="NSFrame">{{-100, -100}, {766, 15}}</string>
 								<reference key="NSSuperview" ref="540614107"/>
-								<bool key="NSEnabled">YES</bool>
 								<int key="NSsFlags">1</int>
 								<reference key="NSTarget" ref="540614107"/>
 								<string key="NSAction">_doScroller:</string>
@@ -1916,7 +1923,7 @@ AAAAAAAAAAAAAAAAAAAAAHRleHQAAAAAQ29weXJpZ2h0IEFwcGxlLCBJbmMuLCAyMDA5AA</bytes>
 						<string key="NSFrame">{{-1, -1}, {854, 549}}</string>
 						<reference key="NSSuperview" ref="883235524"/>
 						<reference key="NSNextKeyView" ref="55752052"/>
-						<int key="NSsFlags">146</int>
+						<int key="NSsFlags">18</int>
 						<reference key="NSVScroller" ref="461569217"/>
 						<reference key="NSHScroller" ref="794486689"/>
 						<reference key="NSContentView" ref="55752052"/>
@@ -5894,6 +5901,14 @@ AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 					</object>
 					<int key="connectionID">861</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">revealInFiles:</string>
+						<reference key="source" ref="701037644"/>
+						<reference key="destination" ref="634724818"/>
+					</object>
+					<int key="connectionID">863</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -6125,8 +6140,9 @@ AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="889695998"/>
-							<reference ref="924341256"/>
 							<reference ref="358993363"/>
+							<reference ref="924341256"/>
+							<reference ref="634724818"/>
 						</object>
 						<reference key="parent" ref="0"/>
 						<string key="objectName">Monitor Context Menu</string>
@@ -8232,6 +8248,11 @@ AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 						<reference key="object" ref="204992117"/>
 						<reference key="parent" ref="540476359"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">862</int>
+						<reference key="object" ref="634724818"/>
+						<reference key="parent" ref="50764731"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -8673,6 +8694,7 @@ AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 					<string>854.IBPluginDependency</string>
 					<string>855.IBPluginDependency</string>
 					<string>856.IBPluginDependency</string>
+					<string>862.IBPluginDependency</string>
 				</object>
 				<object class="NSMutableArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -8707,7 +8729,7 @@ AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{0, 703}, {141, 53}}</string>
+					<string>{{0, 683}, {148, 73}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{{53, 0}, {852, 575}}</string>
@@ -9113,6 +9135,7 @@ AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -9131,7 +9154,7 @@ AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">861</int>
+			<int key="maxID">863</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -9450,54 +9473,25 @@ AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 				<object class="IBPartialClassDescription">
 					<string key="className">WCEventsController</string>
 					<string key="superclassName">WCAdministrationController</string>
-					<object class="NSMutableDictionary" key="actions">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>all:</string>
-							<string>errors:</string>
-							<string>info:</string>
-							<string>search:</string>
-							<string>warnings:</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-						</object>
-					</object>
 					<object class="NSMutableDictionary" key="outlets">
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>_allFilterButton</string>
-							<string>_errorsFilterButton</string>
 							<string>_eventsTableView</string>
-							<string>_filterSearchField</string>
-							<string>_infoFilterButton</string>
 							<string>_ipTableColumn</string>
 							<string>_loginTableColumn</string>
 							<string>_messageTableColumn</string>
 							<string>_nickTableColumn</string>
 							<string>_timeTableColumn</string>
-							<string>_warningsFilterButton</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>NSButton</string>
-							<string>NSButton</string>
 							<string>WITableView</string>
-							<string>NSSearchField</string>
-							<string>NSButton</string>
 							<string>NSTableColumn</string>
 							<string>NSTableColumn</string>
 							<string>NSTableColumn</string>
 							<string>NSTableColumn</string>
 							<string>NSTableColumn</string>
-							<string>NSButton</string>
 						</object>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
@@ -9594,11 +9588,13 @@ AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 							<string>disconnect:</string>
 							<string>downloading:</string>
 							<string>getInfo:</string>
+							<string>revealInFiles:</string>
 							<string>search:</string>
 							<string>uploading:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>

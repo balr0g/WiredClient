@@ -27,6 +27,8 @@
  */
 
 #import "WCAccount.h"
+#import "WCFile.h"
+#import "WCFiles.h"
 #import "WCMonitorCell.h"
 #import "WCMonitorController.h"
 #import "WCServerConnection.h"
@@ -38,8 +40,9 @@
 @interface WCMonitorController(Private)
 
 - (void)_validate;
-- (BOOL)_validateGetInfo;
 - (BOOL)_validateDisconnect;
+- (BOOL)_validateGetInfo;
+- (BOOL)_validateRevealInFiles;
 
 - (void)_reloadUsers;
 - (void)_requestUsers;
@@ -72,6 +75,19 @@
 	return ([self _selectedUser] != NULL &&
 			[[_administration connection] isConnected] &&
 			[[[_administration connection] account] userDisconnectUsers]);
+}
+
+
+
+- (BOOL)_validateRevealInFiles {
+	WCUser		*user;
+	
+	user = [self _selectedUser];
+	
+	return (user != NULL &&
+			[user transfer] != NULL &&
+			[[_administration connection] isConnected] &&
+			[[[_administration connection] account] fileListFiles]);
 }
 
 
@@ -266,16 +282,14 @@
 #pragma mark -
 
 - (BOOL)validateMenuItem:(NSMenuItem *)item {
-	WCAccount	*account;
-	SEL			selector;
-	BOOL		connected;
+	SEL		selector;
 	
-	selector	= [item action];
-	account		= [[_administration connection] account];
-	connected	= [[_administration connection] isConnected];
+	selector = [item action];
 	
 	if(selector == @selector(getInfo:))
 		return [self _validateGetInfo];
+	else if(selector == @selector(revealInFiles::))
+		return [self _validateRevealInFiles];
 	else if(selector == @selector(disconnect:))
 		return [self _validateDisconnect];
 	
@@ -335,6 +349,8 @@
 
 
 
+#pragma mark -
+
 - (IBAction)disconnect:(id)sender {
 	if(![self _validateDisconnect])
 		return;
@@ -382,11 +398,28 @@
 
 
 
+#pragma mark -
+
 - (IBAction)getInfo:(id)sender {
 	if(![self _validateGetInfo])
 		return;
 	
 	[WCUserInfo userInfoWithConnection:[_administration connection] user:[self _selectedUser]];
+}
+
+
+
+- (IBAction)revealInFiles:(id)sender {
+	NSString		*path;
+	
+	if(![self _validateRevealInFiles])
+		return;
+	
+	path = [[[self _selectedUser] transfer] remotePath];
+	
+	[WCFiles filesWithConnection:[_administration connection]
+							file:[WCFile fileWithDirectory:[path stringByDeletingLastPathComponent] connection:[_administration connection]]
+					  selectFile:[WCFile fileWithDirectory:path connection:[_administration connection]]];
 }
 
 

@@ -56,8 +56,11 @@
 - (IBAction)all:(id)sender;
 - (IBAction)downloading:(id)sender;
 - (IBAction)uploading:(id)sender;
+
 - (IBAction)disconnect:(id)sender;
 - (IBAction)search:(id)sender;
+
 - (IBAction)getInfo:(id)sender;
+- (IBAction)revealInFiles:(id)sender;
 
 @end

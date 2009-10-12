@@ -1016,10 +1016,12 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	
 	[self _updateWindowTitle];
 	
-	if(_initialDirectory)
-		[_selectFiles setArray:[NSArray arrayWithObject:_initialDirectory]];
-	else if(forceSelection)
-		[_selectFiles setArray:[NSArray arrayWithObject:_currentDirectory]];
+	if(!_selectFilesWhenOpening) {
+		if(_initialDirectory)
+			[_selectFiles setArray:[NSArray arrayWithObject:_initialDirectory]];
+		else if(forceSelection)
+			[_selectFiles setArray:[NSArray arrayWithObject:_currentDirectory]];
+	}
 	
 	[_initialDirectory release];
 	_initialDirectory = NULL;
