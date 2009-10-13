@@ -84,6 +84,8 @@ NSString * const WCAccountFieldToolTip				= @"WCAccountFieldToolTip";
 		if(value)
 			[_values setObject:value forKey:name];
 	}
+	
+	_originalValues = [_values copy];
 
 	return self;
 }
@@ -444,6 +446,7 @@ NSString * const WCAccountFieldToolTip				= @"WCAccountFieldToolTip";
 
 - (void)dealloc {
 	[_values release];
+	[_originalValues release];
 	
 	[super dealloc];
 }
@@ -978,6 +981,12 @@ NSString * const WCAccountFieldToolTip				= @"WCAccountFieldToolTip";
 
 
 
+- (id)originalValueForKey:(NSString *)key {
+	return [_originalValues objectForKey:key];
+}
+
+
+
 - (void)setValues:(NSDictionary *)values {
 	[_values release];
 	_values = [values mutableCopy];
@@ -1117,6 +1126,12 @@ NSString * const WCAccountFieldToolTip				= @"WCAccountFieldToolTip";
 
 - (NSString *)group {
 	return [self valueForKey:@"wired.account.group"];
+}
+
+
+
+- (NSString *)originalGroup {
+	return [self originalValueForKey:@"wired.account.group"];
 }
 
 

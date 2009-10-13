@@ -52,7 +52,7 @@
 - (void)_readAccounts:(NSArray *)accounts;
 - (void)_readFromAccounts;
 - (void)_validateForAccounts;
-- (void)_writeToAccount:(WCAccount *)account;
+- (void)_writeToAccounts:(NSArray *)accounts;
 
 - (WCAccount *)_accountAtIndex:(NSUInteger)index;
 - (NSArray *)_selectedAccounts;
@@ -195,24 +195,29 @@
 
 - (BOOL)_verifyUnsavedAndSelectRow:(NSInteger)row {
 	NSAlert		*alert;
-	NSString	*name;
 	
 	if(_touched) {
-		name = [_nameTextField stringValue];
+		alert = [[NSAlert alloc] init];
 		
-		if([name length] > 0) {
-			alert = [[NSAlert alloc] init];
-			[alert setMessageText:[NSSWF:NSLS(@"Save changes to the \u201c%@\u201d account?", @"Save account dialog title (name)"), name]];
-			[alert setInformativeText:NSLS(@"If you don't save the changes, they will be lost.", @"Save account dialog description")];
-			[alert addButtonWithTitle:NSLS(@"Save", @"Save account dialog button")];
-			[alert addButtonWithTitle:NSLS(@"Cancel", @"Save account dialog button")];
-			[alert addButtonWithTitle:NSLS(@"Don't Save", @"Save account dialog button")];
-			[alert beginSheetModalForWindow:[_administration window]
-							  modalDelegate:self
-							 didEndSelector:@selector(saveSheetDidEnd:returnCode:contextInfo:)
-								contextInfo:[[NSNumber alloc] initWithInteger:row]];
-			[alert release];
+		if([_accounts count] == 1) {
+			[alert setMessageText:[NSSWF:
+				NSLS(@"Save changes to the \u201c%@\u201d account?", @"Save account dialog title (name)"),
+				[_nameTextField stringValue]]];
+		} else {
+			[alert setMessageText:[NSSWF:
+				NSLS(@"Save changes to %u accounts?", @"Save account dialog title (count)"),
+				[_accounts count]]];
 		}
+		
+		[alert setInformativeText:NSLS(@"If you don't save the changes, they will be lost.", @"Save account dialog description")];
+		[alert addButtonWithTitle:NSLS(@"Save", @"Save account dialog button")];
+		[alert addButtonWithTitle:NSLS(@"Cancel", @"Save account dialog button")];
+		[alert addButtonWithTitle:NSLS(@"Don't Save", @"Save account dialog button")];
+		[alert beginSheetModalForWindow:[_administration window]
+						  modalDelegate:self
+						 didEndSelector:@selector(saveSheetDidEnd:returnCode:contextInfo:)
+							contextInfo:[[NSNumber alloc] initWithInteger:row]];
+		[alert release];
 		
 		return NO;
 	}
@@ -235,7 +240,7 @@
 		
 		[account setValues:[[_accounts lastObject] values]];
 
-		[self _writeToAccount:account];
+		[self _writeToAccounts:[NSArray arrayWithObject:account]];
 		
 		[[_administration connection] sendMessage:[account createAccountMessage]
 									 fromObserver:self
@@ -246,10 +251,10 @@
 		
 		reload = NO;
 	} else {
+		[self _writeToAccounts:_accounts];
+			
 		if([_accounts count] == 1) {
 			account = [_accounts lastObject];
-			
-			[self _writeToAccount:account];
 			
 			[[_administration connection] sendMessage:[account editAccountMessage]
 										 fromObserver:self
@@ -364,9 +369,13 @@
 - (void)_readFromAccounts {
 	NSEnumerator		*enumerator;
 	NSDictionary		*section;
+	NSString			*group;
 	WCAccount			*account;
 	
 	if([_accounts count] == 1) {
+		if([_groupPopUpButton indexOfItem:_dontChangeMenuItem] != -1)
+			[_groupPopUpButton removeItem:_dontChangeMenuItem];
+		
 		account = [_accounts lastObject];
 
 		if(_editing) {
@@ -434,12 +443,65 @@
 			else
 				[_editedByTextField setStringValue:@""];
 		}
-	} else {
+	}
+	else if([_accounts count] == 0) {
+		if([_groupPopUpButton indexOfItem:_dontChangeMenuItem] != -1)
+			[_groupPopUpButton removeItem:_dontChangeMenuItem];
+		
 		[_typePopUpButton selectItem:_userMenuItem];
 		[_nameTextField setStringValue:@""];
 		[_fullNameTextField setStringValue:@""];
 		[_passwordTextField setStringValue:@""];
 		[_groupPopUpButton selectItem:_noneMenuItem];
+		[_groupsTokenField setStringValue:@""];
+		[_commentTextView setString:@""];
+		[_creationTimeTextField setStringValue:@""];
+		[_modificationTimeTextField setStringValue:@""];
+		[_loginTimeTextField setStringValue:@""];
+		[_editedByTextField setStringValue:@""];
+		[_downloadsTextField setStringValue:@""];
+		[_uploadsTextField setStringValue:@""];
+	}
+	else {
+		if([_groupPopUpButton indexOfItem:_dontChangeMenuItem] == -1) {
+			[_groupPopUpButton insertItem:_dontChangeMenuItem atIndex:0];
+			
+			[_dontChangeMenuItem setState:NSOffState];
+		}
+		
+		group			= NULL;
+		enumerator		= [_accounts objectEnumerator];
+		
+		while((account = [enumerator nextObject])) {
+			if([account isKindOfClass:[WCUserAccount class]]) {
+				if(group) {
+					if(![group isEqualToString:[(WCUserAccount *) account group]]) {
+						group = NULL;
+						
+						break;
+					}
+				} else {
+					group = [(WCUserAccount *) account group];
+				}
+			} else {
+				group = NULL;
+				
+				break;
+			}
+		}
+		
+		[_typePopUpButton selectItem:_userMenuItem];
+		[_nameTextField setStringValue:@""];
+		[_fullNameTextField setStringValue:@""];
+		[_passwordTextField setStringValue:@""];
+		
+		if(group == NULL)
+			[_groupPopUpButton selectItem:_dontChangeMenuItem];
+		else if([group length] == 0)
+			[_groupPopUpButton selectItem:_noneMenuItem];
+		else
+			[_groupPopUpButton selectItemWithTitle:group];
+		
 		[_groupsTokenField setStringValue:@""];
 		[_commentTextView setString:@""];
 		[_creationTimeTextField setStringValue:@""];
@@ -463,8 +525,9 @@
 
 
 - (void)_validateForAccounts {
-	WCAccount	*account;
-	BOOL		editable;
+	NSEnumerator	*enumerator;
+	WCAccount		*account;
+	BOOL			editable, group;
 	
 	[_userMenuItem setEnabled:[[[_administration connection] account] accountCreateUsers]];
 	[_groupMenuItem setEnabled:[[[_administration connection] account] accountCreateGroups]];
@@ -503,11 +566,19 @@
 		[_selectAllButton setEnabled:NO];
 	}
 	else {
+		group			= NO;
+		enumerator		= [_accounts objectEnumerator];
+		
+		while((account = [enumerator nextObject])) {
+			if([account isKindOfClass:[WCGroupAccount class]])
+				group = YES;
+		}
+		
 		[_typePopUpButton setEnabled:NO];
 		[_nameTextField setEnabled:NO];
 		[_fullNameTextField setEnabled:NO];
 		[_passwordTextField setEnabled:NO];
-		[_groupPopUpButton setEnabled:NO];
+		[_groupPopUpButton setEnabled:!group];
 		[_groupsTokenField setEnabled:NO];
 		[_commentTextView setEditable:NO];
 		[_selectAllButton setEnabled:YES];
@@ -518,42 +589,63 @@
 
 
 
-- (void)_writeToAccount:(WCAccount *)account {
+- (void)_writeToAccounts:(NSArray *)accounts {
+	NSEnumerator	*enumerator;
 	NSString		*password, *group;
 	NSArray			*groups;
+	WCAccount		*account;
 	
-	if(_editing)
-		[account setNewName:[_nameTextField stringValue]];
-	else
-		[account setName:[_nameTextField stringValue]];
-	
-	[account setComment:[_commentTextView string]];
-	
-	if([account isKindOfClass:[WCUserAccount class]]) {
-		[(WCUserAccount *) account setFullName:[_fullNameTextField stringValue]];
-
-		if([[_passwordTextField stringValue] isEqualToString:@""])
-			password = [@"" SHA1];
-		else if(![[(WCUserAccount *) account password] isEqualToString:[_passwordTextField stringValue]])
-			password = [[_passwordTextField stringValue] SHA1];
+	if([accounts count] == 1) {
+		account = [accounts lastObject];
+		
+		if(_editing)
+			[account setNewName:[_nameTextField stringValue]];
 		else
-			password = [(WCUserAccount *) account password];
+			[account setName:[_nameTextField stringValue]];
 		
-		[(WCUserAccount *) account setPassword:password];
+		[account setComment:[_commentTextView string]];
 		
-		if([_groupPopUpButton selectedItem] != _noneMenuItem)
-			group = [_groupPopUpButton titleOfSelectedItem];
-		else
-			group = @"";
-		
-		[(WCUserAccount *) account setGroup:group];
+		if([account isKindOfClass:[WCUserAccount class]]) {
+			[(WCUserAccount *) account setFullName:[_fullNameTextField stringValue]];
 
-		groups = [[_groupsTokenField stringValue] componentsSeparatedByCharactersFromSet:[_groupsTokenField tokenizingCharacterSet]];
-		
-		if(!groups)
-			groups = [NSArray array];
+			if([[_passwordTextField stringValue] isEqualToString:@""])
+				password = [@"" SHA1];
+			else if(![[(WCUserAccount *) account password] isEqualToString:[_passwordTextField stringValue]])
+				password = [[_passwordTextField stringValue] SHA1];
+			else
+				password = [(WCUserAccount *) account password];
+			
+			[(WCUserAccount *) account setPassword:password];
+			
+			if([_groupPopUpButton selectedItem] != _noneMenuItem)
+				group = [_groupPopUpButton titleOfSelectedItem];
+			else
+				group = @"";
+			
+			[(WCUserAccount *) account setGroup:group];
 
-		[(WCUserAccount *) account setGroups:groups];
+			groups = [[_groupsTokenField stringValue] componentsSeparatedByCharactersFromSet:[_groupsTokenField tokenizingCharacterSet]];
+			
+			if(!groups)
+				groups = [NSArray array];
+
+			[(WCUserAccount *) account setGroups:groups];
+		}
+	} else {
+		enumerator = [accounts objectEnumerator];
+		
+		while((account = [enumerator nextObject])) {
+			if([account isKindOfClass:[WCUserAccount class]]) {
+				if([_groupPopUpButton selectedItem] != _dontChangeMenuItem) {
+					if([_groupPopUpButton selectedItem] != _noneMenuItem)
+						group = [_groupPopUpButton titleOfSelectedItem];
+					else
+						group = @"";
+					
+					[(WCUserAccount *) account setGroup:group];
+				}
+			}
+		}
 	}
 }
 
@@ -597,9 +689,12 @@
 	NSEnumerator		*enumerator;
 	NSMutableArray		*groupAccounts;
 	WCAccount			*account;
+	NSUInteger			count;
 	
-	while([_groupPopUpButton numberOfItems] > 1)
-		[_groupPopUpButton removeItemAtIndex:1];
+	count = ([_groupPopUpButton indexOfItem:_dontChangeMenuItem] == -1) ? 1 : 2;
+	
+	while([_groupPopUpButton numberOfItems] > (NSInteger) count)
+		[_groupPopUpButton removeItemAtIndex:count];
 	
 	while([_groupFilterPopUpButton numberOfItems] > 2)
 		[_groupFilterPopUpButton removeItemAtIndex:2];
@@ -880,6 +975,8 @@
 
 
 - (void)dealloc {
+	[_dontChangeMenuItem release];
+	
 	[_allSettings release];
 	[_shownSettings release];
 	
@@ -914,6 +1011,8 @@
 	
 	[_settingsOutlineView setTarget:self];
 	[_settingsOutlineView setDeleteAction:@selector(clearSetting:)];
+	
+	[_dontChangeMenuItem retain];
 	
 	_dateFormatter = [[WIDateFormatter alloc] init];
 	[_dateFormatter setTimeStyle:NSDateFormatterShortStyle];
@@ -1014,6 +1113,7 @@
 
 
 - (void)wiredAccountReadAccountReply:(WIP7Message *)message {
+	NSEnumerator	*enumerator;
 	WCUserAccount	*userAccount;
 	WCAccount		*account;
 	
@@ -1023,12 +1123,16 @@
 		else
 			account = [WCGroupAccount accountWithMessage:message];
 		
-		if(_requestedAccounts <= 1 && [_accounts count] == 1) {
-			userAccount = [_accounts lastObject];
-			
-			if([userAccount isKindOfClass:[WCUserAccount class]] && [account isKindOfClass:[WCGroupAccount class]] &&
-			   [[userAccount group] isEqualToString:[account name]]) {
-				[userAccount setGroupAccount:(WCGroupAccount *) account];
+		if(_requestedAccounts == [_accounts count]) {
+			if([account isKindOfClass:[WCGroupAccount class]]) {
+				enumerator = [_accounts objectEnumerator];
+				
+				while((userAccount = [enumerator nextObject])) {
+					if([userAccount isKindOfClass:[WCUserAccount class]]) {
+						if([[userAccount group] isEqualToString:[account name]])
+							[userAccount setGroupAccount:(WCGroupAccount *) account];
+					}
+				}
 			}
 			
 			[_progressIndicator stopAnimation:self];
@@ -1039,9 +1143,13 @@
 			[_accounts addObject:account];
 			
 			if([_accounts count] == _requestedAccounts) {
-				if([_accounts count] == 1) {
-					if([account isKindOfClass:[WCUserAccount class]] && [[(WCUserAccount *) account group] length] > 0)
-						[self _readAccount:[WCGroupAccount accountWithName:[(WCUserAccount *) account group]]]; 
+				enumerator = [_accounts objectEnumerator];
+				
+				while((userAccount = [enumerator nextObject])) {
+					if([userAccount isKindOfClass:[WCUserAccount class]]) {
+						if([[userAccount group] length] > 0)
+							[self _readAccount:[WCGroupAccount accountWithName:[userAccount group]]];
+					}
 				}
 				
 				[_progressIndicator stopAnimation:self];
@@ -1618,21 +1726,30 @@
 
 
 - (IBAction)group:(id)sender {
+	NSEnumerator		*enumerator;
 	WCUserAccount		*account;
 	
 	if([_typePopUpButton selectedItem] == _userMenuItem) {
-		account = [_accounts lastObject];
+		enumerator = [_accounts objectEnumerator];
 		
-		if([_groupPopUpButton selectedItem] != _noneMenuItem) {
-			[account setGroup:[_groupPopUpButton titleOfSelectedItem]];
-			
-			[self _readAccount:[WCGroupAccount accountWithName:[account group]]];
-		} else {
-			[account setGroup:@""];
-			[account setGroupAccount:NULL];
-			
-			[_settingsOutlineView reloadData];
+		while((account = [enumerator nextObject])) {
+			if([_groupPopUpButton selectedItem] == _dontChangeMenuItem) {
+				[account setGroup:[account originalGroup]];
+				[account setGroupAccount:NULL];
+			}
+			else if([_groupPopUpButton selectedItem] == _noneMenuItem) {
+				[account setGroup:@""];
+				[account setGroupAccount:NULL];
+			}
+			else {
+				[account setGroup:[_groupPopUpButton titleOfSelectedItem]];
+			}
+				
+			if([[account group] length] > 0)
+				[self _readAccount:[WCGroupAccount accountWithName:[account group]]];
 		}
+		
+		[_settingsOutlineView reloadData];
 
 		[self touch:self];
 	} else {

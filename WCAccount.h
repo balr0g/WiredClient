@@ -58,6 +58,7 @@ extern NSString * const						WCAccountFieldToolTip;
 
 @interface WCAccount : WIObject {
 	NSMutableDictionary						*_values;
+	NSDictionary							*_originalValues;
 }
 
 + (NSArray *)fields;
@@ -149,6 +150,7 @@ extern NSString * const						WCAccountFieldToolTip;
 
 - (void)setValue:(id)value forKey:(NSString *)key;
 - (id)valueForKey:(NSString *)key;
+- (id)originalValueForKey:(NSString *)key;
 - (void)setValues:(NSDictionary *)values;
 - (NSDictionary *)values;
 
@@ -176,6 +178,7 @@ extern NSString * const						WCAccountFieldToolTip;
 - (NSString *)fullName;
 - (void)setGroup:(NSString *)group;
 - (NSString *)group;
+- (NSString *)originalGroup;
 - (void)setGroups:(NSArray *)groups;
 - (NSArray *)groups;
 - (void)setPassword:(NSString *)password;

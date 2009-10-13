@@ -13,8 +13,8 @@
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<integer value="329"/>
-			<integer value="791"/>
 			<integer value="566"/>
+			<integer value="791"/>
 			<integer value="816"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
@@ -3147,7 +3147,7 @@ AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 										<object class="NSPopUpButton" id="33936664">
 											<reference key="NSNextResponder" ref="640632293"/>
 											<int key="NSvFlags">269</int>
-											<string key="NSFrame">{{139, 244}, {100, 22}}</string>
+											<string key="NSFrame">{{139, 244}, {133, 22}}</string>
 											<reference key="NSSuperview" ref="640632293"/>
 											<bool key="NSEnabled">YES</bool>
 											<object class="NSPopUpButtonCell" key="NSCell" id="857925790">
@@ -3161,13 +3161,11 @@ AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 												<string key="NSKeyEquivalent"/>
 												<int key="NSPeriodicDelay">400</int>
 												<int key="NSPeriodicInterval">75</int>
-												<object class="NSMenuItem" key="NSMenuItem" id="389853396">
+												<object class="NSMenuItem" key="NSMenuItem" id="843588341">
 													<reference key="NSMenu" ref="1006531696"/>
-													<string key="NSTitle">None</string>
+													<string key="NSTitle">Don’t Change</string>
 													<string key="NSKeyEquiv"/>
-													<int key="NSKeyEquivModMask">1048576</int>
 													<int key="NSMnemonicLoc">2147483647</int>
-													<int key="NSState">1</int>
 													<reference key="NSOnImage" ref="304067448"/>
 													<reference key="NSMixedImage" ref="747616888"/>
 													<string key="NSAction">_popUpItemAction:</string>
@@ -3178,7 +3176,18 @@ AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 													<string key="NSTitle">OtherViews</string>
 													<object class="NSMutableArray" key="NSMenuItems">
 														<bool key="EncodedWithXMLCoder">YES</bool>
-														<reference ref="389853396"/>
+														<reference ref="843588341"/>
+														<object class="NSMenuItem" id="389853396">
+															<reference key="NSMenu" ref="1006531696"/>
+															<string key="NSTitle">None</string>
+															<string key="NSKeyEquiv"/>
+															<int key="NSKeyEquivModMask">1048576</int>
+															<int key="NSMnemonicLoc">2147483647</int>
+															<reference key="NSOnImage" ref="304067448"/>
+															<reference key="NSMixedImage" ref="747616888"/>
+															<string key="NSAction">_popUpItemAction:</string>
+															<reference key="NSTarget" ref="857925790"/>
+														</object>
 													</object>
 												</object>
 												<int key="NSPreferredEdge">1</int>
@@ -5909,6 +5918,14 @@ AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 					</object>
 					<int key="connectionID">863</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_dontChangeMenuItem</string>
+						<reference key="source" ref="591104344"/>
+						<reference key="destination" ref="843588341"/>
+					</object>
+					<int key="connectionID">865</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -7516,6 +7533,7 @@ AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="389853396"/>
+							<reference ref="843588341"/>
 						</object>
 						<reference key="parent" ref="857925790"/>
 					</object>
@@ -8253,6 +8271,11 @@ AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 						<reference key="object" ref="634724818"/>
 						<reference key="parent" ref="50764731"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">864</int>
+						<reference key="object" ref="843588341"/>
+						<reference key="parent" ref="1006531696"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -8695,6 +8718,7 @@ AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 					<string>855.IBPluginDependency</string>
 					<string>856.IBPluginDependency</string>
 					<string>862.IBPluginDependency</string>
+					<string>864.IBPluginDependency</string>
 				</object>
 				<object class="NSMutableArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -8972,7 +8996,7 @@ AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
-					<string>{{900, 349}, {100, 20}}</string>
+					<string>{{422, 588}, {134, 37}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -9136,6 +9160,7 @@ AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -9154,7 +9179,7 @@ AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">863</int>
+			<int key="maxID">865</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -9265,6 +9290,7 @@ AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 							<string>_commentTextView</string>
 							<string>_creationTimeTextField</string>
 							<string>_deleteButton</string>
+							<string>_dontChangeMenuItem</string>
 							<string>_downloadsTextField</string>
 							<string>_editedByTextField</string>
 							<string>_filterSearchField</string>
@@ -9304,6 +9330,7 @@ AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 							<string>NSTextView</string>
 							<string>NSTextField</string>
 							<string>NSButton</string>
+							<string>NSMenuItem</string>
 							<string>NSTextField</string>
 							<string>NSTextField</string>
 							<string>NSSearchField</string>

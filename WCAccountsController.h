@@ -57,6 +57,7 @@
 	IBOutlet NSTextField				*_fullNameTextField;
 	IBOutlet NSSecureTextField			*_passwordTextField;
 	IBOutlet NSPopUpButton				*_groupPopUpButton;
+	IBOutlet NSMenuItem					*_dontChangeMenuItem;
 	IBOutlet NSMenuItem					*_noneMenuItem;
 	IBOutlet NSTokenField				*_groupsTokenField;
 	IBOutlet NSTextView					*_commentTextView;
