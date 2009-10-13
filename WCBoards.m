@@ -30,8 +30,9 @@
 #import "WCAccountsController.h"
 #import "WCApplicationController.h"
 #import "WCBoard.h"
-#import "WCBoards.h"
 #import "WCBoardPost.h"
+#import "WCBoards.h"
+#import "WCBoardsButtonCell.h"
 #import "WCBoardThread.h"
 #import "WCChatController.h"
 #import "WCErrorQueue.h"
@@ -287,6 +288,9 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	i = ([_threadsTableView sortOrder] == WISortDescending)
 		? [board numberOfThreads] - index - 1
 		: index;
+	
+	if(i >= [board numberOfThreads])
+		return NULL;
 	
 	return [board threadAtIndex:i];
 }
@@ -1088,6 +1092,8 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	[_defaultIconBase64String release];
 	
 	[_smileyBase64Strings release];
+	
+	[_selectPostID release];
 	
 	[super dealloc];
 }
@@ -2025,6 +2031,13 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 - (void)webView:(WebView *)webView didFinishLoadForFrame:(WebFrame *)frame {
 	if(_previousVisibleRect.size.height > 0.0)
 		[[[[_threadWebView mainFrame] frameView] documentView] scrollRectToVisible:_previousVisibleRect];
+
+	if(_selectPostID) {
+		[_threadWebView stringByEvaluatingJavaScriptFromString:[NSSWF:@"window.location.hash='%@';", _selectPostID]];
+		
+		[_selectPostID release];
+		_selectPostID = NULL;
+	}
 }
 
 
@@ -3055,6 +3068,27 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 
 #pragma mark -
 
+- (IBAction)goToLatestPost:(id)sender {
+	WCBoardThread		*thread;
+	NSUInteger			index;
+	
+	thread	= [self _threadAtIndex:[sender tag]];
+	index	= [self _indexOfThread:thread];
+
+	if(index != NSNotFound) {
+		_selectPostID = [[[thread lastPost] postID] retain];
+		
+		if([[_threadsTableView selectedRowIndexes] isEqualToIndexSet:[NSIndexSet indexSetWithIndex:index]])
+			[self _reloadThreadAndRememberPosition:NO];
+		else
+			[_threadsTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
+	}
+}
+
+
+
+#pragma mark -
+
 - (IBAction)bold:(id)sender {
 	[self _insertBBCodeWithStartTag:@"[b]" endTag:@"[/b]"];
 }
@@ -3229,8 +3263,15 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 
 
 - (void)outlineViewSelectionDidChange:(NSNotification *)notification {
-	WCBoard			*board;
-	NSInteger		row;
+	NSEnumerator		*enumerator;
+	WCBoard				*board;
+	WCBoardThread		*thread;
+	NSInteger			row;
+	
+	enumerator = [[_selectedBoard threads] objectEnumerator];
+	
+	while((thread = [enumerator nextObject]))
+		[[thread goToLatestPostButton] removeFromSuperview];
 	
 	row = [_boardsOutlineView selectedRow];
 	
@@ -3419,6 +3460,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 
 
 - (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
+	NSButton			*button;
 	WCBoardThread		*thread;
 	
 	thread = [self _threadAtIndex:row];
@@ -3433,8 +3475,18 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 		return [NSNumber numberWithUnsignedInteger:[thread numberOfPosts] - 1];
 	else if(tableColumn == _threadTimeTableColumn)
 		return [_dateFormatter stringFromDate:[[thread firstPost] postDate]];
-	else if(tableColumn == _postTimeTableColumn)
-		return [_dateFormatter stringFromDate:[[thread lastPost] postDate]];
+	else if(tableColumn == _postTimeTableColumn) {
+		button = [thread goToLatestPostButton];
+		
+		[button setTarget:self];
+		[button setAction:@selector(goToLatestPost:)];
+		[button setTag:row];
+		
+		return [NSDictionary dictionaryWithObjectsAndKeys:
+			[_dateFormatter stringFromDate:[[thread lastPost] postDate]],	WCBoardsButtonCellValueKey,
+			button,															WCBoardsButtonCellButtonKey,
+			NULL];
+	}
 	
 	return NULL;
 }

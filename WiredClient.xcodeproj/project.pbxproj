@@ -45,6 +45,8 @@
 		7739D4AA0E7FFC6400D76C47 /* WiredAppKit.framework in Copy Files (Frameworks) */ = {isa = PBXBuildFile; fileRef = 779AB7D90E5C480A0031B6CE /* WiredAppKit.framework */; };
 		7739D4AB0E7FFC6400D76C47 /* WiredNetworking.framework in Copy Files (Frameworks) */ = {isa = PBXBuildFile; fileRef = 774897940CC8A63300E95A83 /* WiredNetworking.framework */; };
 		773FEED11084C9EF002AF8DF /* PostReply.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 773FEED01084C9EF002AF8DF /* PostReply.tiff */; };
+		773FEF141084CE2F002AF8DF /* WCBoardsButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 773FEF131084CE2F002AF8DF /* WCBoardsButtonCell.m */; };
+		773FEF941084D589002AF8DF /* GoToLatestPost.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 773FEF931084D589002AF8DF /* GoToLatestPost.tiff */; };
 		775C63071066DB04001BDEA3 /* UnreadPost.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 775C63061066DB04001BDEA3 /* UnreadPost.tiff */; };
 		775C63091066DB1A001BDEA3 /* FileLink.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 775C63081066DB1A001BDEA3 /* FileLink.tiff */; };
 		777790B110617FE200248834 /* WCBoardsTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 777790B010617FE200248834 /* WCBoardsTextView.m */; };
@@ -458,6 +460,9 @@
 		771E6D4F0755F506000F9195 /* WCConversation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCConversation.m; sourceTree = "<group>"; };
 		77256AD00F2DFF6800EA5816 /* GrayDrop.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = GrayDrop.tiff; sourceTree = "<group>"; };
 		773FEED01084C9EF002AF8DF /* PostReply.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = PostReply.tiff; sourceTree = "<group>"; };
+		773FEF121084CE2F002AF8DF /* WCBoardsButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCBoardsButtonCell.h; sourceTree = "<group>"; };
+		773FEF131084CE2F002AF8DF /* WCBoardsButtonCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCBoardsButtonCell.m; sourceTree = "<group>"; };
+		773FEF931084D589002AF8DF /* GoToLatestPost.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = GoToLatestPost.tiff; sourceTree = "<group>"; };
 		775C63061066DB04001BDEA3 /* UnreadPost.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = UnreadPost.tiff; sourceTree = "<group>"; };
 		775C63081066DB1A001BDEA3 /* FileLink.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = FileLink.tiff; sourceTree = "<group>"; };
 		777790AF10617FE200248834 /* WCBoardsTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCBoardsTextView.h; sourceTree = "<group>"; };
@@ -1089,6 +1094,8 @@
 				77CED39F0EC068F500123164 /* WCBoardPost.h */,
 				77CED3A20EC068F500123164 /* WCBoards.m */,
 				77CED3A10EC068F500123164 /* WCBoards.h */,
+				773FEF131084CE2F002AF8DF /* WCBoardsButtonCell.m */,
+				773FEF121084CE2F002AF8DF /* WCBoardsButtonCell.h */,
 				777790B010617FE200248834 /* WCBoardsTextView.m */,
 				777790AF10617FE200248834 /* WCBoardsTextView.h */,
 				77CED3A40EC068F500123164 /* WCBoardThread.m */,
@@ -1391,6 +1398,7 @@
 				775C63081066DB1A001BDEA3 /* FileLink.tiff */,
 				A54AF8F70F13AEBA00AFD50E /* Forward.tiff */,
 				A54AF8F60F13AEBA00AFD50E /* General.tiff */,
+				773FEF931084D589002AF8DF /* GoToLatestPost.tiff */,
 				77256AD00F2DFF6800EA5816 /* GrayDrop.tiff */,
 				A54AF8F50F13AEBA00AFD50E /* GreenDrop.tiff */,
 				A54AF8F40F13AEBA00AFD50E /* Group.tiff */,
@@ -1854,6 +1862,7 @@
 				A51B50100F42282F00EAB0E1 /* FilterButtonRight.tiff in Resources */,
 				A54AF9430F13AEBB00AFD50E /* Forward.tiff in Resources */,
 				A54AF9420F13AEBB00AFD50E /* General.tiff in Resources */,
+				773FEF941084D589002AF8DF /* GoToLatestPost.tiff in Resources */,
 				77256AD10F2DFF6800EA5816 /* GrayDrop.tiff in Resources */,
 				A54AF9410F13AEBB00AFD50E /* GreenDrop.tiff in Resources */,
 				A54AF9400F13AEBB00AFD50E /* Group.tiff in Resources */,
@@ -1886,6 +1895,7 @@
 				A54AF9650F13AEBB00AFD50E /* PauseTransfer.tiff in Resources */,
 				A54AF9640F13AEBB00AFD50E /* Plus.tiff in Resources */,
 				A54AF9630F13AEBB00AFD50E /* PostNews.tiff in Resources */,
+				773FEED11084C9EF002AF8DF /* PostReply.tiff in Resources */,
 				A54AF9620F13AEBB00AFD50E /* QuickLook.tiff in Resources */,
 				A54AF9610F13AEBB00AFD50E /* PrivateChat.tiff in Resources */,
 				A54AF9600F13AEBB00AFD50E /* Reconnect.tiff in Resources */,
@@ -1944,7 +1954,6 @@
 				779951890A122BBB00600320 /* Smile.tiff in Resources */,
 				779951900A122BBB00600320 /* Wink.tiff in Resources */,
 				779951820A122BBB00600320 /* Yuck.tiff in Resources */,
-				773FEED11084C9EF002AF8DF /* PostReply.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2121,6 +2130,7 @@
 				A5DC7FAB057AB0A600736BBF /* WCUser.m in Sources */,
 				A5DC7F84057AB05F00736BBF /* WCUserCell.m in Sources */,
 				A5DC7F09057AAF6C00736BBF /* WCUserInfo.m in Sources */,
+				773FEF141084CE2F002AF8DF /* WCBoardsButtonCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

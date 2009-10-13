@@ -33,6 +33,7 @@
 	NSMutableArray						*_posts;
 	BOOL								_unread;
 	WCBoard								*_board;
+	NSButton							*_goToLatestPostButton;
 }
 
 + (WCBoardThread *)threadWithPost:(WCBoardPost *)post connection:(WCServerConnection *)connection;
@@ -43,6 +44,8 @@
 - (BOOL)isUnread;
 - (void)setBoard:(WCBoard *)board;
 - (WCBoard *)board;
+
+- (NSButton *)goToLatestPostButton;
 
 - (NSUInteger)numberOfPosts;
 - (NSUInteger)numberOfUnreadPosts;

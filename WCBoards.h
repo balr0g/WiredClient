@@ -113,6 +113,8 @@ extern NSString * const								WCBoardsDidChangeUnreadCountNotification;
 	
 	NSMutableDictionary								*_smileyBase64Strings;
 	
+	NSString										*_selectPostID;
+	
 	NSRect											_previousVisibleRect;
 }
 
@@ -143,6 +145,8 @@ extern NSString * const								WCBoardsDidChangeUnreadCountNotification;
 - (IBAction)markAsRead:(id)sender;
 - (IBAction)markAsUnread:(id)sender;
 - (IBAction)search:(id)sender;
+
+- (IBAction)goToLatestPost:(id)sender;
 
 - (IBAction)bold:(id)sender;
 - (IBAction)italic:(id)sender;

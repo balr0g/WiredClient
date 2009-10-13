@@ -40,9 +40,17 @@
 - (id)initWithPost:(WCBoardPost *)post connection:(WCServerConnection *)connection {
 	self = [super initWithConnection:connection];
 	
-	_posts		= [[NSMutableArray alloc] init];
-	_threadID	= [[post threadID] retain];
-	_unread		= [post isUnread];
+	_goToLatestPostButton	= [[NSButton alloc] init];
+	
+	[_goToLatestPostButton setButtonType:NSMomentaryLightButton];
+	[_goToLatestPostButton setBordered:NO];
+	[[_goToLatestPostButton cell] setHighlightsBy:NSContentsCellMask];
+	[_goToLatestPostButton setImage:[NSImage imageNamed:@"GoToLatestPost"]];
+	[_goToLatestPostButton retain];
+	
+	_posts					= [[NSMutableArray alloc] init];
+	_threadID				= [[post threadID] retain];
+	_unread					= [post isUnread];
 	
 	[_posts addObject:post];
 	
@@ -54,6 +62,9 @@
 - (void)dealloc {
 	[_threadID release];
 	[_posts release];
+
+	[_goToLatestPostButton removeFromSuperview];
+	[_goToLatestPostButton release];
 	
 	[super dealloc];
 }
@@ -104,6 +115,14 @@
 
 - (WCBoard *)board {
 	return _board;
+}
+
+
+
+#pragma mark -
+
+- (NSButton *)goToLatestPostButton {
+	return _goToLatestPostButton;
 }
 
 

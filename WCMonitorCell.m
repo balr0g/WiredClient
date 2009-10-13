@@ -206,9 +206,6 @@ NSString * const WCMonitorCellStatusKey			= @"WCMonitorCellStatusKey";
 					[view addSubview:progressIndicator];
 				
 				[progressIndicator setFrame:progressRect];
-			} else {
-				if([progressIndicator superview])
-					[progressIndicator removeFromSuperview];
 			}
 		}
 
