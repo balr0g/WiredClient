@@ -121,8 +121,10 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	connection	= [board connection];
 	account		= [connection account];
 
-	return (board != NULL && connection != NULL && [connection isConnected] &&
-			[board isWritableByAccount:account] && [account boardAddThreads]);
+	return (board != NULL &&
+			connection != NULL && [connection isConnected] &&
+			[board isWritableByAccount:account] &&
+			[account boardAddThreads]);
 }
 
 
@@ -136,8 +138,29 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	connection	= [board connection];
 	account		= [connection account];
 
-	return (board != NULL && connection != NULL && [connection isConnected] &&
-			[board isWritableByAccount:account] && [account boardDeleteThreads] && [[self _selectedThreads] count] > 0);
+	return (board != NULL &&
+			[[self _selectedThreads] count] > 0 &&
+			connection != NULL && [connection isConnected] &&
+			[board isWritableByAccount:account] &&
+			[account boardDeleteThreads]);
+}
+
+
+
+- (BOOL)_validatePostReply {
+	WCServerConnection		*connection;
+	WCUserAccount			*account;
+	WCBoard					*board;
+	
+	board		= [self _selectedBoard];
+	connection	= [board connection];
+	account		= [connection account];
+
+	return (board != NULL &&
+			[[self _selectedThreads] count] == 1 &&
+			connection != NULL && [connection isConnected] &&
+			[board isWritableByAccount:account] &&
+			[account boardAddPosts]);
 }
 
 
@@ -534,7 +557,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 
 - (NSString *)_HTMLStringForThread:(WCBoardThread *)thread changedUnread:(BOOL *)changedUnread {
 	NSEnumerator		*enumerator;
-	NSMutableString		*html, *string;
+	NSMutableString		*html;
 	WCBoardPost			*post;
 	BOOL				writable, isKeyWindow;
 	
@@ -570,17 +593,6 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 			*changedUnread = YES;
 		}
 	}
-	
-	string = [[_replyTemplate mutableCopy] autorelease];
-
-	if([[[thread connection] account] boardAddPosts] && writable)
-		[string replaceOccurrencesOfString:@"<? replydisabled ?>" withString:@""];
-	else
-		[string replaceOccurrencesOfString:@"<? replydisabled ?>" withString:@"disabled=\"disabled\""];
-
-	[string replaceOccurrencesOfString:@"<? replystring ?>" withString:NSLS(@"Post Reply", @"Post reply button title")];
-
-	[html appendString:string];
 	
 	[html appendString:_footerTemplate];
 	
@@ -969,9 +981,6 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	_postTemplate				= [[NSMutableString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"Post" ofType:@"html"]
 															  encoding:NSUTF8StringEncoding
 																 error:NULL];
-	_replyTemplate				= [[NSMutableString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"PostReply" ofType:@"html"]
-															   encoding:NSUTF8StringEncoding
-																  error:NULL];
 	
 	[_headerTemplate replaceOccurrencesOfString:@"<? fromstring ?>" withString:NSLS(@"From", @"Post header")];
 	[_headerTemplate replaceOccurrencesOfString:@"<? subjectstring ?>" withString:NSLS(@"Subject", @"Post header")];
@@ -1073,7 +1082,6 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	[_headerTemplate release];
 	[_footerTemplate release];
 	[_postTemplate release];
-	[_replyTemplate release];
 	
 	[_fileLinkBase64String release];
 	[_unreadPostBase64String release];
@@ -1205,6 +1213,13 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 												 target:self
 												 action:@selector(deleteThread:)];
 	}
+	else if([identifier isEqualToString:@"PostReply"]) {
+		return [NSToolbarItem toolbarItemWithIdentifier:identifier
+												   name:NSLS(@"Post Reply", @"Post reply toolbar item")
+												content:[NSImage imageNamed:@"PostReply"]
+												 target:self
+												 action:@selector(postReply:)];
+	}
 	else if([identifier isEqualToString:@"MarkAsRead"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
 												   name:NSLS(@"Mark As Read", @"Mark as read toolbar item")
@@ -1239,6 +1254,8 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 		@"AddThread",
 		@"DeleteThread",
 		NSToolbarSpaceItemIdentifier,
+		@"PostReply",
+		NSToolbarSpaceItemIdentifier,
 		@"MarkAsRead",
 		@"MarkAllAsRead",
 		NSToolbarFlexibleSpaceItemIdentifier,
@@ -1256,6 +1273,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 		NSToolbarCustomizeToolbarItemIdentifier,
 		@"AddThread",
 		@"DeleteThread",
+		@"PostReply",
 		@"MarkAsRead",
 		@"MarkAllAsRead",
 		@"Search",
@@ -2082,6 +2100,8 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 		return [self _validateAddThread];
 	else if(selector == @selector(deleteThread:))
 		return [self _validateDeleteThread];
+	else if(selector == @selector(postReply:))
+		return [self _validatePostReply];
 	else if(selector == @selector(markAsRead:))
 		return [self _validateMarkAsRead];
 	else if(selector == @selector(markAllAsRead:))
@@ -2254,43 +2274,6 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 
 
 #pragma mark -
-
-- (void)replyToThread {
-	NSString			*subject;
-	WCBoard				*board;
-	WCBoardThread		*thread;
-	WCBoardPost			*post;
-	
-	board	= [self _selectedBoard];
-	thread	= [self _selectedThread];
-	post	= [thread firstPost];
-	
-	if(!post)
-		return;
-	
-	subject	= [post subject];
-	
-	if(![subject hasPrefix:@"Re: "])
-		subject = [@"Re: " stringByAppendingString:subject];
-	
-	[self _reloadBoardListsSelectingBoard:board];
-	
-	[_postLocationPopUpButton setEnabled:NO];
-	[_subjectTextField setEnabled:NO];
-	[_subjectTextField setStringValue:subject];
-	[_postTextView setString:@""];
-	[_postButton setTitle:NSLS(@"Reply", @"Reply post button title")];
-	
-	[_postPanel makeFirstResponder:_postTextView];
-	
-	[NSApp beginSheet:_postPanel
-	   modalForWindow:[self window]
-		modalDelegate:self
-	   didEndSelector:@selector(replyPanelDidEnd:returnCode:contextInfo:)
-		  contextInfo:[[NSArray alloc] initWithObjects:board, thread, NULL]];
-}
-
-
 
 - (void)replyToPostWithID:(NSString *)postID {
 	NSString					*subject, *text;
@@ -2946,6 +2929,43 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	}
 	
 	[thread release];
+}
+
+
+
+- (IBAction)postReply:(id)sender {
+	NSString			*subject;
+	WCBoard				*board;
+	WCBoardThread		*thread;
+	WCBoardPost			*post;
+	
+	board	= [self _selectedBoard];
+	thread	= [self _selectedThread];
+	post	= [thread firstPost];
+	
+	if(!post)
+		return;
+	
+	subject	= [post subject];
+	
+	if(![subject hasPrefix:@"Re: "])
+		subject = [@"Re: " stringByAppendingString:subject];
+	
+	[self _reloadBoardListsSelectingBoard:board];
+	
+	[_postLocationPopUpButton setEnabled:NO];
+	[_subjectTextField setEnabled:NO];
+	[_subjectTextField setStringValue:subject];
+	[_postTextView setString:@""];
+	[_postButton setTitle:NSLS(@"Reply", @"Reply post button title")];
+	
+	[_postPanel makeFirstResponder:_postTextView];
+	
+	[NSApp beginSheet:_postPanel
+	   modalForWindow:[self window]
+		modalDelegate:self
+	   didEndSelector:@selector(replyPanelDidEnd:returnCode:contextInfo:)
+		  contextInfo:[[NSArray alloc] initWithObjects:board, thread, NULL]];
 }
 
 

@@ -44,6 +44,7 @@
 		7739D4A90E7FFC6400D76C47 /* WiredFoundation.framework in Copy Files (Frameworks) */ = {isa = PBXBuildFile; fileRef = 779AB7D70E5C480A0031B6CE /* WiredFoundation.framework */; };
 		7739D4AA0E7FFC6400D76C47 /* WiredAppKit.framework in Copy Files (Frameworks) */ = {isa = PBXBuildFile; fileRef = 779AB7D90E5C480A0031B6CE /* WiredAppKit.framework */; };
 		7739D4AB0E7FFC6400D76C47 /* WiredNetworking.framework in Copy Files (Frameworks) */ = {isa = PBXBuildFile; fileRef = 774897940CC8A63300E95A83 /* WiredNetworking.framework */; };
+		773FEED11084C9EF002AF8DF /* PostReply.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 773FEED01084C9EF002AF8DF /* PostReply.tiff */; };
 		775C63071066DB04001BDEA3 /* UnreadPost.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 775C63061066DB04001BDEA3 /* UnreadPost.tiff */; };
 		775C63091066DB1A001BDEA3 /* FileLink.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 775C63081066DB1A001BDEA3 /* FileLink.tiff */; };
 		777790B110617FE200248834 /* WCBoardsTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 777790B010617FE200248834 /* WCBoardsTextView.m */; };
@@ -53,7 +54,6 @@
 		777D36C50987E125005B5EC1 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 777D36C40987E125005B5EC1 /* WebKit.framework */; };
 		777D3F6609890273005B5EC1 /* WCChatWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 777D3F6509890273005B5EC1 /* WCChatWindow.m */; };
 		778943850F5579280017C511 /* LabelYellow.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 778943840F5579280017C511 /* LabelYellow.tiff */; };
-		7789555B0F56D9A50017C511 /* PostReply.html in Resources */ = {isa = PBXBuildFile; fileRef = 7789555A0F56D9A50017C511 /* PostReply.html */; };
 		7789583C0F5828D10017C511 /* SourceAddArrow.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 7789583A0F5828D10017C511 /* SourceAddArrow.tiff */; };
 		7789583D0F5828D10017C511 /* SourceAddArrowPressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 7789583B0F5828D10017C511 /* SourceAddArrowPressed.tiff */; };
 		7789584B0F582B1B0017C511 /* SmartBoard.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 7789584A0F582B1B0017C511 /* SmartBoard.tiff */; };
@@ -457,6 +457,7 @@
 		771E6D4E0755F506000F9195 /* WCConversation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCConversation.h; sourceTree = "<group>"; };
 		771E6D4F0755F506000F9195 /* WCConversation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCConversation.m; sourceTree = "<group>"; };
 		77256AD00F2DFF6800EA5816 /* GrayDrop.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = GrayDrop.tiff; sourceTree = "<group>"; };
+		773FEED01084C9EF002AF8DF /* PostReply.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = PostReply.tiff; sourceTree = "<group>"; };
 		775C63061066DB04001BDEA3 /* UnreadPost.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = UnreadPost.tiff; sourceTree = "<group>"; };
 		775C63081066DB1A001BDEA3 /* FileLink.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = FileLink.tiff; sourceTree = "<group>"; };
 		777790AF10617FE200248834 /* WCBoardsTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCBoardsTextView.h; sourceTree = "<group>"; };
@@ -468,7 +469,6 @@
 		777D3F6509890273005B5EC1 /* WCChatWindow.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCChatWindow.m; sourceTree = "<group>"; };
 		777D3F6709890278005B5EC1 /* WCChatWindow.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCChatWindow.h; sourceTree = "<group>"; };
 		778943840F5579280017C511 /* LabelYellow.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = LabelYellow.tiff; sourceTree = "<group>"; };
-		7789555A0F56D9A50017C511 /* PostReply.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = PostReply.html; sourceTree = "<group>"; };
 		7789583A0F5828D10017C511 /* SourceAddArrow.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = SourceAddArrow.tiff; sourceTree = "<group>"; };
 		7789583B0F5828D10017C511 /* SourceAddArrowPressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = SourceAddArrowPressed.tiff; sourceTree = "<group>"; };
 		7789584A0F582B1B0017C511 /* SmartBoard.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = SmartBoard.tiff; sourceTree = "<group>"; };
@@ -1105,7 +1105,6 @@
 				77CED3B70EC0691E00123164 /* Boards.xib */,
 				A5326A8D0F37981C004180AA /* PostFooter.html */,
 				A5326A8C0F37981C004180AA /* PostHeader.html */,
-				7789555A0F56D9A50017C511 /* PostReply.html */,
 				A5326A8E0F37981C004180AA /* Post.html */,
 			);
 			name = Resources;
@@ -1424,6 +1423,7 @@
 				A54AF9190F13AEBB00AFD50E /* PauseTransfer.tiff */,
 				A54AF9180F13AEBB00AFD50E /* Plus.tiff */,
 				A54AF9170F13AEBB00AFD50E /* PostNews.tiff */,
+				773FEED01084C9EF002AF8DF /* PostReply.tiff */,
 				A54AF9150F13AEBB00AFD50E /* PrivateChat.tiff */,
 				A54AF9160F13AEBB00AFD50E /* QuickLook.tiff */,
 				A54AF9140F13AEBB00AFD50E /* Reconnect.tiff */,
@@ -1802,7 +1802,6 @@
 				A5326D850F379935004180AA /* Message.html in Resources */,
 				A5326A8F0F37981C004180AA /* PostHeader.html in Resources */,
 				A5326A900F37981C004180AA /* PostFooter.html in Resources */,
-				7789555B0F56D9A50017C511 /* PostReply.html in Resources */,
 				A5326A910F37981C004180AA /* Post.html in Resources */,
 				7777C7961063D8B800248834 /* WiredBookmarks.icns in Resources */,
 				A509A96305F3B8F000E6AE2D /* WiredClient.icns in Resources */,
@@ -1945,6 +1944,7 @@
 				779951890A122BBB00600320 /* Smile.tiff in Resources */,
 				779951900A122BBB00600320 /* Wink.tiff in Resources */,
 				779951820A122BBB00600320 /* Yuck.tiff in Resources */,
+				773FEED11084C9EF002AF8DF /* PostReply.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
