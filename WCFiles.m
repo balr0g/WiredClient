@@ -2862,6 +2862,8 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		
 		[self _subscribeToDirectory:file];
 		[self _loadFilesAtDirectory:file selectFiles:NO];
+		
+		[_subscribedFiles addObject:file];
 	}
 }
 
@@ -2873,9 +2875,13 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	if([notification object] == _filesOutlineView) {
 		file = [[notification userInfo] objectForKey:@"NSObject"];
 		
-		[self _unsubscribeFromDirectory:file];
-		
-		[_filesOutlineView setNeedsDisplay:YES];
+		if([_subscribedFiles containsObject:file]) {
+			[self _unsubscribeFromDirectory:file];
+			
+			[_subscribedFiles removeObject:file];
+				
+			[_filesOutlineView setNeedsDisplay:YES];
+		}
 	}
 }
 
