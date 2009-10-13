@@ -60,8 +60,6 @@
 	NSString		*name, *string;
 	WCEvent			*event;
 	
-	event					= [[self alloc] init];
-	
 	name					= [message enumNameForName:@"wired.events.event"];
 	parameters				= [message listForName:@"wired.events.parameters"];
 	
@@ -78,7 +76,18 @@
 			[parameters objectAtIndex:0],
 			[parameters objectAtIndex:1]];
 	}
+	else if([name hasSuffix:@"listed_directory"] && [parameters count] >= 1) {
+		string = [NSSWF:NSLS(@"Listed directory \u201c%@\u201d", @"Event message (path)"),
+			[parameters objectAtIndex:0]];
+	}
+	else {
+		string = NULL;
+	}
 	
+	if(!string)
+		return NULL;
+	
+	event					= [[self alloc] init];
 	event->_message			= [string retain];
 	event->_time			= [[message dateForName:@"wired.events.time"] retain];
 	event->_nick			= [[message stringForName:@"wired.user.nick"] retain];
@@ -342,10 +351,13 @@
 	NSUInteger		i, count;
 	
 	if([[message name] isEqualToString:@"wired.events.list"]) {
-		event					= [WCEvent eventWithMessage:message];
-		event->_formattedTime	= [[_dateFormatter stringFromDate:event->_time] retain];
+		event = [WCEvent eventWithMessage:message];
 		
-		[_listedEvents addObject:event];
+		if(event) {
+			event->_formattedTime = [[_dateFormatter stringFromDate:event->_time] retain];
+			
+			[_listedEvents addObject:event];
+		}
 	}
 	else if([[message name] isEqualToString:@"wired.events.list.done"]) {
 		[_allEvents addObjectsFromArray:_listedEvents];
@@ -391,16 +403,19 @@
 - (void)wiredEventsEvent:(WIP7Message *)message {
 	WCEvent			*event;
 	
-	event					= [WCEvent eventWithMessage:message];
-	event->_formattedTime	= [[_dateFormatter stringFromDate:event->_time] retain];
+	event = [WCEvent eventWithMessage:message];
 	
-	[_allEvents addObject:event];
-	[_receivedEvents addObject:event];
-	
-	if([_receivedEvents count] > 20)
-		[self _refreshReceivedEvents];
-	else
-		[self performSelectorOnce:@selector(_refreshReceivedEvents) afterDelay:0.1];
+	if(event) {
+		event->_formattedTime = [[_dateFormatter stringFromDate:event->_time] retain];
+		
+		[_allEvents addObject:event];
+		[_receivedEvents addObject:event];
+		
+		if([_receivedEvents count] > 20)
+			[self _refreshReceivedEvents];
+		else
+			[self performSelectorOnce:@selector(_refreshReceivedEvents) afterDelay:0.1];
+	}
 }
 
 
