@@ -60,7 +60,7 @@
 	NSString		*name, *string;
 	WCEvent			*event;
 	
-	event = [[self alloc] init];
+	event					= [[self alloc] init];
 	
 	name					= [message enumNameForName:@"wired.events.event"];
 	parameters				= [message listForName:@"wired.events.parameters"];
@@ -70,10 +70,11 @@
 			[parameters objectAtIndex:0],
 			[parameters objectAtIndex:1]];
 	}
-	else if([name hasSuffix:@"login_failed"])
+	else if([name hasSuffix:@"login_failed"]) {
 		string = NSLS(@"Login failed", @"Event message");
+	}
 	else if([name hasSuffix:@"changed_nick"] && [parameters count] >= 2) {
-		string = [NSSWF:NSLS(@"Changed nick from \u201c%@\u201d to \u201c%@\u201d", @"Event message (nick)"),
+		string = [NSSWF:NSLS(@"Changed nick from \u201c%@\u201d to \u201c%@\u201d", @"Event message (old nick, new nick)"),
 			[parameters objectAtIndex:0],
 			[parameters objectAtIndex:1]];
 	}
