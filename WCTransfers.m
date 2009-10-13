@@ -960,11 +960,18 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 
 - (void)_finishTransfer:(WCTransfer *)transfer withError:(WCError *)error {
-	[self _presentError:error forConnection:[transfer connection] transfer:transfer];
+	if(error)
+		[self _presentError:error forConnection:[transfer connection] transfer:transfer];
+	
 	[self _finishTransfer:transfer];
 	
-	if([[WCSettings settings] boolForKey:WCAutoReconnect] && [[transfer connection] isConnected] && [transfer actualTransferred] > 0)
-		[self _requestTransfer:transfer];
+	if(![[error domain] isEqualToString:WCWiredClientErrorDomain] &&
+	   ![[error domain] isEqualToString:WCWiredProtocolErrorDomain] &&
+	   [[WCSettings settings] boolForKey:WCAutoReconnect] &&
+	   [[transfer connection] isConnected] &&
+	   [transfer actualTransferred] > 0) {
+		[self performSelector:@selector(_requestTransfer:) withObject:transfer afterDelay:2.0];
+	}
 }
 
 
