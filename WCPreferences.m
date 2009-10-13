@@ -1729,6 +1729,7 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 	openPanel = [NSOpenPanel openPanel];
 	[openPanel setCanChooseFiles:NO];
 	[openPanel setCanChooseDirectories:YES];
+	[openPanel setCanCreateDirectories:YES];
 	[openPanel setTitle:NSLS(@"Select Download Folder", @"Select download folder dialog title")];
 	[openPanel setPrompt:NSLS(@"Select", @"Select download folder dialog button title")];
 	[openPanel beginSheetForDirectory:NULL
@@ -1737,6 +1738,18 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 						modalDelegate:self
 					   didEndSelector:@selector(downloadFolderPanelDidEnd:returnCode:contextInfo:)
 						  contextInfo:NULL];
+}
+
+
+
+- (void)downloadFolderPanelDidEnd:(NSOpenPanel *)openPanel returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+	if(returnCode == NSOKButton) {
+		[[WCSettings settings] setObject:[openPanel filename] forKey:WCDownloadFolder];
+		
+		[self _reloadDownloadFolder];
+	}
+	
+	[_filesDownloadFolderPopUpButton selectItem:_filesDownloadFolderMenuItem];
 }
 
 
@@ -1760,18 +1773,6 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 							byExtendingSelection:NO];
 
 	[[NSNotificationCenter defaultCenter] postNotificationName:WCTrackerBookmarksDidChangeNotification];
-}
-
-
-
-- (void)downloadFolderPanelDidEnd:(NSOpenPanel *)openPanel returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-	if(returnCode == NSOKButton) {
-		[[WCSettings settings] setObject:[openPanel filename] forKey:WCDownloadFolder];
-		
-		[self _reloadDownloadFolder];
-	}
-	
-	[_filesDownloadFolderPopUpButton selectItem:_filesDownloadFolderMenuItem];
 }
 
 
