@@ -650,7 +650,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 	while((eachPath = [enumerator nextObject])) {
 		if([[eachPath lastPathComponent] hasPrefix:@"."]) {
-			[enumerator skipDescendents];
+			if([[[enumerator fileAttributes] fileType] isEqualToString:NSFileTypeDirectory])
+				[enumerator skipDescendents];
 			
 			continue;
 		}
