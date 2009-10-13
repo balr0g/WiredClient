@@ -56,21 +56,29 @@
 @implementation WCEvent
 
 + (WCEvent *)eventWithMessage:(WIP7Message *)message {
+	NSArray			*parameters;
 	NSString		*name, *string;
 	WCEvent			*event;
 	
 	event = [[self alloc] init];
 	
 	name					= [message enumNameForName:@"wired.events.event"];
-	string					= [message stringForName:@"wired.events.string"];
+	parameters				= [message listForName:@"wired.events.parameters"];
 	
-	if([name hasSuffix:@"logged_in"])
-		event->_message		= [[NSSWF:NSLS(@"Logged in using \u201c%@\u201d", @"Event message (client)"), string] retain];
+	if([name hasSuffix:@"logged_in"] && [parameters count] >= 2) {
+		string = [NSSWF:NSLS(@"Logged in using \u201c%@ on %@\u201d", @"Event message (application, os)"),
+			[parameters objectAtIndex:0],
+			[parameters objectAtIndex:1]];
+	}
 	else if([name hasSuffix:@"login_failed"])
-		event->_message		= [NSLS(@"Login failed", @"Event message") retain];
-	else if([name hasSuffix:@"changed_nick"])
-		event->_message		= [[NSSWF:NSLS(@"Changed nick from \u201c%@\u201d", @"Event message (nick)"), string] retain];
+		string = NSLS(@"Login failed", @"Event message");
+	else if([name hasSuffix:@"changed_nick"] && [parameters count] >= 2) {
+		string = [NSSWF:NSLS(@"Changed nick from \u201c%@\u201d to \u201c%@\u201d", @"Event message (nick)"),
+			[parameters objectAtIndex:0],
+			[parameters objectAtIndex:1]];
+	}
 	
+	event->_message			= [string retain];
 	event->_time			= [[message dateForName:@"wired.events.time"] retain];
 	event->_nick			= [[message stringForName:@"wired.user.nick"] retain];
 	event->_login			= [[message stringForName:@"wired.user.login"] retain];
