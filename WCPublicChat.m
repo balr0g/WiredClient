@@ -347,6 +347,13 @@ typedef enum _WCChatActivity				WCChatActivity;
 												 target:self
 												 action:@selector(monitor:)];
 	}
+	else if([identifier isEqualToString:@"Events"]) {
+		return [NSToolbarItem toolbarItemWithIdentifier:identifier
+												   name:NSLS(@"Events", @"Events toolbar item")
+												content:[NSImage imageNamed:@"Events"]
+												 target:self
+												 action:@selector(events:)];
+	}
 	else if([identifier isEqualToString:@"Log"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
 												   name:NSLS(@"Log", @"Log toolbar item")
@@ -414,6 +421,7 @@ typedef enum _WCChatActivity				WCChatActivity;
 		@"Transfers",
 		@"Settings",
 		@"Monitor",
+		@"Events",
 		@"Log",
 		@"Accounts",
 		@"Banlist",
@@ -609,7 +617,9 @@ typedef enum _WCChatActivity				WCChatActivity;
 	else if(selector == @selector(files:))
 		return (connection != NULL && [connection isConnected] && [[connection account] fileListFiles]);
 	else if(selector == @selector(serverInfo:) || selector == @selector(administration:) ||
-			selector == @selector(monitor:) || selector == @selector(accounts:) || selector == @selector(log:))
+			selector == @selector(monitor:) || selector == @selector(events:) ||
+			selector == @selector(log:) || selector == @selector(accounts:) ||
+			selector == @selector(banlist:))
 		return (connection != NULL);
 	
 	return YES;
@@ -718,6 +728,17 @@ typedef enum _WCChatActivity				WCChatActivity;
 	connection = [[self selectedChatController] connection];
 	
 	[[connection administration] selectController:[[connection administration] monitorController]];
+	[[connection administration] showWindow:self];
+}
+
+
+
+- (IBAction)events:(id)sender {
+	WCServerConnection		*connection;
+	
+	connection = [[self selectedChatController] connection];
+	
+	[[connection administration] selectController:[[connection administration] eventsController]];
 	[[connection administration] showWindow:self];
 }
 
