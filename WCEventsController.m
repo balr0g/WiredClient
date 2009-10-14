@@ -76,8 +76,24 @@
 			[parameters objectAtIndex:0],
 			[parameters objectAtIndex:1]];
 	}
+	else if([name hasSuffix:@"got_user_info"] && [parameters count] >= 1) {
+		string = [NSSWF:NSLS(@"Got user info for \u201c%@\u201d", @"Event message (nick)"),
+			[parameters objectAtIndex:0]];
+	}
 	else if([name hasSuffix:@"listed_directory"] && [parameters count] >= 1) {
 		string = [NSSWF:NSLS(@"Listed directory \u201c%@\u201d", @"Event message (path)"),
+			[parameters objectAtIndex:0]];
+	}
+	else if([name hasSuffix:@"got_file_info"] && [parameters count] >= 1) {
+		string = [NSSWF:NSLS(@"Got file info for \u201c%@\u201d", @"Event message (path)"),
+			[parameters objectAtIndex:0]];
+	}
+	else if([name hasSuffix:@"previewed_file"] && [parameters count] >= 1) {
+		string = [NSSWF:NSLS(@"Previewed \u201c%@\u201d", @"Event message (path)"),
+			[parameters objectAtIndex:0]];
+	}
+	else if([name hasSuffix:@"searched_files"] && [parameters count] >= 1) {
+		string = [NSSWF:NSLS(@"Searched files for \u201c%@\u201d", @"Event message (query)"),
 			[parameters objectAtIndex:0]];
 	}
 	else {
