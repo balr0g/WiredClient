@@ -60,8 +60,8 @@
 	NSString		*name, *string;
 	WCEvent			*event;
 	
-	name					= [message enumNameForName:@"wired.events.event"];
-	parameters				= [message listForName:@"wired.events.parameters"];
+	name			= [message enumNameForName:@"wired.events.event"];
+	parameters		= [message listForName:@"wired.events.parameters"];
 	
 	if([name hasSuffix:@"logged_in"] && [parameters count] >= 2) {
 		string = [NSSWF:NSLS(@"Logged in using \u201c%@ on %@\u201d", @"Event message (application, os)"),
@@ -72,28 +72,70 @@
 		string = NSLS(@"Login failed", @"Event message");
 	}
 	else if([name hasSuffix:@"changed_nick"] && [parameters count] >= 2) {
-		string = [NSSWF:NSLS(@"Changed nick from \u201c%@\u201d to \u201c%@\u201d", @"Event message (old nick, new nick)"),
+		string = [NSSWF:NSLS(@"Changed nick from \u201c%@\u201d to \u201c%@\u201d", @"Event message (oldnick, newnick)"),
 			[parameters objectAtIndex:0],
 			[parameters objectAtIndex:1]];
 	}
 	else if([name hasSuffix:@"got_user_info"] && [parameters count] >= 1) {
-		string = [NSSWF:NSLS(@"Got user info for \u201c%@\u201d", @"Event message (nick)"),
+		string = [NSSWF:NSLS(@"Got info for \u201c%@\u201d", @"Event message (nick)"),
 			[parameters objectAtIndex:0]];
 	}
 	else if([name hasSuffix:@"listed_directory"] && [parameters count] >= 1) {
-		string = [NSSWF:NSLS(@"Listed directory \u201c%@\u201d", @"Event message (path)"),
+		string = [NSSWF:NSLS(@"Listed \u201c%@\u201d", @"Event message (path)"),
 			[parameters objectAtIndex:0]];
 	}
 	else if([name hasSuffix:@"got_file_info"] && [parameters count] >= 1) {
-		string = [NSSWF:NSLS(@"Got file info for \u201c%@\u201d", @"Event message (path)"),
+		string = [NSSWF:NSLS(@"Got info for \u201c%@\u201d", @"Event message (path)"),
+			[parameters objectAtIndex:0]];
+	}
+	else if([name hasSuffix:@"moved_file"] && [parameters count] >= 2) {
+		string = [NSSWF:NSLS(@"Moved \u201c%@\u201d to \u201c%@\u201d", @"Event message (frompath, topath)"),
+			[parameters objectAtIndex:0],
+			[parameters objectAtIndex:1]];
+	}
+	else if([name hasSuffix:@"linked_file"] && [parameters count] >= 2) {
+		string = [NSSWF:NSLS(@"Linked \u201c%@\u201d to \u201c%@\u201d", @"Event message (frompath, topath)"),
+			[parameters objectAtIndex:0],
+			[parameters objectAtIndex:1]];
+	}
+	else if([name hasSuffix:@"set_file_type"] && [parameters count] >= 1) {
+		string = [NSSWF:NSLS(@"Changed type for \u201c%@\u201d", @"Event message (path)"),
+			[parameters objectAtIndex:0]];
+	}
+	else if([name hasSuffix:@"set_file_comment"] && [parameters count] >= 1) {
+		string = [NSSWF:NSLS(@"Changed comment for \u201c%@\u201d", @"Event message (path)"),
+			[parameters objectAtIndex:0]];
+	}
+	else if([name hasSuffix:@"set_file_executable"] && [parameters count] >= 1) {
+		string = [NSSWF:NSLS(@"Changed executable mode for \u201c%@\u201d", @"Event message (path)"),
+			[parameters objectAtIndex:0]];
+	}
+	else if([name hasSuffix:@"set_file_permissions"] && [parameters count] >= 1) {
+		string = [NSSWF:NSLS(@"Changed permissions for \u201c%@\u201d", @"Event message (path)"),
+			[parameters objectAtIndex:0]];
+	}
+	else if([name hasSuffix:@"set_file_label"] && [parameters count] >= 1) {
+		string = [NSSWF:NSLS(@"Changed label for \u201c%@\u201d", @"Event message (path)"),
+			[parameters objectAtIndex:0]];
+	}
+	else if([name hasSuffix:@"set_file_label"] && [parameters count] >= 1) {
+		string = [NSSWF:NSLS(@"Changed label for \u201c%@\u201d", @"Event message (path)"),
+			[parameters objectAtIndex:0]];
+	}
+	else if([name hasSuffix:@"deleted_file"] && [parameters count] >= 1) {
+		string = [NSSWF:NSLS(@"Deleted \u201c%@\u201d", @"Event message (path)"),
+			[parameters objectAtIndex:0]];
+	}
+	else if([name hasSuffix:@"created_directory"] && [parameters count] >= 1) {
+		string = [NSSWF:NSLS(@"Created \u201c%@\u201d", @"Event message (path)"),
+			[parameters objectAtIndex:0]];
+	}
+	else if([name hasSuffix:@"searched_files"] && [parameters count] >= 1) {
+		string = [NSSWF:NSLS(@"Searched for \u201c%@\u201d", @"Event message (query)"),
 			[parameters objectAtIndex:0]];
 	}
 	else if([name hasSuffix:@"previewed_file"] && [parameters count] >= 1) {
 		string = [NSSWF:NSLS(@"Previewed \u201c%@\u201d", @"Event message (path)"),
-			[parameters objectAtIndex:0]];
-	}
-	else if([name hasSuffix:@"searched_files"] && [parameters count] >= 1) {
-		string = [NSSWF:NSLS(@"Searched files for \u201c%@\u201d", @"Event message (query)"),
 			[parameters objectAtIndex:0]];
 	}
 	else {
@@ -103,12 +145,12 @@
 	if(!string)
 		return NULL;
 	
-	event					= [[self alloc] init];
-	event->_message			= [string retain];
-	event->_time			= [[message dateForName:@"wired.events.time"] retain];
-	event->_nick			= [[message stringForName:@"wired.user.nick"] retain];
-	event->_login			= [[message stringForName:@"wired.user.login"] retain];
-	event->_ip				= [[message stringForName:@"wired.user.ip"] retain];
+	event				= [[self alloc] init];
+	event->_message		= [string retain];
+	event->_time		= [[message dateForName:@"wired.events.time"] retain];
+	event->_nick		= [[message stringForName:@"wired.user.nick"] retain];
+	event->_login		= [[message stringForName:@"wired.user.login"] retain];
+	event->_ip			= [[message stringForName:@"wired.user.ip"] retain];
 	
 	return [event autorelease];
 }
