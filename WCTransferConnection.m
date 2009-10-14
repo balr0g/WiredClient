@@ -89,7 +89,7 @@
 
 	_p7Socket = [[WIP7Socket alloc] initWithSocket:_socket spec:WCP7Spec];
 	
-	if(![_p7Socket connectWithOptions:0//WIP7EncryptionRSA_AES256_SHA1 | WIP7ChecksumSHA1
+	if(![_p7Socket connectWithOptions:WIP7EncryptionRSA_AES256_SHA1 | WIP7ChecksumSHA1
 						serialization:WIP7Binary
 							 username:[[self URL] user]
 							 password:[[[self URL] password] SHA1]
