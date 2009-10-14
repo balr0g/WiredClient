@@ -28,15 +28,6 @@
 
 #import "WCAdministration.h"
 
-enum _WCLogLevel {
-	WCLogDebug							= 0,
-	WCLogInfo,
-	WCLogWarning,
-	WCLogError
-};
-typedef enum _WCLogLevel				WCLogLevel;
-
-
 @interface WCLogController : WCAdministrationController {
 	IBOutlet NSButton					*_allFilterButton;
 	IBOutlet NSButton					*_infoFilterButton;

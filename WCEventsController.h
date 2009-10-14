@@ -34,6 +34,7 @@
 	IBOutlet NSTableColumn				*_nickTableColumn;
 	IBOutlet NSTableColumn				*_loginTableColumn;
 	IBOutlet NSTableColumn				*_ipTableColumn;
+	IBOutlet NSTableColumn				*_imageTableColumn;
 	IBOutlet NSTableColumn				*_messageTableColumn;
 	
 	NSMutableArray						*_allEvents;

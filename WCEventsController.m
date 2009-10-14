@@ -31,8 +31,18 @@
 #import "WCEventsController.h"
 #import "WCServerConnection.h"
 
+enum _WCEventType {
+	WCEventUsers,
+	WCEventFiles,
+	WCEventAccounts
+};
+typedef enum _WCEventType		WCEventType;
+
+
 @interface WCEvent : WIObject {
 @public
+	WCEventType					_type;
+	
 	NSString					*_formattedTime;
 	
 	NSDate						*_time;
@@ -59,86 +69,149 @@
 	NSArray			*parameters;
 	NSString		*name, *string;
 	WCEvent			*event;
+	WCEventType		type;
 	
-	name			= [message enumNameForName:@"wired.events.event"];
-	parameters		= [message listForName:@"wired.events.parameters"];
+	name			= [message enumNameForName:@"wired.event.event"];
+	parameters		= [message listForName:@"wired.event.parameters"];
 	
-	if([name hasSuffix:@"logged_in"] && [parameters count] >= 2) {
+	if([name isEqualToString:@"wired.event.user.logged_in"] && [parameters count] >= 2) {
+		type = WCEventUsers;
 		string = [NSSWF:NSLS(@"Logged in using \u201c%@ on %@\u201d", @"Event message (application, os)"),
 			[parameters objectAtIndex:0],
 			[parameters objectAtIndex:1]];
 	}
-	else if([name hasSuffix:@"login_failed"]) {
+	else if([name isEqualToString:@"wired.event.user.login_failed"]) {
+		type = WCEventUsers;
 		string = NSLS(@"Login failed", @"Event message");
 	}
-	else if([name hasSuffix:@"changed_nick"] && [parameters count] >= 2) {
+	else if([name isEqualToString:@"wired.event.user.changed_nick"] && [parameters count] >= 2) {
+		type = WCEventUsers;
 		string = [NSSWF:NSLS(@"Changed nick from \u201c%@\u201d to \u201c%@\u201d", @"Event message (oldnick, newnick)"),
 			[parameters objectAtIndex:0],
 			[parameters objectAtIndex:1]];
 	}
-	else if([name hasSuffix:@"got_user_info"] && [parameters count] >= 1) {
+	else if([name isEqualToString:@"wired.event.user.got_info"] && [parameters count] >= 1) {
+		type = WCEventUsers;
 		string = [NSSWF:NSLS(@"Got info for \u201c%@\u201d", @"Event message (nick)"),
 			[parameters objectAtIndex:0]];
 	}
-	else if([name hasSuffix:@"listed_directory"] && [parameters count] >= 1) {
+	else if([name isEqualToString:@"wired.event.file.listed_directory"] && [parameters count] >= 1) {
+		type = WCEventFiles;
 		string = [NSSWF:NSLS(@"Listed \u201c%@\u201d", @"Event message (path)"),
 			[parameters objectAtIndex:0]];
 	}
-	else if([name hasSuffix:@"got_file_info"] && [parameters count] >= 1) {
+	else if([name isEqualToString:@"wired.event.file.got_info"] && [parameters count] >= 1) {
+		type = WCEventFiles;
 		string = [NSSWF:NSLS(@"Got info for \u201c%@\u201d", @"Event message (path)"),
 			[parameters objectAtIndex:0]];
 	}
-	else if([name hasSuffix:@"moved_file"] && [parameters count] >= 2) {
+	else if([name isEqualToString:@"wired.event.file.moved"] && [parameters count] >= 2) {
+		type = WCEventFiles;
 		string = [NSSWF:NSLS(@"Moved \u201c%@\u201d to \u201c%@\u201d", @"Event message (frompath, topath)"),
 			[parameters objectAtIndex:0],
 			[parameters objectAtIndex:1]];
 	}
-	else if([name hasSuffix:@"linked_file"] && [parameters count] >= 2) {
+	else if([name isEqualToString:@"wired.event.file.linked"] && [parameters count] >= 2) {
+		type = WCEventFiles;
 		string = [NSSWF:NSLS(@"Linked \u201c%@\u201d to \u201c%@\u201d", @"Event message (frompath, topath)"),
 			[parameters objectAtIndex:0],
 			[parameters objectAtIndex:1]];
 	}
-	else if([name hasSuffix:@"set_file_type"] && [parameters count] >= 1) {
+	else if([name isEqualToString:@"wired.event.file.set_type"] && [parameters count] >= 1) {
+		type = WCEventFiles;
 		string = [NSSWF:NSLS(@"Changed type for \u201c%@\u201d", @"Event message (path)"),
 			[parameters objectAtIndex:0]];
 	}
-	else if([name hasSuffix:@"set_file_comment"] && [parameters count] >= 1) {
+	else if([name isEqualToString:@"wired.event.file.set_comment"] && [parameters count] >= 1) {
+		type = WCEventFiles;
 		string = [NSSWF:NSLS(@"Changed comment for \u201c%@\u201d", @"Event message (path)"),
 			[parameters objectAtIndex:0]];
 	}
-	else if([name hasSuffix:@"set_file_executable"] && [parameters count] >= 1) {
+	else if([name isEqualToString:@"wired.event.file.set_executable"] && [parameters count] >= 1) {
+		type = WCEventFiles;
 		string = [NSSWF:NSLS(@"Changed executable mode for \u201c%@\u201d", @"Event message (path)"),
 			[parameters objectAtIndex:0]];
 	}
-	else if([name hasSuffix:@"set_file_permissions"] && [parameters count] >= 1) {
+	else if([name isEqualToString:@"wired.event.file.set_permissions"] && [parameters count] >= 1) {
+		type = WCEventFiles;
 		string = [NSSWF:NSLS(@"Changed permissions for \u201c%@\u201d", @"Event message (path)"),
 			[parameters objectAtIndex:0]];
 	}
-	else if([name hasSuffix:@"set_file_label"] && [parameters count] >= 1) {
+	else if([name isEqualToString:@"wired.event.file.set_label"] && [parameters count] >= 1) {
+		type = WCEventFiles;
 		string = [NSSWF:NSLS(@"Changed label for \u201c%@\u201d", @"Event message (path)"),
 			[parameters objectAtIndex:0]];
 	}
-	else if([name hasSuffix:@"set_file_label"] && [parameters count] >= 1) {
-		string = [NSSWF:NSLS(@"Changed label for \u201c%@\u201d", @"Event message (path)"),
-			[parameters objectAtIndex:0]];
-	}
-	else if([name hasSuffix:@"deleted_file"] && [parameters count] >= 1) {
+	else if([name isEqualToString:@"wired.event.file.deleted"] && [parameters count] >= 1) {
+		type = WCEventFiles;
 		string = [NSSWF:NSLS(@"Deleted \u201c%@\u201d", @"Event message (path)"),
 			[parameters objectAtIndex:0]];
 	}
-	else if([name hasSuffix:@"created_directory"] && [parameters count] >= 1) {
+	else if([name isEqualToString:@"wired.event.file.created_directory"] && [parameters count] >= 1) {
+		type = WCEventFiles;
 		string = [NSSWF:NSLS(@"Created \u201c%@\u201d", @"Event message (path)"),
 			[parameters objectAtIndex:0]];
 	}
-	else if([name hasSuffix:@"searched_files"] && [parameters count] >= 1) {
+	else if([name isEqualToString:@"wired.event.file.searched"] && [parameters count] >= 1) {
+		type = WCEventFiles;
 		string = [NSSWF:NSLS(@"Searched for \u201c%@\u201d", @"Event message (query)"),
 			[parameters objectAtIndex:0]];
 	}
-	else if([name hasSuffix:@"previewed_file"] && [parameters count] >= 1) {
+	else if([name isEqualToString:@"wired.event.file.previewed_file"] && [parameters count] >= 1) {
+		type = WCEventFiles;
 		string = [NSSWF:NSLS(@"Previewed \u201c%@\u201d", @"Event message (path)"),
 			[parameters objectAtIndex:0]];
 	}
+	else if([name isEqualToString:@"wired.event.account.listed_users"]) {
+		type = WCEventAccounts;
+		string = NSLS(@"Listed users", @"Event message");
+	}
+	else if([name isEqualToString:@"wired.event.account.listed_groups"]) {
+		type = WCEventAccounts;
+		string = NSLS(@"Listed groups", @"Event message");
+	}
+	else if([name isEqualToString:@"wired.event.account.read_user"] && [parameters count] >= 1) {
+		type = WCEventAccounts;
+		string = [NSSWF:NSLS(@"Read user \u201c%@\u201d", @"Event message (account)"),
+			[parameters objectAtIndex:0]];
+	}
+	else if([name isEqualToString:@"wired.event.account.read_group"] && [parameters count] >= 1) {
+		type = WCEventAccounts;
+		string = [NSSWF:NSLS(@"Read group \u201c%@\u201d", @"Event message (account)"),
+			[parameters objectAtIndex:0]];
+	}
+	else if([name isEqualToString:@"wired.event.account.created_user"] && [parameters count] >= 1) {
+		type = WCEventAccounts;
+		string = [NSSWF:NSLS(@"Created user \u201c%@\u201d", @"Event message (account)"),
+			[parameters objectAtIndex:0]];
+	}
+	else if([name isEqualToString:@"wired.event.account.created_group"] && [parameters count] >= 1) {
+		type = WCEventAccounts;
+		string = [NSSWF:NSLS(@"Created group \u201c%@\u201d", @"Event message (account)"),
+			[parameters objectAtIndex:0]];
+	}
+	else if([name isEqualToString:@"wired.event.account.edited_user"] && [parameters count] >= 1) {
+		type = WCEventAccounts;
+		string = [NSSWF:NSLS(@"Edited user \u201c%@\u201d", @"Event message (account)"),
+			[parameters objectAtIndex:0]];
+	}
+	else if([name isEqualToString:@"wired.event.account.edited_group"] && [parameters count] >= 1) {
+		type = WCEventAccounts;
+		string = [NSSWF:NSLS(@"Edited group \u201c%@\u201d", @"Event message (account)"),
+			[parameters objectAtIndex:0]];
+	}
+	else if([name isEqualToString:@"wired.event.account.deleted_user"] && [parameters count] >= 1) {
+		type = WCEventAccounts;
+		string = [NSSWF:NSLS(@"Deleted user \u201c%@\u201d", @"Event message (account)"),
+			[parameters objectAtIndex:0]];
+	}
+	else if([name isEqualToString:@"wired.event.account.deleted_group"] && [parameters count] >= 1) {
+		type = WCEventAccounts;
+		string = [NSSWF:NSLS(@"Deleted group \u201c%@\u201d", @"Event message (account)"),
+			[parameters objectAtIndex:0]];
+	}
 	else {
+		type = 0;
 		string = NULL;
 	}
 	
@@ -146,8 +219,9 @@
 		return NULL;
 	
 	event				= [[self alloc] init];
+	event->_type		= type;
 	event->_message		= [string retain];
-	event->_time		= [[message dateForName:@"wired.events.time"] retain];
+	event->_time		= [[message dateForName:@"wired.event.time"] retain];
 	event->_nick		= [[message stringForName:@"wired.user.nick"] retain];
 	event->_login		= [[message stringForName:@"wired.user.login"] retain];
 	event->_ip			= [[message stringForName:@"wired.user.ip"] retain];
@@ -313,11 +387,11 @@
 	WIP7Message		*message;
 	
 	if(!_requested && [[_administration connection] isConnected] && [[[_administration connection] account] eventsViewEvents]) {
-		message = [WIP7Message messageWithName:@"wired.events.get_events" spec:WCP7Spec];
-		[[_administration connection] sendMessage:message fromObserver:self selector:@selector(wiredEventsGetEventsReply:)];
+		message = [WIP7Message messageWithName:@"wired.event.get_events" spec:WCP7Spec];
+		[[_administration connection] sendMessage:message fromObserver:self selector:@selector(wiredEventGetEventsReply:)];
 		
-		message = [WIP7Message messageWithName:@"wired.events.subscribe" spec:WCP7Spec];
-		[[_administration connection] sendMessage:message fromObserver:self selector:@selector(wiredEventsSubscribeReply:)];
+		message = [WIP7Message messageWithName:@"wired.event.subscribe" spec:WCP7Spec];
+		[[_administration connection] sendMessage:message fromObserver:self selector:@selector(wiredEventSubscribeReply:)];
 		
 		_requested = YES;
 	}
@@ -380,7 +454,7 @@
 #pragma mark -
 
 - (void)windowDidLoad {
-	[[_administration connection] addObserver:self selector:@selector(wiredEventsEvent:) messageName:@"wired.events.event"];
+	[[_administration connection] addObserver:self selector:@selector(wiredEventEvent:) messageName:@"wired.event.event"];
 	
 	[_eventsTableView setHighlightedTableColumn:_timeTableColumn sortOrder:WISortAscending];
 }
@@ -404,11 +478,11 @@
 
 
 
-- (void)wiredEventsGetEventsReply:(WIP7Message *)message {
+- (void)wiredEventGetEventsReply:(WIP7Message *)message {
 	WCEvent			*event;
 	NSUInteger		i, count;
 	
-	if([[message name] isEqualToString:@"wired.events.list"]) {
+	if([[message name] isEqualToString:@"wired.event.list"]) {
 		event = [WCEvent eventWithMessage:message];
 		
 		if(event) {
@@ -417,7 +491,7 @@
 			[_listedEvents addObject:event];
 		}
 	}
-	else if([[message name] isEqualToString:@"wired.events.list.done"]) {
+	else if([[message name] isEqualToString:@"wired.event.list.done"]) {
 		[_allEvents addObjectsFromArray:_listedEvents];
 		
 		count = [_listedEvents count];
@@ -445,7 +519,7 @@
 
 
 
-- (void)wiredEventsSubscribeReply:(WIP7Message *)message {
+- (void)wiredEventSubscribeReply:(WIP7Message *)message {
 	if([[message name] isEqualToString:@"wired.okay"]) {
 		[[_administration connection] removeObserver:self message:message];
 	}
@@ -458,7 +532,7 @@
 
 
 
-- (void)wiredEventsEvent:(WIP7Message *)message {
+- (void)wiredEventEvent:(WIP7Message *)message {
 	WCEvent			*event;
 	
 	event = [WCEvent eventWithMessage:message];
@@ -509,6 +583,13 @@
 		return event->_login;
 	else if(tableColumn == _ipTableColumn)
 		return event->_ip;
+	else if(tableColumn == _imageTableColumn) {
+		switch(event->_type) {
+			case WCEventUsers:		return [NSImage imageNamed:@"EventsUsers"];		break;
+			case WCEventFiles:		return [NSImage imageNamed:@"EventsFiles"];		break;
+			case WCEventAccounts:	return [NSImage imageNamed:@"EventsAccounts"];	break;
+		}
+	}
 	else if(tableColumn == _messageTableColumn)
 		return event->_message;
 

@@ -31,6 +31,15 @@
 #import "WCLogController.h"
 #import "WCServerConnection.h"
 
+enum _WCLogLevel {
+	WCLogDebug						= 0,
+	WCLogInfo,
+	WCLogWarning,
+	WCLogError
+};
+typedef enum _WCLogLevel			WCLogLevel;
+
+
 @interface WCLogEntry : WIObject {
 @public
 	WCLogLevel						_level;
