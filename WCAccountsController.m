@@ -246,8 +246,7 @@
 									 fromObserver:self
 										 selector:@selector(wiredAccountChangeAccountReply:)];
 
-		[_selectAccounts removeAllObjects];
-		[_selectAccounts addObject:account];
+		[_selectAccounts setArray:[NSArray arrayWithObject:account]];
 		
 		reload = NO;
 	} else {
@@ -838,6 +837,28 @@
 	}
 }
 
+- (void)_selectAccounts {
+	NSEnumerator			*enumerator;
+	NSMutableIndexSet		*indexes;
+	WCAccount				*account;
+	NSUInteger				index;
+	
+	if([_selectAccounts count] > 0) {
+		indexes		= [NSMutableIndexSet indexSet];
+		enumerator	= [_selectAccounts objectEnumerator];
+		
+		while((account = [enumerator nextObject])) {
+			index = [_shownAccounts indexOfObject:account];
+			
+			if(index != NSNotFound)
+				[indexes addIndex:index];
+		}
+		
+		[_accountsTableView selectRowIndexes:indexes byExtendingSelection:NO];
+		[_selectAccounts removeAllObjects];
+	}
+}
+
 @end
 
 
@@ -1053,17 +1074,14 @@
 
 
 - (void)wiredAccountAccountsChanged:(WIP7Message *)message {
+	[_selectAccounts setArray:[self _selectedAccounts]];
+	
 	[self _reloadAccounts];
 }
 
 
 
 - (void)wiredAccountListAccountsReply:(WIP7Message *)message {
-	NSEnumerator		*enumerator;
-	NSMutableIndexSet	*indexes;
-	WCAccount			*account;
-	NSUInteger			index;
-	
 	if([[message name] isEqualToString:@"wired.account.user_list"]) {
 		[_allAccounts addObject:[WCUserAccount accountWithMessage:message]];
 	}
@@ -1075,22 +1093,13 @@
 	else if([[message name] isEqualToString:@"wired.account.group_list.done"]) {
 		[_progressIndicator stopAnimation:self];
 		[_allAccounts sortUsingSelector:@selector(compareName:)];
+
 		[self _reloadFilter];
 		[self _reloadGroups];
+		
 		[_accountsTableView reloadData];
 		
-		indexes		= [NSMutableIndexSet indexSet];
-		enumerator	= [_selectAccounts objectEnumerator];
-		
-		while((account = [enumerator nextObject])) {
-			index = [_shownAccounts indexOfObject:account];
-			
-			if(index != NSNotFound)
-				[indexes addIndex:index];
-		}
-		
-		[_accountsTableView selectRowIndexes:indexes byExtendingSelection:NO];
-		[_selectAccounts removeAllObjects];
+		[self _selectAccounts];
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
 		[_administration showError:[WCError errorWithWiredMessage:message]];
@@ -1651,10 +1660,13 @@
 	[_usersFilterButton setState:NSOffState];
 	[_groupsFilterButton setState:NSOffState];
 	
+	[_selectAccounts setArray:[self _selectedAccounts]];
+	
 	[self _reloadFilter];
 
 	[_accountsTableView reloadData];
-	[_accountsTableView deselectAll:self];
+	
+	[self _selectAccounts];
 }
 
 
@@ -1663,10 +1675,13 @@
 	[_allFilterButton setState:NSOffState];
 	[_groupsFilterButton setState:NSOffState];
 	
+	[_selectAccounts setArray:[self _selectedAccounts]];
+	
 	[self _reloadFilter];
 	
 	[_accountsTableView reloadData];
-	[_accountsTableView deselectAll:self];
+	
+	[self _selectAccounts];
 }
 
 
@@ -1675,18 +1690,25 @@
 	[_usersFilterButton setState:NSOffState];
 	[_allFilterButton setState:NSOffState];
 
+	[_selectAccounts setArray:[self _selectedAccounts]];
+	
 	[self _reloadFilter];
 	
 	[_accountsTableView reloadData];
-	[_accountsTableView deselectAll:self];
+	
+	[self _selectAccounts];
 }
 
 
 
 - (IBAction)groupFilter:(id)sender {
+	[_selectAccounts setArray:[self _selectedAccounts]];
+	
 	[self _reloadFilter];
 	
 	[_accountsTableView reloadData];
+	
+	[self _selectAccounts];
 }
 
 
@@ -1699,9 +1721,13 @@
 	else
 		_accountFilter = NULL;
 	
+	[_selectAccounts setArray:[self _selectedAccounts]];
+	
 	[self _reloadFilter];
 	
 	[_accountsTableView reloadData];
+	
+	[self _selectAccounts];
 }
 
 
