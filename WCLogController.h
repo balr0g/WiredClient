@@ -33,7 +33,7 @@
 	IBOutlet NSButton					*_infoFilterButton;
 	IBOutlet NSButton					*_warningsFilterButton;
 	IBOutlet NSButton					*_errorsFilterButton;
-	IBOutlet NSSearchField				*_filterSearchField;
+	IBOutlet NSSearchField				*_messageSearchField;
 	
 	IBOutlet WITableView				*_logTableView;
 	IBOutlet NSTableColumn				*_timeTableColumn;
@@ -55,7 +55,6 @@
 - (IBAction)info:(id)sender;
 - (IBAction)warnings:(id)sender;
 - (IBAction)errors:(id)sender;
-
-- (IBAction)search:(id)sender;
+- (IBAction)message:(id)sender;
 
 @end

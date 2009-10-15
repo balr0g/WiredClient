@@ -112,7 +112,7 @@ typedef enum _WCLogLevel			WCLogLevel;
 			return NO;
 	}
 	
-	if(_messageFilter && ![entry->_message containsSubstring:_messageFilter])
+	if(_messageFilter && ![entry->_message containsSubstring:_messageFilter options:NSCaseInsensitiveSearch])
 		return NO;
 	
 	return YES;
@@ -136,6 +136,7 @@ typedef enum _WCLogLevel			WCLogLevel;
 	}
 	
 	[_logTableView reloadData];
+	[_logTableView scrollRowToVisible:[_shownEntries count] - 1];
 }
 
 
@@ -368,11 +369,11 @@ typedef enum _WCLogLevel			WCLogLevel;
 
 
 
-- (IBAction)search:(id)sender {
+- (IBAction)message:(id)sender {
 	[_messageFilter release];
 	
-	if([[_filterSearchField stringValue] length] > 0)
-		_messageFilter = [[_filterSearchField stringValue] retain];
+	if([[_messageSearchField stringValue] length] > 0)
+		_messageFilter = [[_messageSearchField stringValue] retain];
 	else
 		_messageFilter = NULL;
 	

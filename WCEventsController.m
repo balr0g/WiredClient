@@ -403,6 +403,7 @@ typedef enum _WCEventType		WCEventType;
 - (WCEvent *)_eventAtIndex:(NSUInteger)index;
 - (BOOL)_filterIncludesEvent:(WCEvent *)event;
 - (void)_reloadFilter;
+- (void)_reloadPopUpButtons;
 - (void)_refreshReceivedEvents;
 
 - (void)_requestEvents;
@@ -426,6 +427,33 @@ typedef enum _WCEventType		WCEventType;
 
 
 - (BOOL)_filterIncludesEvent:(WCEvent *)event {
+	NSInteger		type;
+	
+	if([_nickPopUpButton tagOfSelectedItem] >= 0) {
+		if(![[_nickPopUpButton titleOfSelectedItem] isEqualToString:event->_nick])
+			return NO;
+	}
+	
+	if([_loginPopUpButton tagOfSelectedItem] >= 0) {
+		if(![[_loginPopUpButton titleOfSelectedItem] isEqualToString:event->_login])
+			return NO;
+	}
+	
+	if([_ipPopUpButton tagOfSelectedItem] >= 0) {
+		if(![[_ipPopUpButton titleOfSelectedItem] isEqualToString:event->_ip])
+			return NO;
+	}
+	
+	type = [_typePopUpButton tagOfSelectedItem];
+	
+	if(type >= 0) {
+		if((NSUInteger) type != event->_type)
+			return NO;
+	}
+	
+	if(_messageFilter && ![event->_message containsSubstring:_messageFilter options:NSCaseInsensitiveSearch])
+		return NO;
+	
 	return YES;
 }
 
@@ -447,6 +475,35 @@ typedef enum _WCEventType		WCEventType;
 	}
 	
 	[_eventsTableView reloadData];
+	[_eventsTableView scrollRowToVisible:[_shownEvents count] - 1];
+}
+
+
+
+- (void)_reloadPopUpButtons {
+	while([_nickPopUpButton numberOfItems] > 1)
+		[_nickPopUpButton removeItemAtIndex:1];
+	
+	[_nickPopUpButton addItemsWithTitles:[[_allNicks allObjects] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)]];
+	
+	if([_nickPopUpButton numberOfItems] > 1)
+		[_nickPopUpButton insertItem:[NSMenuItem separatorItem] atIndex:1];
+
+	while([_loginPopUpButton numberOfItems] > 1)
+		[_loginPopUpButton removeItemAtIndex:1];
+	
+	[_loginPopUpButton addItemsWithTitles:[[_allLogins allObjects] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)]];
+	
+	if([_loginPopUpButton numberOfItems] > 1)
+		[_loginPopUpButton insertItem:[NSMenuItem separatorItem] atIndex:1];
+	
+	while([_ipPopUpButton numberOfItems] > 1)
+		[_ipPopUpButton removeItemAtIndex:1];
+	
+	[_ipPopUpButton addItemsWithTitles:[[_allIPs allObjects] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)]];
+	
+	if([_ipPopUpButton numberOfItems] > 1)
+		[_ipPopUpButton insertItem:[NSMenuItem separatorItem] atIndex:1];
 }
 
 
@@ -454,6 +511,7 @@ typedef enum _WCEventType		WCEventType;
 - (void)_refreshReceivedEvents {
 	WCEvent			*event;
 	NSUInteger		i, count;
+	BOOL			reloadPopUpButtons = NO;
 	
 	count = [_receivedEvents count];
 	
@@ -462,12 +520,33 @@ typedef enum _WCEventType		WCEventType;
 
 		if([self _filterIncludesEvent:event])
 			[_shownEvents addObject:event];
+		
+		if(![_allNicks containsObject:event->_nick]) {
+			[_allNicks addObject:event->_nick];
+			
+			reloadPopUpButtons = YES;
+		}
+		
+		if(![_allLogins containsObject:event->_login]) {
+			[_allLogins addObject:event->_login];
+			
+			reloadPopUpButtons = YES;
+		}
+		
+		if(![_allIPs containsObject:event->_ip]) {
+			[_allIPs addObject:event->_ip];
+			
+			reloadPopUpButtons = YES;
+		}
 	}
 	
 	[_receivedEvents removeAllObjects];
 
 	[_eventsTableView reloadData];
 	[_eventsTableView scrollRowToVisible:[_shownEvents count] - 1];
+	
+	if(reloadPopUpButtons)
+		[self _reloadPopUpButtons];
 }
 
 
@@ -523,6 +602,10 @@ typedef enum _WCEventType		WCEventType;
 	_receivedEvents		= [[NSMutableArray alloc] init];
 	_shownEvents		= [[NSMutableArray alloc] init];
 	
+	_allNicks			= [[NSMutableSet alloc] init];
+	_allLogins			= [[NSMutableSet alloc] init];
+	_allIPs				= [[NSMutableSet alloc] init];
+	
 	_dateFormatter = [[WIDateFormatter alloc] init];
 	[_dateFormatter setTimeStyle:NSDateFormatterShortStyle];
 	[_dateFormatter setDateStyle:NSDateFormatterMediumStyle];
@@ -538,6 +621,11 @@ typedef enum _WCEventType		WCEventType;
 	[_receivedEvents release];
 	[_shownEvents release];
 	[_dateFormatter release];
+	
+	[_allNicks release];
+	[_allLogins release];
+	[_allIPs release];
+	[_messageFilter release];
 	
 	[super dealloc];
 }
@@ -582,10 +670,16 @@ typedef enum _WCEventType		WCEventType;
 			event->_formattedTime = [[_dateFormatter stringFromDate:event->_time] retain];
 			
 			[_listedEvents addObject:event];
+			
+			[_allNicks addObject:event->_nick];
+			[_allLogins addObject:event->_login];
+			[_allIPs addObject:event->_ip];
 		}
 	}
 	else if([[message name] isEqualToString:@"wired.event.list.done"]) {
 		[_allEvents addObjectsFromArray:_listedEvents];
+		
+		[self _reloadPopUpButtons];
 		
 		count = [_listedEvents count];
 		
@@ -651,6 +745,45 @@ typedef enum _WCEventType		WCEventType;
 	[self _requestEvents];
 
 	[[_administration window] makeFirstResponder:_eventsTableView];
+}
+
+
+
+#pragma mark -
+
+- (IBAction)nick:(id)sender {
+	[self _reloadFilter];
+}
+
+
+
+- (IBAction)login:(id)sender {
+	[self _reloadFilter];
+}
+
+
+
+- (IBAction)ip:(id)sender {
+	[self _reloadFilter];
+}
+
+
+
+- (IBAction)type:(id)sender {
+	[self _reloadFilter];
+}
+
+
+
+- (IBAction)message:(id)sender {
+	[_messageFilter release];
+	
+	if([[_messageSearchField stringValue] length] > 0)
+		_messageFilter = [[_messageSearchField stringValue] retain];
+	else
+		_messageFilter = NULL;
+	
+	[self _reloadFilter];
 }
 
 
