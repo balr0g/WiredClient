@@ -226,6 +226,14 @@ typedef enum _WCEventType		WCEventType;
 		type = WCEventMessages;
 		string = NSLS(@"Sent broadcast", @"Event message");
 	}
+	else if([name isEqualToString:@"wired.event.board.got_boards"]) {
+		type = WCEventBoards;
+		string = NSLS(@"Got boards", @"Event message");
+	}
+	else if([name isEqualToString:@"wired.event.board.got_posts"]) {
+		type = WCEventBoards;
+		string = NSLS(@"Got posts", @"Event message");
+	}
 	else if([name isEqualToString:@"wired.event.board.added_board"] && [parameters count] >= 1) {
 		type = WCEventBoards;
 		string = [NSSWF:NSLS(@"Added \u201c%@\u201d", @"Event message (board)"),
