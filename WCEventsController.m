@@ -34,7 +34,9 @@
 enum _WCEventType {
 	WCEventUsers				= 0,
 	WCEventFiles,
-	WCEventAccounts
+	WCEventAccounts,
+	WCEventMessages,
+	WCEventBoards
 };
 typedef enum _WCEventType		WCEventType;
 
@@ -214,6 +216,79 @@ typedef enum _WCEventType		WCEventType;
 		type = WCEventAccounts;
 		string = [NSSWF:NSLS(@"Deleted group \u201c%@\u201d", @"Event message (account)"),
 			[parameters objectAtIndex:0]];
+	}
+	else if([name isEqualToString:@"wired.event.message.sent"] && [parameters count] >= 1) {
+		type = WCEventMessages;
+		string = [NSSWF:NSLS(@"Sent message to \u201c%@\u201d", @"Event message (nick)"),
+			[parameters objectAtIndex:0]];
+	}
+	else if([name isEqualToString:@"wired.event.message.broadcasted"]) {
+		type = WCEventMessages;
+		string = NSLS(@"Sent broadcast", @"Event message");
+	}
+	else if([name isEqualToString:@"wired.event.board.added_board"] && [parameters count] >= 1) {
+		type = WCEventBoards;
+		string = [NSSWF:NSLS(@"Added \u201c%@\u201d", @"Event message (board)"),
+			[parameters objectAtIndex:0]];
+	}
+	else if([name isEqualToString:@"wired.event.board.renamed_board"] && [parameters count] >= 2) {
+		type = WCEventBoards;
+		string = [NSSWF:NSLS(@"Renamed \u201c%@\u201d to \u201c%@\u201d", @"Event message (board)"),
+			[parameters objectAtIndex:0],
+			[parameters objectAtIndex:1]];
+	}
+	else if([name isEqualToString:@"wired.event.board.moved_board"] && [parameters count] >= 2) {
+		type = WCEventBoards;
+		string = [NSSWF:NSLS(@"Moved \u201c%@\u201d to \u201c%@\u201d", @"Event message (board)"),
+			[parameters objectAtIndex:0],
+			[parameters objectAtIndex:1]];
+	}
+	else if([name isEqualToString:@"wired.event.board.deleted_board"] && [parameters count] >= 1) {
+		type = WCEventBoards;
+		string = [NSSWF:NSLS(@"Deleted \u201c%@\u201d", @"Event message (board)"),
+			[parameters objectAtIndex:0]];
+	}
+	else if([name isEqualToString:@"wired.event.board.set_permissions"] && [parameters count] >= 1) {
+		type = WCEventBoards;
+		string = [NSSWF:NSLS(@"Change permissions for \u201c%@\u201d", @"Event message (board)"),
+			[parameters objectAtIndex:0]];
+	}
+	else if([name isEqualToString:@"wired.event.board.added_thread"] && [parameters count] >= 2) {
+		type = WCEventBoards;
+		string = [NSSWF:NSLS(@"Added \u201c%@\u201d in \u201c%@\u201d", @"Event message (board, subject)"),
+			[parameters objectAtIndex:0],
+			[parameters objectAtIndex:1]];
+	}
+	else if([name isEqualToString:@"wired.event.board.moved_thread"] && [parameters count] >= 3) {
+		type = WCEventBoards;
+		string = [NSSWF:NSLS(@"Moved \u201c%@\u201d from \u201c%@\u201d to \u201c%@\u201d", @"Event message (oldboard, newboard, subject)"),
+			[parameters objectAtIndex:0],
+			[parameters objectAtIndex:1],
+			[parameters objectAtIndex:2]];
+	}
+	else if([name isEqualToString:@"wired.event.board.deleted_thread"] && [parameters count] >= 2) {
+		type = WCEventBoards;
+		string = [NSSWF:NSLS(@"Deleted \u201c%@\u201d in \u201c%@\u201d", @"Event message (board, subject)"),
+			[parameters objectAtIndex:0],
+			[parameters objectAtIndex:1]];
+	}
+	else if([name isEqualToString:@"wired.event.board.added_post"] && [parameters count] >= 2) {
+		type = WCEventBoards;
+		string = [NSSWF:NSLS(@"Added \u201c%@\u201d in \u201c%@\u201d", @"Event message (board, subject)"),
+			[parameters objectAtIndex:0],
+			[parameters objectAtIndex:1]];
+	}
+	else if([name isEqualToString:@"wired.event.board.edited_post"] && [parameters count] >= 2) {
+		type = WCEventBoards;
+		string = [NSSWF:NSLS(@"Edited \u201c%@\u201d in \u201c%@\u201d", @"Event message (board, subject)"),
+			[parameters objectAtIndex:0],
+			[parameters objectAtIndex:1]];
+	}
+	else if([name isEqualToString:@"wired.event.board.deleted_post"] && [parameters count] >= 2) {
+		type = WCEventBoards;
+		string = [NSSWF:NSLS(@"Deleted \u201c%@\u201d \u201c%@\u201d", @"Event message (board, subject)"),
+			[parameters objectAtIndex:0],
+			[parameters objectAtIndex:1]];
 	}
 	else {
 		type = 0;
@@ -606,6 +681,8 @@ typedef enum _WCEventType		WCEventType;
 			case WCEventUsers:		return [NSImage imageNamed:@"EventsUsers"];		break;
 			case WCEventFiles:		return [NSImage imageNamed:@"EventsFiles"];		break;
 			case WCEventAccounts:	return [NSImage imageNamed:@"EventsAccounts"];	break;
+			case WCEventMessages:	return [NSImage imageNamed:@"EventsMessages"];	break;
+			case WCEventBoards:		return [NSImage imageNamed:@"EventsBoards"];	break;
 		}
 	}
 	else if(tableColumn == _messageTableColumn)

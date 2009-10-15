@@ -139,6 +139,8 @@
 		77BB1C9A0F28C20E00A402B7 /* WCBoardsWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 77BB1C990F28C20E00A402B7 /* WCBoardsWindow.m */; };
 		77C586AB106826CC0068AA15 /* OpenFolder.icns in Resources */ = {isa = PBXBuildFile; fileRef = 77C586AA106826CC0068AA15 /* OpenFolder.icns */; };
 		77C83C340B70FBD8000F8478 /* WCChatTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 77C83C320B70FBD8000F8478 /* WCChatTextView.m */; };
+		77CC603010874B4100B2F592 /* EventsBoards.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 77CC602E10874B4100B2F592 /* EventsBoards.tiff */; };
+		77CC603110874B4100B2F592 /* EventsMessages.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 77CC602F10874B4100B2F592 /* EventsMessages.tiff */; };
 		77CED3A50EC068F500123164 /* WCBoard.m in Sources */ = {isa = PBXBuildFile; fileRef = 77CED39E0EC068F500123164 /* WCBoard.m */; };
 		77CED3A60EC068F500123164 /* WCBoardPost.m in Sources */ = {isa = PBXBuildFile; fileRef = 77CED3A00EC068F500123164 /* WCBoardPost.m */; };
 		77CED3A70EC068F500123164 /* WCBoards.m in Sources */ = {isa = PBXBuildFile; fileRef = 77CED3A20EC068F500123164 /* WCBoards.m */; };
@@ -564,6 +566,8 @@
 		77C586AA106826CC0068AA15 /* OpenFolder.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = OpenFolder.icns; sourceTree = "<group>"; };
 		77C83C310B70FBD8000F8478 /* WCChatTextView.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = WCChatTextView.h; sourceTree = "<group>"; };
 		77C83C320B70FBD8000F8478 /* WCChatTextView.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = WCChatTextView.m; sourceTree = "<group>"; };
+		77CC602E10874B4100B2F592 /* EventsBoards.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = EventsBoards.tiff; sourceTree = "<group>"; };
+		77CC602F10874B4100B2F592 /* EventsMessages.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = EventsMessages.tiff; sourceTree = "<group>"; };
 		77CED39D0EC068F500123164 /* WCBoard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCBoard.h; sourceTree = "<group>"; };
 		77CED39E0EC068F500123164 /* WCBoard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCBoard.m; sourceTree = "<group>"; };
 		77CED39F0EC068F500123164 /* WCBoardPost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCBoardPost.h; sourceTree = "<group>"; };
@@ -1398,7 +1402,9 @@
 				A54AF8FA0F13AEBA00AFD50E /* EventOn.tiff */,
 				A54AF8F90F13AEBA00AFD50E /* Events.tiff */,
 				773FFA8B10869694002AF8DF /* EventsAccounts.tiff */,
+				77CC602E10874B4100B2F592 /* EventsBoards.tiff */,
 				773FF9E110869114002AF8DF /* EventsFiles.tiff */,
+				77CC602F10874B4100B2F592 /* EventsMessages.tiff */,
 				773FF9FD108692E7002AF8DF /* EventsUsers.tiff */,
 				A51B500E0F42282F00EAB0E1 /* FilterButtonLeft.tiff */,
 				A51B500F0F42282F00EAB0E1 /* FilterButtonMiddle.tiff */,
@@ -1865,7 +1871,9 @@
 				A54AF9460F13AEBB00AFD50E /* EventOn.tiff in Resources */,
 				A54AF9450F13AEBB00AFD50E /* Events.tiff in Resources */,
 				773FFA8C10869694002AF8DF /* EventsAccounts.tiff in Resources */,
+				77CC603010874B4100B2F592 /* EventsBoards.tiff in Resources */,
 				773FF9E210869114002AF8DF /* EventsFiles.tiff in Resources */,
+				77CC603110874B4100B2F592 /* EventsMessages.tiff in Resources */,
 				773FF9FE108692E7002AF8DF /* EventsUsers.tiff in Resources */,
 				A54AF9440F13AEBB00AFD50E /* FileInfo.tiff in Resources */,
 				775C63091066DB1A001BDEA3 /* FileLink.tiff in Resources */,
