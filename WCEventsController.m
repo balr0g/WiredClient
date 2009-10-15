@@ -32,7 +32,7 @@
 #import "WCServerConnection.h"
 
 enum _WCEventType {
-	WCEventUsers,
+	WCEventUsers				= 0,
 	WCEventFiles,
 	WCEventAccounts
 };
@@ -54,6 +54,7 @@ typedef enum _WCEventType		WCEventType;
 
 + (WCEvent *)eventWithMessage:(WIP7Message *)message;
 
+- (NSComparisonResult)compareType:(WCEvent *)event;
 - (NSComparisonResult)compareTime:(WCEvent *)event;
 - (NSComparisonResult)compareNick:(WCEvent *)event;
 - (NSComparisonResult)compareLogin:(WCEvent *)event;
@@ -76,9 +77,13 @@ typedef enum _WCEventType		WCEventType;
 	
 	if([name isEqualToString:@"wired.event.user.logged_in"] && [parameters count] >= 2) {
 		type = WCEventUsers;
-		string = [NSSWF:NSLS(@"Logged in using \u201c%@ on %@\u201d", @"Event message (application, os)"),
+		string = [NSSWF:NSLS(@"Logged in using \u201c%@\u201d on \u201c%@\u201d", @"Event message (application, os)"),
 			[parameters objectAtIndex:0],
 			[parameters objectAtIndex:1]];
+	}
+	else if([name isEqualToString:@"wired.event.user.logged_out"]) {
+		type = WCEventUsers;
+		string = NSLS(@"Logged out", @"Event message");
 	}
 	else if([name isEqualToString:@"wired.event.user.login_failed"]) {
 		type = WCEventUsers;
@@ -247,6 +252,17 @@ typedef enum _WCEventType		WCEventType;
 
 #pragma mark -
 
+- (NSComparisonResult)compareType:(WCEvent *)event {
+	if(self->_type < event->_type)
+		return NSOrderedAscending;
+	else if(self->_type > event->_type)
+		return NSOrderedDescending;
+	
+	return NSOrderedSame;
+}
+
+
+
 - (NSComparisonResult)compareTime:(WCEvent *)event {
 	return [self->_time compare:event->_time];
 }
@@ -412,6 +428,8 @@ typedef enum _WCEventType		WCEventType;
 		[_shownEvents sortUsingSelector:@selector(compareLogin:)];
 	else if(tableColumn == _ipTableColumn)
 		[_shownEvents sortUsingSelector:@selector(compareIP:)];
+	else if(tableColumn == _imageTableColumn)
+		[_shownEvents sortUsingSelector:@selector(compareType:)];
 	else if(tableColumn == _messageTableColumn)
 		[_shownEvents sortUsingSelector:@selector(compareMessage:)];
 }
