@@ -36,7 +36,9 @@ enum _WCEventType {
 	WCEventFiles,
 	WCEventAccounts,
 	WCEventMessages,
-	WCEventBoards
+	WCEventBoards,
+	WCEventDownloads,
+	WCEventUploads
 };
 typedef enum _WCEventType		WCEventType;
 
@@ -297,6 +299,45 @@ typedef enum _WCEventType		WCEventType;
 		string = [NSSWF:NSLS(@"Deleted \u201c%@\u201d \u201c%@\u201d", @"Event message (board, subject)"),
 			[parameters objectAtIndex:0],
 			[parameters objectAtIndex:1]];
+	}
+	else if([name isEqualToString:@"wired.event.transfer.started_file_download"] && [parameters count] >= 1) {
+		type = WCEventDownloads;
+		string = [NSSWF:NSLS(@"Started download of \u201c%@\u201d", @"Event message (path)"),
+			[parameters objectAtIndex:0]];
+	}
+	else if([name isEqualToString:@"wired.event.transfer.stopped_file_download"] && [parameters count] >= 2) {
+		type = WCEventDownloads;
+		string = [NSSWF:NSLS(@"Stopped download of \u201c%@\u201d after sending %@", @"Event message (path)"),
+			[parameters objectAtIndex:0],
+			[NSString humanReadableStringForSizeInBytes:[[parameters objectAtIndex:1] unsignedLongLongValue]]];
+	}
+	else if([name isEqualToString:@"wired.event.transfer.completed_file_download"] && [parameters count] >= 2) {
+		type = WCEventDownloads;
+		string = [NSSWF:NSLS(@"Completed download of \u201c%@\u201d after sending %@", @"Event message (path)"),
+			[parameters objectAtIndex:0],
+			[NSString humanReadableStringForSizeInBytes:[[parameters objectAtIndex:1] unsignedLongLongValue]]];
+	}
+	else if([name isEqualToString:@"wired.event.transfer.started_file_upload"] && [parameters count] >= 1) {
+		type = WCEventUploads;
+		string = [NSSWF:NSLS(@"Started upload of \u201c%@\u201d", @"Event message (path)"),
+			[parameters objectAtIndex:0]];
+	}
+	else if([name isEqualToString:@"wired.event.transfer.stopped_file_upload"] && [parameters count] >= 2) {
+		type = WCEventUploads;
+		string = [NSSWF:NSLS(@"Stopped upload of \u201c%@\u201d after sending %@", @"Event message (path)"),
+			[parameters objectAtIndex:0],
+			[NSString humanReadableStringForSizeInBytes:[[parameters objectAtIndex:1] unsignedLongLongValue]]];
+	}
+	else if([name isEqualToString:@"wired.event.transfer.completed_file_upload"] && [parameters count] >= 2) {
+		type = WCEventUploads;
+		string = [NSSWF:NSLS(@"Completed upload of \u201c%@\u201d after sending %@", @"Event message (path)"),
+			[parameters objectAtIndex:0],
+			[NSString humanReadableStringForSizeInBytes:[[parameters objectAtIndex:1] unsignedLongLongValue]]];
+	}
+	else if([name isEqualToString:@"wired.event.transfer.completed_directory_upload"] && [parameters count] >= 1) {
+		type = WCEventUploads;
+		string = [NSSWF:NSLS(@"Completed upload of \u201c%@\u201d", @"Event message (path)"),
+			[parameters objectAtIndex:0]];
 	}
 	else {
 		type = 0;
@@ -824,6 +865,8 @@ typedef enum _WCEventType		WCEventType;
 			case WCEventAccounts:	return [NSImage imageNamed:@"EventsAccounts"];	break;
 			case WCEventMessages:	return [NSImage imageNamed:@"EventsMessages"];	break;
 			case WCEventBoards:		return [NSImage imageNamed:@"EventsBoards"];	break;
+			case WCEventDownloads:	return [NSImage imageNamed:@"EventsDownloads"];	break;
+			case WCEventUploads:	return [NSImage imageNamed:@"EventsUploads"];	break;
 		}
 	}
 	else if(tableColumn == _messageTableColumn)
