@@ -1550,6 +1550,16 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	dataLength = [file uploadDataSize] - dataOffset;
 	rsrcLength = [file uploadRsrcSize] - rsrcOffset;
 	
+	if([file dataTransferred] == 0) {
+		[file setDataTransferred:dataOffset];
+		[transfer setDataTransferred:[transfer dataTransferred] + dataOffset];
+	}
+	
+	if([file rsrcTransferred] == 0) {
+		[file setRsrcTransferred:rsrcOffset];
+		[transfer setRsrcTransferred:[transfer rsrcTransferred] + rsrcOffset];
+	}
+	
 	if(![self _sendUploadMessageOnConnection:connection forFile:file dataLength:dataLength rsrcLength:rsrcLength error:&error]) {
 		if(![transfer isTerminating]) {
 			[transfer setState:WCTransferDisconnecting];
