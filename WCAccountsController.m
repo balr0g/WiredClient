@@ -1074,7 +1074,8 @@
 
 
 - (void)wiredAccountAccountsChanged:(WIP7Message *)message {
-	[_selectAccounts setArray:[self _selectedAccounts]];
+	if([_selectAccounts count] == 0)
+		[_selectAccounts setArray:[self _selectedAccounts]];
 	
 	[self _reloadAccounts];
 }
