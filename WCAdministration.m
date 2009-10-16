@@ -477,7 +477,7 @@
 - (void)selectController:(id)controller {
 	NSString		*identifier;
 	
-	if([_shownController controllerShouldUnselect]) {
+	if([_shownController controllerShouldUnselectForNewController:controller]) {
 		identifier = [self _identifierForController:controller];
 		
 		[self _selectAdministrationViewWithIdentifier:identifier animate:YES];
@@ -569,8 +569,11 @@
 
 - (IBAction)toolbarItem:(id)sender {
 	NSString		*identifier;
+	id				controller;
 	
-	if([_shownController controllerShouldUnselect]) {
+	controller = [[_views objectForKey:[sender itemIdentifier]] objectForKey:WCAdministrationControllerKey];
+	
+	if([_shownController controllerShouldUnselectForNewController:controller]) {
 		[self _selectAdministrationViewWithIdentifier:[sender itemIdentifier] animate:YES];
 	} else {
 		identifier = [self _identifierForController:_shownController];
@@ -639,7 +642,7 @@
 
 
 
-- (BOOL)controllerShouldUnselect {
+- (BOOL)controllerShouldUnselectForNewController:(id)controller {
 	return YES;
 }
 

@@ -34,6 +34,16 @@
 #define	WCAccountsFieldCell					@"WCAccountsFieldCell"
 #define	WCAccountsFieldSettings				@"WCAccountsFieldSettings"
 
+
+enum _WCAccountsAction {
+	WCAccountsDoNothing,
+	WCAccountsCloseWindow,
+	WCAccountsSelectTab,
+	WCAccountsSelectRow
+};
+typedef enum _WCAccountsAction				WCAccountsAction;
+
+
 @interface WCAccountsController(Private)
 
 - (void)_validate;
@@ -44,7 +54,7 @@
 
 - (NSDictionary *)_settingForRow:(NSInteger)row;
 
-- (BOOL)_verifyUnsavedAndSelectRow:(NSInteger)row;
+- (BOOL)_verifyUnsavedAndPerformAction:(WCAccountsAction)action argument:(id)argument;
 - (void)_save;
 - (BOOL)_canEditAccounts;
 
@@ -193,10 +203,18 @@
 
 #pragma mark -
 
-- (BOOL)_verifyUnsavedAndSelectRow:(NSInteger)row {
-	NSAlert		*alert;
+- (BOOL)_verifyUnsavedAndPerformAction:(WCAccountsAction)action argument:(id)argument {
+	NSMutableDictionary		*dictionary;
+	NSAlert					*alert;
 	
 	if(_touched) {
+		dictionary = [[NSMutableDictionary alloc] init];
+					  
+		[dictionary setObject:[NSNumber numberWithInteger:action] forKey:@"WCAccountsAction"];
+		
+		if(argument)
+			[dictionary setObject:argument forKey:@"WCAccountsArgument"];
+		
 		alert = [[NSAlert alloc] init];
 		
 		if([_accounts count] == 1) {
@@ -216,7 +234,7 @@
 		[alert beginSheetModalForWindow:[_administration window]
 						  modalDelegate:self
 						 didEndSelector:@selector(saveSheetDidEnd:returnCode:contextInfo:)
-							contextInfo:[[NSNumber alloc] initWithInteger:row]];
+							contextInfo:dictionary];
 		[alert release];
 		
 		return NO;
@@ -1310,7 +1328,7 @@
 #pragma mark -
 
 - (BOOL)controllerWindowShouldClose {
-	return [self _verifyUnsavedAndSelectRow:-2];
+	return [self _verifyUnsavedAndPerformAction:WCAccountsCloseWindow argument:NULL];
 }
 
 
@@ -1323,8 +1341,8 @@
 
 
 
-- (BOOL)controllerShouldUnselect {
-	return [self _verifyUnsavedAndSelectRow:-1];
+- (BOOL)controllerShouldUnselectForNewController:(id)controller {
+	return [self _verifyUnsavedAndPerformAction:WCAccountsSelectTab argument:controller];
 }
 
 
@@ -1868,39 +1886,56 @@
 
 
 - (void)saveSheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-	NSNumber	*number = contextInfo;
-	NSInteger	row = [number integerValue];
-
-	if(row != -2 || returnCode != NSAlertSecondButtonReturn) {
+	NSDictionary		*dictionary = contextInfo;
+	id					argument;
+	WCAccountsAction	action;
+	
+	action		= [[dictionary objectForKey:@"WCAccountsAction"] integerValue];
+	argument	= [dictionary objectForKey:@"WCAccountsArgument"];
+	
+	if(returnCode != NSAlertSecondButtonReturn) {
 		if(returnCode == NSAlertFirstButtonReturn) {
 			[self _save];
+			
+			[_selectAccounts removeAllObjects];
 		} else {
 			[_accounts removeAllObjects];
 			
 			_creating = _editing = NO;
 		}
-
+		
 		_touched = NO;
 
 		[[_administration window] setDocumentEdited:NO];
-
-		if(row >= 0) {
-			[_accountsTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
-		} else {
-			[self _validateForAccounts];
-			[self _readFromAccounts];
-			
-			if(row == -2) {
-				[_accountsTableView deselectAll:self];
-
-				[_administration close];
-			}
-		}
-
+		
 		[self _validate];
+		
+		switch(action) {
+			case WCAccountsDoNothing:
+			default:
+				break;
+				
+			case WCAccountsCloseWindow:
+				[_accountsTableView deselectAll:self];
+				
+				[_administration close];
+				break;
+			
+			case WCAccountsSelectTab:
+				[_accountsTableView deselectAll:self];
+				
+				[_administration selectController:argument];
+				break;
+				
+			case WCAccountsSelectRow:
+				[_selectAccounts removeAllObjects];
+				
+				[_accountsTableView selectRowIndexes:argument byExtendingSelection:NO];
+				break;
+		}
 	}
 	
-	[number release];
+	[dictionary release];
 }
 
 
@@ -1939,7 +1974,7 @@
 
 - (BOOL)tableView:(NSTableView *)tableView shouldSelectRow:(NSInteger)row {
 	if(row != [_accountsTableView selectedRow])
-		return [self _verifyUnsavedAndSelectRow:row];
+		return [self _verifyUnsavedAndPerformAction:WCAccountsSelectRow argument:[NSIndexSet indexSetWithIndex:row]];
 	
 	return YES;
 }
@@ -1947,7 +1982,7 @@
 
 
 - (void)tableViewSelectionDidChange:(NSNotification *)notification {
-	if([self _verifyUnsavedAndSelectRow:-1]) {
+	if([self _verifyUnsavedAndPerformAction:WCAccountsDoNothing argument:NULL]) {
 		if([[[_administration connection] account] accountReadAccounts]) {
 			if([_accountsTableView numberOfSelectedRows] > 0) {
 				[self _readAccounts:[self _selectedAccounts]];

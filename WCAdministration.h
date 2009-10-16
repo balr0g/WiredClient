@@ -94,7 +94,7 @@
 - (BOOL)controllerWindowShouldClose;
 - (void)controllerWindowWillClose;
 - (void)controllerDidSelect;
-- (BOOL)controllerShouldUnselect;
+- (BOOL)controllerShouldUnselectForNewController:(id)controller;
 - (void)controllerDidUnselect;
 
 - (NSSize)maximumWindowSize;
