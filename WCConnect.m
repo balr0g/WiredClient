@@ -144,13 +144,33 @@
 
 
 - (void)linkConnectionDidClose:(NSNotification *)notification {
+	NSMutableDictionary		*userInfo;
+	NSString				*reason;
+	WCError					*error;
+	
 	if([notification object] != _connection)
 		return;
 	
-	if([_connection error]) {
+	error = [_connection error];
+	
+	if(error) {
+		if([[error domain] isEqualToString:WIWiredNetworkingErrorDomain] &&
+		   [error code] == WISocketConnectFailed &&
+		   [[[error userInfo] objectForKey:WILibWiredErrorKey] code] == WI_ERROR_P7_INCOMPATIBLESPEC) {
+			userInfo = [[[error userInfo] mutableCopy] autorelease];
+			
+			reason = [NSSWF:@"%@\n\n%@",
+				[error localizedFailureReason],
+				NSLS(@"You may need to download a newer version of Wired Client to connect to this server.", @"Connect error")];
+			
+			[userInfo setObject:reason forKey:NSLocalizedFailureReasonErrorKey];
+			
+			error = [WCError errorWithDomain:WIWiredNetworkingErrorDomain code:[error code] userInfo:userInfo];
+		}
+		
 		[self showWindow:self];
 		
-		[[[_connection error] alert] beginSheetModalForWindow:[self window]];
+		[[error alert] beginSheetModalForWindow:[self window]];
 	}
 	
 	[_progressIndicator stopAnimation:self];
