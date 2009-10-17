@@ -48,6 +48,9 @@ NSString * const WCWiredProtocolErrorDomain		= @"WCWiredProtocolErrorDomain";
 #pragma mark -
 
 - (NSString *)localizedDescription {
+	if([[self userInfo] objectForKey:NSLocalizedDescriptionKey])
+		return [[self userInfo] objectForKey:NSLocalizedDescriptionKey];
+	
 	if([[self domain] isEqualToString:WCWiredClientErrorDomain]) {
 		switch((WCWiredClientError) [self code]) {
 			case WCWiredClientServerDisconnected:
@@ -192,6 +195,9 @@ NSString * const WCWiredProtocolErrorDomain		= @"WCWiredProtocolErrorDomain";
 
 - (NSString *)localizedFailureReason {
 	id		argument;
+	
+	if([[self userInfo] objectForKey:NSLocalizedFailureReasonErrorKey])
+		return [[self userInfo] objectForKey:NSLocalizedFailureReasonErrorKey];
 	
 	argument = [[self userInfo] objectForKey:WIArgumentErrorKey];
 
