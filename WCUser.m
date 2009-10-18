@@ -51,7 +51,11 @@
 	[message getUInt32:&uid forName:@"wired.user.id"];
 	[message getBool:&idle forName:@"wired.user.idle"];
 	[message getUInt32:&cipherBits forName:@"wired.user.cipher.bits"];
-	[message getEnum:&color forName:@"wired.account.color"];
+	
+	if([message getEnum:&color forName:@"wired.account.color"])
+		_color = color;
+	else
+		_color = WCAccountColorBlack;
 	
 	_userID = uid;
 	
@@ -77,7 +81,6 @@
 	_joinDate		= [[message dateForName:@"wired.user.login_time"] retain];
 	_idleDate		= [[message dateForName:@"wired.user.idle_time"] retain];
 	_transfer		= [[WCTransfer transferWithMessage:message connection:connection] retain];
-	_color			= color;
 	
 	if(!_joinDate)
 		_joinDate = [[NSDate date] retain];

@@ -1495,32 +1495,36 @@ typedef enum _WCChatFormat					WCChatFormat;
 	if(!user)
 		return;
 	
-	[message getBool:&idle forName:@"wired.user.idle"];
-	[message getEnum:&color forName:@"wired.account.color"];
-	
 	nick = [message stringForName:@"wired.user.nick"];
-	status = [message stringForName:@"wired.user.status"];
 	
 	if(![nick isEqualToString:[user nick]]) {
 		if([[[WCSettings settings] eventWithTag:WCEventsUserChangedNick] boolForKey:WCEventsPostInChat])
 			[self _printUserChange:user nick:nick];
 		
 		[[self connection] triggerEvent:WCEventsUserChangedNick info1:user info2:nick];
+	
+		[user setNick:nick];
 		
 		nickChanged = YES;
 	}
+	
+	status = [message stringForName:@"wired.user.status"];
 	
 	if(![status isEqualToString:[user status]]) {
 		if([[[WCSettings settings] eventWithTag:WCEventsUserChangedStatus] boolForKey:WCEventsPostInChat])
 			[self _printUserChange:user status:status];
 		
 		[[self connection] triggerEvent:WCEventsUserChangedStatus info1:user info2:status];
+	
+		[user setStatus:status];
 	}
 	
-	[user setNick:nick];
-	[user setStatus:status];
+	[message getBool:&idle forName:@"wired.user.idle"];
+	
 	[user setIdle:idle];
-	[user setColor:color];
+	
+	if([message getEnum:&color forName:@"wired.account.color"])
+		[user setColor:color];
 	
 	[_userListTableView setNeedsDisplay:YES];
 	
