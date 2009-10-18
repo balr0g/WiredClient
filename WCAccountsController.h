@@ -57,7 +57,7 @@
 	IBOutlet NSTextField				*_fullNameTextField;
 	IBOutlet NSSecureTextField			*_passwordTextField;
 	IBOutlet NSPopUpButton				*_groupPopUpButton;
-	IBOutlet NSMenuItem					*_dontChangeMenuItem;
+	IBOutlet NSMenuItem					*_dontChangeGroupMenuItem;
 	IBOutlet NSMenuItem					*_noneMenuItem;
 	IBOutlet NSTokenField				*_groupsTokenField;
 	IBOutlet NSTextView					*_commentTextView;
@@ -80,7 +80,10 @@
 	NSArray								*_allSettings;
 	NSMutableArray						*_shownSettings;
 	
+	NSMutableDictionary					*_listedAccounts;
 	NSMutableArray						*_allAccounts;
+	NSMutableArray						*_allUserAccounts;
+	NSMutableArray						*_allGroupAccounts;
 	NSMutableArray						*_shownAccounts;
 	NSImage								*_userImage;
 	NSImage								*_groupImage;

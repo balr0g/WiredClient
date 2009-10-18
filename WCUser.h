@@ -26,14 +26,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "WCAccount.h"
 #import "WCServerConnectionObject.h"
 
-@class WCUserAccount, WCTransfer;
+@class WCTransfer;
 
 @interface WCUser : WCServerConnectionObject {
 	NSUInteger				_userID;
 	BOOL					_idle;
-	BOOL					_admin;
 	NSString				*_nick;
 	NSString				*_status;
 	NSImage					*_icon;
@@ -47,20 +47,22 @@
 	NSDate					*_idleDate;
 	WCUserAccount			*_account;
 	WCTransfer				*_transfer;
+	WCAccountColor			_color;
 }
+
++ (NSColor *)colorForColor:(WCAccountColor)color idleTint:(BOOL)idleTint;
 
 + (id)userWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection;
 
 - (void)setIdle:(BOOL)value;
-- (void)setAdmin:(BOOL)value;
 - (void)setNick:(NSString *)nick;
 - (void)setStatus:(NSString *)status;
 - (void)setIcon:(NSImage *)icon;
 - (void)setAccount:(WCUserAccount *)account;
+- (void)setColor:(WCAccountColor)color;
 
 - (NSUInteger)userID;
 - (BOOL)isIdle;
-- (BOOL)isAdmin;
 - (NSImage *)icon;
 - (NSImage *)iconWithIdleTint:(BOOL)value;
 - (NSString *)nick;
@@ -75,8 +77,8 @@
 - (NSDate *)idleDate;
 - (WCUserAccount *)account;
 - (WCTransfer *)transfer;
+- (WCAccountColor)color;
 
-- (NSColor *)color;
 - (BOOL)isIgnored;
 
 @end

@@ -30,6 +30,7 @@
 #import "WCAdministration.h"
 #import "WCAccountsController.h"
 #import "WCServerConnection.h"
+#import "WCUser.h"
 
 #define	WCAccountsFieldCell					@"WCAccountsFieldCell"
 #define	WCAccountsFieldSettings				@"WCAccountsFieldSettings"
@@ -153,6 +154,8 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 		[_progressIndicator startAnimation:self];
 
 		[_allAccounts removeAllObjects];
+		[_allUserAccounts removeAllObjects];
+		[_allGroupAccounts removeAllObjects];
 		[_shownAccounts removeAllObjects];
 
 		[_accountsTableView reloadData];
@@ -179,6 +182,8 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 		[_progressIndicator startAnimation:self];
 		
 		[_allAccounts removeAllObjects];
+		[_allUserAccounts removeAllObjects];
+		[_allGroupAccounts removeAllObjects];
 		[_shownAccounts removeAllObjects];
 		
 		[_accountsTableView reloadData];
@@ -291,22 +296,6 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 
 		[_selectAccounts setArray:_accounts];
 	}
-	
-	[_accounts removeAllObjects];
-	
-	_creating = NO;
-	_editing = NO;
-	_touched = NO;
-
-	[self _validateForAccounts];
-	[self _readFromAccounts];
-	
-	if(reload)
-		[self _reloadAccounts];
-	
-	[[_administration window] setDocumentEdited:NO];
-
-	[self _validate];
 }
 
 
@@ -345,6 +334,24 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 	}
 	
 	return editable;
+}
+
+
+
+- (void)_stopEditing {
+	[_accounts removeAllObjects];
+	
+	_creating	= NO;
+	_editing	= NO;
+	_touched	= NO;
+	
+	[self _validateForAccounts];
+	[self _readFromAccounts];
+	[self _reloadAccounts];
+	
+	[[_administration window] setDocumentEdited:NO];
+	
+	[self _validate];
 }
 
 
@@ -390,8 +397,8 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 	WCAccount			*account;
 	
 	if([_accounts count] == 1) {
-		if([_groupPopUpButton indexOfItem:_dontChangeMenuItem] != -1)
-			[_groupPopUpButton removeItem:_dontChangeMenuItem];
+		if([_groupPopUpButton indexOfItem:_dontChangeGroupMenuItem] != -1)
+			[_groupPopUpButton removeItem:_dontChangeGroupMenuItem];
 		
 		account = [_accounts lastObject];
 
@@ -462,8 +469,8 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 		}
 	}
 	else if([_accounts count] == 0) {
-		if([_groupPopUpButton indexOfItem:_dontChangeMenuItem] != -1)
-			[_groupPopUpButton removeItem:_dontChangeMenuItem];
+		if([_groupPopUpButton indexOfItem:_dontChangeGroupMenuItem] != -1)
+			[_groupPopUpButton removeItem:_dontChangeGroupMenuItem];
 		
 		[_typePopUpButton selectItem:_userMenuItem];
 		[_nameTextField setStringValue:@""];
@@ -480,30 +487,31 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 		[_uploadsTextField setStringValue:@""];
 	}
 	else {
-		if([_groupPopUpButton indexOfItem:_dontChangeMenuItem] == -1) {
-			[_groupPopUpButton insertItem:_dontChangeMenuItem atIndex:0];
+		if([_groupPopUpButton indexOfItem:_dontChangeGroupMenuItem] == -1) {
+			[_groupPopUpButton insertItem:_dontChangeGroupMenuItem atIndex:0];
 			
-			[_dontChangeMenuItem setState:NSOffState];
+			[_dontChangeGroupMenuItem setState:NSOffState];
 		}
 		
 		group			= NULL;
 		enumerator		= [_accounts objectEnumerator];
 		
 		while((account = [enumerator nextObject])) {
-			if([account isKindOfClass:[WCUserAccount class]]) {
-				if(group) {
+			if(group) {
+				if([account isKindOfClass:[WCUserAccount class]]) {
 					if(![group isEqualToString:[(WCUserAccount *) account group]]) {
 						group = NULL;
 						
 						break;
 					}
 				} else {
-					group = [(WCUserAccount *) account group];
+					group = NULL;
+					
+					break;
 				}
 			} else {
-				group = NULL;
-				
-				break;
+				if([account isKindOfClass:[WCUserAccount class]])
+					group = [(WCUserAccount *) account group];
 			}
 		}
 		
@@ -513,7 +521,7 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 		[_passwordTextField setStringValue:@""];
 		
 		if(group == NULL)
-			[_groupPopUpButton selectItem:_dontChangeMenuItem];
+			[_groupPopUpButton selectItem:_dontChangeGroupMenuItem];
 		else if([group length] == 0)
 			[_groupPopUpButton selectItem:_noneMenuItem];
 		else
@@ -653,11 +661,11 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 		
 		while((account = [enumerator nextObject])) {
 			if([account isKindOfClass:[WCUserAccount class]]) {
-				if([_groupPopUpButton selectedItem] != _dontChangeMenuItem) {
+				if([_groupPopUpButton selectedItem] != _dontChangeGroupMenuItem) {
 					if([_groupPopUpButton selectedItem] != _noneMenuItem)
 						group = [_groupPopUpButton titleOfSelectedItem];
 					else
-						group = @"";
+						group = NULL;
 					
 					[(WCUserAccount *) account setGroup:group];
 				}
@@ -708,7 +716,7 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 	WCAccount			*account;
 	NSUInteger			count;
 	
-	count = ([_groupPopUpButton indexOfItem:_dontChangeMenuItem] == -1) ? 1 : 2;
+	count = ([_groupPopUpButton indexOfItem:_dontChangeGroupMenuItem] == -1) ? 1 : 2;
 	
 	while([_groupPopUpButton numberOfItems] > (NSInteger) count)
 		[_groupPopUpButton removeItemAtIndex:count];
@@ -855,6 +863,8 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 	}
 }
 
+
+
 - (void)_selectAccounts {
 	NSEnumerator			*enumerator;
 	NSMutableIndexSet		*indexes;
@@ -890,10 +900,14 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 	NSMutableArray			*basicsSettings, *filesSettings, *boardsSettings, *trackerSettings, *usersSettings, *accountsSettings, *administrationSettings, *limitsSettings;
 	NSButtonCell			*buttonCell;
 	NSTextFieldCell			*textFieldCell;
+	NSPopUpButtonCell		*popUpButtonCell;
 	
 	self = [super init];
 	
+	_listedAccounts			= [[NSMutableDictionary alloc] init];
 	_allAccounts			= [[NSMutableArray alloc] init];
+	_allUserAccounts		= [[NSMutableArray alloc] init];
+	_allGroupAccounts		= [[NSMutableArray alloc] init];
 	_shownAccounts			= [[NSMutableArray alloc] init];
 	_userImage				= [[NSImage imageNamed:@"User"] retain];
 	_groupImage				= [[NSImage imageNamed:@"Group"] retain];
@@ -917,8 +931,8 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 		switch([[setting objectForKey:WCAccountFieldType] intValue]) {
 			case WCAccountFieldBoolean:
 				buttonCell = [[NSButtonCell alloc] initTextCell:@""];
-				[buttonCell setButtonType:NSSwitchButton];
 				[buttonCell setControlSize:NSSmallControlSize];
+				[buttonCell setButtonType:NSSwitchButton];
 				[buttonCell setAllowsMixedState:YES];
 				[setting setObject:buttonCell forKey:WCAccountsFieldCell];
 				[buttonCell release];
@@ -933,6 +947,31 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 				[textFieldCell setFont:[NSFont smallSystemFont]];
 				[setting setObject:textFieldCell forKey:WCAccountsFieldCell];
 				[textFieldCell release];
+				break;
+			
+			case WCAccountFieldEnum:
+				popUpButtonCell = [[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO];
+				[popUpButtonCell setControlSize:NSSmallControlSize];
+				[popUpButtonCell setBordered:NO];
+				[popUpButtonCell setFont:[NSFont smallSystemFont]];
+				
+				if([[setting objectForKey:WCAccountFieldName] isEqualToString:@"wired.account.color"]) {
+					[popUpButtonCell addItem:[NSMenuItem itemWithTitle:NSLS(@"Black", @"Account color")
+																 image:[NSImage imageNamed:@"LabelBlack"]]];
+					[popUpButtonCell addItem:[NSMenuItem itemWithTitle:NSLS(@"Red", @"Account color")
+																 image:[NSImage imageNamed:@"LabelRed"]]];
+					[popUpButtonCell addItem:[NSMenuItem itemWithTitle:NSLS(@"Orange", @"Account color")
+																 image:[NSImage imageNamed:@"LabelOrange"]]];
+					[popUpButtonCell addItem:[NSMenuItem itemWithTitle:NSLS(@"Green", @"Account color")
+																 image:[NSImage imageNamed:@"LabelGreen"]]];
+					[popUpButtonCell addItem:[NSMenuItem itemWithTitle:NSLS(@"Blue", @"Account color")
+																 image:[NSImage imageNamed:@"LabelBlue"]]];
+					[popUpButtonCell addItem:[NSMenuItem itemWithTitle:NSLS(@"Purple", @"Account color")
+																 image:[NSImage imageNamed:@"LabelPurple"]]];
+				}
+				
+				[setting setObject:popUpButtonCell forKey:WCAccountsFieldCell];
+				[popUpButtonCell release];
 				break;
 		}
 		
@@ -1014,7 +1053,7 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 
 
 - (void)dealloc {
-	[_dontChangeMenuItem release];
+	[_dontChangeGroupMenuItem release];
 	
 	[_allSettings release];
 	[_shownSettings release];
@@ -1022,7 +1061,10 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 	[_userImage release];
 	[_groupImage release];
 
+	[_listedAccounts release];
 	[_allAccounts release];
+	[_allUserAccounts release];
+	[_allGroupAccounts release];
 	[_shownAccounts release];
 	
 	[_accounts release];
@@ -1051,7 +1093,7 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 	[_settingsOutlineView setTarget:self];
 	[_settingsOutlineView setDeleteAction:@selector(clearSetting:)];
 	
-	[_dontChangeMenuItem retain];
+	[_dontChangeGroupMenuItem retain];
 	
 	_dateFormatter = [[WIDateFormatter alloc] init];
 	[_dateFormatter setTimeStyle:NSDateFormatterShortStyle];
@@ -1066,6 +1108,8 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 
 - (void)linkConnectionLoggedIn:(NSNotification *)notification {
 	[_allAccounts removeAllObjects];
+	[_allUserAccounts removeAllObjects];
+	[_allGroupAccounts removeAllObjects];
 	[_shownAccounts removeAllObjects];
 	
 	[_accountsTableView reloadData];
@@ -1101,16 +1145,41 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 
 
 - (void)wiredAccountListAccountsReply:(WIP7Message *)message {
+	NSMutableArray		*accounts;
+	NSNumber			*number;
+	WIP7UInt32			transaction;
+	
+	[message getUInt32:&transaction forName:@"wired.transaction"];
+	
+	number		= [NSNumber numberWithUnsignedInteger:transaction];
+	accounts	= [_listedAccounts objectForKey:number];
+	
+	if(!accounts) {
+		accounts = [NSMutableArray array];
+		
+		[_listedAccounts setObject:accounts forKey:number];
+	}
+	
 	if([[message name] isEqualToString:@"wired.account.user_list"]) {
-		[_allAccounts addObject:[WCUserAccount accountWithMessage:message]];
+		[accounts addObject:[WCUserAccount accountWithMessage:message]];
 	}
 	else if([[message name] isEqualToString:@"wired.account.user_list.done"]) {
+		[_allUserAccounts setArray:accounts];
+		
+		[_listedAccounts removeObjectForKey:number];
 	}
 	else if([[message name] isEqualToString:@"wired.account.group_list"]) {
-		[_allAccounts addObject:[WCGroupAccount accountWithMessage:message]];
+		[accounts addObject:[WCGroupAccount accountWithMessage:message]];
 	}
 	else if([[message name] isEqualToString:@"wired.account.group_list.done"]) {
+		[_allGroupAccounts setArray:accounts];
+		
+		[_listedAccounts removeObjectForKey:number];
+		
 		[_progressIndicator stopAnimation:self];
+		
+		[_allAccounts setArray:_allUserAccounts];
+		[_allAccounts addObjectsFromArray:_allGroupAccounts];
 		[_allAccounts sortUsingSelector:@selector(compareName:)];
 
 		[self _reloadFilter];
@@ -1198,7 +1267,9 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 
 
 - (void)wiredAccountChangeAccountReply:(WIP7Message *)message {
-	if([[message name] isEqualToString:@"wired.error"])
+	if([[message name] isEqualToString:@"wired.okay"])
+		[self _stopEditing];
+	else if([[message name] isEqualToString:@"wired.error"])
 		[_administration showError:[WCError errorWithWiredMessage:message]];
 }
 
@@ -1778,7 +1849,7 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 		enumerator = [_accounts objectEnumerator];
 		
 		while((account = [enumerator nextObject])) {
-			if([_groupPopUpButton selectedItem] == _dontChangeMenuItem) {
+			if([_groupPopUpButton selectedItem] == _dontChangeGroupMenuItem) {
 				[account setGroup:[account originalGroup]];
 				[account setGroupAccount:NULL];
 			}
@@ -1899,16 +1970,10 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 			
 			[_selectAccounts removeAllObjects];
 		} else {
-			[_accounts removeAllObjects];
-			
-			_creating = _editing = NO;
+			[self _stopEditing];
 		}
 		
 		_touched = NO;
-
-		[[_administration window] setDocumentEdited:NO];
-		
-		[self _validate];
 		
 		switch(action) {
 			case WCAccountsDoNothing:
@@ -1959,10 +2024,16 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 
 
 - (void)tableView:(NSTableView *)tableView willDisplayCell:(id)cell forTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
-	if([[self _accountAtIndex:row] isKindOfClass:[WCUserAccount class]])
+	WCAccount		*account;
+	
+	account = [self _accountAtIndex:row];
+	
+	if([account isKindOfClass:[WCUserAccount class]])
 		[cell setImage:_userImage];
 	else
 		[cell setImage:_groupImage];
+	
+	[cell setTextColor:[WCUser colorForColor:[account color] idleTint:NO]];
 }
 
 
@@ -2026,12 +2097,14 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 
 
 - (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item {
-	NSEnumerator		*enumerator;
-	NSMutableSet		*values;
-	NSString			*name;
-	WCAccount			*account;
-	id					value;
-	NSInteger			type;
+	NSEnumerator			*enumerator;
+	NSMutableSet			*values;
+	NSAttributedString		*attributedString;
+	NSDictionary			*attributes;
+	NSString				*name;
+	WCAccount				*account;
+	id						cell, value;
+	NSInteger				type;
 	
 	if(tableColumn == _settingTableColumn) {
 		return [item objectForKey:WCAccountFieldLocalizedName];
@@ -2039,9 +2112,17 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 	else if(tableColumn == _valueTableColumn) {
 		type = [[item objectForKey:WCAccountFieldType] integerValue];
 		name = [item objectForKey:WCAccountFieldName];
+		cell = [item objectForKey:WCAccountsFieldCell];
 		
 		if(!name)
 			return NULL;
+		
+		if(type == WCAccountFieldEnum) {
+			if([[cell itemAtIndex:0] tag] == -1) {
+				[cell removeItemAtIndex:0];
+				[cell removeItemAtIndex:0];
+			}
+		}
 		
 		if([_accounts count] == 1) {
 			account		= [_accounts lastObject];
@@ -2066,19 +2147,33 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 				value = [values anyObject];
 				
 				if([value isKindOfClass:[NSNull class]])
-					value = @"";
+					value = NULL;
 			}
 			else if([values count] == 0) {
 				value = NULL;
 			}
 			else {
+				attributes			= [NSDictionary dictionaryWithObjectsAndKeys:
+					[NSColor grayColor],	NSForegroundColorAttributeName,
+					[cell font],			NSFontAttributeName,
+					NULL];
+				attributedString	= [NSAttributedString attributedStringWithString:NSLS(@"<Multiple values>", @"Account field value")
+																	   attributes:attributes];
+				
 				if(type == WCAccountFieldBoolean)
 					value = [NSNumber numberWithInteger:NSMixedState];
-				else
-					value = NSLS(@"<Multiple values>", @"Account field value");
+				else if(type == WCAccountFieldEnum) {
+					[cell insertItem:[NSMenuItem itemWithAttributedTitle:attributedString tag:-1] atIndex:0];
+					[cell insertItem:[NSMenuItem separatorItem] atIndex:1];
+					
+					value = [NSNumber numberWithInteger:0];
+				}
+				else {
+					value = [attributedString string];
+				}
 			}
 		}
-
+		
 		if([name isEqualToString:@"wired.account.transfer.download_speed_limit"] ||
 		   [name isEqualToString:@"wired.account.transfer.upload_speed_limit"]) {
 			if([value isKindOfClass:[NSNumber class]])
@@ -2110,10 +2205,11 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 	NSString		*name;
 	WCAccount		*account;
 	NSInteger		type;
-	id				value;
+	id				cell, value;
 	
 	type	= [[item objectForKey:WCAccountFieldType] integerValue];
 	name	= [item objectForKey:WCAccountFieldName];
+	cell	= [item objectForKey:WCAccountsFieldCell];
 	value	= object;
 	
 	if(type == WCAccountFieldNumber) {
@@ -2124,6 +2220,13 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 	}
 	else if(type == WCAccountFieldBoolean) {
 		value = [NSNumber numberWithBool:([value integerValue] == -1) ? YES : [value boolValue]];
+	}
+	else if(type == WCAccountFieldEnum) {
+		if([value integerValue] < 0)
+			return;
+		
+		if([[cell itemAtIndex:0] tag] == -1)
+			value = [NSNumber numberWithInteger:[value integerValue] - 2];
 	}
 
 	if([name isEqualToString:@"wired.account.transfer.download_speed_limit"] ||
@@ -2146,8 +2249,10 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 	NSEnumerator	*enumerator;
 	NSString		*name;
 	WCAccount		*account;
+	NSUInteger		type;
 	BOOL			set = NO;
 	
+	type		= [[item objectForKey:WCAccountFieldType] integerValue];
 	name		= [item objectForKey:WCAccountFieldName];
 	enumerator	= [_accounts objectEnumerator];
 	
@@ -2165,7 +2270,7 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 		[cell setFont:[[cell font] fontByAddingTrait:NSUnboldFontMask]];
 	
 	if([cell respondsToSelector:@selector(setTextColor:)]) {
-		if([[cell objectValue] isEqual:NSLS(@"<Multiple values>", @"Account field value")])
+		if([[cell objectValue] isEqualToString:NSLS(@"<Multiple values>", @"Account field value")])
 			[cell setTextColor:[NSColor grayColor]];
 		else
 			[cell setTextColor:[NSColor blackColor]];

@@ -143,6 +143,7 @@
 		77CC603110874B4100B2F592 /* EventsMessages.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 77CC602F10874B4100B2F592 /* EventsMessages.tiff */; };
 		77CC89EC1087E62100B2F592 /* EventsDownloads.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 77CC89EB1087E62100B2F592 /* EventsDownloads.tiff */; };
 		77CC89F01087E65400B2F592 /* EventsUploads.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 77CC89EF1087E65400B2F592 /* EventsUploads.tiff */; };
+		77CCA9AB1089FB5F00B2F592 /* LabelBlack.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 77CCA9AA1089FB5F00B2F592 /* LabelBlack.tiff */; };
 		77CED3A50EC068F500123164 /* WCBoard.m in Sources */ = {isa = PBXBuildFile; fileRef = 77CED39E0EC068F500123164 /* WCBoard.m */; };
 		77CED3A60EC068F500123164 /* WCBoardPost.m in Sources */ = {isa = PBXBuildFile; fileRef = 77CED3A00EC068F500123164 /* WCBoardPost.m */; };
 		77CED3A70EC068F500123164 /* WCBoards.m in Sources */ = {isa = PBXBuildFile; fileRef = 77CED3A20EC068F500123164 /* WCBoards.m */; };
@@ -572,6 +573,7 @@
 		77CC602F10874B4100B2F592 /* EventsMessages.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = EventsMessages.tiff; sourceTree = "<group>"; };
 		77CC89EB1087E62100B2F592 /* EventsDownloads.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = EventsDownloads.tiff; sourceTree = "<group>"; };
 		77CC89EF1087E65400B2F592 /* EventsUploads.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = EventsUploads.tiff; sourceTree = "<group>"; };
+		77CCA9AA1089FB5F00B2F592 /* LabelBlack.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = LabelBlack.tiff; sourceTree = "<group>"; };
 		77CED39D0EC068F500123164 /* WCBoard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCBoard.h; sourceTree = "<group>"; };
 		77CED39E0EC068F500123164 /* WCBoard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCBoard.m; sourceTree = "<group>"; };
 		77CED39F0EC068F500123164 /* WCBoardPost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCBoardPost.h; sourceTree = "<group>"; };
@@ -1424,6 +1426,7 @@
 				A54AF8F50F13AEBA00AFD50E /* GreenDrop.tiff */,
 				A54AF8F40F13AEBA00AFD50E /* Group.tiff */,
 				A54AF8F30F13AEBA00AFD50E /* Kick.tiff */,
+				77CCA9AA1089FB5F00B2F592 /* LabelBlack.tiff */,
 				A5D07FFE0F54B1FB00053320 /* LabelBlue.tiff */,
 				A5D07FFF0F54B1FB00053320 /* LabelGray.tiff */,
 				A5D080000F54B1FB00053320 /* LabelGreen.tiff */,
@@ -1982,6 +1985,7 @@
 				779951890A122BBB00600320 /* Smile.tiff in Resources */,
 				779951900A122BBB00600320 /* Wink.tiff in Resources */,
 				779951820A122BBB00600320 /* Yuck.tiff in Resources */,
+				77CCA9AB1089FB5F00B2F592 /* LabelBlack.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

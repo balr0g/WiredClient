@@ -42,18 +42,20 @@
 
 - (id)_initWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection {
 	NSImage			*image;
-	WIP7UInt32		uid;
-	WIP7Bool		idle, admin;
+	WIP7UInt32		uid, cipherBits;
+	WIP7Enum		color;
+	WIP7Bool		idle;
 
 	self = [super initWithConnection:connection];
 	
 	[message getUInt32:&uid forName:@"wired.user.id"];
 	[message getBool:&idle forName:@"wired.user.idle"];
-	[message getBool:&admin forName:@"wired.user.admin"];
+	[message getUInt32:&cipherBits forName:@"wired.user.cipher.bits"];
+	[message getEnum:&color forName:@"wired.account.color"];
 	
 	_userID = uid;
+	
 	[self setIdle:idle];
-	[self setAdmin:admin];
 	[self setNick:[message stringForName:@"wired.user.nick"]];
 	[self setStatus:[message stringForName:@"wired.user.status"]];
 	
@@ -66,23 +68,20 @@
 		[image release];
 	}
 	
-	_login		= [[message stringForName:@"wired.user.login"] retain];
-	_address	= [[message stringForName:@"wired.user.ip"] retain];
-	_host		= [[message stringForName:@"wired.user.host"] retain];
-	_version	= [[WCServerConnection versionStringForMessage:message] retain];
-	_cipherName	= [[message stringForName:@"wired.user.cipher.name"] retain];
-	
-	[message getUInt32:&_cipherBits forName:@"wired.user.cipher.bits"];
-	
-	_joinDate = [[message dateForName:@"wired.user.login_time"] retain];
+	_login			= [[message stringForName:@"wired.user.login"] retain];
+	_address		= [[message stringForName:@"wired.user.ip"] retain];
+	_host			= [[message stringForName:@"wired.user.host"] retain];
+	_version		= [[WCServerConnection versionStringForMessage:message] retain];
+	_cipherName		= [[message stringForName:@"wired.user.cipher.name"] retain];
+	_cipherBits		= cipherBits;
+	_joinDate		= [[message dateForName:@"wired.user.login_time"] retain];
+	_idleDate		= [[message dateForName:@"wired.user.idle_time"] retain];
+	_transfer		= [[WCTransfer transferWithMessage:message connection:connection] retain];
+	_color			= color;
 	
 	if(!_joinDate)
 		_joinDate = [[NSDate date] retain];
 	
-	_idleDate = [[message dateForName:@"wired.user.idle_time"] retain];
-	
-	_transfer = [[WCTransfer transferWithMessage:message connection:connection] retain];
-
 	return self;
 }
 
@@ -90,6 +89,57 @@
 
 
 @implementation WCUser
+
++ (NSColor *)colorForColor:(WCAccountColor)color idleTint:(BOOL)idleTint {
+	NSColor		*value;
+	
+	switch(color) {
+		case WCAccountColorBlack:
+		default:
+			value = [NSColor colorWithCalibratedHue:0.0 saturation:0.0 brightness:0.0 alpha:1.0];
+			break;
+			
+		case WCAccountColorRed:
+			value = [NSColor redColor];
+			break;
+			
+		case WCAccountColorOrange:
+			value = [NSColor orangeColor];
+			break;
+			
+		case WCAccountColorGreen:
+			value = [NSColor colorWithCalibratedRed:0.0 green:0.8 blue:0.0 alpha:1.0];
+			break;
+			
+		case WCAccountColorBlue:
+			value = [NSColor blueColor];
+			break;
+			
+		case WCAccountColorPurple:
+			value = [NSColor purpleColor];
+			break;
+	}
+	
+	if(idleTint) {
+		if(color == WCAccountColorBlack) {
+			value = [NSColor colorWithCalibratedHue:[value hueComponent]
+										 saturation:[value saturationComponent]
+										 brightness:0.5
+											  alpha:[value alphaComponent]];
+		} else {
+			value = [NSColor colorWithCalibratedHue:[value hueComponent]
+										 saturation:0.5
+										 brightness:[value brightnessComponent]
+											  alpha:[value alphaComponent]];
+		}
+	}
+	
+	return value;
+}
+
+
+
+#pragma mark -
 
 + (id)userWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection {
 	return [[[self alloc] _initWithMessage:message connection:connection] autorelease];
@@ -140,12 +190,6 @@
 
 
 
-- (void)setAdmin:(BOOL)value {
-	_admin = value;
-}
-
-
-
 - (void)setIcon:(NSImage *)icon {
 	[icon retain];
 	[_icon release];
@@ -182,6 +226,12 @@
 
 
 
+- (void)setColor:(WCAccountColor)color {
+	_color = color;
+}
+
+
+
 #pragma mark -
 
 - (NSUInteger)userID {
@@ -192,12 +242,6 @@
 
 - (BOOL)isIdle {
 	return _idle;
-}
-
-
-
-- (BOOL)isAdmin {
-	return _admin;
 }
 
 
@@ -288,20 +332,13 @@
 
 
 
-#pragma mark -
-
-- (NSColor *)color {
-	if([self isIdle] && [self isAdmin])
-		return [NSColor colorWithCalibratedHue:0.0 saturation:0.5 brightness:1.0 alpha:1.0];
-	else if([self isIdle])
-		return [NSColor colorWithCalibratedHue:0.0 saturation:0.0 brightness:0.5 alpha:1.0];
-	else if([self isAdmin])
-		return [NSColor colorWithCalibratedHue:0.0 saturation:1.0 brightness:1.0 alpha:1.0];
-
-	return [NSColor colorWithCalibratedHue:0.0 saturation:0.0 brightness:0.0 alpha:1.0];
+- (WCAccountColor)color {
+	return _color;
 }
 
 
+
+#pragma mark -
 
 - (BOOL)isIgnored {
 	NSEnumerator	*enumerator;

@@ -73,9 +73,10 @@ NSString * const WCAccountFieldToolTip				= @"WCAccountFieldToolTip";
 
 			case WCAccountFieldNumber:
 			case WCAccountFieldBoolean:
+			case WCAccountFieldEnum:
 				value = [message numberForName:name];
 				break;
-
+			
 			case WCAccountFieldList:
 				value = [message listForName:name];
 				break;
@@ -108,7 +109,7 @@ NSString * const WCAccountFieldToolTip				= @"WCAccountFieldToolTip";
 			value	= [self valueForKey:name];
 			
 			if(value) {
-				switch([[field objectForKey:WCAccountFieldType] intValue]) {
+				switch([[field objectForKey:WCAccountFieldType] integerValue]) {
 					case WCAccountFieldString:
 						[message setString:value forName:name];
 						break;
@@ -119,6 +120,7 @@ NSString * const WCAccountFieldToolTip				= @"WCAccountFieldToolTip";
 
 					case WCAccountFieldNumber:
 					case WCAccountFieldBoolean:
+					case WCAccountFieldEnum:
 						[message setNumber:value forName:name];
 						break;
 
@@ -190,6 +192,9 @@ NSString * const WCAccountFieldToolTip				= @"WCAccountFieldToolTip";
 		WCAccountFieldDictionary(WCAccountFieldNone,
 			@"wired.account.password", @"", WCAccountFieldString, NO, @""),
 		
+		WCAccountFieldDictionary(WCAccountFieldBasics,
+			@"wired.account.color", NSLS(@"Color", @"Account field name"), WCAccountFieldEnum, NO,
+			@""),
 		WCAccountFieldBooleanDictionary(WCAccountFieldBasics,
 			@"wired.account.user.cannot_set_nick", NSLS(@"Cannot Set Nick", @"Account field name"),
 			@"TBD"),
@@ -534,6 +539,18 @@ NSString * const WCAccountFieldToolTip				= @"WCAccountFieldToolTip";
 
 - (NSString *)comment {
 	return [self valueForKey:@"wired.account.comment"];
+}
+
+
+
+- (void)setColor:(WCAccountColor)color {
+	[self setValue:[NSNumber numberWithInteger:color] forKey:@"wired.account.color"];
+}
+
+
+
+- (WCAccountColor)color {
+	return [[self valueForKey:@"wired.account.color"] integerValue];
 }
 
 

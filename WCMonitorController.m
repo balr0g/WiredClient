@@ -471,7 +471,7 @@
 	if(column == _nickTableColumn) {
 		user = [_shownUsers objectAtIndex:row];
 
-		[cell setTextColor:[user color]];
+		[cell setTextColor:[WCUser colorForColor:[user color] idleTint:[user isIdle]]];
 		[cell setIgnored:[user isIgnored]];
 	}
 }

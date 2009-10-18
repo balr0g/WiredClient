@@ -1479,7 +1479,8 @@ typedef enum _WCChatFormat					WCChatFormat;
 	NSString		*nick, *status;
 	WCUser			*user;
 	WIP7UInt32		cid, uid;
-	WIP7Bool		idle, admin;
+	WIP7Enum		color;
+	WIP7Bool		idle;
 	BOOL			nickChanged = NO;
 	
 	[message getUInt32:&cid forName:@"wired.chat.id"];
@@ -1495,7 +1496,8 @@ typedef enum _WCChatFormat					WCChatFormat;
 		return;
 	
 	[message getBool:&idle forName:@"wired.user.idle"];
-	[message getBool:&admin forName:@"wired.user.admin"];
+	[message getEnum:&color forName:@"wired.account.color"];
+	
 	nick = [message stringForName:@"wired.user.nick"];
 	status = [message stringForName:@"wired.user.status"];
 	
@@ -1518,7 +1520,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 	[user setNick:nick];
 	[user setStatus:status];
 	[user setIdle:idle];
-	[user setAdmin:admin];
+	[user setColor:color];
 	
 	[_userListTableView setNeedsDisplay:YES];
 	
@@ -2282,7 +2284,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 	if(column == _nickTableColumn) {
 		user = [self userAtIndex:row];
 		
-		[cell setTextColor:[user color]];
+		[cell setTextColor:[WCUser colorForColor:[user color] idleTint:[user isIdle]]];
 		[cell setIgnored:[user isIgnored]];
 	}
 }

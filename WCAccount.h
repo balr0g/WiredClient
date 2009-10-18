@@ -26,6 +26,16 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+enum _WCAccountColor {
+	WCAccountColorBlack						= 0,
+	WCAccountColorRed						= 1,
+	WCAccountColorOrange					= 2,
+	WCAccountColorGreen						= 3,
+	WCAccountColorBlue						= 4,
+	WCAccountColorPurple					= 5
+};
+typedef enum _WCAccountColor				WCAccountColor;
+
 extern NSString * const						WCAccountFieldName;
 extern NSString * const						WCAccountFieldLocalizedName;
 extern NSString * const						WCAccountFieldType;
@@ -35,7 +45,8 @@ enum {
 	WCAccountFieldDate						= 1,
 	WCAccountFieldNumber					= 2,
 	WCAccountFieldBoolean					= 3,
-	WCAccountFieldList						= 4
+	WCAccountFieldEnum						= 4,
+	WCAccountFieldList						= 5
 };
 
 extern NSString * const						WCAccountFieldSection;
@@ -76,6 +87,8 @@ extern NSString * const						WCAccountFieldToolTip;
 - (NSString *)newName;
 - (void)setComment:(NSString *)comment;
 - (NSString *)comment;
+- (void)setColor:(WCAccountColor)color;
+- (WCAccountColor)color;
 - (NSDate *)creationDate;
 - (NSDate *)modificationDate;
 - (NSString *)editedBy;
