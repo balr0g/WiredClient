@@ -1342,13 +1342,6 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 
 
 
-- (void)wiredAccountChangePasswordReply:(WIP7Message *)message {
-	if([[message name] isEqualToString:@"wired.error"])
-		[_administration showError:[WCError errorWithWiredMessage:message]];
-}
-
-
-
 - (void)textDidChange:(NSNotification *)notification {
 	[self touch:self];
 }

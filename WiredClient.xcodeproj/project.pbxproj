@@ -50,6 +50,8 @@
 		773FF9E210869114002AF8DF /* EventsFiles.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 773FF9E110869114002AF8DF /* EventsFiles.tiff */; };
 		773FF9FE108692E7002AF8DF /* EventsUsers.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 773FF9FD108692E7002AF8DF /* EventsUsers.tiff */; };
 		773FFA8C10869694002AF8DF /* EventsAccounts.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 773FFA8B10869694002AF8DF /* EventsAccounts.tiff */; };
+		7759CC06108BD0A6005FBC7E /* EventsAdministration.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 7759CC05108BD0A6005FBC7E /* EventsAdministration.tiff */; };
+		7759CC15108BD1DE005FBC7E /* EventsTracker.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 7759CC14108BD1DE005FBC7E /* EventsTracker.tiff */; };
 		775C63071066DB04001BDEA3 /* UnreadPost.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 775C63061066DB04001BDEA3 /* UnreadPost.tiff */; };
 		775C63091066DB1A001BDEA3 /* FileLink.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 775C63081066DB1A001BDEA3 /* FileLink.tiff */; };
 		777790B110617FE200248834 /* WCBoardsTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 777790B010617FE200248834 /* WCBoardsTextView.m */; };
@@ -474,6 +476,8 @@
 		773FF9E110869114002AF8DF /* EventsFiles.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = EventsFiles.tiff; sourceTree = "<group>"; };
 		773FF9FD108692E7002AF8DF /* EventsUsers.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = EventsUsers.tiff; sourceTree = "<group>"; };
 		773FFA8B10869694002AF8DF /* EventsAccounts.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = EventsAccounts.tiff; sourceTree = "<group>"; };
+		7759CC05108BD0A6005FBC7E /* EventsAdministration.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = EventsAdministration.tiff; sourceTree = "<group>"; };
+		7759CC14108BD1DE005FBC7E /* EventsTracker.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = EventsTracker.tiff; sourceTree = "<group>"; };
 		775C63061066DB04001BDEA3 /* UnreadPost.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = UnreadPost.tiff; sourceTree = "<group>"; };
 		775C63081066DB1A001BDEA3 /* FileLink.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = FileLink.tiff; sourceTree = "<group>"; };
 		777790AF10617FE200248834 /* WCBoardsTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCBoardsTextView.h; sourceTree = "<group>"; };
@@ -1408,10 +1412,12 @@
 				A54AF8FA0F13AEBA00AFD50E /* EventOn.tiff */,
 				A54AF8F90F13AEBA00AFD50E /* Events.tiff */,
 				773FFA8B10869694002AF8DF /* EventsAccounts.tiff */,
+				7759CC05108BD0A6005FBC7E /* EventsAdministration.tiff */,
 				77CC602E10874B4100B2F592 /* EventsBoards.tiff */,
 				77CC89EB1087E62100B2F592 /* EventsDownloads.tiff */,
 				773FF9E110869114002AF8DF /* EventsFiles.tiff */,
 				77CC602F10874B4100B2F592 /* EventsMessages.tiff */,
+				7759CC14108BD1DE005FBC7E /* EventsTracker.tiff */,
 				77CC89EF1087E65400B2F592 /* EventsUploads.tiff */,
 				773FF9FD108692E7002AF8DF /* EventsUsers.tiff */,
 				A51B500E0F42282F00EAB0E1 /* FilterButtonLeft.tiff */,
@@ -1880,10 +1886,12 @@
 				A54AF9460F13AEBB00AFD50E /* EventOn.tiff in Resources */,
 				A54AF9450F13AEBB00AFD50E /* Events.tiff in Resources */,
 				773FFA8C10869694002AF8DF /* EventsAccounts.tiff in Resources */,
+				7759CC06108BD0A6005FBC7E /* EventsAdministration.tiff in Resources */,
 				77CC603010874B4100B2F592 /* EventsBoards.tiff in Resources */,
 				77CC89EC1087E62100B2F592 /* EventsDownloads.tiff in Resources */,
 				773FF9E210869114002AF8DF /* EventsFiles.tiff in Resources */,
 				77CC603110874B4100B2F592 /* EventsMessages.tiff in Resources */,
+				7759CC15108BD1DE005FBC7E /* EventsTracker.tiff in Resources */,
 				77CC89F01087E65400B2F592 /* EventsUploads.tiff in Resources */,
 				773FF9FE108692E7002AF8DF /* EventsUsers.tiff in Resources */,
 				A54AF9440F13AEBB00AFD50E /* FileInfo.tiff in Resources */,
@@ -1898,6 +1906,7 @@
 				A54AF9410F13AEBB00AFD50E /* GreenDrop.tiff in Resources */,
 				A54AF9400F13AEBB00AFD50E /* Group.tiff in Resources */,
 				A54AF93F0F13AEBB00AFD50E /* Kick.tiff in Resources */,
+				77CCA9AB1089FB5F00B2F592 /* LabelBlack.tiff in Resources */,
 				A5D080050F54B1FB00053320 /* LabelBlue.tiff in Resources */,
 				A5D080060F54B1FB00053320 /* LabelGray.tiff in Resources */,
 				A5D080070F54B1FB00053320 /* LabelGreen.tiff in Resources */,
@@ -1985,7 +1994,6 @@
 				779951890A122BBB00600320 /* Smile.tiff in Resources */,
 				779951900A122BBB00600320 /* Wink.tiff in Resources */,
 				779951820A122BBB00600320 /* Yuck.tiff in Resources */,
-				77CCA9AB1089FB5F00B2F592 /* LabelBlack.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

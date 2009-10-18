@@ -38,7 +38,9 @@ enum _WCEventType {
 	WCEventMessages,
 	WCEventBoards,
 	WCEventDownloads,
-	WCEventUploads
+	WCEventUploads,
+	WCEventAdministration,
+	WCEventTracker,
 };
 typedef enum _WCEventType		WCEventType;
 
@@ -170,6 +172,10 @@ typedef enum _WCEventType		WCEventType;
 		type = WCEventFiles;
 		string = [NSSWF:NSLS(@"Previewed \u201c%@\u201d", @"Event message (path)"),
 			[parameters objectAtIndex:0]];
+	}
+	else if([name isEqualToString:@"wired.event.account.changed_password"]) {
+		type = WCEventAccounts;
+		string = NSLS(@"Changed password", @"Event message");
 	}
 	else if([name isEqualToString:@"wired.event.account.listed_users"]) {
 		type = WCEventAccounts;
@@ -337,6 +343,49 @@ typedef enum _WCEventType		WCEventType;
 	else if([name isEqualToString:@"wired.event.transfer.completed_directory_upload"] && [parameters count] >= 1) {
 		type = WCEventUploads;
 		string = [NSSWF:NSLS(@"Completed upload of \u201c%@\u201d", @"Event message (path)"),
+			[parameters objectAtIndex:0]];
+	}
+	else if([name isEqualToString:@"wired.event.log.got_log"]) {
+		type = WCEventAdministration;
+		string = NSLS(@"Got log", @"Event message");
+	}
+	else if([name isEqualToString:@"wired.event.events.got_events"]) {
+		type = WCEventAdministration;
+		string = NSLS(@"Got events", @"Event message");
+	}
+	else if([name isEqualToString:@"wired.event.settings.got_settings"]) {
+		type = WCEventAdministration;
+		string = NSLS(@"Got settings", @"Event message");
+	}
+	else if([name isEqualToString:@"wired.event.settings.set_settings"]) {
+		type = WCEventAdministration;
+		string = NSLS(@"Set settings", @"Event message");
+	}
+	else if([name isEqualToString:@"wired.event.banlist.got_bans"]) {
+		type = WCEventAdministration;
+		string = NSLS(@"Got banlist", @"Event message");
+	}
+	else if([name isEqualToString:@"wired.event.banlist.added_ban"] && [parameters count] >= 1) {
+		type = WCEventAdministration;
+		string = [NSSWF:NSLS(@"Added ban of \u201c%@\u201d", @"Event message (ip)"),
+			[parameters objectAtIndex:0]];
+	}
+	else if([name isEqualToString:@"wired.event.banlist.deleted_ban"] && [parameters count] >= 1) {
+		type = WCEventAdministration;
+		string = [NSSWF:NSLS(@"Deleted ban of \u201c%@\u201d", @"Event message (ip)"),
+			[parameters objectAtIndex:0]];
+	}
+	else if([name isEqualToString:@"wired.event.tracker.got_categories"]) {
+		type = WCEventTracker;
+		string = NSLS(@"Got tracker categories", @"Event message");
+	}
+	else if([name isEqualToString:@"wired.event.tracker.got_servers"]) {
+		type = WCEventTracker;
+		string = NSLS(@"Got tracker servers", @"Event message");
+	}
+	else if([name isEqualToString:@"wired.event.tracker.registered_server"] && [parameters count] >= 1) {
+		type = WCEventTracker;
+		string = [NSSWF:NSLS(@"Registered server \u201c%@\u201d", @"Event message (server)"),
 			[parameters objectAtIndex:0]];
 	}
 	else {
@@ -860,13 +909,15 @@ typedef enum _WCEventType		WCEventType;
 		return event->_ip;
 	else if(tableColumn == _imageTableColumn) {
 		switch(event->_type) {
-			case WCEventUsers:		return [NSImage imageNamed:@"EventsUsers"];		break;
-			case WCEventFiles:		return [NSImage imageNamed:@"EventsFiles"];		break;
-			case WCEventAccounts:	return [NSImage imageNamed:@"EventsAccounts"];	break;
-			case WCEventMessages:	return [NSImage imageNamed:@"EventsMessages"];	break;
-			case WCEventBoards:		return [NSImage imageNamed:@"EventsBoards"];	break;
-			case WCEventDownloads:	return [NSImage imageNamed:@"EventsDownloads"];	break;
-			case WCEventUploads:	return [NSImage imageNamed:@"EventsUploads"];	break;
+			case WCEventUsers:				return [NSImage imageNamed:@"EventsUsers"];				break;
+			case WCEventFiles:				return [NSImage imageNamed:@"EventsFiles"];				break;
+			case WCEventAccounts:			return [NSImage imageNamed:@"EventsAccounts"];			break;
+			case WCEventMessages:			return [NSImage imageNamed:@"EventsMessages"];			break;
+			case WCEventBoards:				return [NSImage imageNamed:@"EventsBoards"];			break;
+			case WCEventDownloads:			return [NSImage imageNamed:@"EventsDownloads"];			break;
+			case WCEventUploads:			return [NSImage imageNamed:@"EventsUploads"];			break;
+			case WCEventAdministration:		return [NSImage imageNamed:@"EventsAdministration"];	break;
+			case WCEventTracker:			return [NSImage imageNamed:@"EventsTracker"];			break;
 		}
 	}
 	else if(tableColumn == _messageTableColumn)

@@ -143,6 +143,19 @@
 
 
 
+- (void)wiredAccountChangePasswordReply:(WIP7Message *)message {
+	if([[message name] isEqualToString:@"wired.okay"]) {
+		[[self connection] removeObserver:self message:message];
+	}
+	else if([[message name] isEqualToString:@"wired.error"]) {
+		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
+		
+		[[self connection] removeObserver:self message:message];
+	}
+}
+
+
+
 - (CGFloat)splitView:(NSSplitView *)splitView constrainMaxCoordinate:(CGFloat)proposedMax ofSubviewAt:(NSInteger)offset {
 	if(splitView == _userListSplitView)
 		return proposedMax - 176.0;
