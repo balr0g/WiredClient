@@ -140,13 +140,13 @@
 #pragma mark -
 
 - (void)setDelegate:(id)delegate {
-	_delegate = delegate;
+	_delegate						= delegate;
 	
-	_delegateLinkConnected = [_delegate respondsToSelector:@selector(linkConnected:)];
-	_delegateLinkClosed = [_delegate respondsToSelector:@selector(linkClosed:error:)];
-	_delegateLinkTerminated = [_delegate respondsToSelector:@selector(linkTerminated:)];
-	_delegateLinkSentCommand = [_delegate respondsToSelector:@selector(link:sentMessage:)];
-	_delegateLinkReceivedMessage = [_delegate respondsToSelector:@selector(link:receivedMessage:)];
+	_delegateLinkConnected			= [_delegate respondsToSelector:@selector(linkConnected:)];
+	_delegateLinkClosed				= [_delegate respondsToSelector:@selector(linkClosed:error:)];
+	_delegateLinkTerminated			= [_delegate respondsToSelector:@selector(linkTerminated:)];
+	_delegateLinkSentCommand		= [_delegate respondsToSelector:@selector(link:sentMessage:)];
+	_delegateLinkReceivedMessage	= [_delegate respondsToSelector:@selector(link:receivedMessage:)];
 }
 
 
