@@ -52,7 +52,6 @@
 @end
 
 
-
 @implementation WCServers(Private)
 
 - (id)_itemAtIndex:(NSUInteger)index {
@@ -272,12 +271,12 @@
 
 - (id)init {
 	self = [super initWithWindowNibName:@"Servers"];
-
-	_bonjour = [[WCServerBonjour bonjourItem] retain];
-
-	_servers = [[WCServerContainer alloc] initWithName:@"<root>"];
 	
-	_browser = [[NSNetServiceBrowser alloc] init];
+	_bonjour		= [[WCServerBonjour bonjourItem] retain];
+
+	_servers		= [[WCServerContainer alloc] initWithName:@"<root>"];
+	
+	_browser		= [[NSNetServiceBrowser alloc] init];
 	[_browser setDelegate:self];
 	[_browser searchForServicesOfType:WCBonjourName inDomain:@""];
 
@@ -457,8 +456,6 @@
 
 	if([connection error])
 		[_errorQueue showError:[connection error]];
-	
-	[connection terminate];
 }
 
 
@@ -481,8 +478,6 @@
 	}
 	
 	[_progressIndicator stopAnimation:self];
-	
-	[connection removeObserver:self];
 }
 
 
@@ -503,8 +498,6 @@
 			[[tracker itemForCategoryPath:path] addItem:[WCServerTrackerCategory itemWithName:[path lastPathComponent]]];
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
-		[(id) [message contextInfo] terminate];
-
 		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
 	}
 }
