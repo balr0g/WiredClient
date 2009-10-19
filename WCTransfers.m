@@ -28,6 +28,7 @@
 
 #import "WCCache.h"
 #import "WCConnect.h"
+#import "WCConsole.h"
 #import "WCErrorQueue.h"
 #import "WCFile.h"
 #import "WCFileInfo.h"
@@ -1208,7 +1209,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	double						percent, maxSpeed;
 	int							dataFD, rsrcFD, writtenBytes;
 	BOOL						data;
-	
+		
 	error = NULL;
 	connection = [transfer transferConnection];
 	
@@ -1219,6 +1220,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 			[transfer setState:WCTransferStopping];
 			[transfer signalTerminated];
 			
+			[[[transfer connection] console] log:@"*** %@ -_connectConnection:forTransfer:error: -> %@", [transfer remotePath], error];
+
 			[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 								   withObject:transfer
 								   withObject:error];
@@ -1250,6 +1253,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 			[transfer signalTerminated];
 		}
 		
+		[[[transfer connection] console] log:@"*** %@ -_createRemainingDirectoriesOnConnection:forTransfer:error: -> %@", [transfer remotePath], error];
+		
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 							   withObject:transfer
 							   withObject:error];
@@ -1262,6 +1267,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 			[transfer setState:WCTransferDisconnecting];
 			[transfer signalTerminated];
 		}
+		
+		[[[transfer connection] console] log:@"*** %@ -_sendDownloadFileMessageOnConnection:forFile:error: -> %@", [transfer remotePath], error];
 		
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 							   withObject:transfer
@@ -1281,6 +1288,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 			[transfer signalTerminated];
 		}
 		
+		[[[transfer connection] console] log:@"*** %@ -_runConnection:forTransfer:untilReceivingMessageName:error: -> %@", [transfer remotePath], error];
+
 		if(error) {
 			[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 								   withObject:transfer
@@ -1314,6 +1323,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		if(rsrcFD >= 0)
 			close(rsrcFD);
 
+		[[[transfer connection] console] log:@"*** %@ open() -> %@", [transfer remotePath], error];
+
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 							   withObject:transfer
 							   withObject:error];
@@ -1340,18 +1351,26 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		if(data && dataLength == 0)
 			data = NO;
 		
-		if(!data && rsrcLength == 0)
+		if(!data && rsrcLength == 0) {
+			[[[transfer connection] console] log:@"*** %@ !data && rsrcLength == 0", [transfer remotePath]];
 			break;
+		}
 		
 		readBytes = [socket readOOBData:&buffer timeout:30.0 error:&error];
 		
 		if(readBytes <= 0) {
+			[[[transfer connection] console] log:@"*** %@ -readOOBData:timeout:error: -> %d %@", [transfer remotePath], readBytes, error];
 			[transfer setState:WCTransferDisconnecting];
 
 			break;
 		}
 		
 		if((data && dataLength < (NSUInteger) readBytes) || (!data && rsrcLength < (NSUInteger) readBytes)) {
+			if(data && dataLength < (NSUInteger) readBytes)
+				[[[transfer connection] console] log:@"*** %@ data && dataLength < (NSUInteger) readBytes", [transfer remotePath]];
+			else if(!data && rsrcLength < (NSUInteger) readBytes)
+				[[[transfer connection] console] log:@"*** %@ !data && rsrcLength < (NSUInteger) readBytes", [transfer remotePath]];
+				
 			error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientTransferFailed argument:[transfer name]];
 			
 			break;
@@ -1360,6 +1379,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		writtenBytes = write(data ? dataFD : rsrcFD, buffer, readBytes);
 		
 		if(writtenBytes <= 0) {
+			[[[transfer connection] console] log:@"*** %@ write() -> %d", [transfer remotePath], writtenBytes];
 			if(writtenBytes < 0)
 				error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientTransferFailed argument:[transfer name]];
 			
@@ -1470,6 +1490,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 				[transfer signalTerminated];
 			}
 			
+			[[[transfer connection] console] log:@"*** %@ -_connectConnection:forTransfer:error: -> %@", [transfer remotePath], error];
+
 			[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 								   withObject:transfer
 								   withObject:error];
@@ -1501,6 +1523,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 			[transfer signalTerminated];
 		}
 
+		[[[transfer connection] console] log:@"*** %@ -_createRemainingDirectoriesOnConnection:forTransfer:error: -> %@", [transfer remotePath], error];
+		
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 							   withObject:transfer
 							   withObject:error];
@@ -1513,6 +1537,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 			[transfer setState:WCTransferDisconnecting];
 			[transfer signalTerminated];
 		}
+		
+		[[[transfer connection] console] log:@"*** %@ -_sendUploadFileMessageOnConnection:forFile:error: -> %@", [transfer remotePath], error];
 		
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 							   withObject:transfer
@@ -1532,6 +1558,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 			[transfer signalTerminated];
 		}
 		
+		[[[transfer connection] console] log:@"*** %@ -_runConnection:forTransfer:untilReceivingMessageName:error: -> %@", [transfer remotePath], error];
+
 		if(error) {
 			[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 								   withObject:transfer
@@ -1566,6 +1594,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 			[transfer signalTerminated];
 		}
 		
+		[[[transfer connection] console] log:@"*** %@ -_sendUploadMessageOnConnection:forFile:dataLength:rsrcLength:error: -> %@", [transfer remotePath], error];
+		
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 							   withObject:transfer
 							   withObject:error];
@@ -1591,6 +1621,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		if(rsrcFD >= 0)
 			close(rsrcFD);
 		
+		[[[transfer connection] console] log:@"*** %@ open() -> %@", [transfer remotePath], error];
+		
 		[self performSelectorOnMainThread:@selector(_finishTransfer:withError:)
 							   withObject:transfer
 							   withObject:error];
@@ -1612,12 +1644,17 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 		if(data && dataLength == 0)
 			data = NO;
 		
-		if(!data && rsrcLength == 0)
+		if(!data && rsrcLength == 0) {
+			[[[transfer connection] console] log:@"*** %@ !data && rsrcLength == 0", [transfer remotePath]];
+			
 			break;
+		}
 		
 		readBytes = read(data ? dataFD : rsrcFD, buffer, sizeof(buffer));
 
 		if(readBytes <= 0) {
+			[[[transfer connection] console] log:@"*** %@ read() -> %d", [transfer remotePath], readBytes];
+		
 			if(readBytes < 0)
 				error = [WCError errorWithDomain:WCWiredClientErrorDomain code:WCWiredClientTransferFailed argument:[transfer name]];
 
@@ -1633,6 +1670,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 			sendBytes = (rsrcLength < (NSUInteger) readBytes) ? rsrcLength : (NSUInteger) readBytes;
 		
 		if(![socket writeOOBData:buffer length:sendBytes timeout:30.0 error:&error]) {
+			[[[transfer connection] console] log:@"*** %@ -writeOOBData:length:timeout:error: -> %@", [transfer remotePath], error];
+			
 			[transfer setState:WCTransferDisconnecting];
 
 			break;
