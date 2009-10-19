@@ -212,7 +212,9 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 	NSMutableDictionary		*dictionary;
 	NSAlert					*alert;
 	
-	if(_touched) {
+	if(_touched && !_saving) {
+		_saving = YES;
+		
 		dictionary = [[NSMutableDictionary alloc] init];
 					  
 		[dictionary setObject:[NSNumber numberWithInteger:action] forKey:@"WCAccountsAction"];
@@ -334,24 +336,6 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 	}
 	
 	return editable;
-}
-
-
-
-- (void)_stopEditing {
-	[_accounts removeAllObjects];
-	
-	_creating	= NO;
-	_editing	= NO;
-	_touched	= NO;
-	
-	[self _validateForAccounts];
-	[self _readFromAccounts];
-	[self _reloadAccounts];
-	
-	[[_administration window] setDocumentEdited:NO];
-	
-	[self _validate];
 }
 
 
@@ -884,6 +868,20 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 		
 		[_accountsTableView selectRowIndexes:indexes byExtendingSelection:NO];
 		[_selectAccounts removeAllObjects];
+	} else {
+		if([[_accountsTableView selectedRowIndexes] count] == 0) {
+			indexes		= [NSMutableIndexSet indexSet];
+			enumerator	= [_accounts objectEnumerator];
+			
+			while((account = [enumerator nextObject])) {
+				index = [_shownAccounts indexOfObject:account];
+				
+				if(index != NSNotFound)
+					[indexes addIndex:index];
+			}
+			
+			[_accountsTableView selectRowIndexes:indexes byExtendingSelection:NO];
+		}
 	}
 }
 
@@ -1167,6 +1165,8 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 		[_allUserAccounts setArray:accounts];
 		
 		[_listedAccounts removeObjectForKey:number];
+		
+		[[_administration connection] removeObserver:self message:message];
 	}
 	else if([[message name] isEqualToString:@"wired.account.group_list"]) {
 		[accounts addObject:[WCGroupAccount accountWithMessage:message]];
@@ -1188,9 +1188,13 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 		[_accountsTableView reloadData];
 		
 		[self _selectAccounts];
+		
+		[[_administration connection] removeObserver:self message:message];
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
 		[_administration showError:[WCError errorWithWiredMessage:message]];
+		
+		[[_administration connection] removeObserver:self message:message];
 	}
 }
 
@@ -1198,6 +1202,8 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 
 - (void)wiredAccountSubscribeAccountsReply:(WIP7Message *)message {
 	if([[message name] isEqualToString:@"wired.okay"]) {
+		[[_administration connection] removeObserver:self message:message];
+		
 		[[_administration connection] removeObserver:self message:message];
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
@@ -1258,19 +1264,40 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 			}
 		}
 		
+		[[_administration connection] removeObserver:self message:message];
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
 		[_administration showError:[WCError errorWithWiredMessage:message]];
+		
+		[[_administration connection] removeObserver:self message:message];
 	}
 }
 
 
 
 - (void)wiredAccountChangeAccountReply:(WIP7Message *)message {
-	if([[message name] isEqualToString:@"wired.okay"])
-		[self _stopEditing];
-	else if([[message name] isEqualToString:@"wired.error"])
+	if([[message name] isEqualToString:@"wired.okay"]) {
+		[_accounts removeAllObjects];
+		
+		_creating	= NO;
+		_editing	= NO;
+		_touched	= NO;
+		
+		[self _validateForAccounts];
+		[self _readFromAccounts];
+		[self _reloadAccounts];
+		
+		[[_administration window] setDocumentEdited:NO];
+		
+		[self _validate];
+		
+		[[_administration connection] removeObserver:self message:message];
+	}
+	else if([[message name] isEqualToString:@"wired.error"]) {
 		[_administration showError:[WCError errorWithWiredMessage:message]];
+		
+		[[_administration connection] removeObserver:self message:message];
+	}
 }
 
 
@@ -1963,7 +1990,17 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 			
 			[_selectAccounts removeAllObjects];
 		} else {
-			[self _stopEditing];
+			[_accounts removeAllObjects];
+			
+			_creating	= NO;
+			_editing	= NO;
+			
+			[self _validateForAccounts];
+			[self _readFromAccounts];
+			
+			[[_administration window] setDocumentEdited:NO];
+			
+			[self _validate];
 		}
 		
 		_touched = NO;
@@ -1992,6 +2029,8 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 				break;
 		}
 	}
+	
+	_saving = NO;
 	
 	[dictionary release];
 }

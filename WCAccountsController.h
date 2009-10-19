@@ -95,6 +95,7 @@
 	BOOL								_creating;
 	BOOL								_editing;
 	BOOL								_touched;
+	BOOL								_saving;
 	
 	NSUInteger							_requestedAccounts;
 
