@@ -582,7 +582,9 @@ typedef enum _WCChatActivity				WCChatActivity;
 	connection		= [[self selectedChatController] connection];
 	selector		= [item action];
 	
-	if(selector == @selector(reconnect:))
+	if(selector == @selector(disconnect:))
+		return (connection != NULL && [connection isConnected]);
+	else if(selector == @selector(reconnect:))
 		return (connection != NULL && ![connection isConnected] && ![connection isManuallyReconnecting]);
 	else if(selector == @selector(files:))
 		return (connection != NULL && [connection isConnected] && [[connection account] fileListFiles]);
