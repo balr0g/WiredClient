@@ -658,19 +658,19 @@
 			break;
 			
 		case WCTransferPausing:
-			return [NSSWF:@"%@%C", NSLS(@"Pausing", @"Transfer pausing"), 0x2026];
+			return NSLS(@"Pausing\u2026", @"Transfer pausing");
 			break;
 			
 		case WCTransferStopping:
-			return [NSSWF:@"%@%C", NSLS(@"Stopping", @"Transfer stopping"), 0x2026];
+			return NSLS(@"Stopping\u2026", @"Transfer stopping");
 			break;
 			
 		case WCTransferDisconnecting:
-			return [NSSWF:@"%@%C", NSLS(@"Disconnecting", @"Transfer disconnecting"), 0x2026];
+			return NSLS(@"Disconnecting\u2026", @"Transfer disconnecting");
 			break;
 
 		case WCTransferRemoving:
-			return [NSSWF:@"%@%C", NSLS(@"Removing", @"Transfer removing"), 0x2026];
+			return NSLS(@"Removing\u2026", @"Transfer removing");
 			break;
 
 		case WCTransferPaused:

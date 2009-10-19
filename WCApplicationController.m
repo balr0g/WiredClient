@@ -195,12 +195,10 @@ static NSInteger _WCCompareSmileyLength(id object1, id object2, void *context) {
 #pragma mark -
 
 - (void)_update {
-	if([[WCSettings settings] boolForKey:WCConfirmDisconnect]) {
-		[_disconnectMenuItem setTitle:[NSSWF:
-			@"%@%C", NSLS(@"Disconnect", @"Disconnect menu item"), 0x2026]];
-	} else {
+	if([[WCSettings settings] boolForKey:WCConfirmDisconnect])
+		[_disconnectMenuItem setTitle:NSLS(@"Disconnect\u2026", @"Disconnect menu item")];
+	else
 		[_disconnectMenuItem setTitle:NSLS(@"Disconnect", @"Disconnect menu item")];
-	}
 	
 	[_updater setAutomaticallyChecksForUpdates:[[WCSettings settings] boolForKey:WCCheckForUpdate]];
 }

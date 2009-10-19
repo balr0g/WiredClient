@@ -140,18 +140,16 @@
 	
 	if([item isKindOfClass:[WCServerTrackerServer class]]) {
 		[_statusTextField setStringValue:[NSSWF:
-			@"%@ %C %@",
+			@"%@ \u2014 %@",
 			[item name],
-			0x2014,
 			[[(WCServerTrackerServer *) item URL] humanReadableString]]];
 	}
 	else if([item isKindOfClass:[WCServerTracker class]] || [item isKindOfClass:[WCServerTrackerCategory class]]) {
 		count = [item numberOfServerItems];
 
 		[_statusTextField setStringValue:[NSSWF:
-			@"%@ %C %lu %@",
+			@"%@ \u2014 %lu %@",
 			[item name],
-			0x2014,
 			count,
 			count == 1
 				? NSLS(@"server", @"Server singular")
@@ -161,8 +159,7 @@
 		count = [item numberOfServerItems];
 
 		[_statusTextField setStringValue:[NSSWF:
-			NSLS(@"Bonjour local service discovery %C %lu %@", @"Bonjour tracker ('-', servers, 'server(s)'"),
-			0x2014,
+			NSLS(@"Bonjour local service discovery \u2014 %lu %@", @"Bonjour tracker (servers, 'server(s)'"),
 			count,
 			count == 1
 				? NSLS(@"server", @"Server singular")
@@ -170,9 +167,8 @@
 	}
 	else if([item isKindOfClass:[WCServerBonjourServer class]]) {
 		[_statusTextField setStringValue:[NSSWF:
-			@"%@ %C %@",
+			@"%@ \u2014 %@",
 			[item name],
-			0x2014,
 			NSLS(@"Local server via Bonjour", @"Server via Bonjour")]];
 	}
 }

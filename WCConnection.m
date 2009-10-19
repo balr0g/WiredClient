@@ -35,7 +35,7 @@ WIP7Spec							*WCP7Spec;
 
 + (NSString *)versionStringForMessage:(WIP7Message *)message {
 	NSString		*applicationName, *applicationVersion, *osName, *osVersion, *arch;
-	WIP7UInt32		build;
+	WIP7UInt32		applicationBuild;
 	
 	applicationName		= [message stringForName:@"wired.info.application.name"];
 	applicationVersion	= [message stringForName:@"wired.info.application.version"];
@@ -43,15 +43,12 @@ WIP7Spec							*WCP7Spec;
 	osVersion			= [message stringForName:@"wired.info.os.version"];
 	arch				= [message stringForName:@"wired.info.arch"];
 	
-	if([message getUInt32:&build forName:@"wired.info.application.build"]) {
-		return [NSSWF:
-			NSLS(@"%@ %@ (%u) on %@ %@ (%@)", @"Wired version (application name, application version, application build, os name, os version, architecture)"),
-			applicationName, applicationVersion, build, osName, osVersion, arch];
-	} else {
-		return [NSSWF:
-			NSLS(@"%@ %@ on %@ %@ (%@)", @"Wired version (application name, application version, os name, os version, architecture)"),
-			applicationName, applicationVersion, osName, osVersion, arch];
-	}
+	[message getUInt32:&applicationBuild forName:@"wired.info.application.build"];
+	
+	return [NSSWF:
+		NSLS(@"%@ %@ (%u) on %@ %@ (%@)", @"Wired version (application name, application version, application build, os name, os version, architecture)"),
+		applicationName, applicationVersion, applicationBuild,
+		osName, osVersion, arch];
 }
 
 
