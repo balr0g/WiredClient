@@ -288,7 +288,7 @@
 	
 	if(selector == @selector(getInfo:))
 		return [self _validateGetInfo];
-	else if(selector == @selector(revealInFiles::))
+	else if(selector == @selector(revealInFiles:))
 		return [self _validateRevealInFiles];
 	else if(selector == @selector(disconnect:))
 		return [self _validateDisconnect];
