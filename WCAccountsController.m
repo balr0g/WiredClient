@@ -806,7 +806,7 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 			if(item == _noGroupMenuItem)
 				passed = [[(WCUserAccount *) account group] isEqualToString:@""];
 			else
-				passed = [[(WCUserAccount *)account group] isEqualToString:[item title]];
+				passed = [[(WCUserAccount *) account group] isEqualToString:[item title]];
 		}
 		
 		if(!passed)
@@ -2281,12 +2281,14 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 	NSEnumerator	*enumerator;
 	NSString		*name;
 	WCAccount		*account;
+	id				value;
 	NSUInteger		type;
 	BOOL			set = NO;
 	
 	type		= [[item objectForKey:WCAccountFieldType] integerValue];
 	name		= [item objectForKey:WCAccountFieldName];
 	enumerator	= [_accounts objectEnumerator];
+	value		= [cell objectValue];
 	
 	while((account = [enumerator nextObject])) {
 		if([account valueForKey:name]) {
@@ -2302,7 +2304,7 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 		[cell setFont:[[cell font] fontByAddingTrait:NSUnboldFontMask]];
 	
 	if([cell respondsToSelector:@selector(setTextColor:)]) {
-		if([[cell objectValue] isEqualToString:NSLS(@"<Multiple values>", @"Account field value")])
+		if([value isKindOfClass:value] && [value isEqualToString:NSLS(@"<Multiple values>", @"Account field value")])
 			[cell setTextColor:[NSColor grayColor]];
 		else
 			[cell setTextColor:[NSColor blackColor]];
