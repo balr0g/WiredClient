@@ -649,7 +649,7 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 					if([_groupPopUpButton selectedItem] != _noneMenuItem)
 						group = [_groupPopUpButton titleOfSelectedItem];
 					else
-						group = NULL;
+						group = @"";
 					
 					[(WCUserAccount *) account setGroup:group];
 				}
