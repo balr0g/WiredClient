@@ -106,6 +106,20 @@ typedef enum _WCEventType		WCEventType;
 		string = [NSSWF:NSLS(@"Got info for \u201c%@\u201d", @"Event message (nick)"),
 			[parameters objectAtIndex:0]];
 	}
+	else if([name isEqualToString:@"wired.event.user.disconnected_user"] && [parameters count] >= 1) {
+		type = WCEventUsers;
+		string = [NSSWF:NSLS(@"Disconnected \u201c%@\u201d", @"Event message (nick)"),
+			[parameters objectAtIndex:0]];
+	}
+	else if([name isEqualToString:@"wired.event.user.banned_user"] && [parameters count] >= 1) {
+		type = WCEventUsers;
+		string = [NSSWF:NSLS(@"Banned \u201c%@\u201d", @"Event message (nick)"),
+			[parameters objectAtIndex:0]];
+	}
+	else if([name isEqualToString:@"wired.event.user.got_users"]) {
+		type = WCEventUsers;
+		string = NSLS(@"Monitored users", @"Event message");
+	}
 	else if([name isEqualToString:@"wired.event.file.listed_directory"] && [parameters count] >= 1) {
 		type = WCEventFiles;
 		string = [NSSWF:NSLS(@"Listed \u201c%@\u201d", @"Event message (path)"),
