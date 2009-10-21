@@ -70,6 +70,7 @@ extern NSString * const WCServerConnectionEventInfo2Key;
 	
 	BOOL									_manuallyReconnecting;
 	BOOL									_shouldAutoReconnect;
+	BOOL									_willAutoReconnect;
 	BOOL									_autoReconnecting;
 	
 	BOOL									_hasConnected;
@@ -91,6 +92,7 @@ extern NSString * const WCServerConnectionEventInfo2Key;
 - (BOOL)isReconnecting;
 - (BOOL)isManuallyReconnecting;
 - (BOOL)isAutoReconnecting;
+- (BOOL)willAutoReconnect;
 - (NSUInteger)userID;
 - (NSString *)name;
 - (WCUserAccount *)account;

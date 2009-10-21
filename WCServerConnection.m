@@ -92,6 +92,7 @@ NSString * const WCServerConnectionEventInfo2Key						= @"WCServerConnectionEven
 
 - (void)_autoReconnect {
 	if(![self isConnected] && !_autoReconnecting) {
+		_willAutoReconnect		= NO;
 		_autoReconnecting		= YES;
 		_manuallyReconnecting	= NO;
 		
@@ -293,10 +294,14 @@ NSString * const WCServerConnectionEventInfo2Key						= @"WCServerConnectionEven
 			[[WCPublicChat publicChat] showWindow:self];
 		}
 		
-		if(!_manuallyReconnecting && !_disconnecting)
+		if(!_manuallyReconnecting && !_disconnecting) {
 			[self performSelector:@selector(_triggerAutoReconnect) afterDelay:1.0];
+			
+			_willAutoReconnect = YES;
+		}
 
-		_manuallyReconnecting = _autoReconnecting = NO;
+		_manuallyReconnecting	= NO;
+		_autoReconnecting		= NO;
 	}
 }
 
@@ -416,6 +421,7 @@ NSString * const WCServerConnectionEventInfo2Key						= @"WCServerConnectionEven
 	if(![self isConnected] && !_manuallyReconnecting) {
 		_autoReconnecting		= NO;
 		_manuallyReconnecting	= YES;
+		_willAutoReconnect		= NO;
 		_shouldAutoReconnect	= YES;
 		
 		[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_autoReconnect)];
@@ -516,6 +522,12 @@ NSString * const WCServerConnectionEventInfo2Key						= @"WCServerConnectionEven
 
 - (BOOL)isAutoReconnecting {
 	return _autoReconnecting;
+}
+
+
+
+- (BOOL)willAutoReconnect {
+	return _willAutoReconnect;
 }
 
 
