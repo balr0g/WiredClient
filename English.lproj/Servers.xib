@@ -3,16 +3,16 @@
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
 		<string key="IBDocument.SystemVersion">10A432</string>
-		<string key="IBDocument.InterfaceBuilderVersion">732</string>
+		<string key="IBDocument.InterfaceBuilderVersion">740</string>
 		<string key="IBDocument.AppKitVersion">1038</string>
 		<string key="IBDocument.HIToolboxVersion">437.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">732</string>
+			<string key="NS.object.0">740</string>
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="2"/>
+			<integer value="48"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -114,7 +114,7 @@
 													<object class="NSTextFieldCell" key="NSDataCell" id="143599398">
 														<int key="NSCellFlags">1411513920</int>
 														<int key="NSCellFlags2">2048</int>
-														<string key="NSContents">Text Cell</string>
+														<string key="NSContents"/>
 														<object class="NSFont" key="NSSupport" id="792916435">
 															<string key="NSName">LucidaGrande</string>
 															<double key="NSSize">13</double>
@@ -157,7 +157,7 @@
 													<object class="NSTextFieldCell" key="NSDataCell" id="598297992">
 														<int key="NSCellFlags">1411513920</int>
 														<int key="NSCellFlags2">67110912</int>
-														<string key="NSContents">Text Cell</string>
+														<string key="NSContents"/>
 														<reference key="NSSupport" ref="792916435"/>
 														<reference key="NSControlView" ref="789247016"/>
 														<reference key="NSBackgroundColor" ref="643625732"/>
@@ -191,7 +191,7 @@
 													<object class="NSTextFieldCell" key="NSDataCell" id="731100205">
 														<int key="NSCellFlags">1411513920</int>
 														<int key="NSCellFlags2">67110912</int>
-														<string key="NSContents">Text Cell</string>
+														<string key="NSContents"/>
 														<reference key="NSSupport" ref="792916435"/>
 														<reference key="NSControlView" ref="789247016"/>
 														<reference key="NSBackgroundColor" ref="643625732"/>
@@ -217,7 +217,7 @@
 													<object class="NSTextFieldCell" key="NSDataCell" id="932845414">
 														<int key="NSCellFlags">1411513920</int>
 														<int key="NSCellFlags2">67110912</int>
-														<string key="NSContents">Text Cell</string>
+														<string key="NSContents"/>
 														<reference key="NSSupport" ref="792916435"/>
 														<reference key="NSControlView" ref="789247016"/>
 														<reference key="NSBackgroundColor" ref="643625732"/>
@@ -243,7 +243,7 @@
 													<object class="NSTextFieldCell" key="NSDataCell" id="864489204">
 														<int key="NSCellFlags">1411513920</int>
 														<int key="NSCellFlags2">2048</int>
-														<string key="NSContents">Text Cell</string>
+														<string key="NSContents"/>
 														<reference key="NSSupport" ref="792916435"/>
 														<reference key="NSControlView" ref="789247016"/>
 														<reference key="NSBackgroundColor" ref="643625732"/>
@@ -341,7 +341,7 @@
 							<object class="NSTextFieldCell" key="NSTitleCell">
 								<int key="NSCellFlags">67239424</int>
 								<int key="NSCellFlags2">0</int>
-								<string key="NSContents">Box</string>
+								<string key="NSContents"/>
 								<reference key="NSSupport" ref="792916435"/>
 								<object class="NSColor" key="NSBackgroundColor">
 									<int key="NSColorSpace">6</int>
@@ -713,9 +713,9 @@
 				<object class="NSMutableArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{267, 203}, {889, 461}}</string>
+					<string>{{162, 203}, {889, 461}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{267, 203}, {889, 461}}</string>
+					<string>{{162, 203}, {889, 461}}</string>
 					<integer value="0"/>
 					<string>{196, 240}</string>
 					<string>{{5, 244}, {889, 461}}</string>

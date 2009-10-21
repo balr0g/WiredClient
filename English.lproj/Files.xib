@@ -3,19 +3,20 @@
 	<data>
 		<int key="IBDocument.SystemTarget">1040</int>
 		<string key="IBDocument.SystemVersion">10A432</string>
-		<string key="IBDocument.InterfaceBuilderVersion">732</string>
+		<string key="IBDocument.InterfaceBuilderVersion">740</string>
 		<string key="IBDocument.AppKitVersion">1038</string>
 		<string key="IBDocument.HIToolboxVersion">437.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">732</string>
+			<string key="NS.object.0">740</string>
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="3"/>
-			<integer value="2"/>
 			<integer value="190"/>
-			<integer value="265"/>
+			<integer value="2"/>
+			<integer value="1"/>
+			<integer value="3"/>
+			<integer value="34"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -149,7 +150,7 @@
 													<object class="NSTextFieldCell" key="NSDataCell" id="761080176">
 														<int key="NSCellFlags">337772096</int>
 														<int key="NSCellFlags2">2048</int>
-														<string key="NSContents">Text Cell</string>
+														<string key="NSContents"/>
 														<object class="NSFont" key="NSSupport">
 															<string key="NSName">LucidaGrande</string>
 															<double key="NSSize">11</double>
@@ -296,7 +297,7 @@
 																		<object class="NSTextFieldCell" key="NSDataCell" id="275318058">
 																			<int key="NSCellFlags">338820672</int>
 																			<int key="NSCellFlags2">1024</int>
-																			<string key="NSContents">Text Cell</string>
+																			<string key="NSContents"/>
 																			<object class="NSFont" key="NSSupport" id="910864519">
 																				<string key="NSName">LucidaGrande</string>
 																				<double key="NSSize">13</double>
@@ -331,7 +332,7 @@
 																		<object class="NSTextFieldCell" key="NSDataCell" id="391244510">
 																			<int key="NSCellFlags">338820672</int>
 																			<int key="NSCellFlags2">1024</int>
-																			<string key="NSContents">Text Cell</string>
+																			<string key="NSContents"/>
 																			<reference key="NSSupport" ref="910864519"/>
 																			<reference key="NSControlView" ref="950557505"/>
 																			<reference key="NSBackgroundColor" ref="817950902"/>
@@ -357,7 +358,7 @@
 																		<object class="NSTextFieldCell" key="NSDataCell" id="103537843">
 																			<int key="NSCellFlags">338820672</int>
 																			<int key="NSCellFlags2">1024</int>
-																			<string key="NSContents">Text Cell</string>
+																			<string key="NSContents"/>
 																			<reference key="NSSupport" ref="910864519"/>
 																			<reference key="NSControlView" ref="950557505"/>
 																			<reference key="NSBackgroundColor" ref="817950902"/>
@@ -383,7 +384,7 @@
 																		<object class="NSTextFieldCell" key="NSDataCell" id="460282056">
 																			<int key="NSCellFlags">338820672</int>
 																			<int key="NSCellFlags2">1024</int>
-																			<string key="NSContents">Text Cell</string>
+																			<string key="NSContents"/>
 																			<reference key="NSSupport" ref="910864519"/>
 																			<reference key="NSControlView" ref="950557505"/>
 																			<reference key="NSBackgroundColor" ref="817950902"/>
@@ -409,7 +410,7 @@
 																		<object class="NSTextFieldCell" key="NSDataCell" id="818695022">
 																			<int key="NSCellFlags">338820672</int>
 																			<int key="NSCellFlags2">67109888</int>
-																			<string key="NSContents">Text Cell</string>
+																			<string key="NSContents"/>
 																			<reference key="NSSupport" ref="910864519"/>
 																			<reference key="NSControlView" ref="950557505"/>
 																			<reference key="NSBackgroundColor" ref="329671793"/>
@@ -565,7 +566,7 @@
 														<object class="NSTextFieldCell" key="NSTitleCell">
 															<int key="NSCellFlags">67239424</int>
 															<int key="NSCellFlags2">0</int>
-															<string key="NSContents">Box</string>
+															<string key="NSContents"/>
 															<reference key="NSSupport" ref="910864519"/>
 															<object class="NSColor" key="NSBackgroundColor" id="547321203">
 																<int key="NSColorSpace">6</int>
@@ -683,7 +684,7 @@
 							<object class="NSTextFieldCell" key="NSTitleCell">
 								<int key="NSCellFlags">67239424</int>
 								<int key="NSCellFlags2">0</int>
-								<string key="NSContents">Box</string>
+								<string key="NSContents"/>
 								<reference key="NSSupport" ref="910864519"/>
 								<reference key="NSBackgroundColor" ref="547321203"/>
 								<object class="NSColor" key="NSTextColor">
@@ -705,7 +706,7 @@
 							<object class="NSTextFieldCell" key="NSTitleCell">
 								<int key="NSCellFlags">67239424</int>
 								<int key="NSCellFlags2">0</int>
-								<string key="NSContents">Box</string>
+								<string key="NSContents"/>
 								<reference key="NSSupport" ref="910864519"/>
 								<reference key="NSBackgroundColor" ref="547321203"/>
 								<object class="NSColor" key="NSTextColor">
@@ -731,7 +732,7 @@
 				<int key="NSWindowBacking">2</int>
 				<string key="NSWindowRect">{{348, 55}, {410, 280}}</string>
 				<int key="NSWTFlags">1886912512</int>
-				<string key="NSWindowTitle">&lt;&lt; do not localize &gt;&gt;</string>
+				<string key="NSWindowTitle"/>
 				<string key="NSWindowClass">NSPanel</string>
 				<object class="NSMutableString" key="NSViewClass">
 					<characters key="NS.bytes">View</characters>
@@ -739,7 +740,7 @@
 				<string key="NSWindowContentMaxSize">{1.79769e+308, 1.79769e+308}</string>
 				<string key="NSWindowContentMinSize">{213, 107}</string>
 				<object class="NSView" key="NSWindowView" id="537927326">
-					<nil key="NSNextResponder"/>
+					<reference key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
 					<object class="NSMutableArray" key="NSSubviews">
 						<bool key="EncodedWithXMLCoder">YES</bool>
@@ -890,9 +891,7 @@
 								</object>
 								<bool key="NSMenuItemRespectAlignment">YES</bool>
 								<object class="NSMenu" key="NSMenu" id="874690085">
-									<object class="NSMutableString" key="NSTitle">
-										<characters key="NS.bytes">OtherViews</characters>
-									</object>
+									<string key="NSTitle"/>
 									<object class="NSMutableArray" key="NSMenuItems">
 										<bool key="EncodedWithXMLCoder">YES</bool>
 										<reference ref="427456702"/>
@@ -953,9 +952,7 @@
 								<nil key="NSMenuItem"/>
 								<bool key="NSMenuItemRespectAlignment">YES</bool>
 								<object class="NSMenu" key="NSMenu" id="173190813">
-									<object class="NSMutableString" key="NSTitle">
-										<characters key="NS.bytes">OtherViews</characters>
-									</object>
+									<string key="NSTitle"/>
 									<object class="NSMutableArray" key="NSMenuItems">
 										<bool key="EncodedWithXMLCoder">YES</bool>
 									</object>
@@ -1008,9 +1005,7 @@
 								<nil key="NSMenuItem"/>
 								<bool key="NSMenuItemRespectAlignment">YES</bool>
 								<object class="NSMenu" key="NSMenu" id="281648975">
-									<object class="NSMutableString" key="NSTitle">
-										<characters key="NS.bytes">OtherViews</characters>
-									</object>
+									<string key="NSTitle"/>
 									<object class="NSMutableArray" key="NSMenuItems">
 										<bool key="EncodedWithXMLCoder">YES</bool>
 									</object>
@@ -1090,9 +1085,7 @@
 								</object>
 								<bool key="NSMenuItemRespectAlignment">YES</bool>
 								<object class="NSMenu" key="NSMenu" id="102906759">
-									<object class="NSMutableString" key="NSTitle">
-										<characters key="NS.bytes">OtherViews</characters>
-									</object>
+									<string key="NSTitle"/>
 									<object class="NSMutableArray" key="NSMenuItems">
 										<bool key="EncodedWithXMLCoder">YES</bool>
 										<reference ref="237631390"/>
@@ -1176,9 +1169,7 @@
 								</object>
 								<bool key="NSMenuItemRespectAlignment">YES</bool>
 								<object class="NSMenu" key="NSMenu" id="440773252">
-									<object class="NSMutableString" key="NSTitle">
-										<characters key="NS.bytes">OtherViews</characters>
-									</object>
+									<string key="NSTitle"/>
 									<object class="NSMutableArray" key="NSMenuItems">
 										<bool key="EncodedWithXMLCoder">YES</bool>
 										<reference ref="363090316"/>
@@ -1262,9 +1253,7 @@
 								</object>
 								<bool key="NSMenuItemRespectAlignment">YES</bool>
 								<object class="NSMenu" key="NSMenu" id="227831713">
-									<object class="NSMutableString" key="NSTitle">
-										<characters key="NS.bytes">OtherViews</characters>
-									</object>
+									<string key="NSTitle"/>
 									<object class="NSMutableArray" key="NSMenuItems">
 										<bool key="EncodedWithXMLCoder">YES</bool>
 										<reference ref="450799299"/>
@@ -1314,13 +1303,14 @@
 						</object>
 					</object>
 					<string key="NSFrameSize">{410, 280}</string>
+					<reference key="NSSuperview"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1680, 1028}}</string>
 				<string key="NSMinSize">{213, 129}</string>
 				<string key="NSMaxSize">{1.79769e+308, 1.79769e+308}</string>
 			</object>
 			<object class="NSMenu" id="627364992">
-				<string key="NSTitle">Menu</string>
+				<string key="NSTitle"/>
 				<object class="NSMutableArray" key="NSMenuItems">
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<object class="NSMenuItem" id="11273854">
@@ -1503,7 +1493,7 @@
 				<string key="NSName"/>
 			</object>
 			<object class="NSMenu" id="793235678">
-				<string key="NSTitle">Menu</string>
+				<string key="NSTitle"/>
 				<object class="NSMutableArray" key="NSMenuItems">
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<object class="NSMenuItem" id="798588731">

@@ -966,6 +966,7 @@
 		770966D1107E8994005F357B /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				778D4F11108EFCB400A74B39 /* Resources */,
 				A5DC7FB4057AB0D000736BBF /* WCError.m */,
 				A5DC7FB3057AB0D000736BBF /* WCError.h */,
 				A51474A80F487ECD00DBE395 /* WCErrorQueue.m */,
@@ -991,6 +992,14 @@
 				A5F7F8D10F1D16EE007BF4FD /* WCSourceSplitView.h */,
 			);
 			name = Views;
+			sourceTree = "<group>";
+		};
+		778D4F11108EFCB400A74B39 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A51474BE0F487FC900DBE395 /* Error.xib */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 		779951B30A122D1F00600320 /* Smileys */ = {
@@ -1294,7 +1303,6 @@
 		A52B1C3C06C406AC0033D317 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				A51474BE0F487FC900DBE395 /* Error.xib */,
 				778C6A3F0E66B37F00DBF2E3 /* MainMenu.xib */,
 			);
 			name = Resources;

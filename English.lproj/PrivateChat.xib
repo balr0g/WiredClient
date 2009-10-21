@@ -3,18 +3,18 @@
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
 		<string key="IBDocument.SystemVersion">10A432</string>
-		<string key="IBDocument.InterfaceBuilderVersion">732</string>
+		<string key="IBDocument.InterfaceBuilderVersion">740</string>
 		<string key="IBDocument.AppKitVersion">1038</string>
 		<string key="IBDocument.HIToolboxVersion">437.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">732</string>
+			<string key="NS.object.0">740</string>
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="247"/>
-			<integer value="133"/>
+			<integer value="250"/>
 			<integer value="196"/>
+			<integer value="237"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -484,8 +484,8 @@ UkhXUwNXVSIWTgWYUTUrTJVgUPVUJKICAA8BAAADAAAAAQAjAAABAQADAAAAAQAjAAABAgADAAAABAAA
 DfIBAwADAAAAAQAFAAABBgADAAAAAQACAAABEQAEAAAAAQAAAAgBEgADAAAAAQABAAABFQADAAAAAQAE
 AAABFgADAAAAAQAjAAABFwAEAAAAAQAADTABHAADAAAAAQABAAABPQADAAAAAQACAAABUgADAAAAAQAB
 AAABUwADAAAABAAADfqHcwAHAAAnhAAADgIAAAAAAAgACAAIAAgAAQABAAEAAQAAJ4RhcHBsAgAAAG1u
-dHJSR0IgWFlaIAfZAAgAEgAQAC4ACmFjc3BBUFBMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD21gAB
-AAAAANMtYXBwbKPYDXIJj4kCJGRA4Fu9rs4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEXJY
+dHJSR0IgWFlaIAfZAAgAHwAKAC4AAmFjc3BBUFBMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD21gAB
+AAAAANMtYXBwbGDAUOCa/Yxemaf4NzHNCg4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEXJY
 WVoAAAFQAAAAFGdYWVoAAAFkAAAAFGJYWVoAAAF4AAAAFHd0cHQAAAGMAAAAFGNoYWQAAAGgAAAALHJU
 UkMAAAHMAAAIDGdUUkMAAAnYAAAIDGJUUkMAABHkAAAIDGFhcmcAABnwAAAAIGFhZ2cAABoQAAAAIGFh
 YmcAABowAAAAIHZjZ3QAABpQAAAGEm5kaW4AACBkAAAGPmRlc2MAACakAAAAZGRzY20AACcIAAAALm1t
@@ -696,7 +696,7 @@ Z2h0IEFwcGxlLCBJbmMuLCAyMDA5AA</bytes>
 																	<object class="NSTextFieldCell" key="NSDataCell" id="730288082">
 																		<int key="NSCellFlags">338820672</int>
 																		<int key="NSCellFlags2">1024</int>
-																		<string key="NSContents">Text Cell</string>
+																		<string key="NSContents"/>
 																		<object class="NSFont" key="NSSupport" id="682960347">
 																			<string key="NSName">LucidaGrande</string>
 																			<double key="NSSize">13</double>
@@ -869,7 +869,7 @@ Z2h0IEFwcGxlLCBJbmMuLCAyMDA5AA</bytes>
 				<string key="NSMaxSize">{1.79769e+308, 1.79769e+308}</string>
 			</object>
 			<object class="NSMenu" id="710850544">
-				<string key="NSTitle">Menu</string>
+				<string key="NSTitle"/>
 				<object class="NSMutableArray" key="NSMenuItems">
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<object class="NSMenuItem" id="802844112">
@@ -953,7 +953,7 @@ Z2h0IEFwcGxlLCBJbmMuLCAyMDA5AA</bytes>
 				<int key="NSWindowBacking">2</int>
 				<string key="NSWindowRect">{{275, 148}, {372, 179}}</string>
 				<int key="NSWTFlags">1886912512</int>
-				<string key="NSWindowTitle">&lt;&lt; do not localize &gt;&gt;</string>
+				<string key="NSWindowTitle"/>
 				<string key="NSWindowClass">NSPanel</string>
 				<object class="NSMutableString" key="NSViewClass">
 					<characters key="NS.bytes">View</characters>
@@ -1183,7 +1183,7 @@ Z2h0IEFwcGxlLCBJbmMuLCAyMDA5AA</bytes>
 				<int key="NSWindowBacking">2</int>
 				<string key="NSWindowRect">{{308, 516}, {323, 127}}</string>
 				<int key="NSWTFlags">1886912512</int>
-				<string key="NSWindowTitle">&lt;&lt; do not localize &gt;&gt;</string>
+				<string key="NSWindowTitle"/>
 				<string key="NSWindowClass">NSPanel</string>
 				<object class="NSMutableString" key="NSViewClass">
 					<characters key="NS.bytes">View</characters>
@@ -2649,6 +2649,7 @@ Z2h0IEFwcGxlLCBJbmMuLCAyMDA5AA</bytes>
 							<string>ignore:</string>
 							<string>kick:</string>
 							<string>saveChat:</string>
+							<string>saveDocument:</string>
 							<string>sendPrivateMessage:</string>
 							<string>setTopic:</string>
 							<string>stats:</string>
@@ -2656,6 +2657,7 @@ Z2h0IEFwcGxlLCBJbmMuLCAyMDA5AA</bytes>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -2805,10 +2807,12 @@ Z2h0IEFwcGxlLCBJbmMuLCAyMDA5AA</bytes>
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>getInfo:</string>
 							<string>saveChat:</string>
+							<string>saveDocument:</string>
 							<string>setTopic:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
