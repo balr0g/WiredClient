@@ -50,7 +50,9 @@
 	
 	[message getUInt32:&uid forName:@"wired.user.id"];
 	[message getBool:&idle forName:@"wired.user.idle"];
-	[message getUInt32:&cipherBits forName:@"wired.user.cipher.bits"];
+	
+	if([message getUInt32:&cipherBits forName:@"wired.user.cipher.bits"])
+	   _cipherBits = cipherBits;
 	
 	if([message getEnum:&color forName:@"wired.account.color"])
 		_color = color;
@@ -77,7 +79,6 @@
 	_host			= [[message stringForName:@"wired.user.host"] retain];
 	_version		= [[WCServerConnection versionStringForMessage:message] retain];
 	_cipherName		= [[message stringForName:@"wired.user.cipher.name"] retain];
-	_cipherBits		= cipherBits;
 	_joinDate		= [[message dateForName:@"wired.user.login_time"] retain];
 	_idleDate		= [[message dateForName:@"wired.user.idle_time"] retain];
 	_transfer		= [[WCTransfer transferWithMessage:message connection:connection] retain];
