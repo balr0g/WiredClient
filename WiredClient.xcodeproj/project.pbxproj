@@ -38,10 +38,10 @@
 		7712242E0F27421D00984433 /* UnreadHeader.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 7712242C0F27421D00984433 /* UnreadHeader.tiff */; };
 		771E6D510755F506000F9195 /* WCConversation.m in Sources */ = {isa = PBXBuildFile; fileRef = 771E6D4F0755F506000F9195 /* WCConversation.m */; };
 		77256AD10F2DFF6800EA5816 /* GrayDrop.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 77256AD00F2DFF6800EA5816 /* GrayDrop.tiff */; };
-		7739D4A10E7FFC2C00D76C47 /* WiredFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 779AB7D70E5C480A0031B6CE /* WiredFoundation.framework */; };
+		77270CD21090874200977C49 /* WiredFoundation.framework in Copy Files (Frameworks) */ = {isa = PBXBuildFile; fileRef = 7743D4F5109086FE0046D05E /* WiredFoundation.framework */; };
+		77270CE21090875A00977C49 /* WiredFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7743D4F5109086FE0046D05E /* WiredFoundation.framework */; };
 		7739D4A20E7FFC2C00D76C47 /* WiredAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 779AB7D90E5C480A0031B6CE /* WiredAppKit.framework */; };
 		7739D4A30E7FFC2C00D76C47 /* WiredNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 774897940CC8A63300E95A83 /* WiredNetworking.framework */; };
-		7739D4A90E7FFC6400D76C47 /* WiredFoundation.framework in Copy Files (Frameworks) */ = {isa = PBXBuildFile; fileRef = 779AB7D70E5C480A0031B6CE /* WiredFoundation.framework */; };
 		7739D4AA0E7FFC6400D76C47 /* WiredAppKit.framework in Copy Files (Frameworks) */ = {isa = PBXBuildFile; fileRef = 779AB7D90E5C480A0031B6CE /* WiredAppKit.framework */; };
 		7739D4AB0E7FFC6400D76C47 /* WiredNetworking.framework in Copy Files (Frameworks) */ = {isa = PBXBuildFile; fileRef = 774897940CC8A63300E95A83 /* WiredNetworking.framework */; };
 		773FEED11084C9EF002AF8DF /* PostReply.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 773FEED01084C9EF002AF8DF /* PostReply.tiff */; };
@@ -379,19 +379,19 @@
 			remoteGlobalIDString = 774896EA0CC8A63200E95A83;
 			remoteInfo = WiredNetworking;
 		};
+		7743D4F4109086FE0046D05E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A544C1B90758E0E9008446CF /* WiredAdditions.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7743CF7D109086DE0046D05E;
+			remoteInfo = WiredFoundation;
+		};
 		774897930CC8A63300E95A83 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = A544C1B90758E0E9008446CF /* WiredAdditions.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 774897900CC8A63200E95A83;
 			remoteInfo = "Wired Additions copy";
-		};
-		779AB7D60E5C480A0031B6CE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A544C1B90758E0E9008446CF /* WiredAdditions.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 7712BB320E5C1726001C4210;
-			remoteInfo = WiredFoundation;
 		};
 		779AB7D80E5C480A0031B6CE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -448,7 +448,7 @@
 				77A1AF340F15001F00F7D24B /* PSMTabBarControl.framework in Copy Files (Frameworks) */,
 				77CFBCBD0E66EFD500F2D5F8 /* Sparkle.framework in Copy Files (Frameworks) */,
 				7739D4AA0E7FFC6400D76C47 /* WiredAppKit.framework in Copy Files (Frameworks) */,
-				7739D4A90E7FFC6400D76C47 /* WiredFoundation.framework in Copy Files (Frameworks) */,
+				77270CD21090874200977C49 /* WiredFoundation.framework in Copy Files (Frameworks) */,
 				7739D4AB0E7FFC6400D76C47 /* WiredNetworking.framework in Copy Files (Frameworks) */,
 			);
 			name = "Copy Files (Frameworks)";
@@ -872,8 +872,8 @@
 				A5A3400707216D8900A16E9A /* Security.framework in Frameworks */,
 				77CFBCBC0E66EFD200F2D5F8 /* Sparkle.framework in Frameworks */,
 				777D36C50987E125005B5EC1 /* WebKit.framework in Frameworks */,
-				7739D4A10E7FFC2C00D76C47 /* WiredFoundation.framework in Frameworks */,
 				7739D4A20E7FFC2C00D76C47 /* WiredAppKit.framework in Frameworks */,
+				77270CE21090875A00977C49 /* WiredFoundation.framework in Frameworks */,
 				7739D4A30E7FFC2C00D76C47 /* WiredNetworking.framework in Frameworks */,
 				A55C73440F268087006E8568 /* libicucore.dylib in Frameworks */,
 			);
@@ -1628,7 +1628,7 @@
 		A5E8BAF208748EFD0010F2A4 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				779AB7D70E5C480A0031B6CE /* WiredFoundation.framework */,
+				7743D4F5109086FE0046D05E /* WiredFoundation.framework */,
 				779AB7D90E5C480A0031B6CE /* WiredAppKit.framework */,
 				774897940CC8A63300E95A83 /* WiredNetworking.framework */,
 				A59C7E850E64002B00FF73AD /* libWiredFoundation.a */,
@@ -1737,18 +1737,18 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		7743D4F5109086FE0046D05E /* WiredFoundation.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = WiredFoundation.framework;
+			remoteRef = 7743D4F4109086FE0046D05E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		774897940CC8A63300E95A83 /* WiredNetworking.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = WiredNetworking.framework;
 			remoteRef = 774897930CC8A63300E95A83 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		779AB7D70E5C480A0031B6CE /* WiredFoundation.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = WiredFoundation.framework;
-			remoteRef = 779AB7D60E5C480A0031B6CE /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		779AB7D90E5C480A0031B6CE /* WiredAppKit.framework */ = {
