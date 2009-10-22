@@ -1210,7 +1210,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	NSUInteger					i, speedBytes, statsBytes;
 	NSInteger					readBytes;
 	WIP7UInt64					dataLength, rsrcLength;
-	double						percent, maxSpeed;
+	double						percent;
 	int							dataFD, rsrcFD, writtenBytes;
 	BOOL						data;
 		
@@ -1239,7 +1239,6 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	rsrcPath			= [NSFileManager resourceForkPathForPath:dataPath];
 	speedBytes			= 0;
 	statsBytes			= 0;
-	maxSpeed			= 0;
 	i					= 0;
 	socket				= [connection socket];
 	speedTime			= _WCTransfersTimeInterval();
@@ -1395,9 +1394,6 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 			transfer->_speed = wi_speed_calculator_speed(transfer->_speedCalculator);
 			
-			if(transfer->_speed > maxSpeed)
-				maxSpeed = transfer->_speed;
-			
 			speedBytes = 0;
 			speedTime = time;
 		}
@@ -1425,9 +1421,6 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	if(statsBytes > 0)
 		[[WCStats stats] addUnsignedLongLong:statsBytes forKey:WCStatsDownloaded];
 
-	if([[WCStats stats] unsignedIntForKey:WCStatsMaxDownloadSpeed] < maxSpeed)
-		[[WCStats stats] setUnsignedInt:maxSpeed forKey:WCStatsMaxDownloadSpeed];
-	
 	[transfer signalTerminated];
 	
 	if(error) {
@@ -1458,7 +1451,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	NSUInteger					i, sendBytes, speedBytes, statsBytes;
 	WIP7UInt64					dataLength, rsrcLength;
 	WIP7UInt64					dataOffset, rsrcOffset;
-	double						percent, maxSpeed;
+	double						percent;
 	ssize_t						readBytes;
 	int							dataFD, rsrcFD;
 	BOOL						data;
@@ -1490,7 +1483,6 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	rsrcPath			= [NSFileManager resourceForkPathForPath:dataPath];
 	speedBytes			= 0;
 	statsBytes			= 0;
-	maxSpeed			= 0;
 	i					= 0;
 	socket				= [connection socket];
 	speedTime			= _WCTransfersTimeInterval();
@@ -1667,9 +1659,6 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 			
 			transfer->_speed = wi_speed_calculator_speed(transfer->_speedCalculator);
 			
-			if(transfer->_speed > maxSpeed)
-				maxSpeed = transfer->_speed;
-
 			speedBytes = 0;
 			speedTime = time;
 		}
@@ -1697,9 +1686,6 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	if(statsBytes > 0)
 		[[WCStats stats] addUnsignedLongLong:statsBytes forKey:WCStatsDownloaded];
 
-	if([[WCStats stats] unsignedIntForKey:WCStatsMaxDownloadSpeed] < maxSpeed)
-		[[WCStats stats] setUnsignedInt:maxSpeed forKey:WCStatsMaxDownloadSpeed];
-	
 	[transfer signalTerminated];
 	
 	if(error) {

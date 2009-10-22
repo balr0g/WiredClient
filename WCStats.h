@@ -30,8 +30,6 @@ extern NSString * const WCStatsDownloaded;
 extern NSString * const WCStatsUploaded;
 extern NSString * const WCStatsChat;
 extern NSString * const WCStatsOnline;
-extern NSString * const WCStatsMaxDownloadSpeed;
-extern NSString * const WCStatsMaxUploadSpeed;
 extern NSString * const WCStatsMessagesSent;
 extern NSString * const WCStatsMessagesReceived;
 

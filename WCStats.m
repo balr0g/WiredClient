@@ -36,8 +36,6 @@ NSString * const WCStatsDownloaded				= @"Downloaded";
 NSString * const WCStatsUploaded				= @"Uploaded";
 NSString * const WCStatsChat					= @"Chat";
 NSString * const WCStatsOnline					= @"Online";
-NSString * const WCStatsMaxDownloadSpeed		= @"Max Download Speed";
-NSString * const WCStatsMaxUploadSpeed			= @"Max Upload Speed";
 NSString * const WCStatsMessagesSent			= @"Messages Sent";
 NSString * const WCStatsMessagesReceived		= @"Messages Received";
 
@@ -175,9 +173,7 @@ static OSStatus _WCStatsEventSystemTimeDateChanged(EventHandlerCallRef nextHandl
 
 	_stats = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
 		[NSNumber numberWithInt:0],		WCStatsDownloaded,
-		[NSNumber numberWithInt:0],		WCStatsMaxDownloadSpeed,
 		[NSNumber numberWithInt:0],		WCStatsUploaded,
-		[NSNumber numberWithInt:0],		WCStatsMaxUploadSpeed,
 		[NSNumber numberWithInt:0],		WCStatsChat,
 		[NSNumber numberWithInt:0],		WCStatsOnline,
 		[NSNumber numberWithInt:0],		WCStatsMessagesSent,
@@ -341,15 +337,11 @@ static OSStatus _WCStatsEventSystemTimeDateChanged(EventHandlerCallRef nextHandl
 
 	[_lock lock];
 	
-	string = [NSSWF:NSLS(@"%@ downloaded, %@/s max download speed, %@ uploaded, %@/s max upload speed, %@ chat, %@ online, %lu %@ received, %lu %@ sent", @"Stats message"),
+	string = [NSSWF:NSLS(@"%@ downloaded, %@ uploaded, %@ chat, %@ online, %lu %@ received, %lu %@ sent", @"Stats message"),
 		[NSString humanReadableStringForSizeInBytes:
 			[[self _objectForKey:WCStatsDownloaded] unsignedLongLongValue]],
 		[NSString humanReadableStringForSizeInBytes:
-			[[self _objectForKey:WCStatsMaxDownloadSpeed] unsignedLongLongValue]],
-		[NSString humanReadableStringForSizeInBytes:
 			[[self _objectForKey:WCStatsUploaded] unsignedLongLongValue]],
-		[NSString humanReadableStringForSizeInBytes:
-			[[self _objectForKey:WCStatsMaxUploadSpeed] unsignedLongLongValue]],
 		[NSString humanReadableStringForSizeInBytes:
 			[[self _objectForKey:WCStatsChat] unsignedLongLongValue]],
 		[NSString humanReadableStringForTimeInterval:
