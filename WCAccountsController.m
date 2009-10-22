@@ -257,6 +257,8 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 	WCAccount			*account;
 	BOOL				reload = YES;
 	
+	_touched = NO;
+	
 	if(_creating) {
 		if([_typePopUpButton selectedItem] == _userMenuItem)
 			account = [WCUserAccount account];
@@ -1294,6 +1296,8 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 		[[_administration connection] removeObserver:self message:message];
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
+		_touched = YES;
+		
 		[_administration showError:[WCError errorWithWiredMessage:message]];
 		
 		[[_administration connection] removeObserver:self message:message];
