@@ -40,6 +40,9 @@ extern NSString * const WCStatsMessagesReceived;
 	NSRecursiveLock						*_lock;
 	NSUInteger							_connections;
 	
+	WISizeFormatter						*_sizeFormatter;
+	WITimeIntervalFormatter				*_timeIntervalFormatter;
+	
 	EventHandlerRef						_eventHandlerRef;
 }
 

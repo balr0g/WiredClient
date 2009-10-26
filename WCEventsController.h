@@ -48,6 +48,7 @@
 	NSMutableArray						*_receivedEvents;
 	NSMutableArray						*_shownEvents;
 	WIDateFormatter						*_dateFormatter;
+	WISizeFormatter						*_sizeFormatter;
 	
 	NSMutableSet						*_allNicks;
 	NSMutableSet						*_allLogins;

@@ -79,13 +79,11 @@
 	[_descriptionTextField setStringValue:[server serverDescription]];
 	[_uptimeTextField setStringValue:[NSSWF:
 		NSLS(@"%@,\nsince %@", @"Time stamp (time counter, time string)"),
-		[NSString humanReadableStringForTimeInterval:
-			[[NSDate date] timeIntervalSinceDate:[server startupDate]]],
+		[_timeIntervalFormatter stringFromTimeIntervalSinceDate:[server startupDate]],
 		[_dateFormatter stringFromDate:[server startupDate]]]];
 	[_urlTextField setStringValue:[url humanReadableString]];
 	[_filesTextField setIntValue:[server files]];
-	[_sizeTextField setStringValue:
-		[NSString humanReadableStringForSizeInBytes:[server size]]];
+	[_sizeTextField setStringValue:[_sizeFormatter stringFromSize:[server size]]];
 	[_versionTextField setStringValue:[server serverVersion]];
 	[_protocolTextField setStringValue:[NSSWF:@"%@ %@",
 		[socket remoteProtocolName],
@@ -154,6 +152,8 @@
 
 - (void)dealloc {
 	[_dateFormatter release];
+	[_timeIntervalFormatter release];
+	[_sizeFormatter release];
 	
 	[super dealloc];
 }
@@ -172,6 +172,10 @@
 	[_dateFormatter setDateStyle:NSDateFormatterMediumStyle];
 	[_dateFormatter setNaturalLanguageStyle:WIDateFormatterNormalNaturalLanguageStyle];
 
+	_timeIntervalFormatter = [[WITimeIntervalFormatter alloc] init];
+	
+	_sizeFormatter = [[WISizeFormatter alloc] init];
+	
 	[self setDefaultFrame:[_descriptionTextField frame]];
 
 	[super windowDidLoad];

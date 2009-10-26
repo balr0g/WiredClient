@@ -57,6 +57,7 @@
 
 	WCUser							*_user;
 	WIDateFormatter					*_dateFormatter;
+	WITimeIntervalFormatter			*_timeIntervalFormatter;
 	NSRect							_fieldFrame;
 	
 	BOOL							_requestedAccount;

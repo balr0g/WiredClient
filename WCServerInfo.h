@@ -54,6 +54,8 @@
 	IBOutlet NSTextField			*_compressionTextField;
 	
 	WIDateFormatter					*_dateFormatter;
+	WITimeIntervalFormatter			*_timeIntervalFormatter;
+	WISizeFormatter					*_sizeFormatter;
 }
 
 + (id)serverInfoWithConnection:(WCServerConnection *)connection;

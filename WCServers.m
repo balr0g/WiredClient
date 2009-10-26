@@ -275,6 +275,8 @@
 	_browser		= [[NSNetServiceBrowser alloc] init];
 	[_browser setDelegate:self];
 	[_browser searchForServicesOfType:WCBonjourName inDomain:@""];
+	
+	_sizeFormatter	= [[WISizeFormatter alloc] init];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
@@ -301,6 +303,7 @@
 	[_itemFilter release];
 	[_servers release];
 	[_bonjour release];
+	[_sizeFormatter release];
 
 	[super dealloc];
 }
@@ -766,7 +769,7 @@
 		else if(tableColumn == _filesCountTableColumn)
 			return [NSSWF:@"%u", [item filesCount]];
 		else if(tableColumn == _filesSizeTableColumn)
-			return [NSString humanReadableStringForSizeInBytes:[item filesSize]];
+			return [_sizeFormatter stringFromSize:[item filesSize]];
 		else if(tableColumn == _descriptionTableColumn)
 			return [item serverDescription];
 	}

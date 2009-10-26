@@ -98,6 +98,8 @@ typedef enum _WCTransferState			WCTransferState;
 - (NSUInteger)transaction;
 - (void)setSpeed:(double)speed;
 - (double)speed;
+- (NSUInteger)speedLimit;
+- (NSTimeInterval)accumulatedTime;
 - (void)setSize:(WIFileOffset)size;
 - (WIFileOffset)size;
 - (void)setDataTransferred:(WIFileOffset)transferred;
@@ -132,7 +134,6 @@ typedef enum _WCTransferState			WCTransferState;
 - (BOOL)isStopped;
 - (void)signalTerminated;
 - (BOOL)waitUntilTerminatedBeforeDate:(NSDate *)date;
-- (NSString *)status;
 - (NSImage *)icon;
 - (void)refreshSpeedLimit;
 

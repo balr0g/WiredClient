@@ -130,8 +130,7 @@
 		[_commentTextField setStringValue:[file comment]];
 		
 		if([file type] == WCFileFile) {
-			[_sizeTextField setStringValue:
-				[NSString humanReadableStringForSizeInBytes:[file dataSize] + [file rsrcSize] withBytes:YES]];
+			[_sizeTextField setStringValue:[_sizeFormatter stringFromSize:[file totalSize]]];
 		} else {
 			[_sizeTextField setStringValue:
 				[[self class] _stringForFolderCount:[file directoryCount]]];
@@ -210,7 +209,7 @@
 					dropBoxes++;
 			} else {
 				files++;
-				fileSize += [file dataSize] + [file rsrcSize];
+				fileSize += [file totalSize];
 			}
 		}
 		
@@ -224,15 +223,13 @@
 		if(files > 0 && folders > 0) {
 			 [_sizeTextField setStringValue:[NSSWF:@"%@, %@",
 				[[self class] _stringForFolderCount:folderSize],
-				[NSString humanReadableStringForSizeInBytes:fileSize withBytes:YES]]];
+				[_sizeFormatter stringFromSize:fileSize]]];
 		}
 		else if(files > 0) {
-			[_sizeTextField setStringValue:
-				[NSString humanReadableStringForSizeInBytes:fileSize withBytes:YES]];
+			[_sizeTextField setStringValue:[_sizeFormatter stringFromSize:fileSize]];
 		}
 		else if(folders > 0) {
-			[_sizeTextField setStringValue:
-				[[self class] _stringForFolderCount:folderSize]];
+			[_sizeTextField setStringValue:[[self class] _stringForFolderCount:folderSize]];
 		}
 		
 		[self setYOffset:22.0];
@@ -464,6 +461,7 @@
 	[_files release];
 	[_info release];
 	[_dateFormatter release];
+	[_sizeFormatter release];
 
 	[super dealloc];
 }
@@ -497,6 +495,9 @@
 	[_dateFormatter setTimeStyle:NSDateFormatterShortStyle];
 	[_dateFormatter setDateStyle:NSDateFormatterMediumStyle];
 	[_dateFormatter setNaturalLanguageStyle:WIDateFormatterCapitalizedNaturalLanguageStyle];
+	
+	_sizeFormatter = [[WISizeFormatter alloc] init];
+	[_sizeFormatter setAppendsRawNumber:YES];
 	
 	[_ownerPopUpButton addItemsWithTitles:[[[[self connection] administration] accountsController] userNames]];
 	[_groupPopUpButton addItemsWithTitles:[[[[self connection] administration] accountsController] groupNames]];

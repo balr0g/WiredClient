@@ -101,6 +101,7 @@ extern NSString * const					WCPlacePboardType;
 	BOOL								_currentDirectoryDeleted;
 	
 	WIDateFormatter						*_dateFormatter;
+	WISizeFormatter						*_sizeFormatter;
 	
 	NSMutableParagraphStyle				*_truncatingTailParagraphStyle;
 	

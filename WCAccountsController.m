@@ -419,11 +419,11 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 				
 				[_downloadsTextField setStringValue:[NSSWF:NSLS(@"%u completed, %@ transferred", @"Account transfer stats (count, transferred"),
 					[(WCUserAccount *) account downloads],
-					[NSString humanReadableStringForSizeInBytes:[(WCUserAccount *) account downloadTransferred]]]];
+					[_sizeFormatter stringFromSize:[(WCUserAccount *) account downloadTransferred]]]];
 				
 				[_uploadsTextField setStringValue:[NSSWF:NSLS(@"%u completed, %@ transferred", @"Account transfer stats (count, transferred"),
 					[(WCUserAccount *) account uploads],
-					[NSString humanReadableStringForSizeInBytes:[(WCUserAccount *) account uploadTransferred]]]];
+					[_sizeFormatter stringFromSize:[(WCUserAccount *) account uploadTransferred]]]];
 			}
 			else if([account isKindOfClass:[WCGroupAccount class]]) {
 				[_typePopUpButton selectItem:_groupMenuItem];
@@ -1071,6 +1071,7 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 	[_selectAccounts release];
 	
 	[_dateFormatter release];
+	[_sizeFormatter release];
 	[_accountFilter release];
 	
 	[_deletedAccounts release];
@@ -1099,6 +1100,8 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 	[_dateFormatter setTimeStyle:NSDateFormatterShortStyle];
 	[_dateFormatter setDateStyle:NSDateFormatterMediumStyle];
 	[_dateFormatter setNaturalLanguageStyle:WIDateFormatterCapitalizedNaturalLanguageStyle];
+	
+	_sizeFormatter = [[WISizeFormatter alloc] init];
 	
 	[self _validateForAccounts];
 	[self _readFromAccounts];

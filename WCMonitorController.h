@@ -49,6 +49,8 @@
 
 	NSString							*_userFilter;
 	WIDateFormatter						*_dateFormatter;
+	WISizeFormatter						*_sizeFormatter;
+	WITimeIntervalFormatter				*_timeIntervalFormatter;
 
 	BOOL								_error;
 }

@@ -52,6 +52,8 @@
 - (WCUser *)_userAtIndex:(NSUInteger)index;
 - (WCUser *)_selectedUser;
 
+- (NSString *)_statusForTransfer:(WCTransfer *)transfer;
+
 @end
 
 
@@ -172,6 +174,42 @@
 	return [self _userAtIndex:row];
 }
 
+
+
+#pragma mark -
+
+- (NSString *)_statusForTransfer:(WCTransfer *)transfer {
+	NSTimeInterval		interval;
+	WIFileOffset		size, transferred, remaining;
+	double				speed;
+	
+	switch([transfer state]) {
+		case WCTransferQueued:
+			return [NSSWF:NSLS(@"Queued at position %lu", @"Transfer queued (position)"),
+				[transfer queuePosition]];
+			break;
+		
+		case WCTransferRunning:
+			size			= [transfer size];
+			transferred		= [transfer dataTransferred] + [transfer rsrcTransferred];
+			remaining		= (transferred < size) ? size - transferred : 0;
+			speed			= [transfer speed];
+			interval		= (speed > 0) ? (double) remaining / (double) speed : 0.0;
+			
+			return [NSSWF:NSLS(@"%@ of %@, %@/s, %@", @"Transfer status (transferred, size, speed, time)"),
+				[_sizeFormatter stringFromSize:transferred],
+				[_sizeFormatter stringFromSize:size],
+				[_sizeFormatter stringFromSize:speed],
+				[_timeIntervalFormatter stringFromTimeInterval:interval]];
+			break;
+		
+		default:
+			break;
+	}
+	
+	return @"";
+}
+
 @end
 
 
@@ -181,15 +219,18 @@
 - (id)init {
 	self = [super init];
 	
-	_listedUsers	= [[NSMutableArray alloc] init];
-	_allUsers		= [[NSMutableArray alloc] init];
-	_shownUsers		= [[NSMutableArray alloc] init];
+	_listedUsers			= [[NSMutableArray alloc] init];
+	_allUsers				= [[NSMutableArray alloc] init];
+	_shownUsers				= [[NSMutableArray alloc] init];
 	
-	_dateFormatter = [[WIDateFormatter alloc] init];
+	_sizeFormatter			= [[WISizeFormatter alloc] init];
+	_timeIntervalFormatter	= [[WITimeIntervalFormatter alloc] init];
+
+	_dateFormatter			= [[WIDateFormatter alloc] init];
 	[_dateFormatter setTimeStyle:NSDateFormatterShortStyle];
 	[_dateFormatter setDateStyle:NSDateFormatterMediumStyle];
 	[_dateFormatter setNaturalLanguageStyle:WIDateFormatterNormalNaturalLanguageStyle];
-
+	
 	return self;
 }
 
@@ -433,9 +474,9 @@
 
 
 - (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
-	NSString		*status;
-	NSDate			*date;
-	WCUser			*user;
+	NSMutableDictionary		*dictionary;
+	NSString				*status;
+	WCUser					*user;
 	
 	user = [self _userAtIndex:row];
 	
@@ -448,16 +489,24 @@
 			NULL];
 	}
 	else if(tableColumn == _statusTableColumn) {
-		if([user transfer]) {
-			return [NSDictionary dictionaryWithObject:[user transfer] forKey:WCMonitorCellTransferKey];
-		} else {
-			date = [user idleDate];
-			status = [NSSWF:NSLS(@"Idle %@, since %@", @"Monitor idle status (time counter, time string)"),
-				[NSString humanReadableStringForTimeInterval:[[NSDate date] timeIntervalSinceDate:date]],
-				[_dateFormatter stringFromDate:date]];
+		dictionary = [NSMutableDictionary dictionary];
 		
-			return [NSDictionary dictionaryWithObject:status forKey:WCMonitorCellStatusKey];
+		if([user transfer]) {
+			status = [self _statusForTransfer:[user transfer]];
+			
+			[dictionary setObject:[user transfer] forKey:WCMonitorCellTransferKey];
+			
+			if([[user transfer] queuePosition] == 0)
+				[dictionary setObject:[[user transfer] progressIndicator] forKey:WCMonitorCellProgressIndicatorKey];
+		} else {
+			status = [NSSWF:NSLS(@"Idle %@, since %@", @"Monitor idle status (time counter, time string)"),
+				[_timeIntervalFormatter stringFromTimeIntervalSinceDate:[user idleDate]],
+				[_dateFormatter stringFromDate:[user idleDate]]];
 		}
+		
+		[dictionary setObject:status forKey:WCMonitorCellStatusKey];
+		
+		return dictionary;
 	}
 	
 	return NULL;

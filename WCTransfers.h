@@ -52,6 +52,9 @@
 	NSTimer									*_timer;
 	NSLock									*_lock;
 	
+	WISizeFormatter							*_sizeFormatter;
+	WITimeIntervalFormatter					*_timeIntervalFormatter;
+	
 	Class									_quickLookPanelClass;
 }
 

@@ -128,7 +128,6 @@ typedef enum _WCFileLabel			WCFileLabel;
 - (NSUInteger)volume;
 - (NSImage *)iconWithWidth:(CGFloat)width open:(BOOL)open;
 - (NSImage *)iconWithWidth:(CGFloat)width open:(BOOL)open;
-- (NSString *)humanReadableSize;
 
 - (void)setDataSize:(WIFileOffset)size;
 - (WIFileOffset)dataSize;
@@ -137,6 +136,7 @@ typedef enum _WCFileLabel			WCFileLabel;
 - (WIFileOffset)totalSize;
 - (void)setDirectoryCount:(NSUInteger)directoryCount;
 - (NSUInteger)directoryCount;
+- (NSString *)humanReadableDirectoryCount;
 - (void)setFreeSpace:(WIFileOffset)free;
 - (WIFileOffset)freeSpace;
 

@@ -185,6 +185,10 @@ static OSStatus _WCStatsEventSystemTimeDateChanged(EventHandlerCallRef nextHandl
 	if([[_stats objectForKey:WCStatsOnline] doubleValue] > 864000000.0)
 		[_stats setObject:[NSNumber numberWithInt:0] forKey:WCStatsOnline];
 	
+	_sizeFormatter = [[WISizeFormatter alloc] init];
+	
+	_timeIntervalFormatter = [[WITimeIntervalFormatter alloc] init];
+	
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		   selector:@selector(applicationWillTerminate:)
@@ -224,6 +228,13 @@ static OSStatus _WCStatsEventSystemTimeDateChanged(EventHandlerCallRef nextHandl
 
 - (void)dealloc {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	
+	[_lock release];
+	[_stats release];
+	[_date release];
+	
+	[_sizeFormatter release];
+	[_timeIntervalFormatter release];
 	
 	RemoveEventHandler(_eventHandlerRef);
 	
@@ -338,14 +349,10 @@ static OSStatus _WCStatsEventSystemTimeDateChanged(EventHandlerCallRef nextHandl
 	[_lock lock];
 	
 	string = [NSSWF:NSLS(@"%@ downloaded, %@ uploaded, %@ chat, %@ online, %lu %@ received, %lu %@ sent", @"Stats message"),
-		[NSString humanReadableStringForSizeInBytes:
-			[[self _objectForKey:WCStatsDownloaded] unsignedLongLongValue]],
-		[NSString humanReadableStringForSizeInBytes:
-			[[self _objectForKey:WCStatsUploaded] unsignedLongLongValue]],
-		[NSString humanReadableStringForSizeInBytes:
-			[[self _objectForKey:WCStatsChat] unsignedLongLongValue]],
-		[NSString humanReadableStringForTimeInterval:
-			[[self _objectForKey:WCStatsOnline] doubleValue]],
+		[_sizeFormatter stringFromNumber:[self _objectForKey:WCStatsDownloaded]],
+		[_sizeFormatter stringFromNumber:[self _objectForKey:WCStatsUploaded]],
+		[_sizeFormatter stringFromNumber:[self _objectForKey:WCStatsChat]],
+		[_timeIntervalFormatter stringFromNumber:[self _objectForKey:WCStatsOnline]],
 		[[self _objectForKey:WCStatsMessagesReceived] unsignedIntegerValue],
 		[[self _objectForKey:WCStatsMessagesReceived] unsignedIntegerValue] == 1
 			? NSLS(@"message", @"Message singular")

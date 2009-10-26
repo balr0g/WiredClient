@@ -29,8 +29,9 @@
 #import "WCMonitorCell.h"
 #import "WCTransfer.h"
 
-NSString * const WCMonitorCellTransferKey		= @"WCMonitorCellTransferKey";
-NSString * const WCMonitorCellStatusKey			= @"WCMonitorCellStatusKey";
+NSString * const WCMonitorCellStatusKey					= @"WCMonitorCellStatusKey";
+NSString * const WCMonitorCellTransferKey				= @"WCMonitorCellTransferKey";
+NSString * const WCMonitorCellProgressIndicatorKey		= @"WCMonitorCellProgressIndicatorKey";
 
 
 @interface WCMonitorCell(Private)
@@ -137,8 +138,9 @@ NSString * const WCMonitorCellStatusKey			= @"WCMonitorCellStatusKey";
 	WCTransfer					*transfer;
 	NSRect						imageRect, statusRect, progressRect, transferStatusRect;
 	
-	transfer	= [(NSDictionary *) [self objectValue] objectForKey:WCMonitorCellTransferKey];
-	status		= [(NSDictionary *) [self objectValue] objectForKey:WCMonitorCellStatusKey];
+	status				= [(NSDictionary *) [self objectValue] objectForKey:WCMonitorCellStatusKey];
+	transfer			= [(NSDictionary *) [self objectValue] objectForKey:WCMonitorCellTransferKey];
+	progressIndicator	= [(NSDictionary *) [self objectValue] objectForKey:WCMonitorCellProgressIndicatorKey];
 
 	if(transfer) {
 		if([self controlSize] == NSRegularControlSize) {
@@ -198,18 +200,14 @@ NSString * const WCMonitorCellStatusKey			= @"WCMonitorCellStatusKey";
 		[_statusCell setAttributedStringValue:string];
 		[_statusCell drawWithFrame:statusRect inView:view];
 
-		if([transfer queuePosition] == 0) {
-			progressIndicator = [transfer progressIndicator];
+		if(progressIndicator) {
+			if(![progressIndicator superview])
+				[view addSubview:progressIndicator];
 			
-			if(progressIndicator) {
-				if(![progressIndicator superview])
-					[view addSubview:progressIndicator];
-				
-				[progressIndicator setFrame:progressRect];
-			}
+			[progressIndicator setFrame:progressRect];
 		}
 
-		string = [NSMutableAttributedString attributedStringWithString:[transfer status] attributes:_transferStatusAttributes];
+		string = [NSMutableAttributedString attributedStringWithString:status attributes:_transferStatusAttributes];
 		
 		if([_transferStatusCell highlightColorWithFrame:transferStatusRect inView:view] == [NSColor alternateSelectedControlColor]) {
 			if([self isHighlighted])

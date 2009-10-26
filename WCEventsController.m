@@ -58,7 +58,7 @@ typedef enum _WCEventType		WCEventType;
 	NSString					*_message;
 }
 
-+ (WCEvent *)eventWithMessage:(WIP7Message *)message;
++ (WCEvent *)eventWithMessage:(WIP7Message *)message dateFormatter:(WIDateFormatter *)dateFormatter sizeFormatter:(WISizeFormatter *)sizeFormatter;
 
 - (NSComparisonResult)compareType:(WCEvent *)event;
 - (NSComparisonResult)compareTime:(WCEvent *)event;
@@ -72,7 +72,7 @@ typedef enum _WCEventType		WCEventType;
 
 @implementation WCEvent
 
-+ (WCEvent *)eventWithMessage:(WIP7Message *)message {
++ (WCEvent *)eventWithMessage:(WIP7Message *)message dateFormatter:(WIDateFormatter *)dateFormatter sizeFormatter:(WISizeFormatter *)sizeFormatter {
 	NSArray			*parameters;
 	NSString		*name, *string;
 	WCEvent			*event;
@@ -329,13 +329,13 @@ typedef enum _WCEventType		WCEventType;
 		type = WCEventDownloads;
 		string = [NSSWF:NSLS(@"Stopped download of \u201c%@\u201d after sending %@", @"Event message (path)"),
 			[parameters objectAtIndex:0],
-			[NSString humanReadableStringForSizeInBytes:[[parameters objectAtIndex:1] unsignedLongLongValue]]];
+			[sizeFormatter stringFromSize:[[parameters objectAtIndex:1] unsignedLongLongValue]]];
 	}
 	else if([name isEqualToString:@"wired.event.transfer.completed_file_download"] && [parameters count] >= 2) {
 		type = WCEventDownloads;
 		string = [NSSWF:NSLS(@"Completed download of \u201c%@\u201d after sending %@", @"Event message (path)"),
 			[parameters objectAtIndex:0],
-			[NSString humanReadableStringForSizeInBytes:[[parameters objectAtIndex:1] unsignedLongLongValue]]];
+			[sizeFormatter stringFromSize:[[parameters objectAtIndex:1] unsignedLongLongValue]]];
 	}
 	else if([name isEqualToString:@"wired.event.transfer.started_file_upload"] && [parameters count] >= 1) {
 		type = WCEventUploads;
@@ -346,13 +346,13 @@ typedef enum _WCEventType		WCEventType;
 		type = WCEventUploads;
 		string = [NSSWF:NSLS(@"Stopped upload of \u201c%@\u201d after sending %@", @"Event message (path)"),
 			[parameters objectAtIndex:0],
-			[NSString humanReadableStringForSizeInBytes:[[parameters objectAtIndex:1] unsignedLongLongValue]]];
+			[sizeFormatter stringFromSize:[[parameters objectAtIndex:1] unsignedLongLongValue]]];
 	}
 	else if([name isEqualToString:@"wired.event.transfer.completed_file_upload"] && [parameters count] >= 2) {
 		type = WCEventUploads;
 		string = [NSSWF:NSLS(@"Completed upload of \u201c%@\u201d after sending %@", @"Event message (path)"),
 			[parameters objectAtIndex:0],
-			[NSString humanReadableStringForSizeInBytes:[[parameters objectAtIndex:1] unsignedLongLongValue]]];
+			[sizeFormatter stringFromSize:[[parameters objectAtIndex:1] unsignedLongLongValue]]];
 	}
 	else if([name isEqualToString:@"wired.event.transfer.completed_directory_upload"] && [parameters count] >= 1) {
 		type = WCEventUploads;
@@ -410,13 +410,14 @@ typedef enum _WCEventType		WCEventType;
 	if(!string)
 		return NULL;
 	
-	event				= [[self alloc] init];
-	event->_type		= type;
-	event->_message		= [string retain];
-	event->_time		= [[message dateForName:@"wired.event.time"] retain];
-	event->_nick		= [[message stringForName:@"wired.user.nick"] retain];
-	event->_login		= [[message stringForName:@"wired.user.login"] retain];
-	event->_ip			= [[message stringForName:@"wired.user.ip"] retain];
+	event					= [[self alloc] init];
+	event->_type			= type;
+	event->_message			= [string retain];
+	event->_time			= [[message dateForName:@"wired.event.time"] retain];
+	event->_nick			= [[message stringForName:@"wired.user.nick"] retain];
+	event->_login			= [[message stringForName:@"wired.user.login"] retain];
+	event->_ip				= [[message stringForName:@"wired.user.ip"] retain];
+	event->_formattedTime	= [[dateFormatter stringFromDate:event->_time] retain];
 	
 	return [event autorelease];
 }
@@ -721,6 +722,8 @@ typedef enum _WCEventType		WCEventType;
 	_dateFormatter = [[WIDateFormatter alloc] init];
 	[_dateFormatter setTimeStyle:NSDateFormatterShortStyle];
 	[_dateFormatter setDateStyle:NSDateFormatterMediumStyle];
+	
+	_sizeFormatter = [[WISizeFormatter alloc] init];
 
 	return self;
 }
@@ -776,11 +779,9 @@ typedef enum _WCEventType		WCEventType;
 	NSUInteger		i, count;
 	
 	if([[message name] isEqualToString:@"wired.event.list"]) {
-		event = [WCEvent eventWithMessage:message];
+		event = [WCEvent eventWithMessage:message dateFormatter:_dateFormatter sizeFormatter:_sizeFormatter];
 		
 		if(event) {
-			event->_formattedTime = [[_dateFormatter stringFromDate:event->_time] retain];
-			
 			[_listedEvents addObject:event];
 			
 			[_allNicks addObject:event->_nick];
@@ -834,11 +835,9 @@ typedef enum _WCEventType		WCEventType;
 - (void)wiredEventEvent:(WIP7Message *)message {
 	WCEvent			*event;
 	
-	event = [WCEvent eventWithMessage:message];
+	event = [WCEvent eventWithMessage:message dateFormatter:_dateFormatter sizeFormatter:_sizeFormatter];
 	
 	if(event) {
-		event->_formattedTime = [[_dateFormatter stringFromDate:event->_time] retain];
-		
 		[_allEvents addObject:event];
 		[_receivedEvents addObject:event];
 		

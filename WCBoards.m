@@ -2376,7 +2376,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	
 	[self _reloadBoardListsSelectingBoard:board];
 
-	[_postLocationPopUpButton setEnabled:NO];
+	[_postLocationPopUpButton setEnabled:([post isEqual:[thread firstPost]] && [[[board connection] account] boardMoveThreads])];
 	[_subjectTextField setEnabled:[post isEqual:[thread firstPost]]];
 	[_subjectTextField setStringValue:[post subject]];
 	[_postTextView setString:[post text]];
@@ -2397,7 +2397,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	NSArray			*array = contextInfo;
 	NSString		*string;
 	WIP7Message		*message;
-	WCBoard			*board = [array objectAtIndex:0];
+	WCBoard			*board = [array objectAtIndex:0], *newBoard;
 	WCBoardThread	*thread = [array objectAtIndex:1];
 	WCBoardPost		*post = [array objectAtIndex:2];
 	
@@ -2411,6 +2411,16 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 		[message setString:[_subjectTextField stringValue] forName:@"wired.board.subject"];
 		[message setString:[self _textForPostText:string] forName:@"wired.board.text"];
 		[[board connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardEditPostReply:)];
+		
+		newBoard = [_postLocationPopUpButton representedObjectOfSelectedItem];
+		
+		if(![board isEqual:newBoard] && [[[board connection] account] boardMoveBoards]) {
+			message = [WIP7Message messageWithName:@"wired.board.move_thread" spec:WCP7Spec];
+			[message setString:[board path] forName:@"wired.board.board"];
+			[message setUUID:[thread threadID] forName:@"wired.board.thread"];
+			[message setString:[newBoard path] forName:@"wired.board.new_board"];
+			[[board connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardMoveThreadReply:)];
+		}
 	}
 	
 	[_postPanel close];
@@ -3354,6 +3364,9 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	if([board isRootBoard] || [board isKindOfClass:[WCSmartBoard class]])
 		return NO;
 	
+	if(![[[board connection] account] boardMoveBoards])
+		return NO;
+	
 	[pasteboard declareTypes:[NSArray arrayWithObject:WCBoardPboardType] owner:NULL];
 	[pasteboard setPropertyList:[NSArray arrayWithObjects:[board path], [board name], NULL] forType:WCBoardPboardType];
 	
@@ -3526,8 +3539,14 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 
 - (BOOL)tableView:(NSTableView *)tableView writeRowsWithIndexes:(NSIndexSet *)indexes toPasteboard:(NSPasteboard *)pasteboard {
 	NSMutableArray		*threads;
+	WCBoard				*board;
 	NSUInteger			index;
 	
+	board = [self _selectedBoard];
+	
+	if(![[[board connection] account] boardMoveThreads])
+		return NO;
+
 	threads = [NSMutableArray array];
 	
 	[threads addObject:[[self _selectedBoard] path]];

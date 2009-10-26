@@ -61,6 +61,7 @@
 	NSArray							*_files;
 	NSMutableArray					*_info;
 	WIDateFormatter					*_dateFormatter;
+	WISizeFormatter					*_sizeFormatter;
 }
 
 + (id)fileInfoWithConnection:(WCServerConnection *)connection file:(WCFile *)file;

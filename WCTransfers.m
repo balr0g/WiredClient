@@ -83,6 +83,8 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 - (WCTransfer *)_transferWithTransaction:(NSUInteger)transaction;
 - (NSUInteger)_numberOfWorkingTransfersOfClass:(Class)class connection:(WCServerConnection *)connection;
 
+- (NSString *)_statusForTransfer:(WCTransfer *)transfer;
+
 - (void)_requestNextTransferForConnection:(WCServerConnection *)connection;
 - (void)_requestTransfer:(WCTransfer *)transfer;
 - (void)_startTransfer:(WCTransfer *)transfer first:(BOOL)first;
@@ -707,6 +709,172 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	[_transfersTableView reloadData];
 	
 	return YES;
+}
+
+
+
+#pragma mark -
+
+- (NSString *)_statusForTransfer:(WCTransfer *)transfer {
+	NSString			*format;
+	NSTimeInterval		interval;
+	NSUInteger			speedLimit;
+	WIFileOffset		size, transferred, remaining;
+	WCTransferState		state;
+	double				speed;
+	
+	state = [transfer state];
+	
+	if(state == WCTransferWaiting && [transfer numberOfTransferredFiles] > 1)
+		state = WCTransferRunning;
+	
+	switch(state) {
+		case WCTransferLocallyQueued:
+			return NSLS(@"Queued", @"Transfer locally queued");
+			break;
+			
+		case WCTransferWaiting:
+			return NSLS(@"Waiting", @"Transfer waiting");
+			break;
+			
+		case WCTransferQueued:
+			return [NSSWF:NSLS(@"Queued at position %lu", @"Transfer queued (position)"),
+				[transfer queuePosition]];
+			break;
+		
+		case WCTransferListing:
+			return [NSSWF:NSLS(@"Listing directory... %lu %@", @"Transfer listing (files, 'file(s)'"),
+				[transfer numberOfUntransferredFiles] + [transfer numberOfTransferredFiles],
+				[transfer numberOfUntransferredFiles] + [transfer numberOfTransferredFiles] == 1
+					? NSLS(@"file", @"File singular")
+					: NSLS(@"files", @"File plural")];
+			break;
+			
+		case WCTransferCreatingDirectories:
+			return [NSSWF:NSLS(@"Creating directories... %lu", @"Transfer directories (directories"),
+				[[transfer createdDirectories] count]];
+			break;
+			
+		case WCTransferRunning:
+			size			= [transfer size];
+			transferred		= [transfer dataTransferred] + [transfer rsrcTransferred];
+			remaining		= (transferred < size) ? size - transferred : 0;
+			speed			= [transfer speed];
+			speedLimit		= [transfer speedLimit];
+			interval		= (speed > 0) ? (double) remaining / (double) speed : 0;
+			
+			if([transfer isFolder] && [transfer numberOfUntransferredFiles] + [transfer numberOfTransferredFiles] > 1) {
+				if(speedLimit > 0) {
+					return [NSSWF:NSLS(@"%lu of %lu files, %@ of %@, %@/s (%@/s), %@",
+									   @"Transfer status (files, transferred, size, speed, speed limit, time)"),
+						[transfer numberOfTransferredFiles],
+						[transfer numberOfUntransferredFiles] + [transfer numberOfTransferredFiles],
+						[_sizeFormatter stringFromSize:transferred],
+						[_sizeFormatter stringFromSize:[transfer size]],
+						[_sizeFormatter stringFromSize:speed],
+						[_sizeFormatter stringFromSize:speedLimit],
+						[_timeIntervalFormatter stringFromTimeInterval:interval]];
+				} else {
+					return [NSSWF:NSLS(@"%lu of %lu files, %@ of %@, %@/s, %@",
+									   @"Transfer status (files, transferred, size, speed, time)"),
+						[transfer numberOfTransferredFiles],
+						[transfer numberOfUntransferredFiles] + [transfer numberOfTransferredFiles],
+						[_sizeFormatter stringFromSize:transferred],
+						[_sizeFormatter stringFromSize:[transfer size]],
+						[_sizeFormatter stringFromSize:speed],
+						[_timeIntervalFormatter stringFromTimeInterval:interval]];
+				}
+			} else {
+				if(speedLimit > 0) {
+					return [NSSWF:NSLS(@"%@ of %@, %@/s (%@/s limit), %@",
+									   @"Transfer status (transferred, size, speed, speed limit, time)"),
+						[_sizeFormatter stringFromSize:transferred],
+						[_sizeFormatter stringFromSize:size],
+						[_sizeFormatter stringFromSize:speed],
+						[_sizeFormatter stringFromSize:speedLimit],
+						[_timeIntervalFormatter stringFromTimeInterval:interval]];
+				} else {
+					return [NSSWF:NSLS(@"%@ of %@, %@/s, %@",
+									   @"Transfer status (transferred, size, speed, time)"),
+						[_sizeFormatter stringFromSize:transferred],
+						[_sizeFormatter stringFromSize:size],
+						[_sizeFormatter stringFromSize:speed],
+						[_timeIntervalFormatter stringFromTimeInterval:interval]];
+				}
+			}
+			break;
+			
+		case WCTransferPausing:
+			return NSLS(@"Pausing\u2026", @"Transfer pausing");
+			break;
+			
+		case WCTransferStopping:
+			return NSLS(@"Stopping\u2026", @"Transfer stopping");
+			break;
+			
+		case WCTransferDisconnecting:
+			return NSLS(@"Disconnecting\u2026", @"Transfer disconnecting");
+			break;
+
+		case WCTransferRemoving:
+			return NSLS(@"Removing\u2026", @"Transfer removing");
+			break;
+
+		case WCTransferPaused:
+		case WCTransferStopped:
+		case WCTransferDisconnected:
+			transferred = [transfer dataTransferred] + [transfer rsrcTransferred];
+			
+			if([transfer isFolder] && [transfer numberOfUntransferredFiles] + [transfer numberOfTransferredFiles] > 1) {
+				if([transfer state] == WCTransferPaused)
+					format = NSLS(@"Paused at %lu of %lu files, %@ of %@", @"Transfer paused (files, transferred, size)");
+				else if([transfer state] == WCTransferStopped)
+					format = NSLS(@"Stopped at %lu of %lu files, %@ of %@", @"Transfer stopped (files, transferred, size)");
+				else
+					format = NSLS(@"Disconnected at %lu of %lu files, %@ of %@", @"Transfer disconnected (files, transferred, size)");
+
+				return [NSSWF:format,
+					[transfer numberOfTransferredFiles],
+					[transfer numberOfUntransferredFiles] + [transfer numberOfTransferredFiles],
+					[_sizeFormatter stringFromSize:transferred],
+					[_sizeFormatter stringFromSize:[transfer size]]];
+			} else {
+				if([transfer state] == WCTransferPaused)
+					format = NSLS(@"Paused at %@ of %@", @"Transfer stopped (transferred, size)");
+				else if([transfer state] == WCTransferStopped)
+					format = NSLS(@"Stopped at %@ of %@", @"Transfer stopped (transferred, size)");
+				else
+					format = NSLS(@"Disconnected at %@ of %@", @"Transfer disconnected (transferred, size)");
+
+				return [NSSWF:format,
+					[_sizeFormatter stringFromSize:transferred],
+					[_sizeFormatter stringFromSize:[transfer size]]];
+			}
+			break;
+			
+		case WCTransferFinished:
+			transferred		= [transfer dataTransferred] + [transfer rsrcTransferred];
+			interval		= [transfer accumulatedTime];
+			speed			= (interval > 0.0) ? [transfer actualTransferred] / interval : 0.0;
+			
+			if([transfer isFolder] && [transfer numberOfUntransferredFiles] + [transfer numberOfTransferredFiles] > 1) {
+				return [NSSWF:NSLS(@"Finished %lu files, average %@/s, average %@, took %@",
+								   @"Transfer finished (files, transferred, speed, time)"),
+					[transfer numberOfTransferredFiles],
+					[_sizeFormatter stringFromSize:transferred],
+					[_sizeFormatter stringFromSize:speed],
+					[_timeIntervalFormatter stringFromTimeInterval:interval]];
+			} else {
+				return [NSSWF:NSLS(@"Finished %@, average %@/s, took %@",
+								   @"Transfer finished (transferred, speed, time)"),
+					[_sizeFormatter stringFromSize:transferred],
+					[_sizeFormatter stringFromSize:speed],
+					[_timeIntervalFormatter stringFromTimeInterval:interval]];
+			}
+			break;
+	}
+	
+	return @"";
 }
 
 
@@ -1725,6 +1893,9 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 	_quickLookTransfers		= [[NSMutableArray alloc] init];
 	_quickLookPanelClass	= NSClassFromString(@"QLPreviewPanel");
+	
+	_sizeFormatter			= [[WISizeFormatter alloc] init];
+	_timeIntervalFormatter	= [[WITimeIntervalFormatter alloc] init];
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
@@ -1758,6 +1929,11 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
+		   selector:@selector(serverConnectionServerInfoDidChange:)
+			   name:WCServerConnectionServerInfoDidChangeNotification];
+
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
 		   selector:@selector(serverConnectionPrivilegesDidChange:)
 			   name:WCServerConnectionPrivilegesDidChangeNotification];
 
@@ -1783,6 +1959,9 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	[_folderImage release];
 	[_transfers release];
 	[_quickLookTransfers release];
+	
+	[_sizeFormatter release];
+	[_timeIntervalFormatter release];
 
 	[super dealloc];
 }
@@ -2053,6 +2232,24 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	[self _invalidateTransfersForConnection:[notification object]];
 	
 	[self _validate];
+}
+
+
+
+- (void)serverConnectionServerInfoDidChange:(NSNotification *)notification {
+	NSEnumerator			*enumerator;
+	WCServerConnection		*connection;
+	WCTransfer				*transfer;
+	
+	connection = [notification object];
+	enumerator = [_transfers objectEnumerator];
+
+	while((transfer = [enumerator nextObject])) {
+		if([transfer connection] == connection)
+			[transfer refreshSpeedLimit];
+	}
+	
+	[_transfersTableView setNeedsDisplay:YES];
 }
 
 
@@ -2598,9 +2795,9 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	}
 	else if(tableColumn == _infoTableColumn) {
 		return [NSDictionary dictionaryWithObjectsAndKeys:
-			[transfer name],				WCTransferCellNameKey,
-			[transfer status],				WCTransferCellStatusKey,
-			[transfer progressIndicator],	WCTransferCellProgressKey,
+			[transfer name],						WCTransferCellNameKey,
+			[self _statusForTransfer:transfer],		WCTransferCellStatusKey,
+			[transfer progressIndicator],			WCTransferCellProgressKey,
 			NULL];
 	}
 
@@ -2631,7 +2828,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 	enumerator		= [[self _selectedTransfers] objectEnumerator];
 	
 	while((transfer = [enumerator nextObject]))
-		[string appendFormat:[NSSWF:@"%@ - %@\n", [transfer name], [transfer status]]];
+		[string appendFormat:[NSSWF:@"%@ - %@\n", [transfer name], [self _statusForTransfer:transfer]]];
 	
 	[string trimCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 
@@ -2658,7 +2855,7 @@ static inline NSTimeInterval _WCTransfersTimeInterval(void) {
 
 	index		= [indexes firstIndex];
 	transfer	= [_transfers objectAtIndex:index];
-	string		= [NSSWF:@"%@ - %@", [transfer name], [transfer status]];
+	string		= [NSSWF:@"%@ - %@", [transfer name], [self _statusForTransfer:transfer]];
 
 	[pasteboard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, WCTransferPboardType, NULL] owner:NULL];
 	[pasteboard setString:[NSSWF:@"%ld", index] forType:WCTransferPboardType];

@@ -371,6 +371,18 @@
 
 
 
+- (NSUInteger)speedLimit {
+	return _speedLimit;
+}
+
+
+
+- (NSTimeInterval)accumulatedTime {
+	return _accumulatedTime;
+}
+
+
+
 - (void)setSize:(WIFileOffset)size {
 	_size = size;
 }
@@ -591,154 +603,6 @@
 
 
 
-- (NSString *)status {
-	NSString			*format, *speed;
-	NSTimeInterval		interval;
-	WIFileOffset		transferred, remaining;
-	WCTransferState		state;
-	
-	state = [self state];
-	
-	if(state == WCTransferWaiting && [self numberOfTransferredFiles] > 1)
-		state = WCTransferRunning;
-	
-	switch(state) {
-		case WCTransferLocallyQueued:
-			return NSLS(@"Queued", @"Transfer locally queued");
-			break;
-			
-		case WCTransferWaiting:
-			return NSLS(@"Waiting", @"Transfer waiting");
-			break;
-			
-		case WCTransferQueued:
-			return [NSSWF:NSLS(@"Queued at position %lu", @"Transfer queued (position)"),
-				[self queuePosition]];
-			break;
-		
-		case WCTransferListing:
-			return [NSSWF:NSLS(@"Listing directory... %lu %@", @"Transfer listing (files, 'file(s)'"),
-				[self numberOfUntransferredFiles] + [self numberOfTransferredFiles],
-				[self numberOfUntransferredFiles] + [self numberOfTransferredFiles] == 1
-					? NSLS(@"file", @"File singular")
-					: NSLS(@"files", @"File plural")];
-			break;
-			
-		case WCTransferCreatingDirectories:
-			return [NSSWF:NSLS(@"Creating directories... %lu", @"Transfer directories (directories"),
-				[[self createdDirectories] count]];
-			break;
-			
-		case WCTransferRunning:
-			transferred		= [self dataTransferred] + [self rsrcTransferred];
-			remaining		= (transferred < [self size]) ? [self size] - transferred : 0;
-			interval		= ([self speed] > 0) ? (double) remaining / (double) [self speed] : 0;
-			speed			= [NSSWF:@"%@/s", [NSString humanReadableStringForSizeInBytes:[self speed]]];
-			
-			if(_speedLimit > 0) {
-				speed = [speed stringByAppendingFormat:@" (%@/s limit)",
-					[NSString humanReadableStringForSizeInBytes:_speedLimit]];
-			}
-			
-			if([self isFolder] && [self numberOfUntransferredFiles] + [self numberOfTransferredFiles] > 1) {
-				return [NSSWF:NSLS(@"%lu of %lu files, %@ of %@, %@, %@", @"Transfer status (files, transferred, size, speed, time)"),
-					[self numberOfTransferredFiles],
-					[self numberOfUntransferredFiles] + [self numberOfTransferredFiles],
-					[NSString humanReadableStringForSizeInBytes:transferred],
-					[NSString humanReadableStringForSizeInBytes:[self size]],
-					speed,
-					[NSString humanReadableStringForTimeInterval:interval]];
-			} else {
-				return [NSSWF:NSLS(@"%@ of %@, %@, %@", @"Transfer status (transferred, size, speed, time)"),
-					[NSString humanReadableStringForSizeInBytes:transferred],
-					[NSString humanReadableStringForSizeInBytes:[self size]],
-					speed,
-					[NSString humanReadableStringForTimeInterval:interval]];
-			}
-			break;
-			
-		case WCTransferPausing:
-			return NSLS(@"Pausing\u2026", @"Transfer pausing");
-			break;
-			
-		case WCTransferStopping:
-			return NSLS(@"Stopping\u2026", @"Transfer stopping");
-			break;
-			
-		case WCTransferDisconnecting:
-			return NSLS(@"Disconnecting\u2026", @"Transfer disconnecting");
-			break;
-
-		case WCTransferRemoving:
-			return NSLS(@"Removing\u2026", @"Transfer removing");
-			break;
-
-		case WCTransferPaused:
-		case WCTransferStopped:
-		case WCTransferDisconnected:
-			transferred = [self dataTransferred] + [self rsrcTransferred];
-			
-			if([self isFolder] && [self numberOfUntransferredFiles] + [self numberOfTransferredFiles] > 1) {
-				if([self state] == WCTransferPaused)
-					format = NSLS(@"Paused at %lu of %lu files, %@ of %@", @"Transfer paused (files, transferred, size)");
-				else if([self state] == WCTransferStopped)
-					format = NSLS(@"Stopped at %lu of %lu files, %@ of %@", @"Transfer stopped (files, transferred, size)");
-				else
-					format = NSLS(@"Disconnected at %lu of %lu files, %@ of %@", @"Transfer disconnected (files, transferred, size)");
-
-				return [NSSWF:format,
-					[self numberOfTransferredFiles],
-					[self numberOfUntransferredFiles] + [self numberOfTransferredFiles],
-					[NSString humanReadableStringForSizeInBytes:transferred],
-					[NSString humanReadableStringForSizeInBytes:[self size]]];
-			} else {
-				if([self state] == WCTransferPaused)
-					format = NSLS(@"Paused at %@ of %@", @"Transfer stopped (transferred, size)");
-				else if([self state] == WCTransferStopped)
-					format = NSLS(@"Stopped at %@ of %@", @"Transfer stopped (transferred, size)");
-				else
-					format = NSLS(@"Disconnected at %@ of %@", @"Transfer disconnected (transferred, size)");
-
-				return [NSSWF:format,
-					[NSString humanReadableStringForSizeInBytes:transferred],
-					[NSString humanReadableStringForSizeInBytes:[self size]]];
-			}
-			break;
-			
-		case WCTransferFinished:
-			transferred		= [self dataTransferred] + [self rsrcTransferred];
-			interval		= _accumulatedTime;
-			
-			if(interval > 0.0)
-				speed		= [NSSWF:@"%@/s", [NSString humanReadableStringForSizeInBytes:[self actualTransferred] / interval]];
-			else
-				speed		= [NSSWF:@"%@/s", [NSString humanReadableStringForSizeInBytes:0]];
-			
-			if(_speedLimit > 0) {
-				speed		= [speed stringByAppendingFormat:@" (%@/s limit)",
-					[NSString humanReadableStringForSizeInBytes:_speedLimit]];
-			}
-
-			if([self isFolder] && [self numberOfUntransferredFiles] + [self numberOfTransferredFiles] > 1) {
-				return [NSSWF:NSLS(@"Finished %lu files, %@, average %@, took %@", @"Transfer finished (files, transferred, speed, time)"),
-					[self numberOfTransferredFiles],
-					[NSString humanReadableStringForSizeInBytes:transferred],
-					speed,
-					[NSString humanReadableStringForTimeInterval:_accumulatedTime]];
-			} else {
-				return [NSSWF:NSLS(@"Finished %@, average %@, took %@", @"Transfer finished (files, transferred, speed, time)"),
-					[NSString humanReadableStringForSizeInBytes:transferred],
-					speed,
-					[NSString humanReadableStringForTimeInterval:_accumulatedTime]];
-			}
-			break;
-	}
-	
-	return @"";
-}
-
-
-
 - (NSImage *)icon {
 	if(!_icon) {
 		if([self isFolder])
@@ -891,10 +755,17 @@
 - (void)refreshSpeedLimit {
 	NSUInteger		serverLimit, accountLimit;
 	
-	serverLimit = [[[self connection] server] downloadSpeed];
-	accountLimit = [[[self connection] account] transferDownloadSpeedLimit];
+	serverLimit		= [[[self connection] server] downloadSpeed];
+	accountLimit	= [[[self connection] account] transferDownloadSpeedLimit];
 	
-	_speedLimit = WI_MIN(serverLimit, accountLimit);
+	if(serverLimit > 0 && accountLimit > 0)
+		_speedLimit = WIMin(serverLimit, accountLimit);
+	else if(serverLimit > 0)
+		_speedLimit = serverLimit;
+	else if(accountLimit > 0)
+		_speedLimit = accountLimit;
+	else
+		_speedLimit = 0;
 }
 
 @end
@@ -906,10 +777,17 @@
 - (void)refreshSpeedLimit {
 	NSUInteger		serverLimit, accountLimit;
 	
-	serverLimit = [[[self connection] server] uploadSpeed];
-	accountLimit = [[[self connection] account] transferUploadSpeedLimit];
-	
-	_speedLimit = WI_MIN(serverLimit, accountLimit);
+	serverLimit		= [[[self connection] server] uploadSpeed];
+	accountLimit	= [[[self connection] account] transferUploadSpeedLimit];
+
+	if(serverLimit > 0 && accountLimit > 0)
+		_speedLimit = WIMin(serverLimit, accountLimit);
+	else if(serverLimit > 0)
+		_speedLimit = serverLimit;
+	else if(accountLimit > 0)
+		_speedLimit = accountLimit;
+	else
+		_speedLimit = 0;
 }
 
 @end

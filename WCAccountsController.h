@@ -101,6 +101,7 @@
 
 	NSString							*_accountFilter;
 	WIDateFormatter						*_dateFormatter;
+	WISizeFormatter						*_sizeFormatter;
 	
 	NSMutableDictionary					*_deletedAccounts;
 }

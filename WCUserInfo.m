@@ -74,9 +74,7 @@
 
 - (void)_showUserInfo {
 	NSMutableArray		*groups;
-	NSDate				*date;
 	NSRect				rect;
-	NSTimeInterval		interval;
 	CGFloat				height;
 
 	[_iconImageView setImage:[_user iconWithIdleTint:NO]];
@@ -108,21 +106,15 @@
 			NSLS(@"bits", "Cipher string")]];
 	}
 	
-	date = [_user joinDate];
-	interval = [[NSDate date] timeIntervalSinceDate:date];
-	
 	[_loginTimeTextField setStringValue:[NSSWF:
 		NSLS(@"%@,\nsince %@", @"Time stamp (time counter, time string)"),
-		[NSString humanReadableStringForTimeInterval:interval],
-		[_dateFormatter stringFromDate:date]]];
-	
-	date = [_user idleDate];
-	interval = [[NSDate date] timeIntervalSinceDate:date];
+		[_timeIntervalFormatter stringFromTimeIntervalSinceDate:[_user joinDate]],
+		[_dateFormatter stringFromDate:[_user joinDate]]]];
 	
 	[_idleTimeTextField setStringValue:[NSSWF:
 		NSLS(@"%@,\nsince %@", @"Time stamp (time counter, time string)"),
-		[NSString humanReadableStringForTimeInterval:interval],
-		[_dateFormatter stringFromDate:date]]];
+		[_timeIntervalFormatter stringFromTimeIntervalSinceDate:[_user idleDate]],
+		[_dateFormatter stringFromDate:[_user idleDate]]]];
 	
 	[self setYOffset:18.0];
 	[self resizeTitleTextField:_idleTimeTitleTextField withTextField:_idleTimeTextField];
@@ -176,6 +168,7 @@
 	[_errorQueue release];
 	[_user release];
 	[_dateFormatter release];
+	[_timeIntervalFormatter release];
 
 	[super dealloc];
 }
@@ -199,6 +192,8 @@
 	[_dateFormatter setDateStyle:NSDateFormatterMediumStyle];
 	[_dateFormatter setNaturalLanguageStyle:WIDateFormatterNormalNaturalLanguageStyle];
 
+	_timeIntervalFormatter = [[WITimeIntervalFormatter alloc] init];
+	
 	_fieldFrame	= [_statusTextField frame];
 	[self setDefaultFrame:[_statusTextField frame]];
 	

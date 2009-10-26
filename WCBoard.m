@@ -226,6 +226,15 @@
 
 #pragma mark -
 
+- (BOOL)isEqual:(id)object {
+	if(![object isKindOfClass:[self class]])
+		return NO;
+	
+	return [[self path] isEqual:[object path]];
+}
+
+
+
 - (NSString *)description {
 	return [NSSWF:@"<%@: %p>{board = %@}", [self class], self, [self path]];
 }

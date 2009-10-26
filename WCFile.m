@@ -713,20 +713,6 @@
 
 
 
-- (NSString *)humanReadableSize {
-	if([self type] == WCFileFile) {
-		return [NSString humanReadableStringForSizeInBytes:[self totalSize]];
-	} else {
-		return [NSSWF:NSLS(@"%u %@", @"Files folder size (count, 'item(s)'"),
-			[self directoryCount],
-			[self directoryCount] == 1
-				? NSLS(@"item", @"Item singular")
-				: NSLS(@"items", @"Item plural")];
-	}
-}
-
-
-
 #pragma mark -
 
 - (void)setDataSize:(WIFileOffset)size {
@@ -767,6 +753,16 @@
 
 - (NSUInteger)directoryCount {
 	return _directoryCount;
+}
+
+
+
+- (NSString *)humanReadableDirectoryCount {
+	return [NSSWF:NSLS(@"%u %@", @"Files folder size (count, 'item(s)'"),
+		[self directoryCount],
+		[self directoryCount] == 1
+			? NSLS(@"item", @"Item singular")
+			: NSLS(@"items", @"Item plural")];
 }
 
 

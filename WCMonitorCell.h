@@ -26,8 +26,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-extern NSString * const					WCMonitorCellTransferKey;
 extern NSString * const					WCMonitorCellStatusKey;
+extern NSString * const					WCMonitorCellTransferKey;
+extern NSString * const					WCMonitorCellProgressIndicatorKey;
 
 
 @interface WCMonitorCell : NSCell {

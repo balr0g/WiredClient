@@ -160,6 +160,8 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	[_dateFormatter setDateStyle:NSDateFormatterMediumStyle];
 	[_dateFormatter setNaturalLanguageStyle:WIDateFormatterCapitalizedNaturalLanguageStyle];
 	
+	_sizeFormatter = [[WISizeFormatter alloc] init];
+	
 	_truncatingTailParagraphStyle = [[NSMutableParagraphStyle alloc] init];
 	[_truncatingTailParagraphStyle setLineBreakMode:NSLineBreakByTruncatingTail];
 
@@ -1330,8 +1332,8 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		[directory count] == 1
 			? NSLS(@"item", @"Item singular")
 			: NSLS(@"items", @"Item plural"),
-		[NSString humanReadableStringForSizeInBytes:size],
-		[NSString humanReadableStringForSizeInBytes:[_currentDirectory freeSpace]]]];
+		[_sizeFormatter stringFromSize:size],
+		[_sizeFormatter stringFromSize:[_currentDirectory freeSpace]]]];
 }
 
 
@@ -1477,6 +1479,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	[_initialDirectory release];
 	
 	[_dateFormatter release];
+	[_sizeFormatter release];
 	
 	[super dealloc];
 }
@@ -2778,7 +2781,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		else if(tableColumn == _modifiedTableColumn)
 			return [_dateFormatter stringFromDate:[file modificationDate]];
 		else if(tableColumn == _sizeTableColumn)
-			return [file humanReadableSize];
+			return [file isFolder] ? [file humanReadableDirectoryCount] : [_sizeFormatter stringFromSize:[file totalSize]];
 		else if(tableColumn == _serverTableColumn)
 			return [[file connection] name];
 	}

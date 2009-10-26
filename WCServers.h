@@ -44,6 +44,8 @@
 	NSNetServiceBrowser						*_browser;
 	NSString								*_itemFilter;
 	
+	WISizeFormatter							*_sizeFormatter;
+	
 	WCServerContainer						*_servers;
 	WCServerBonjour							*_bonjour;
 }
