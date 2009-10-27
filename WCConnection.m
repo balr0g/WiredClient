@@ -252,7 +252,7 @@ WIP7Spec							*WCP7Spec;
 
 
 - (NSString *)URLIdentifier {
-	return [[self URL] hostpair];
+	return [[[self URL] hostpair] stringByAppendingString:[[self URL] user]];
 }
 
 
