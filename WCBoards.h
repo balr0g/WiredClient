@@ -70,6 +70,7 @@ extern NSString * const								WCBoardsDidChangeUnreadCountNotification;
 	IBOutlet NSPopUpButton							*_setGroupPopUpButton;
 	IBOutlet NSPopUpButton							*_setGroupPermissionsPopUpButton;
 	IBOutlet NSPopUpButton							*_setEveryonePermissionsPopUpButton;
+	IBOutlet NSProgressIndicator					*_permissionsProgressIndicator;
 
 	IBOutlet NSPanel								*_postPanel;
 	IBOutlet NSPopUpButton							*_postLocationPopUpButton;

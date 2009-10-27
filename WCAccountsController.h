@@ -28,6 +28,8 @@
 
 #import "WCAdministration.h"
 
+extern NSString * const					WCAccountsControllerAccountsDidChangeNotification;
+
 @class WCAccount;
 
 @interface WCAccountsController : WCAdministrationController {
@@ -109,13 +111,8 @@
 - (NSString *)newDocumentMenuItemTitle;
 - (NSString *)deleteDocumentMenuItemTitle;
 
-- (NSArray *)accounts;
-- (NSArray *)users;
 - (NSArray *)userNames;
-- (NSArray *)groups;
 - (NSArray *)groupNames;
-- (WCAccount *)userWithName:(NSString *)name;
-- (WCAccount *)groupWithName:(NSString *)name;
 - (void)editUserAccountWithName:(NSString *)name;
 
 - (IBAction)newDocument:(id)sender;

@@ -883,14 +883,20 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	
 	array = [[[[board connection] administration] accountsController] userNames];
 	
-	if([array count] > 0) {
-		[_addOwnerPopUpButton addItem:[NSMenuItem separatorItem]];
-		[_addOwnerPopUpButton addItemsWithTitles:array];
+	if(array) {
+		if([array count] > 0) {
+			[_addOwnerPopUpButton addItem:[NSMenuItem separatorItem]];
+			[_addOwnerPopUpButton addItemsWithTitles:array];
 
-		if(selectedOwner && [_addOwnerPopUpButton indexOfItemWithTitle:selectedOwner] != -1)
-			[_addOwnerPopUpButton selectItemWithTitle:selectedOwner];
-		else
-			[_addOwnerPopUpButton selectItemWithTitle:[[[board connection] URL] user]];
+			if(selectedOwner && [_addOwnerPopUpButton indexOfItemWithTitle:selectedOwner] != -1)
+				[_addOwnerPopUpButton selectItemWithTitle:selectedOwner];
+			else
+				[_addOwnerPopUpButton selectItemWithTitle:[[[board connection] URL] user]];
+		}
+		
+		[_permissionsProgressIndicator stopAnimation:self];
+	} else {
+		[_permissionsProgressIndicator startAnimation:self];
 	}
 	
 	[_setOwnerPopUpButton removeAllItems];
@@ -909,14 +915,20 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	
 	array = [[[[board connection] administration] accountsController] groupNames];
 	
-	if([array count] > 0) {
-		[_addGroupPopUpButton addItem:[NSMenuItem separatorItem]];
-		[_addGroupPopUpButton addItemsWithTitles:array];
+	if(array) {
+		if([array count] > 0) {
+			[_addGroupPopUpButton addItem:[NSMenuItem separatorItem]];
+			[_addGroupPopUpButton addItemsWithTitles:array];
 
-		if(selectedGroup && [_addGroupPopUpButton indexOfItemWithTitle:selectedGroup] != -1)
-			[_addGroupPopUpButton selectItemWithTitle:selectedGroup];
-		else
-			[_addGroupPopUpButton selectItemAtIndex:0];
+			if(selectedGroup && [_addGroupPopUpButton indexOfItemWithTitle:selectedGroup] != -1)
+				[_addGroupPopUpButton selectItemWithTitle:selectedGroup];
+			else
+				[_addGroupPopUpButton selectItemAtIndex:0];
+		}
+		
+		[_permissionsProgressIndicator stopAnimation:self];
+	} else {
+		[_permissionsProgressIndicator startAnimation:self];
 	}
 	
 	[_setGroupPopUpButton removeAllItems];
@@ -1051,6 +1063,11 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 		addObserver:self
 		   selector:@selector(serverConnectionPrivilegesDidChange:)
 			   name:WCServerConnectionPrivilegesDidChangeNotification];
+	
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
+		   selector:@selector(accountsControllerAccountsDidChange:)
+			   name:WCAccountsControllerAccountsDidChangeNotification];
 	
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
@@ -1381,6 +1398,12 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 		[self _getBoardsForConnection:connection];
 	
 	[self _reloadThreadAndRememberPosition:YES];
+}
+
+
+
+- (void)accountsControllerAccountsDidChange:(NSNotification *)notification {
+	[self _updatePermissions];
 }
 
 

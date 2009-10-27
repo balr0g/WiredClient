@@ -32,8 +32,11 @@
 #import "WCServerConnection.h"
 #import "WCUser.h"
 
-#define	WCAccountsFieldCell					@"WCAccountsFieldCell"
-#define	WCAccountsFieldSettings				@"WCAccountsFieldSettings"
+#define	WCAccountsFieldCell											@"WCAccountsFieldCell"
+#define	WCAccountsFieldSettings										@"WCAccountsFieldSettings"
+
+
+NSString * const WCAccountsControllerAccountsDidChangeNotification	= @"WCAccountsControllerAccountsDidChangeNotification";
 
 
 enum _WCAccountsAction {
@@ -42,7 +45,7 @@ enum _WCAccountsAction {
 	WCAccountsSelectTab,
 	WCAccountsSelectRow
 };
-typedef enum _WCAccountsAction				WCAccountsAction;
+typedef enum _WCAccountsAction										WCAccountsAction;
 
 
 @interface WCAccountsController(Private)
@@ -1195,6 +1198,9 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 		[self _selectAccounts];
 		
 		[[_administration connection] removeObserver:self message:message];
+		
+		[[NSNotificationCenter defaultCenter] postNotificationName:WCAccountsControllerAccountsDidChangeNotification
+															object:self];
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
 		[_administration showError:[WCError errorWithWiredMessage:message]];
@@ -1485,62 +1491,29 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 
 #pragma mark -
 
-- (NSArray *)accounts {
-	return _shownAccounts;
-}
-
-
-
-- (NSArray *)users {
-	NSEnumerator	*enumerator;
-	NSMutableArray	*array;
-	WCAccount		*account;
-
-	array = [NSMutableArray array];
-	enumerator = [[self accounts] objectEnumerator];
-
-	while((account = [enumerator nextObject])) {
-		if([account isKindOfClass:[WCUserAccount class]])
-			[array addObject:account];
-	}
-
-	return array;
-}
-
-
-
 - (NSArray *)userNames {
 	NSEnumerator	*enumerator;
 	NSMutableArray	*array;
 	WCAccount		*account;
-
-	array = [NSMutableArray array];
-	enumerator = [[self users] objectEnumerator];
-
-	while((account = [enumerator nextObject]))
-		[array addObject:[account name]];
 	
-	[array sortUsingSelector:@selector(caseInsensitiveCompare:)];
+	if(_requested) {
+		array			= [NSMutableArray array];
+		enumerator		= [_allUserAccounts objectEnumerator];
 
-	return array;
-}
+		while((account = [enumerator nextObject]))
+			[array addObject:[account name]];
+		
+		[array sortUsingSelector:@selector(caseInsensitiveCompare:)];
 
-
-
-- (NSArray *)groups {
-	NSEnumerator	*enumerator;
-	NSMutableArray	*array;
-	WCAccount		*account;
-
-	array = [NSMutableArray array];
-	enumerator = [[self accounts] objectEnumerator];
-
-	while((account = [enumerator nextObject])) {
-		if([account isKindOfClass:[WCGroupAccount class]])
-			[array addObject:account];
+		return array;
+	} else {
+		[self _requestAccounts];
+		
+		if(_requested)
+			return nil;
+		else
+			return [NSArray array];
 	}
-
-	return array;
 }
 
 
@@ -1550,47 +1523,24 @@ typedef enum _WCAccountsAction				WCAccountsAction;
 	NSMutableArray	*array;
 	WCAccount		*account;
 
-	array = [NSMutableArray array];
-	enumerator = [[self groups] objectEnumerator];
+	if(_requested) {
+		array			= [NSMutableArray array];
+		enumerator		= [_allGroupAccounts objectEnumerator];
 
-	while((account = [enumerator nextObject]))
-		[array addObject:[account name]];
-	
-	[array sortUsingSelector:@selector(caseInsensitiveCompare:)];
+		while((account = [enumerator nextObject]))
+			[array addObject:[account name]];
+		
+		[array sortUsingSelector:@selector(caseInsensitiveCompare:)];
 
-	return array;
-}
-
-
-
-- (WCAccount *)userWithName:(NSString *)name {
-	NSEnumerator	*enumerator;
-	WCAccount		*account;
-
-	enumerator = [[self accounts] objectEnumerator];
-
-	while((account = [enumerator nextObject])) {
-		if([account isKindOfClass:[WCUserAccount class]] && [[account name] isEqualToString:name])
-			return account;
+		return array;
+	} else {
+		[self _requestAccounts];
+		
+		if(_requested)
+			return nil;
+		else
+			return [NSArray array];
 	}
-
-	return NULL;
-}
-
-
-
-- (WCAccount *)groupWithName:(NSString *)name {
-	NSEnumerator	*enumerator;
-	WCAccount		*account;
-
-	enumerator = [[self accounts] objectEnumerator];
-
-	while((account = [enumerator nextObject])) {
-		if([account isKindOfClass:[WCGroupAccount class]] && [[account name] isEqualToString:name])
-			return account;
-	}
-
-	return NULL;
 }
 
 
