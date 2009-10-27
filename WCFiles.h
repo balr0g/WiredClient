@@ -75,6 +75,7 @@ extern NSString * const					WCPlacePboardType;
 	IBOutlet NSPopUpButton				*_groupPopUpButton;
 	IBOutlet NSPopUpButton				*_groupPermissionsPopUpButton;
 	IBOutlet NSPopUpButton				*_everyonePermissionsPopUpButton;
+	IBOutlet NSProgressIndicator		*_permissionsProgressIndicator;
 
 	WCErrorQueue						*_errorQueue;
 	

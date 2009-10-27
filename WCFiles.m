@@ -109,6 +109,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 - (void)_selectStyle:(NSUInteger)style;
 
 - (void)_updateWindowTitle;
+- (void)_updatePermissions;
 
 - (void)_changeCurrentDirectory:(WCFile *)file selectFiles:(BOOL)selectFiles forceSelection:(BOOL)forceSelection addToHistory:(BOOL)addToHistory;
 - (void)_loadFilesAtDirectory:(WCFile *)file selectFiles:(BOOL)selectFiles;
@@ -196,6 +197,11 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		addObserver:self
 		   selector:@selector(serverConnectionPrivilegesDidChange:)
 			   name:WCServerConnectionPrivilegesDidChangeNotification];
+	
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
+		   selector:@selector(accountsControllerAccountsDidChange:)
+			   name:WCAccountsControllerAccountsDidChangeNotification];
 	
 	[self _addPlaces];
 	[self _addConnections];
@@ -954,6 +960,55 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		[[self window] setTitle:NSLS(@"Searching", @"Files window title") withSubtitle:[[[self _selectedSource] connection] name]];
 	else
 		[[self window] setTitle:NSLS(@"Files", @"Files window title") withSubtitle:[_currentDirectory path]];
+}
+
+
+
+- (void)_updatePermissions {
+	NSArray					*array;
+	WCServerConnection		*connection;
+	
+	connection = [self _selectedConnection];
+
+	[_ownerPopUpButton removeAllItems];
+	[_ownerPopUpButton addItem:[NSMenuItem itemWithTitle:NSLS(@"None", @"Create folder owner popup title") tag:1]];
+	
+	array = [[[connection administration] accountsController] userNames];
+	
+	if(array) {
+		if([array count] > 0) {
+			[_ownerPopUpButton addItem:[NSMenuItem separatorItem]];
+			[_ownerPopUpButton addItemsWithTitles:array];
+			[_ownerPopUpButton selectItemWithTitle:[[connection URL] user]];
+		}
+		
+		[_permissionsProgressIndicator stopAnimation:self];
+	} else {
+		[_permissionsProgressIndicator startAnimation:self];
+	}
+	
+	[_ownerPermissionsPopUpButton selectItemWithTag:WCFileOwnerRead | WCFileOwnerWrite];
+	
+	[_groupPopUpButton removeAllItems];
+	[_groupPopUpButton addItem:[NSMenuItem itemWithTitle:NSLS(@"None", @"Create folder group popup title") tag:1]];
+	
+	array = [[[connection administration] accountsController] groupNames];
+	
+	if(array) {
+		if([array count] > 0) {
+			[_groupPopUpButton addItem:[NSMenuItem separatorItem]];
+			[_groupPopUpButton addItemsWithTitles:array];
+		}
+		
+		[_permissionsProgressIndicator stopAnimation:self];
+	} else {
+		[_permissionsProgressIndicator startAnimation:self];
+	}
+		
+	[_groupPopUpButton selectItemAtIndex:0];
+	[_groupPermissionsPopUpButton selectItemWithTag:0];
+
+	[_everyonePermissionsPopUpButton selectItemWithTag:WCFileEveryoneWrite];
 }
 
 
@@ -1790,6 +1845,12 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 
 
+- (void)accountsControllerAccountsDidChange:(NSNotification *)notification {
+	[self _updatePermissions];
+}
+
+
+
 - (void)wiredFileDirectoryChanged:(WIP7Message *)message {
 	WCFile		*file;
 	
@@ -2422,14 +2483,10 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 - (IBAction)createFolder:(id)sender {
 	NSEnumerator		*enumerator;
-	NSArray				*array;
 	NSMenuItem			*item;
-	WCServerConnection	*connection;
 	
 	if(![self _validateCreateFolder])
 		return;
-	
-	connection = [self _selectedConnection];
 	
 	if(![[_typePopUpButton lastItem] image]) {
 		enumerator = [[_typePopUpButton itemArray] objectEnumerator];
@@ -2443,34 +2500,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	[_typePopUpButton selectItemWithTag:WCFileDirectory];
 	
 	[self _validatePermissions];
-	
-	[_ownerPopUpButton removeAllItems];
-	[_ownerPopUpButton addItem:[NSMenuItem itemWithTitle:NSLS(@"None", @"Create folder owner popup title") tag:1]];
-	
-	array = [[[connection administration] accountsController] userNames];
-	
-	if([array count] > 0) {
-		[_ownerPopUpButton addItem:[NSMenuItem separatorItem]];
-		[_ownerPopUpButton addItemsWithTitles:array];
-		[_ownerPopUpButton selectItemWithTitle:[[connection URL] user]];
-	}
-	
-	[_ownerPermissionsPopUpButton selectItemWithTag:WCFileOwnerRead | WCFileOwnerWrite];
-	
-	[_groupPopUpButton removeAllItems];
-	[_groupPopUpButton addItem:[NSMenuItem itemWithTitle:NSLS(@"None", @"Create folder group popup title") tag:1]];
-	
-	array = [[[connection administration] accountsController] groupNames];
-	
-	if([array count] > 0) {
-		[_groupPopUpButton addItem:[NSMenuItem separatorItem]];
-		[_groupPopUpButton addItemsWithTitles:array];
-	}
-	
-	[_groupPopUpButton selectItemAtIndex:0];
-	[_groupPermissionsPopUpButton selectItemWithTag:0];
-
-	[_everyonePermissionsPopUpButton selectItemWithTag:WCFileEveryoneWrite];
+	[self _updatePermissions];
 	
 	[NSApp beginSheet:_createFolderPanel
 	   modalForWindow:[self window]
