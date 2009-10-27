@@ -51,6 +51,7 @@ typedef enum _WCEventType		WCEventType;
 	
 	NSString					*_formattedTime;
 	
+	NSDate						*_archive;
 	NSDate						*_time;
 	NSString					*_nick;
 	NSString					*_login;
@@ -413,6 +414,7 @@ typedef enum _WCEventType		WCEventType;
 	event					= [[self alloc] init];
 	event->_type			= type;
 	event->_message			= [string retain];
+	event->_archive			= [[message dateForName:@"wired.event.archive"] retain];
 	event->_time			= [[message dateForName:@"wired.event.time"] retain];
 	event->_nick			= [[message stringForName:@"wired.user.nick"] retain];
 	event->_login			= [[message stringForName:@"wired.user.login"] retain];
@@ -427,6 +429,7 @@ typedef enum _WCEventType		WCEventType;
 - (void)dealloc {
 	[_formattedTime release];
 
+	[_archive release];
 	[_time release];
 	[_nick release];
 	[_login release];
@@ -573,15 +576,21 @@ typedef enum _WCEventType		WCEventType;
 
 
 - (void)_reloadFilter {
+	NSArray			*events;
 	WCEvent			*event;
+	id				archive;
 	NSUInteger		i, count;
 	
 	[_shownEvents removeAllObjects];
 	
-	count = [_allEvents count];
+	archive		= [_archivePopUpButton representedObjectOfSelectedItem]
+		? [_archivePopUpButton representedObjectOfSelectedItem]
+		: [NSNull null];
+	events		= [_allEvents objectForKey:archive];
+	count		= [events count];
 	
 	for(i = 0; i < count; i++) {
-		event = [_allEvents objectAtIndex:i];
+		event = [events objectAtIndex:i];
 		
 		if([self _filterIncludesEvent:event])
 			[_shownEvents addObject:event];
@@ -594,6 +603,25 @@ typedef enum _WCEventType		WCEventType;
 
 
 - (void)_reloadPopUpButtons {
+	NSEnumerator		*enumerator;
+	NSDate				*archive, *selectedArchive;
+	
+	selectedArchive = [[[_archivePopUpButton representedObjectOfSelectedItem] retain] autorelease];
+	
+	while([_archivePopUpButton numberOfItems] > 1)
+		[_archivePopUpButton removeItemAtIndex:1];
+	
+	if([_allArchives count] > 0)
+		[_archivePopUpButton addItem:[NSMenuItem separatorItem]];
+	
+	enumerator = [[_allArchives sortedArrayUsingSelector:@selector(compare:)] objectEnumerator];
+	
+	while((archive = [enumerator nextObject]))
+		[_archivePopUpButton addItem:[NSMenuItem itemWithTitle:[_dateFormatter stringFromDate:archive] representedObject:archive]];
+	
+	if(selectedArchive)
+		[_archivePopUpButton selectItemWithRepresentedObject:selectedArchive];
+	
 	while([_nickPopUpButton numberOfItems] > 1)
 		[_nickPopUpButton removeItemAtIndex:1];
 	
@@ -670,6 +698,9 @@ typedef enum _WCEventType		WCEventType;
 	WIP7Message		*message;
 	
 	if(!_requested && [[_administration connection] isConnected] && [[[_administration connection] account] eventsViewEvents]) {
+		message = [WIP7Message messageWithName:@"wired.event.get_archives" spec:WCP7Spec];
+		[[_administration connection] sendMessage:message fromObserver:self selector:@selector(wiredEventGetArchivesReply:)];
+		
 		message = [WIP7Message messageWithName:@"wired.event.get_events" spec:WCP7Spec];
 		[[_administration connection] sendMessage:message fromObserver:self selector:@selector(wiredEventGetEventsReply:)];
 		
@@ -710,10 +741,13 @@ typedef enum _WCEventType		WCEventType;
 - (id)init {
 	self = [super init];
 	
-	_allEvents			= [[NSMutableArray alloc] init];
+	_allEvents			= [[NSMutableDictionary alloc] init];
 	_listedEvents		= [[NSMutableArray alloc] init];
 	_receivedEvents		= [[NSMutableArray alloc] init];
 	_shownEvents		= [[NSMutableArray alloc] init];
+	
+	_allArchives		= [[NSMutableArray alloc] init];
+	_listedArchives		= [[NSMutableArray alloc] init];
 	
 	_allNicks			= [[NSMutableSet alloc] init];
 	_allLogins			= [[NSMutableSet alloc] init];
@@ -735,7 +769,12 @@ typedef enum _WCEventType		WCEventType;
 	[_listedEvents release];
 	[_receivedEvents release];
 	[_shownEvents release];
+	
+	[_allArchives release];
+	[_listedArchives release];
+	
 	[_dateFormatter release];
+	[_sizeFormatter release];
 	
 	[_allNicks release];
 	[_allLogins release];
@@ -750,6 +789,7 @@ typedef enum _WCEventType		WCEventType;
 #pragma mark -
 
 - (void)windowDidLoad {
+	[[_administration connection] addObserver:self selector:@selector(wiredEventArchive:) messageName:@"wired.event.archive"];
 	[[_administration connection] addObserver:self selector:@selector(wiredEventEvent:) messageName:@"wired.event.event"];
 	
 	[_eventsTableView setHighlightedTableColumn:_timeTableColumn sortOrder:WISortAscending];
@@ -774,11 +814,34 @@ typedef enum _WCEventType		WCEventType;
 
 
 
+- (void)wiredEventGetArchivesReply:(WIP7Message *)message {
+	if([[message name] isEqualToString:@"wired.event.archive_list"]) {
+		[_listedArchives addObject:[message dateForName:@"wired.event.archive"]];
+	}
+	else if([[message name] isEqualToString:@"wired.event.archive_list.done"]) {
+		[_allArchives setArray:_listedArchives];
+		[_listedArchives removeAllObjects];
+		
+		[self _reloadPopUpButtons];
+		
+		[[_administration connection] removeObserver:self message:message];
+	}
+	else if([[message name] isEqualToString:@"wired.error"]) {
+		[_administration showError:[WCError errorWithWiredMessage:message]];
+		
+		[[_administration connection] removeObserver:self message:message];
+	}
+}
+
+
+
 - (void)wiredEventGetEventsReply:(WIP7Message *)message {
-	WCEvent			*event;
-	NSUInteger		i, count;
+	NSMutableArray		*events;
+	WCEvent				*event;
+	id					archive;
+	NSUInteger			i, count;
 	
-	if([[message name] isEqualToString:@"wired.event.list"]) {
+	if([[message name] isEqualToString:@"wired.event.event_list"]) {
 		event = [WCEvent eventWithMessage:message dateFormatter:_dateFormatter sizeFormatter:_sizeFormatter];
 		
 		if(event) {
@@ -789,8 +852,20 @@ typedef enum _WCEventType		WCEventType;
 			[_allIPs addObject:event->_ip];
 		}
 	}
-	else if([[message name] isEqualToString:@"wired.event.list.done"]) {
-		[_allEvents addObjectsFromArray:_listedEvents];
+	else if([[message name] isEqualToString:@"wired.event.event_list.done"]) {
+		if([_listedEvents count] > 0) {
+			event		= [_listedEvents objectAtIndex:0];
+			archive		= event->_archive ? event->_archive : (id) [NSNull null];
+			events		= [_allEvents objectForKey:archive];
+			
+			if(!events) {
+				events = [NSMutableArray array];
+				
+				[_allEvents setObject:events forKey:archive];
+			}
+			
+			[events addObjectsFromArray:_listedEvents];
+		}
 		
 		[self _reloadPopUpButtons];
 		
@@ -832,13 +907,30 @@ typedef enum _WCEventType		WCEventType;
 
 
 
+- (void)wiredEventArchive:(WIP7Message *)message {
+	[_allArchives addObject:[message dateForName:@"wired.event.archive"]];
+	
+	[self _reloadPopUpButtons];
+}
+
+
+
 - (void)wiredEventEvent:(WIP7Message *)message {
-	WCEvent			*event;
+	NSMutableArray		*events;
+	WCEvent				*event;
 	
 	event = [WCEvent eventWithMessage:message dateFormatter:_dateFormatter sizeFormatter:_sizeFormatter];
 	
 	if(event) {
-		[_allEvents addObject:event];
+		events = [_allEvents objectForKey:[NSNull null]];
+		
+		if(!events) {
+			events = [NSMutableArray array];
+			
+			[_allEvents setObject:events forKey:[NSNull null]];
+		}
+		
+		[events addObject:event];
 		[_receivedEvents addObject:event];
 		
 		if([_receivedEvents count] > 20)
@@ -861,6 +953,23 @@ typedef enum _WCEventType		WCEventType;
 
 
 #pragma mark -
+
+- (IBAction)archive:(id)sender {
+	WIP7Message		*message;
+	NSDate			*archive;
+	
+	archive = [_archivePopUpButton representedObjectOfSelectedItem];
+	
+	if(archive && ![_allEvents objectForKey:archive]) {
+		message = [WIP7Message messageWithName:@"wired.event.get_events" spec:WCP7Spec];
+		[message setDate:archive forName:@"wired.event.archive"];
+		[[_administration connection] sendMessage:message fromObserver:self selector:@selector(wiredEventGetEventsReply:)];
+	}
+	
+	[self _reloadFilter];
+}
+
+
 
 - (IBAction)nick:(id)sender {
 	[self _reloadFilter];

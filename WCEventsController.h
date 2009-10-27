@@ -29,6 +29,7 @@
 #import "WCAdministration.h"
 
 @interface WCEventsController : WCAdministrationController {
+	IBOutlet NSPopUpButton				*_archivePopUpButton;
 	IBOutlet NSPopUpButton				*_nickPopUpButton;
 	IBOutlet NSPopUpButton				*_loginPopUpButton;
 	IBOutlet NSPopUpButton				*_ipPopUpButton;
@@ -43,10 +44,14 @@
 	IBOutlet NSTableColumn				*_imageTableColumn;
 	IBOutlet NSTableColumn				*_messageTableColumn;
 	
-	NSMutableArray						*_allEvents;
+	NSMutableDictionary					*_allEvents;
 	NSMutableArray						*_listedEvents;
 	NSMutableArray						*_receivedEvents;
 	NSMutableArray						*_shownEvents;
+	
+	NSMutableArray						*_allArchives;
+	NSMutableArray						*_listedArchives;
+	
 	WIDateFormatter						*_dateFormatter;
 	WISizeFormatter						*_sizeFormatter;
 	
@@ -58,6 +63,7 @@
 	BOOL								_requested;
 }
 
+- (IBAction)archive:(id)sender;
 - (IBAction)nick:(id)sender;
 - (IBAction)login:(id)sender;
 - (IBAction)ip:(id)sender;

@@ -794,7 +794,6 @@
 
 
 
-
 - (void)outlineViewItemDidExpand:(NSNotification *)notification {
 	id		item;
 	
