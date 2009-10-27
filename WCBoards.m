@@ -1343,14 +1343,23 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 
 - (void)linkConnectionDidClose:(NSNotification *)notification {
 	WCServerConnection		*connection;
+	WCBoard					*board;
 	
 	connection = [notification object];
 	
 	if(![connection isKindOfClass:[WCServerConnection class]])
 		return;
+
+	board = [_boards boardForConnection:connection];
+	
+	if(board) {
+		[_boards removeBoard:board];
+		
+		[_boardsOutlineView reloadData];
+	}
 	
 	[_boards invalidateForConnection:connection];
-
+	
 	[connection removeObserver:self];
 	
 	[self _validate];
@@ -1360,11 +1369,20 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 
 - (void)linkConnectionDidTerminate:(NSNotification *)notification {
 	WCServerConnection		*connection;
+	WCBoard					*board;
 
 	connection = [notification object];
 
 	if(![connection isKindOfClass:[WCServerConnection class]])
 		return;
+	
+	board = [_boards boardForConnection:connection];
+	
+	if(board) {
+		[_boards removeBoard:board];
+		
+		[_boardsOutlineView reloadData];
+	}
 	
 	[_boards invalidateForConnection:[notification object]];
 	
