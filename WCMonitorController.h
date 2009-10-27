@@ -32,6 +32,8 @@
 	IBOutlet NSButton					*_allFilterButton;
 	IBOutlet NSButton					*_downloadingFilterButton;
 	IBOutlet NSButton					*_uploadingFilterButton;
+	IBOutlet NSTextField				*_downloadSpeedTextField;
+	IBOutlet NSTextField				*_uploadSpeedTextField;
 	IBOutlet NSButton					*_disconnectButton;
 	IBOutlet NSSearchField				*_filterSearchField;
 

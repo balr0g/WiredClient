@@ -283,12 +283,37 @@
 
 
 - (void)wiredUserGetUsersReply:(WIP7Message *)message {
+	NSEnumerator	*enumerator;
+	WCUser			*user;
+	WCTransfer		*transfer;
+	NSUInteger		downloadSpeed, uploadSpeed;
+	
 	if([[message name] isEqualToString:@"wired.user.user_list"]) {
 		[_listedUsers addObject:[WCUser userWithMessage:message connection:[_administration connection]]];
 	}
 	else if([[message name] isEqualToString:@"wired.user.user_list.done"]) {
 		[_allUsers setArray:_listedUsers];
 		[_listedUsers removeAllObjects];
+		
+		downloadSpeed	= 0;
+		uploadSpeed		= 0;
+		enumerator		= [_allUsers objectEnumerator];
+		
+		while((user = [enumerator nextObject])) {
+			transfer = [user transfer];
+			
+			if(transfer) {
+				if([transfer isKindOfClass:[WCDownloadTransfer class]])
+					downloadSpeed += [transfer speed];
+				else
+					uploadSpeed += [transfer speed];
+			}
+		}
+		
+		[_downloadSpeedTextField setStringValue:[NSSWF:NSLS(@"%@/s", @"Monitor download speed"),
+			[_sizeFormatter stringFromSize:downloadSpeed]]];
+		[_uploadSpeedTextField setStringValue:[NSSWF:NSLS(@"%@/s", @"Monitor upload speed"),
+			[_sizeFormatter stringFromSize:uploadSpeed]]];
 		
 		[self _reloadFilter];
 		
