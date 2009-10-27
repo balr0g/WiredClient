@@ -47,7 +47,7 @@
 - (NSString *)passwordForBookmark:(NSDictionary *)bookmark {
 	WIURL	*url;
 	
-	url = [WIURL URLWithScheme:@"wired" hostpair:[bookmark objectForKey:WCBookmarksAddress]];
+	url = [WIURL URLWithScheme:@"wiredp7" hostpair:[bookmark objectForKey:WCBookmarksAddress]];
 	[url setUser:[bookmark objectForKey:WCBookmarksLogin]];
 	[url setPath:[bookmark objectForKey:WCBookmarksIdentifier]];
 	
@@ -59,7 +59,7 @@
 - (void)setPassword:(NSString *)password forBookmark:(NSDictionary *)bookmark {
 	WIURL	*url;
 	
-	url = [WIURL URLWithScheme:@"wired" hostpair:[bookmark objectForKey:WCBookmarksAddress]];
+	url = [WIURL URLWithScheme:@"wiredp7" hostpair:[bookmark objectForKey:WCBookmarksAddress]];
 	[url setUser:[bookmark objectForKey:WCBookmarksLogin]];
 	[url setPath:[bookmark objectForKey:WCBookmarksIdentifier]];
 	
@@ -71,7 +71,7 @@
 - (void)deletePasswordForBookmark:(NSDictionary *)bookmark {
 	WIURL	*url;
 	
-	url = [WIURL URLWithScheme:@"wired" hostpair:[bookmark objectForKey:WCBookmarksAddress]];
+	url = [WIURL URLWithScheme:@"wiredp7" hostpair:[bookmark objectForKey:WCBookmarksAddress]];
 	[url setUser:[bookmark objectForKey:WCBookmarksLogin]];
 	[url setPath:[bookmark objectForKey:WCBookmarksIdentifier]];
 	
@@ -85,7 +85,7 @@
 - (NSString *)passwordForTrackerBookmark:(NSDictionary *)bookmark {
 	WIURL	*url;
 	
-	url = [WIURL URLWithScheme:@"wiredtracker" hostpair:[bookmark objectForKey:WCTrackerBookmarksAddress]];
+	url = [WIURL URLWithScheme:@"wiredp7" hostpair:[bookmark objectForKey:WCTrackerBookmarksAddress]];
 	[url setUser:[bookmark objectForKey:WCTrackerBookmarksLogin]];
 	[url setPath:[bookmark objectForKey:WCTrackerBookmarksIdentifier]];
 	
@@ -97,7 +97,7 @@
 - (void)setPassword:(NSString *)password forTrackerBookmark:(NSDictionary *)bookmark {
 	WIURL	*url;
 	
-	url = [WIURL URLWithScheme:@"wiredtracker" hostpair:[bookmark objectForKey:WCTrackerBookmarksAddress]];
+	url = [WIURL URLWithScheme:@"wiredp7" hostpair:[bookmark objectForKey:WCTrackerBookmarksAddress]];
 	[url setUser:[bookmark objectForKey:WCTrackerBookmarksLogin]];
 	[url setPath:[bookmark objectForKey:WCTrackerBookmarksIdentifier]];
 	
@@ -109,7 +109,7 @@
 - (void)deletePasswordForTrackerBookmark:(NSDictionary *)bookmark {
 	WIURL	*url;
 	
-	url = [WIURL URLWithScheme:@"wiredtracker" hostpair:[bookmark objectForKey:WCTrackerBookmarksAddress]];
+	url = [WIURL URLWithScheme:@"wiredp7" hostpair:[bookmark objectForKey:WCTrackerBookmarksAddress]];
 	[url setUser:[bookmark objectForKey:WCTrackerBookmarksLogin]];
 	[url setPath:[bookmark objectForKey:WCTrackerBookmarksIdentifier]];
 	
@@ -127,10 +127,8 @@
 	OSStatus			err;
 	SecProtocolType		type;
 	
-	if([[url scheme] isEqualToString:@"wired"])
+	if([[url scheme] isEqualToString:@"wiredp7"])
 		type = kSecProtocolTypeWired;
-	else if([[url scheme] isEqualToString:@"wiredtracker"])
-		type = kSecProtocolTypeWiredTracker;
 	else
 		type = kSecProtocolTypeHTTP;
 	
@@ -166,10 +164,8 @@
 	OSStatus			err;
 	SecProtocolType		type;
 	
-	if([[url scheme] isEqualToString:@"wired"])
+	if([[url scheme] isEqualToString:@"wiredp7"])
 		type = kSecProtocolTypeWired;
-	else if([[url scheme] isEqualToString:@"wiredtracker"])
-		type = kSecProtocolTypeWiredTracker;
 	else
 		type = kSecProtocolTypeHTTP;
 
@@ -231,10 +227,8 @@
 	OSStatus			err;
 	SecProtocolType		type;
 	
-	if([[url scheme] isEqualToString:@"wired"])
+	if([[url scheme] isEqualToString:@"wiredp7"])
 		type = kSecProtocolTypeWired;
-	else if([[url scheme] isEqualToString:@"wiredtracker"])
-		type = kSecProtocolTypeWiredTracker;
 	else
 		type = kSecProtocolTypeHTTP;
 

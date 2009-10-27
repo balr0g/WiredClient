@@ -455,6 +455,8 @@
 
 	if([connection error])
 		[_errorQueue showError:[connection error]];
+	
+	[_progressIndicator stopAnimation:self];
 }
 
 

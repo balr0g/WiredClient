@@ -30,11 +30,6 @@
 #define kSecProtocolTypeWired				'wird'
 #endif
 
-#ifndef kSecProtocolTypeWiredTracker
-#define kSecProtocolTypeWiredTracker		'wrdt'
-#endif
-
-
 @interface WCKeychain : WIObject
 
 + (WCKeychain *)keychain;

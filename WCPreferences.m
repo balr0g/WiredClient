@@ -552,7 +552,7 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 	NSDictionary		*oldBookmark = [arguments objectAtIndex:0];
 	NSDictionary		*bookmark = [arguments objectAtIndex:1];
 	NSString			*password = [arguments objectAtIndex:2];
-
+	
 	[[WCKeychain keychain] deletePasswordForTrackerBookmark:oldBookmark];
 	
 	if([password length] > 0)
