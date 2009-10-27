@@ -163,6 +163,7 @@
 		77CFBABF0E66EEDD00F2D5F8 /* Growl.framework in Copy Files (Frameworks) */ = {isa = PBXBuildFile; fileRef = 77CFBAB60E66EED500F2D5F8 /* Growl.framework */; };
 		77CFBCBC0E66EFD200F2D5F8 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77CFBCB30E66EFCF00F2D5F8 /* Sparkle.framework */; };
 		77CFBCBD0E66EFD500F2D5F8 /* Sparkle.framework in Copy Files (Frameworks) */ = {isa = PBXBuildFile; fileRef = 77CFBCB30E66EFCF00F2D5F8 /* Sparkle.framework */; };
+		77DE115E109795B100A0F33A /* PostReply.html in Resources */ = {isa = PBXBuildFile; fileRef = 77DE115D109795B100A0F33A /* PostReply.html */; };
 		77E361A40F80EC070065329A /* Files.xib in Resources */ = {isa = PBXBuildFile; fileRef = 77E361A20F80EC070065329A /* Files.xib */; };
 		77E36EEE0F82414F0065329A /* WCFilesSourceOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 77E36EED0F82414F0065329A /* WCFilesSourceOutlineView.m */; };
 		77EF17F4106C19BA00883C96 /* WiredSettings.icns in Resources */ = {isa = PBXBuildFile; fileRef = 77EF17F3106C19BA00883C96 /* WiredSettings.icns */; };
@@ -597,6 +598,7 @@
 		77CFB9970E66D39000F2D5F8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Servers.xib; sourceTree = "<group>"; };
 		77CFBAB60E66EED500F2D5F8 /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Growl.framework; sourceTree = "<group>"; };
 		77CFBCB30E66EFCF00F2D5F8 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
+		77DE115D109795B100A0F33A /* PostReply.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = PostReply.html; sourceTree = "<group>"; };
 		77E361A30F80EC070065329A /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Files.xib; sourceTree = "<group>"; };
 		77E36EEC0F82414F0065329A /* WCFilesSourceOutlineView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCFilesSourceOutlineView.h; sourceTree = "<group>"; };
 		77E36EED0F82414F0065329A /* WCFilesSourceOutlineView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCFilesSourceOutlineView.m; sourceTree = "<group>"; };
@@ -1141,6 +1143,7 @@
 				77CED3B70EC0691E00123164 /* Boards.xib */,
 				A5326A8D0F37981C004180AA /* PostFooter.html */,
 				A5326A8C0F37981C004180AA /* PostHeader.html */,
+				77DE115D109795B100A0F33A /* PostReply.html */,
 				A5326A8E0F37981C004180AA /* Post.html */,
 			);
 			name = Resources;
@@ -2002,6 +2005,7 @@
 				779951890A122BBB00600320 /* Smile.tiff in Resources */,
 				779951900A122BBB00600320 /* Wink.tiff in Resources */,
 				779951820A122BBB00600320 /* Yuck.tiff in Resources */,
+				77DE115E109795B100A0F33A /* PostReply.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

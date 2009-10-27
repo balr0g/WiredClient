@@ -106,6 +106,7 @@ extern NSString * const								WCBoardsDidChangeUnreadCountNotification;
 	
 	NSMutableString									*_headerTemplate;
 	NSMutableString									*_footerTemplate;
+	NSMutableString									*_replyTemplate;
 	NSMutableString									*_postTemplate;
 	
 	NSString										*_fileLinkBase64String;

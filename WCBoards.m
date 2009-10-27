@@ -561,7 +561,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 
 - (NSString *)_HTMLStringForThread:(WCBoardThread *)thread changedUnread:(BOOL *)changedUnread {
 	NSEnumerator		*enumerator;
-	NSMutableString		*html;
+	NSMutableString		*html, *string;
 	WCBoardPost			*post;
 	BOOL				writable, isKeyWindow;
 	
@@ -597,6 +597,17 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 			*changedUnread = YES;
 		}
 	}
+	
+	string = [[_replyTemplate mutableCopy] autorelease]; 
+	
+	if([[[thread connection] account] boardAddPosts] && writable) 
+		[string replaceOccurrencesOfString:@"<? replydisabled ?>" withString:@""]; 
+	else 
+		[string replaceOccurrencesOfString:@"<? replydisabled ?>" withString:@"disabled=\"disabled\""]; 
+	
+	[string replaceOccurrencesOfString:@"<? replystring ?>" withString:NSLS(@"Post Reply", @"Post reply button title")]; 
+	
+	[html appendString:string]; 
 	
 	[html appendString:_footerTemplate];
 	
@@ -994,6 +1005,9 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	_footerTemplate				= [[NSMutableString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"PostFooter" ofType:@"html"]
 																encoding:NSUTF8StringEncoding
 																   error:NULL];
+	_replyTemplate				= [[NSMutableString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"PostReply" ofType:@"html"]
+															  encoding:NSUTF8StringEncoding
+																 error:NULL];
 	_postTemplate				= [[NSMutableString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"Post" ofType:@"html"]
 															  encoding:NSUTF8StringEncoding
 																 error:NULL];
@@ -1102,6 +1116,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	
 	[_headerTemplate release];
 	[_footerTemplate release];
+	[_replyTemplate release];
 	[_postTemplate release];
 	
 	[_fileLinkBase64String release];
@@ -2329,6 +2344,43 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 
 #pragma mark -
 
+- (void)replyToThread { 
+	NSString				*subject; 
+	WCBoard					*board; 
+	WCBoardThread			*thread; 
+	WCBoardPost				*post; 
+	
+	board	= [self _selectedBoard]; 
+	thread	= [self _selectedThread]; 
+	post	= [thread firstPost]; 
+	
+	if(!post) 
+		return; 
+	
+	subject = [post subject]; 
+	
+	if(![subject hasPrefix:@"Re: "]) 
+		subject = [@"Re: " stringByAppendingString:subject]; 
+	
+	[self _reloadBoardListsSelectingBoard:board]; 
+	
+	[_postLocationPopUpButton setEnabled:NO]; 
+	[_subjectTextField setEnabled:NO]; 
+	[_subjectTextField setStringValue:subject]; 
+	[_postTextView setString:@""]; 
+	[_postButton setTitle:NSLS(@"Reply", @"Reply post button title")]; 
+	
+	[_postPanel makeFirstResponder:_postTextView]; 
+	
+	[NSApp beginSheet:_postPanel 
+	   modalForWindow:[self window] 
+		modalDelegate:self 
+	   didEndSelector:@selector(replyPanelDidEnd:returnCode:contextInfo:) 
+		  contextInfo:[[NSArray alloc] initWithObjects:board, thread, NULL]]; 
+} 
+
+
+
 - (void)replyToPostWithID:(NSString *)postID {
 	NSString					*subject, *text;
 	WCBoard						*board;
@@ -2998,38 +3050,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 
 
 - (IBAction)postReply:(id)sender {
-	NSString			*subject;
-	WCBoard				*board;
-	WCBoardThread		*thread;
-	WCBoardPost			*post;
-	
-	board	= [self _selectedBoard];
-	thread	= [self _selectedThread];
-	post	= [thread firstPost];
-	
-	if(!post)
-		return;
-	
-	subject	= [post subject];
-	
-	if(![subject hasPrefix:@"Re: "])
-		subject = [@"Re: " stringByAppendingString:subject];
-	
-	[self _reloadBoardListsSelectingBoard:board];
-	
-	[_postLocationPopUpButton setEnabled:NO];
-	[_subjectTextField setEnabled:NO];
-	[_subjectTextField setStringValue:subject];
-	[_postTextView setString:@""];
-	[_postButton setTitle:NSLS(@"Reply", @"Reply post button title")];
-	
-	[_postPanel makeFirstResponder:_postTextView];
-	
-	[NSApp beginSheet:_postPanel
-	   modalForWindow:[self window]
-		modalDelegate:self
-	   didEndSelector:@selector(replyPanelDidEnd:returnCode:contextInfo:)
-		  contextInfo:[[NSArray alloc] initWithObjects:board, thread, NULL]];
+	[self replyToThread];
 }
 
 
