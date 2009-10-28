@@ -58,6 +58,8 @@ extern NSString * const						WCExceptionHandlerReceivedExceptionNotification;
 - (NSArray *)allSmileys;
 - (NSString *)pathForSmiley:(NSString *)smiley;
 
+- (void)checkForUpdate;
+
 - (IBAction)about:(id)sender;
 - (IBAction)preferences:(id)sender;
 

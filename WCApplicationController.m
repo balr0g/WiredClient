@@ -946,6 +946,14 @@ static WCApplicationController		*sharedController;
 
 #pragma mark -
 
+- (void)checkForUpdate {
+	[_updater checkForUpdates:self];
+}
+
+
+
+#pragma mark -
+
 - (IBAction)about:(id)sender {
 	NSMutableParagraphStyle		*style;
 	NSMutableAttributedString	*credits;

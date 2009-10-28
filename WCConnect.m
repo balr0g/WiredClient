@@ -26,6 +26,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "WCApplicationController.h"
 #import "WCConnect.h"
 #import "WCErrorQueue.h"
 #import "WCServerConnection.h"
@@ -146,7 +147,9 @@
 - (void)linkConnectionDidClose:(NSNotification *)notification {
 	NSMutableDictionary		*userInfo;
 	NSString				*reason;
+	NSAlert					*alert;
 	WCError					*error;
+	BOOL					checkForUpdate = NO;
 	
 	if([notification object] != _connection)
 		return;
@@ -165,12 +168,21 @@
 			
 			[userInfo setObject:reason forKey:NSLocalizedFailureReasonErrorKey];
 			
-			error = [WCError errorWithDomain:WIWiredNetworkingErrorDomain code:[error code] userInfo:userInfo];
+			error				= [WCError errorWithDomain:WIWiredNetworkingErrorDomain code:[error code] userInfo:userInfo];
+			checkForUpdate		= YES;
 		}
 		
 		[self showWindow:self];
 		
-		[[error alert] beginSheetModalForWindow:[self window]];
+		alert = [error alert];
+		
+		if(checkForUpdate)
+			[alert addButtonWithTitle:NSLS(@"Check for Update", @"Check for update button")];
+		
+		[alert beginSheetModalForWindow:[self window]
+						  modalDelegate:self
+						 didEndSelector:@selector(connectAlertDidEnd:returnCode:contextInfo:)
+							contextInfo:NULL];
 	}
 	
 	[_progressIndicator stopAnimation:self];
@@ -228,6 +240,13 @@
 	
 	[_connection setURL:url];
 	[_connection connect];
+}
+
+
+
+- (void)connectAlertDidEnd:(NSAlert *)alert returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+	if(returnCode == NSAlertSecondButtonReturn)
+		[[WCApplicationController sharedController] checkForUpdate];
 }
 
 @end
