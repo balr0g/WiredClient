@@ -161,6 +161,7 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 		[_themesUserListIconSizeMatrix selectCellWithTag:[theme integerForKey:WCThemesUserListIconSize]];
 		[_themesUserListAlternateRowsButton setState:[theme boolForKey:WCThemesUserListAlternateRows]];
 		
+		[_themesFileListIconSizeMatrix selectCellWithTag:[theme integerForKey:WCThemesFileListIconSize]];
 		[_themesFileListAlternateRowsButton setState:[theme boolForKey:WCThemesFileListAlternateRows]];
 		
 		[_themesTransferListShowProgressBarButton setState:[theme boolForKey:WCThemesTransferListShowProgressBar]];
@@ -1198,6 +1199,7 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 	[theme setInteger:[_themesUserListIconSizeMatrix selectedTag] forKey:WCThemesUserListIconSize];
 	[theme setBool:[_themesUserListAlternateRowsButton state] forKey:WCThemesUserListAlternateRows];
 	
+	[theme setInteger:[_themesFileListIconSizeMatrix selectedTag] forKey:WCThemesFileListIconSize];
 	[theme setBool:[_themesFileListAlternateRowsButton state] forKey:WCThemesFileListAlternateRows];
 	
 	[theme setBool:[_themesTransferListShowProgressBarButton state] forKey:WCThemesTransferListShowProgressBar];

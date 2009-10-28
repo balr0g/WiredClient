@@ -233,6 +233,28 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	theme = [[WCSettings settings] themeWithIdentifier:[[WCSettings settings] objectForKey:WCTheme]];
 	
 	[_filesOutlineView setUsesAlternatingRowBackgroundColors:[theme boolForKey:WCThemesFileListAlternateRows]];
+
+	switch([[theme objectForKey:WCThemesFileListIconSize] integerValue]) {
+		case WCThemesFileListIconSizeLarge:
+			[_filesOutlineView setRowHeight:17.0];
+			[_filesOutlineView setFont:[NSFont systemFontOfSize:13.0]];
+			
+			[_filesTreeView setRowHeight:17.0];
+			[_filesTreeView setFont:[NSFont systemFontOfSize:13.0]];
+			
+			_iconWidth = 16.0;
+			break;
+
+		case WCThemesFileListIconSizeSmall:
+			[_filesOutlineView setRowHeight:14.0];
+			[_filesOutlineView setFont:[NSFont systemFontOfSize:10.0]];
+			
+			[_filesTreeView setRowHeight:14.0];
+			[_filesTreeView setFont:[NSFont systemFontOfSize:10.0]];
+			
+			_iconWidth = 12.0;
+			break;
+	}
 }
 
 
@@ -2855,7 +2877,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	}
 	else if(outlineView == _filesOutlineView) {
 		if(tableColumn == _nameTableColumn) {
-			image = [item iconWithWidth:16.0 open:[_filesOutlineView isItemExpanded:item]];
+			image = [item iconWithWidth:_iconWidth open:[_filesOutlineView isItemExpanded:item]];
 			
 			[cell setImage:image];
 		}
@@ -3396,7 +3418,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	
 	file = [[self _filesForConnection:[self _selectedConnection]] objectForKey:path];
 	
-	[cell setImage:[file iconWithWidth:16.0 open:[[_currentDirectory path] hasPrefix:path]]];
+	[cell setImage:[file iconWithWidth:_iconWidth open:[[_currentDirectory path] hasPrefix:path]]];
 }
 
 

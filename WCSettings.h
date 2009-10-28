@@ -68,6 +68,13 @@ enum {
 
 extern NSString * const						WCThemesUserListAlternateRows;
 extern NSString * const						WCThemesFileListAlternateRows;
+extern NSString * const						WCThemesFileListIconSize;
+
+enum {
+	WCThemesFileListIconSizeLarge			= 1,
+	WCThemesFileListIconSizeSmall			= 0
+};
+
 extern NSString * const						WCThemesTransferListShowProgressBar;
 extern NSString * const						WCThemesTransferListAlternateRows;
 extern NSString * const						WCThemesTrackerListAlternateRows;

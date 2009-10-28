@@ -85,6 +85,7 @@ extern NSString * const								WCIconDidChangeNotification;
 	IBOutlet NSButton								*_themesChatTimestampEveryLineButton;
 	IBOutlet NSMatrix								*_themesUserListIconSizeMatrix;
 	IBOutlet NSButton								*_themesUserListAlternateRowsButton;
+	IBOutlet NSMatrix								*_themesFileListIconSizeMatrix;
 	IBOutlet NSButton								*_themesFileListAlternateRowsButton;
 	IBOutlet NSButton								*_themesTransferListShowProgressBarButton;
 	IBOutlet NSButton								*_themesTransferListAlternateRowsButton;

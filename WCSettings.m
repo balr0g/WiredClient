@@ -100,6 +100,7 @@ NSString * const WCThemesBoardsBackgroundColor			= @"WCThemesBoardsBackgroundCol
 NSString * const WCThemesUserListIconSize				= @"WCThemesUserListIconSize";
 NSString * const WCThemesUserListAlternateRows			= @"WCThemesUserListAlternateRows";
 NSString * const WCThemesFileListAlternateRows			= @"WCThemesFileListAlternateRows";
+NSString * const WCThemesFileListIconSize				= @"WCThemesFileListIconSize";
 NSString * const WCThemesTransferListShowProgressBar	= @"WCThemesTransferListShowProgressBar";
 NSString * const WCThemesTransferListAlternateRows		= @"WCThemesTransferListAlternateRows";
 NSString * const WCThemesTrackerListAlternateRows		= @"WCThemesTrackerListAlternateRows";
@@ -349,12 +350,12 @@ NSString * const WCDebug								= @"WCDebug";
 	enumerator = [[defaults objectForKey:WCThemes] objectEnumerator];
 	index = 0;
 	
-	while((theme = [enumerator nextObject])) {
-		builtinTheme = [self _themeWithBuiltinName:[theme objectForKey:WCThemesBuiltinName]];
+	while((builtinTheme = [enumerator nextObject])) {
+		theme = [self _themeWithBuiltinName:[builtinTheme objectForKey:WCThemesBuiltinName]];
 		
-		if(builtinTheme) {
-			if(![[builtinTheme objectForKey:WCThemesBuiltinVersion] isEqual:[theme objectForKey:WCThemesBuiltinVersion]]) {
-				[newThemes removeObject:builtinTheme];
+		if(theme) {
+			if(![[theme objectForKey:WCThemesBuiltinVersion] isEqual:[builtinTheme objectForKey:WCThemesBuiltinVersion]]) {
+				[newThemes removeObject:theme];
 				
 				builtinTheme = NULL;
 			}
@@ -610,7 +611,7 @@ NSString * const WCDebug								= @"WCDebug";
 				[NSDictionary dictionaryWithObjectsAndKeys:
 					NSLS(@"Basic", @"Theme"),										WCThemesName,
 					@"Basic",														WCThemesBuiltinName,
-					[NSNumber numberWithInteger:2],									WCThemesBuiltinVersion,
+					[NSNumber numberWithInteger:3],									WCThemesBuiltinVersion,
 					basicThemeIdentifier,											WCThemesIdentifier,
 					WIStringFromFont([NSFont userFixedPitchFontOfSize:9.0]),		WCThemesChatFont,
 					WIStringFromColor([NSColor blackColor]),						WCThemesChatTextColor,
@@ -629,6 +630,7 @@ NSString * const WCDebug								= @"WCDebug";
 					[NSNumber numberWithInteger:WCThemesUserListIconSizeLarge],		WCThemesUserListIconSize,
 					[NSNumber numberWithBool:YES],									WCThemesUserListAlternateRows,
 					[NSNumber numberWithBool:YES],									WCThemesFileListAlternateRows,
+					[NSNumber numberWithInteger:WCThemesFileListIconSizeLarge],		WCThemesFileListIconSize,
 					[NSNumber numberWithBool:YES],									WCThemesTransferListShowProgressBar,
 					[NSNumber numberWithBool:YES],									WCThemesTransferListAlternateRows,
 					[NSNumber numberWithBool:YES],									WCThemesTrackerListAlternateRows,
@@ -638,7 +640,7 @@ NSString * const WCDebug								= @"WCDebug";
 				[NSDictionary dictionaryWithObjectsAndKeys:
 					NSLS(@"Hacker", @"Theme"),										WCThemesName,
 					@"Hacker",														WCThemesBuiltinName,
-					[NSNumber numberWithInteger:2],									WCThemesBuiltinVersion,
+					[NSNumber numberWithInteger:3],									WCThemesBuiltinVersion,
 					[NSString UUIDString],											WCThemesIdentifier,
 					WIStringFromFont([NSFont fontWithName:@"Monaco" size:9.0]),		WCThemesChatFont,
 					WIStringFromColor([NSColor greenColor]),						WCThemesChatTextColor,
@@ -656,6 +658,7 @@ NSString * const WCDebug								= @"WCDebug";
 					[NSNumber numberWithBool:NO],									WCThemesChatTimestampEveryLine,
 					[NSNumber numberWithInteger:WCThemesUserListIconSizeLarge],		WCThemesUserListIconSize,
 					[NSNumber numberWithBool:YES],									WCThemesUserListAlternateRows,
+					[NSNumber numberWithInteger:WCThemesFileListIconSizeLarge],		WCThemesFileListIconSize,
 					[NSNumber numberWithBool:YES],									WCThemesFileListAlternateRows,
 					[NSNumber numberWithBool:YES],									WCThemesTransferListShowProgressBar,
 					[NSNumber numberWithBool:YES],									WCThemesTransferListAlternateRows,

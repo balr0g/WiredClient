@@ -141,8 +141,6 @@
 	static NSImage		*folderImage32[2], *folderImage16[2], *folderImage12[2];
 	static NSImage		*uploadsImage32[2], *uploadsImage16[2], *uploadsImage12[2];
 	static NSImage		*dropBoxImage32[2], *dropBoxImage16[2], *dropBoxImage12[2];
-	NSEnumerator		*enumerator;
-	NSImageRep			*representation, *folderRepresentation;
 	NSImage				*image = NULL, *badgeImage, *selectedFolderImage;
 	NSUInteger			index;
 	
@@ -165,20 +163,9 @@
 				image = folderImage12[index];
 			
 			if(!image) {
-				image					= [[NSImage alloc] initWithSize:NSMakeSize(width, width)];
-				folderRepresentation	= NULL;
+				[selectedFolderImage setSize:NSMakeSize(width, width)];
 
-				[selectedFolderImage setSize:[image size]];
-				
-				enumerator				= [[selectedFolderImage representations] objectEnumerator];
-				
-				while((representation = [enumerator nextObject])) {
-					if([representation size].width >= width)
-						folderRepresentation = representation;
-				}
-				
-				if(folderRepresentation)
-					[image addRepresentation:folderRepresentation];
+				image = [[selectedFolderImage imageBySuperimposingImage:NULL] retain];
 				
 				if(width == 32.0)
 					folderImage32[index] = image;

@@ -107,6 +107,8 @@ extern NSString * const					WCPlacePboardType;
 	NSMutableParagraphStyle				*_truncatingTailParagraphStyle;
 	
 	Class								_quickLookPanelClass;
+	
+	CGFloat								_iconWidth;
 }
 
 + (id)filesWithConnection:(WCServerConnection *)connection file:(WCFile *)file;
