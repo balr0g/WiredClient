@@ -433,7 +433,7 @@
 		else if(tableColumn == _categoryTableColumn)
 			[url setPath:[NSSWF:@"/%@", object]];
 		
-		[_trackers replaceObjectAtIndex:row withObject:[url string]];
+		[_trackers replaceObjectAtIndex:row withObject:[url humanReadableString]];
 	}
 	else if(tableView == _categoriesTableView) {
 		[_categories replaceObjectAtIndex:row withObject:object];
