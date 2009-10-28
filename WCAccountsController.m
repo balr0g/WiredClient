@@ -433,6 +433,7 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 				[_fullNameTextField setStringValue:@""];
 				[_passwordTextField setStringValue:@""];
 				[_groupPopUpButton selectItem:_noneMenuItem];
+				[_groupsTokenField setStringValue:@""];
 				[_loginTimeTextField setStringValue:@""];
 				[_downloadsTextField setStringValue:@""];
 				[_uploadsTextField setStringValue:@""];
