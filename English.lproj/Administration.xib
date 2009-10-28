@@ -12,6 +12,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
+			<integer value="449"/>
 			<integer value="336"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
@@ -57,7 +58,7 @@
 				<string key="NSClassName">WCBanlistController</string>
 			</object>
 			<object class="NSView" id="475925077">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">292</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -771,6 +772,7 @@
 													<int key="NSCellFlags2">133120</int>
 													<string key="NSContents"/>
 													<reference key="NSSupport" ref="26"/>
+													<string key="NSPlaceholderString">guest</string>
 													<reference key="NSControlView" ref="800648494"/>
 													<reference key="NSBackgroundColor" ref="43315241"/>
 													<reference key="NSTextColor" ref="441106160"/>
@@ -925,6 +927,7 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{712, 557}</string>
+				<reference key="NSSuperview"/>
 			</object>
 			<object class="NSView" id="951333011">
 				<reference key="NSNextResponder"/>
@@ -9772,7 +9775,7 @@ AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 					<string>{{0, 683}, {148, 73}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{276, 158}, {852, 575}}</string>
+					<string>{{199, 158}, {852, 575}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
