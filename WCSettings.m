@@ -81,7 +81,6 @@ NSString * const WCTheme								= @"WCTheme";
 NSString * const WCThemes								= @"WCThemes";
 NSString * const WCThemesName							= @"WCThemesName";
 NSString * const WCThemesBuiltinName					= @"WCThemesBuiltinName";
-NSString * const WCThemesBuiltinVersion					= @"WCThemesBuiltinVersion";
 NSString * const WCThemesIdentifier						= @"WCThemesIdentifier";
 NSString * const WCThemesShowSmileys					= @"WCThemesShowSmileys";
 NSString * const WCThemesChatFont						= @"WCThemesChatFont";
@@ -192,7 +191,6 @@ NSString * const WCDebug								= @"WCDebug";
 	NSDictionary			*theme, *builtinTheme, *bookmark;
 	NSMutableDictionary		*newTheme, *newBookmark;
 	NSString				*key, *password;
-	NSUInteger				index;
 	
 	defaults		= [self defaults];
 	defaultTheme	= [[defaults objectForKey:WCThemes] objectAtIndex:0];
@@ -328,50 +326,34 @@ NSString * const WCDebug								= @"WCDebug";
 	enumerator		= [themes objectEnumerator];
 	
 	while((theme = [enumerator nextObject])) {
-		newTheme		= [[theme mutableCopy] autorelease];
-		keyEnumerator	= [defaultTheme keyEnumerator];
-		
-		while((key = [keyEnumerator nextObject])) {
-			if([key isEqualToString:WCThemesBuiltinName] || [key isEqualToString:WCThemesBuiltinVersion])
-				continue;
+		if(![theme objectForKey:WCThemesBuiltinName]) {
+			newTheme		= [[theme mutableCopy] autorelease];
+			keyEnumerator	= [defaultTheme keyEnumerator];
 			
-			if(![theme objectForKey:key])
-				[newTheme setObject:[defaultTheme objectForKey:key] forKey:key];
+			while((key = [keyEnumerator nextObject])) {
+				if(![newTheme objectForKey:key])
+					[newTheme setObject:[defaultTheme objectForKey:key] forKey:key];
+			}
+			
+			[newThemes addObject:newTheme];
 		}
-		
-		[newThemes addObject:newTheme];
 	}
+	
+	/* Add all default themes */
+	enumerator = [[defaults objectForKey:WCThemes] reverseObjectEnumerator];
+	
+	while((builtinTheme = [enumerator nextObject])) {
+		if([newThemes count] > 0)
+			[newThemes insertObject:builtinTheme atIndex:0];
+		else
+			[newThemes addObject:builtinTheme];
+	}
+	
+	[self setObject:newThemes forKey:WCThemes];
 
 	/* Set default theme */
 	if(![self themeWithIdentifier:[self objectForKey:WCTheme]])
 		[self setObject:[[[self objectForKey:WCThemes] objectAtIndex:0] objectForKey:WCThemesIdentifier] forKey:WCTheme];
-	
-	/* Add all default themes */
-	enumerator = [[defaults objectForKey:WCThemes] objectEnumerator];
-	index = 0;
-	
-	while((builtinTheme = [enumerator nextObject])) {
-		theme = [self _themeWithBuiltinName:[builtinTheme objectForKey:WCThemesBuiltinName]];
-		
-		if(theme) {
-			if(![[theme objectForKey:WCThemesBuiltinVersion] isEqual:[builtinTheme objectForKey:WCThemesBuiltinVersion]]) {
-				[newThemes removeObject:theme];
-				
-				builtinTheme = NULL;
-			}
-		}
-		
-		if(!builtinTheme) {
-			if(index < [newThemes count])
-				[newThemes insertObject:theme atIndex:index];
-			else
-				[newThemes addObject:theme];
-		}
-		
-		index++;
-	}
-	
-	[self setObject:newThemes forKey:WCThemes];
 	
 	/* Convert bookmarks */
 	bookmarks		= [self objectForKey:WCBookmarks];
@@ -611,7 +593,6 @@ NSString * const WCDebug								= @"WCDebug";
 				[NSDictionary dictionaryWithObjectsAndKeys:
 					NSLS(@"Basic", @"Theme"),										WCThemesName,
 					@"Basic",														WCThemesBuiltinName,
-					[NSNumber numberWithInteger:3],									WCThemesBuiltinVersion,
 					basicThemeIdentifier,											WCThemesIdentifier,
 					WIStringFromFont([NSFont userFixedPitchFontOfSize:9.0]),		WCThemesChatFont,
 					WIStringFromColor([NSColor blackColor]),						WCThemesChatTextColor,
@@ -640,7 +621,6 @@ NSString * const WCDebug								= @"WCDebug";
 				[NSDictionary dictionaryWithObjectsAndKeys:
 					NSLS(@"Hacker", @"Theme"),										WCThemesName,
 					@"Hacker",														WCThemesBuiltinName,
-					[NSNumber numberWithInteger:3],									WCThemesBuiltinVersion,
 					[NSString UUIDString],											WCThemesIdentifier,
 					WIStringFromFont([NSFont fontWithName:@"Monaco" size:9.0]),		WCThemesChatFont,
 					WIStringFromColor([NSColor greenColor]),						WCThemesChatTextColor,

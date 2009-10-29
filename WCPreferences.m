@@ -518,7 +518,6 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 							forKey:WCThemesName];
 		[newTheme setObject:[NSString UUIDString] forKey:WCThemesIdentifier];
 		[newTheme removeObjectForKey:WCThemesBuiltinName];
-		[newTheme removeObjectForKey:WCThemesBuiltinVersion];
 		
 		[[WCSettings settings] addObject:newTheme toArrayForKey:WCThemes];
 		
@@ -1074,7 +1073,6 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 	
 	[theme setObject:[NSString UUIDString] forKey:WCThemesIdentifier];
 	[theme removeObjectForKey:WCThemesBuiltinName];
-	[theme removeObjectForKey:WCThemesBuiltinVersion];
 	
 	[[WCSettings settings] addObject:theme toArrayForKey:WCThemes];
 	
@@ -1098,7 +1096,6 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 	theme = [[[[[WCSettings settings] objectForKey:WCThemes] objectAtIndex:row] mutableCopy] autorelease];
 	[theme removeObjectForKey:WCThemesIdentifier];
 	[theme removeObjectForKey:WCThemesBuiltinName];
-	[theme removeObjectForKey:WCThemesBuiltinVersion];
 
 	savePanel = [NSSavePanel savePanel];
 	[savePanel setRequiredFileType:@"WiredTheme"];

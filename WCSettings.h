@@ -43,7 +43,6 @@ extern NSString * const						WCTheme;
 extern NSString * const						WCThemes;
 extern NSString * const						WCThemesName;
 extern NSString * const						WCThemesBuiltinName;
-extern NSString * const						WCThemesBuiltinVersion;
 extern NSString * const						WCThemesIdentifier;
 extern NSString * const						WCThemesShowSmileys;
 extern NSString * const						WCThemesChatFont;
