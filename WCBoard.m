@@ -230,7 +230,13 @@
 	if(![object isKindOfClass:[self class]])
 		return NO;
 	
-	return [[self path] isEqual:[object path]];
+	return ([[self path] isEqual:[object path]] && [self connection] == [(WCBoard *) object connection]);
+}
+
+
+
+- (NSUInteger)hash {
+	return [[self path] hash] + [[self connection] hash];
 }
 
 
