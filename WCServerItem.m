@@ -198,8 +198,11 @@
 
 
 - (void)addItem:(id)item {
-	if([item isKindOfClass:[WCServerBonjourServer class]] || [item isKindOfClass:[WCServerTrackerServer class]])
+	if([item isKindOfClass:[WCServerBonjourServer class]] ||
+	   [item isKindOfClass:[WCServerTrackerServer class]] ||
+	   [item isKindOfClass:[WCServerBookmarkServer class]]) {
 		_serverCount++;
+	}
 	
 	[_items addObject:item];
 }
@@ -207,8 +210,11 @@
 
 
 - (void)removeItem:(id)item {
-	if([item isKindOfClass:[WCServerBonjourServer class]] || [item isKindOfClass:[WCServerTrackerServer class]])
+	if([item isKindOfClass:[WCServerBonjourServer class]] ||
+	   [item isKindOfClass:[WCServerTrackerServer class]] ||
+	   [item isKindOfClass:[WCServerBookmarkServer class]]) {
 		_serverCount--;
+	}
 	
 	[_items removeObject:item];
 }
@@ -227,6 +233,147 @@
 
 - (BOOL)isExpandable {
 	return YES;
+}
+
+@end
+
+
+
+@implementation WCServerBonjour
+
++ (id)bonjourItem {
+	return [self itemWithName:NSLS(@"Bonjour", @"Bonjour server")];
+}
+
+
+
+#pragma mark -
+
+- (NSImage *)icon {
+	return [NSImage imageNamed:@"Bonjour"];
+}
+
+@end
+
+
+
+@interface WCServerBonjourServer(Private)
+
+- (id)_initWithNetService:(NSNetService *)netService;
+
+@end
+
+
+@implementation WCServerBonjourServer(Private)
+
+- (id)_initWithNetService:(NSNetService *)netService {
+	self = [self initWithName:[netService name]];
+	
+	_netService = [netService retain];
+	
+	return self;
+}
+
+@end
+
+
+
+@implementation WCServerBonjourServer
+
++ (id)itemWithNetService:(NSNetService *)netService {
+	return [[[self alloc] _initWithNetService:netService] autorelease];
+}
+
+
+
+- (void)dealloc {
+	[_netService release];
+	
+	[super dealloc];
+}
+
+
+
+#pragma mark -
+
+- (NSNetService *)netService {
+	return _netService;
+}
+
+@end
+
+
+
+@implementation WCServerBookmarks
+
++ (id)bookmarksItem {
+	return [self itemWithName:NSLS(@"Bookmarks", @"Bookmarks server")];
+}
+
+
+
+#pragma mark -
+
+- (NSImage *)icon {
+	return [NSImage imageNamed:@"BookmarksSmall"];
+}
+
+@end
+
+
+
+@interface WCServerBookmarkServer(Private)
+
+- (id)_initWithBookmark:(NSDictionary *)bookmark;
+
+@end
+
+
+@implementation WCServerBookmarkServer(Private)
+
+- (id)_initWithBookmark:(NSDictionary *)bookmark {
+	self = [self initWithName:[bookmark objectForKey:WCBookmarksName]];
+	
+	_bookmark = [bookmark retain];
+	
+	_url = [[WIURL URLWithString:[bookmark objectForKey:WCBookmarksAddress] scheme:@"wiredp7"] retain];
+	[_url setUser:[bookmark objectForKey:WCBookmarksLogin]];
+	[_url setPassword:[[WCKeychain keychain] passwordForBookmark:bookmark]];
+	
+	return self;
+}
+
+@end
+
+
+
+@implementation WCServerBookmarkServer
+
++ (id)itemWithBookmark:(NSDictionary *)bookmark {
+	return [[[self alloc] _initWithBookmark:bookmark] autorelease];
+}
+
+
+
+- (void)dealloc {
+	[_bookmark release];
+	[_url release];
+	
+	[super dealloc];
+}
+
+
+
+#pragma mark -
+
+- (NSDictionary *)bookmark {
+	return _bookmark;
+}
+
+
+
+- (WIURL *)URL {
+	return _url;
 }
 
 @end
@@ -307,6 +454,18 @@
 
 #pragma mark -
 
+- (NSImage *)icon {
+	NSImage		*image;
+	
+	image = [NSImage imageNamed:@"WiredServer"];
+	
+	[image setSize:NSMakeSize(16.0, 16.0)];
+	
+	return image;
+}
+
+
+
 - (NSDictionary *)bookmark {
 	return _bookmark;
 }
@@ -334,71 +493,6 @@
 
 
 @implementation WCServerTrackerCategory
-
-@end
-
-
-
-@implementation WCServerBonjour
-
-+ (id)bonjourItem {
-	return [self itemWithName:NSLS(@"Bonjour", @"Bonjour server")];
-}
-
-
-
-#pragma mark -
-
-- (NSImage *)icon {
-	return [NSImage imageNamed:@"Bonjour"];
-}
-
-@end
-
-
-
-@interface WCServerBonjourServer(Private)
-
-- (id)_initWithNetService:(NSNetService *)netService;
-
-@end
-
-
-@implementation WCServerBonjourServer(Private)
-
-- (id)_initWithNetService:(NSNetService *)netService {
-	self = [self initWithName:[netService name]];
-	
-	_netService = [netService retain];
-	
-	return self;
-}
-
-@end
-
-
-
-@implementation WCServerBonjourServer
-
-+ (id)itemWithNetService:(NSNetService *)netService {
-	return [[[self alloc] _initWithNetService:netService] autorelease];
-}
-
-
-
-- (void)dealloc {
-	[_netService release];
-	
-	[super dealloc];
-}
-
-
-
-#pragma mark -
-
-- (NSNetService *)netService {
-	return _netService;
-}
 
 @end
 
@@ -457,6 +551,12 @@
 
 
 #pragma mark -
+
+- (NSImage *)icon {
+	return NULL;
+}
+
+
 
 - (BOOL)isExpandable {
 	return [self isTracker];

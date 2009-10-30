@@ -138,13 +138,15 @@
 		return;
 	}
 	
-	if([item isKindOfClass:[WCServerTrackerServer class]]) {
+	if([item isKindOfClass:[WCServerBookmarkServer class]] || [item isKindOfClass:[WCServerTrackerServer class]]) {
 		[_statusTextField setStringValue:[NSSWF:
 			@"%@ \u2014 %@",
 			[item name],
 			[[(WCServerTrackerServer *) item URL] humanReadableString]]];
 	}
-	else if([item isKindOfClass:[WCServerTracker class]] || [item isKindOfClass:[WCServerTrackerCategory class]]) {
+	else if([item isKindOfClass:[WCServerBookmarks class]] ||
+			[item isKindOfClass:[WCServerTracker class]] ||
+			[item isKindOfClass:[WCServerTrackerCategory class]]) {
 		count = [item numberOfServerItems];
 
 		[_statusTextField setStringValue:[NSSWF:
@@ -179,8 +181,17 @@
 	NSEnumerator		*enumerator;
 	NSDictionary		*bookmark;
 	
+	[_bookmarks removeAllItems];
 	[_servers removeAllItems];
+	
 	[_servers addItem:_bonjour];
+	
+	enumerator = [[[WCSettings settings] objectForKey:WCBookmarks] objectEnumerator];
+	
+	while((bookmark = [enumerator nextObject]))
+		[_bookmarks addItem:[WCServerBookmarkServer itemWithBookmark:bookmark]];
+	
+	[_servers addItem:_bookmarks];
 	
 	enumerator = [[[WCSettings settings] objectForKey:WCTrackerBookmarks] objectEnumerator];
 	
@@ -269,6 +280,7 @@
 	self = [super initWithWindowNibName:@"Servers"];
 	
 	_bonjour		= [[WCServerBonjour bonjourItem] retain];
+	_bookmarks		= [[WCServerBookmarks bookmarksItem] retain];
 
 	_servers		= [[WCServerContainer alloc] initWithName:@"<root>"];
 	
@@ -303,6 +315,7 @@
 	[_itemFilter release];
 	[_servers release];
 	[_bonjour release];
+	[_bookmarks release];
 	[_sizeFormatter release];
 
 	[super dealloc];
@@ -340,6 +353,7 @@
 	[self _reloadTrackers];
 	
 	[_serversOutlineView expandItem:_bonjour];
+	[_serversOutlineView expandItem:_bookmarks];
 	
 	[[self window] makeFirstResponder:_serversOutlineView];
 }
@@ -635,7 +649,9 @@
 
 	item = [self _selectedItem];
 	
-	if([item isKindOfClass:[WCServerBonjourServer class]] || [item isKindOfClass:[WCServerTrackerServer class]]) {
+	if([item isKindOfClass:[WCServerBookmarkServer class]] ||
+	   [item isKindOfClass:[WCServerBonjourServer class]] ||
+	   [item isKindOfClass:[WCServerTrackerServer class]]) {
 		if([item isKindOfClass:[WCServerBonjourServer class]]) {
 			address = [WIAddress addressWithNetService:[item netService] error:&error];
 			

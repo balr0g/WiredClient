@@ -45,7 +45,6 @@
 @end
 
 
-
 @interface WCServerContainer : WCServerItem {
     NSMutableArray					*_items;
 	NSUInteger						_serverCount;
@@ -66,6 +65,43 @@
 @end
 
 
+@interface WCServerBonjour : WCServerContainer
+
++ (id)bonjourItem;
+
+@end
+
+
+@interface WCServerBonjourServer : WCServerItem {
+	NSNetService					*_netService;
+}
+
++ (id)itemWithNetService:(NSNetService *)netService;
+
+- (NSNetService *)netService;
+
+@end
+
+
+@interface WCServerBookmarks : WCServerContainer
+
++ (id)bookmarksItem;
+
+@end
+
+
+@interface WCServerBookmarkServer : WCServerItem {
+	NSDictionary					*_bookmark;
+	WIURL							*_url;
+}
+
++ (id)itemWithBookmark:(NSDictionary *)bookmark;
+
+- (NSDictionary *)bookmark;
+- (WIURL *)URL;
+
+@end
+
 
 enum _WCServerTrackerState {
 	WCServerTrackerIdle,
@@ -73,7 +109,6 @@ enum _WCServerTrackerState {
 	WCServerTrackerLoaded
 };
 typedef enum _WCServerTrackerState	WCServerTrackerState;
-
 
 @class WCServerTrackerCategory;
 
@@ -95,31 +130,9 @@ typedef enum _WCServerTrackerState	WCServerTrackerState;
 @end
 
 
-
 @interface WCServerTrackerCategory : WCServerContainer
 
 @end
-
-
-
-@interface WCServerBonjour : WCServerContainer
-
-+ (id)bonjourItem;
-
-@end
-
-
-
-@interface WCServerBonjourServer : WCServerItem {
-	NSNetService					*_netService;
-}
-
-+ (id)itemWithNetService:(NSNetService *)netService;
-
-- (NSNetService *)netService;
-
-@end
-
 
 
 @interface WCServerTrackerServer : WCServerTracker {

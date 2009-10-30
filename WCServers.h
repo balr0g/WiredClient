@@ -26,7 +26,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-@class WCErrorQueue, WCServerContainer, WCServerBonjour;
+@class WCErrorQueue, WCServerContainer, WCServerBonjour, WCServerBookmarks;
 
 @interface WCServers : WIWindowController {
 	IBOutlet WIOutlineView					*_serversOutlineView;
@@ -48,6 +48,7 @@
 	
 	WCServerContainer						*_servers;
 	WCServerBonjour							*_bonjour;
+	WCServerBookmarks						*_bookmarks;
 }
 
 + (id)servers;
