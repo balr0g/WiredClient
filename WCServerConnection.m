@@ -267,6 +267,8 @@ NSString * const WCServerConnectionEventInfo2Key						= @"WCServerConnectionEven
 
 - (void)linkConnectionDidClose:(NSNotification *)notification {
 	NSString	*reason;
+	NSInteger	code;
+	BOOL		autoReconnect = YES;
 	
 	[super linkConnectionDidClose:notification];
 	
@@ -281,6 +283,16 @@ NSString * const WCServerConnectionEventInfo2Key						= @"WCServerConnectionEven
 		if([self isReconnecting]) {
 			if(reason)
 				[_chatController printEvent:reason];
+			
+			if([[_error domain] isEqualToString:WIWiredNetworkingErrorDomain] && [_error code] == WISocketConnectFailed) {
+				code = [[[_error userInfo] objectForKey:WILibWiredErrorKey] code];
+				
+				if(code == WI_ERROR_P7_HANDSHAKEFAILED ||
+				   code == WI_ERROR_P7_INCOMPATIBLESPEC ||
+				   code == WI_ERROR_P7_AUTHENTICATIONFAILED) {
+					autoReconnect = NO;
+				}
+			}
 		} else {
 			if([reason length] > 0) {
 				[_chatController printEvent:[NSSWF:NSLS(@"Disconnected from %@: %@", @"Disconnected chat message (server, error)"),
@@ -294,7 +306,7 @@ NSString * const WCServerConnectionEventInfo2Key						= @"WCServerConnectionEven
 			[[WCPublicChat publicChat] showWindow:self];
 		}
 		
-		if(!_manuallyReconnecting && !_disconnecting) {
+		if(!_manuallyReconnecting && !_disconnecting && autoReconnect) {
 			[self performSelector:@selector(_triggerAutoReconnect) afterDelay:1.0];
 			
 			_willAutoReconnect = YES;
