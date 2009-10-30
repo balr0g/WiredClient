@@ -331,8 +331,10 @@ NSString * const WCDebug								= @"WCDebug";
 			keyEnumerator	= [defaultTheme keyEnumerator];
 			
 			while((key = [keyEnumerator nextObject])) {
-				if(![newTheme objectForKey:key])
-					[newTheme setObject:[defaultTheme objectForKey:key] forKey:key];
+				if(![key isEqualToString:WCThemesBuiltinName]) {
+					if(![newTheme objectForKey:key])
+						[newTheme setObject:[defaultTheme objectForKey:key] forKey:key];
+				}
 			}
 			
 			[newThemes addObject:newTheme];
