@@ -1123,6 +1123,9 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 	
 	_requested = NO;
 
+	if([[_administration window] isVisible] && [_administration selectedController] == self)
+		[self _requestAccounts];
+	
 	[self _validate];
 }
 

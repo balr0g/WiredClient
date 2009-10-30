@@ -182,6 +182,22 @@
 
 
 
+- (void)linkConnectionLoggedIn:(NSNotification *)notification {
+	if([[_administration window] isVisible] && [_administration selectedController] == self)
+		[self _requestSettings];
+}
+
+
+
+- (void)serverConnectionPrivilegesDidChange:(NSNotification *)notification {
+	if([[_administration window] isVisible] && [_administration selectedController] == self)
+		[self _requestSettings];
+	
+	[self _validate];
+}
+
+
+
 - (void)wiredSettingsGetSettingsReply:(WIP7Message *)message {
 	NSImage			*image;
 	WIP7UInt32		downloads, uploads, downloadSpeed, uploadSpeed;
@@ -247,15 +263,6 @@
 	if([[message name] isEqualToString:@"wired.error"]) {
 		// error
 	}
-}
-
-
-
-- (void)serverConnectionPrivilegesDidChange:(NSNotification *)notification {
-	if([[_administration window] isVisible] && [_administration selectedController] == self)
-		[self _requestSettings];
-	
-	[self _validate];
 }
 
 

@@ -275,6 +275,12 @@
 
 
 
+- (void)linkConnectionLoggedIn:(NSNotification *)notification {
+	[self _reloadUsers];
+}
+
+
+
 - (void)serverConnectionPrivilegesDidChange:(NSNotification *)notification {
 	[self _validate];
 	[self _reloadUsers];

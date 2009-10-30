@@ -248,10 +248,17 @@
 
 
 
+- (void)linkConnectionLoggedIn:(NSNotification *)notification {
+	if([[_administration window] isVisible] && [_administration selectedController] == self)
+		[self _requestBans];
+}
+
+
+
 - (void)serverConnectionPrivilegesDidChange:(NSNotification *)notification {
 	if([[_administration window] isVisible] && [_administration selectedController] == self)
 		[self _requestBans];
-	
+
 	[self _validate];
 }
 

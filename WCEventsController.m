@@ -799,6 +799,9 @@ typedef enum _WCEventType		WCEventType;
 
 - (void)linkConnectionLoggedIn:(NSNotification *)notification {
 	_requested = NO;
+	
+	if([[_administration window] isVisible] && [_administration selectedController] == self)
+		[self _requestEvents];
 }
 
 
@@ -943,6 +946,12 @@ typedef enum _WCEventType		WCEventType;
 
 
 #pragma mark -
+
+- (void)controllerWindowDidBecomeKey {
+	[self _requestEvents];
+}
+
+
 
 - (void)controllerDidSelect {
 	[self _requestEvents];

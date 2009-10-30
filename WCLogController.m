@@ -226,6 +226,9 @@ typedef enum _WCLogLevel			WCLogLevel;
 
 - (void)linkConnectionLoggedIn:(NSNotification *)notification {
 	_requested = NO;
+	
+	if([[_administration window] isVisible] && [_administration selectedController] == self)
+		[self _requestLog];
 }
 
 
@@ -318,6 +321,12 @@ typedef enum _WCLogLevel			WCLogLevel;
 
 
 #pragma mark -
+
+- (void)controllerWindowDidBecomeKey {
+	[self _requestLog];
+}
+
+
 
 - (void)controllerDidSelect {
 	[self _requestLog];
