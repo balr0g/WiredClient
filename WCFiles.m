@@ -36,6 +36,7 @@
 #import "WCPreferences.h"
 #import "WCPublicChat.h"
 #import "WCPublicChatController.h"
+#import "WCServer.h"
 #import "WCTransfers.h"
 
 #define WCFilesFiles						@"WCFilesFiles"
@@ -1393,24 +1394,30 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 - (void)_reloadStatus {
 	NSEnumerator			*enumerator;
 	NSMutableArray			*directory;
-	WCFile					*file;
-	WIFileOffset			size = 0;
+	NSString				*path;
 
-	directory		= [self _directoryForConnection:[_currentDirectory connection] path:[_currentDirectory path]];
+	path			= [_currentDirectory path];
+	directory		= [self _directoryForConnection:[_currentDirectory connection] path:path];
 	enumerator		= [directory objectEnumerator];
 
-	while((file = [enumerator nextObject]))
-		if([file type] == WCFileFile)
-			size += [file totalSize];
-
-	[_statusTextField setStringValue:[NSSWF:
-		NSLS(@"%lu %@, %@ total, %@ available", @"Files info (count, 'item(s)', size, available)"),
-		[directory count],
-		[directory count] == 1
-			? NSLS(@"item", @"Item singular")
-			: NSLS(@"items", @"Item plural"),
-		[_sizeFormatter stringFromSize:size],
-		[_sizeFormatter stringFromSize:[_currentDirectory freeSpace]]]];
+	if([path isEqualToString:@"/"]) {
+		[_statusTextField setStringValue:[NSSWF:
+			NSLS(@"%lu %@, %@ total, %@ available", @"Files info (count, 'item(s)', size, available)"),
+			[directory count],
+			[directory count] == 1
+				? NSLS(@"item", @"Item singular")
+				: NSLS(@"items", @"Item plural"),
+			[_sizeFormatter stringFromSize:[[[_currentDirectory connection] server] size]],
+			[_sizeFormatter stringFromSize:[_currentDirectory freeSpace]]]];
+	} else {
+		[_statusTextField setStringValue:[NSSWF:
+			NSLS(@"%lu %@, %@ available", @"Files info (count, 'item(s)', available)"),
+			[directory count],
+			[directory count] == 1
+				? NSLS(@"item", @"Item singular")
+				: NSLS(@"items", @"Item plural"),
+			[_sizeFormatter stringFromSize:[_currentDirectory freeSpace]]]];
+	}
 }
 
 
