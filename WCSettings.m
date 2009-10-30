@@ -190,7 +190,7 @@ NSString * const WCDebug								= @"WCDebug";
 	NSMutableArray			*newThemes, *newBookmarks;
 	NSDictionary			*theme, *builtinTheme, *bookmark;
 	NSMutableDictionary		*newTheme, *newBookmark;
-	NSString				*key, *password;
+	NSString				*key, *password, *identifier, *builtinName;
 	
 	defaults		= [self defaults];
 	defaultTheme	= [[defaults objectForKey:WCThemes] objectAtIndex:0];
@@ -321,12 +321,17 @@ NSString * const WCDebug								= @"WCDebug";
 	}
 	
 	/* Convert themes */
+	builtinName		= NULL;
+	identifier		= [self objectForKey:WCTheme];
 	themes			= [self objectForKey:WCThemes];
 	newThemes		= [NSMutableArray array];
 	enumerator		= [themes objectEnumerator];
 	
 	while((theme = [enumerator nextObject])) {
-		if(![theme objectForKey:WCThemesBuiltinName]) {
+		if([theme objectForKey:WCThemesBuiltinName]) {
+			if([[theme objectForKey:WCThemesIdentifier] isEqualToString:identifier])
+				builtinName = [theme objectForKey:WCThemesBuiltinName];
+		} else {
 			newTheme		= [[theme mutableCopy] autorelease];
 			keyEnumerator	= [defaultTheme keyEnumerator];
 			
@@ -349,14 +354,13 @@ NSString * const WCDebug								= @"WCDebug";
 			[newThemes insertObject:builtinTheme atIndex:0];
 		else
 			[newThemes addObject:builtinTheme];
+		
+		if(builtinName && [[builtinTheme objectForKey:WCThemesBuiltinName] isEqualToString:builtinName])
+			[self setObject:[builtinTheme objectForKey:WCThemesIdentifier] forKey:WCTheme];
 	}
 	
 	[self setObject:newThemes forKey:WCThemes];
 
-	/* Set default theme */
-	if(![self themeWithIdentifier:[self objectForKey:WCTheme]])
-		[self setObject:[[[self objectForKey:WCThemes] objectAtIndex:0] objectForKey:WCThemesIdentifier] forKey:WCTheme];
-	
 	/* Convert bookmarks */
 	bookmarks		= [self objectForKey:WCBookmarks];
 	newBookmarks	= [NSMutableArray array];
