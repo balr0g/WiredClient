@@ -1073,6 +1073,8 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 	
 	[theme setObject:[NSString UUIDString] forKey:WCThemesIdentifier];
 	[theme removeObjectForKey:WCThemesBuiltinName];
+	[theme setObject:[NSSWF:NSLS(@"%@ Copy", @"Duplicated builtin theme name"), [theme objectForKey:WCThemesName]]
+			  forKey:WCThemesName];
 	
 	[[WCSettings settings] addObject:theme toArrayForKey:WCThemes];
 	
