@@ -907,7 +907,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 		enumerator		= [[[WCApplicationController sharedController] allSmileys] objectEnumerator];
 		
 		while((smiley = [enumerator nextObject])) {
-			regex	= [[smiley mutableCopy] autorelease];
+			regex = [[smiley mutableCopy] autorelease];
 			
 			[regex replaceOccurrencesOfString:@"." withString:@"\\."];
 			[regex replaceOccurrencesOfString:@"*" withString:@"\\*"];
@@ -921,6 +921,12 @@ typedef enum _WCChatFormat					WCChatFormat;
 			[regex replaceOccurrencesOfString:@"-" withString:@"\\-"];
 			
 			[smileyRegexs setObject:regex forKey:smiley];
+			
+			if([smiley containsSubstring:@">"]) {
+				[regex replaceOccurrencesOfString:@">" withString:@"&#62;"];
+				
+				[smileyRegexs setObject:regex forKey:smiley];
+			}
 		}
 	}
 	

@@ -302,12 +302,12 @@ NSString * const WCMessagesDidChangeUnreadCountNotification		= @"WCMessagesDidCh
 		;
 
 	if([theme boolForKey:WCThemesShowSmileys]) {
-		regexs		= [WCChatController smileyRegexs];
-		enumerator	= [regexs keyEnumerator];
+		regexs			= [WCChatController smileyRegexs];
+		enumerator		= [regexs keyEnumerator];
 		
 		while((smiley = [enumerator nextObject])) {
-			regex	= [regexs objectForKey:smiley];
-			path	= [[WCApplicationController sharedController] pathForSmiley:smiley];
+			regex		= [regexs objectForKey:smiley];
+			path		= [[WCApplicationController sharedController] pathForSmiley:smiley];
 		
 			[text replaceOccurrencesOfRegex:[NSSWF:@"(^|\\s)%@(\\s|$)", regex]
 								 withString:[NSSWF:@"$1<img src=\"%@\" alt=\"%@\" />$2", path, smiley]
