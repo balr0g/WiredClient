@@ -498,12 +498,16 @@
 		[_trackers moveObjectAtIndex:fromRow toIndex:row];
 		[_trackersTableView reloadData];
 		
+		[self touch:self];
+		
 		return YES;
 	}
 	else if([types containsObject:WCCategoryPboardType]) {
 		fromRow = [[pasteboard stringForType:WCCategoryPboardType] integerValue];
 		[_categories moveObjectAtIndex:fromRow toIndex:row];
 		[_categoriesTableView reloadData];
+		
+		[self touch:self];
 		
 		return YES;
 	}
