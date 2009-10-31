@@ -79,6 +79,7 @@
 + (id)itemWithNetService:(NSNetService *)netService;
 
 - (NSNetService *)netService;
+- (WIURL *)URLWithError:(WCError **)error;
 
 @end
 

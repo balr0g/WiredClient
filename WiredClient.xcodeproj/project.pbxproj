@@ -53,6 +53,7 @@
 		7759CC06108BD0A6005FBC7E /* EventsAdministration.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 7759CC05108BD0A6005FBC7E /* EventsAdministration.tiff */; };
 		7759CC15108BD1DE005FBC7E /* EventsTracker.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 7759CC14108BD1DE005FBC7E /* EventsTracker.tiff */; };
 		775BD93E109B528300826A31 /* BookmarksSmall.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 775BD93D109B528300826A31 /* BookmarksSmall.tiff */; };
+		775BF369109C726E00826A31 /* AddBookmark.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 775BF368109C726E00826A31 /* AddBookmark.tiff */; };
 		775C63071066DB04001BDEA3 /* UnreadPost.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 775C63061066DB04001BDEA3 /* UnreadPost.tiff */; };
 		775C63091066DB1A001BDEA3 /* FileLink.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 775C63081066DB1A001BDEA3 /* FileLink.tiff */; };
 		777790B110617FE200248834 /* WCBoardsTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 777790B010617FE200248834 /* WCBoardsTextView.m */; };
@@ -217,7 +218,7 @@
 		A54AF9470F13AEBB00AFD50E /* EventOff.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF8FB0F13AEBA00AFD50E /* EventOff.tiff */; };
 		A54AF9480F13AEBB00AFD50E /* Download.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF8FC0F13AEBA00AFD50E /* Download.tiff */; };
 		A54AF9490F13AEBB00AFD50E /* Disconnect.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF8FD0F13AEBA00AFD50E /* Disconnect.tiff */; };
-		A54AF94A0F13AEBB00AFD50E /* DeleteTracker.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF8FE0F13AEBA00AFD50E /* DeleteTracker.tiff */; };
+		A54AF94A0F13AEBB00AFD50E /* DeleteBookmark.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF8FE0F13AEBA00AFD50E /* DeleteBookmark.tiff */; };
 		A54AF94B0F13AEBB00AFD50E /* DeleteFile.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF8FF0F13AEBA00AFD50E /* DeleteFile.tiff */; };
 		A54AF94C0F13AEBB00AFD50E /* DeleteAccount.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF9000F13AEBA00AFD50E /* DeleteAccount.tiff */; };
 		A54AF94D0F13AEBB00AFD50E /* DefaultIcon.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF9010F13AEBA00AFD50E /* DefaultIcon.tiff */; };
@@ -272,7 +273,7 @@
 		A54AF97F0F13AEBB00AFD50E /* RemoveTransfer.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF9330F13AEBB00AFD50E /* RemoveTransfer.tiff */; };
 		A54AF9800F13AEBB00AFD50E /* ChangePassword.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF9340F13AEBB00AFD50E /* ChangePassword.tiff */; };
 		A54AF9810F13AEBB00AFD50E /* Bookmarks.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF9350F13AEBB00AFD50E /* Bookmarks.tiff */; };
-		A54AF9820F13AEBB00AFD50E /* AddTracker.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF9360F13AEBB00AFD50E /* AddTracker.tiff */; };
+		A54AF9820F13AEBB00AFD50E /* AddTrackerBookmark.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF9360F13AEBB00AFD50E /* AddTrackerBookmark.tiff */; };
 		A54AF9830F13AEBB00AFD50E /* Action.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A54AF9370F13AEBB00AFD50E /* Action.tiff */; };
 		A54AF98C0F13AED000AFD50E /* AliasBadge.icns in Resources */ = {isa = PBXBuildFile; fileRef = A54AF9870F13AED000AFD50E /* AliasBadge.icns */; };
 		A54AF98D0F13AED000AFD50E /* Folder.icns in Resources */ = {isa = PBXBuildFile; fileRef = A54AF9880F13AED000AFD50E /* Folder.icns */; };
@@ -481,6 +482,7 @@
 		7759CC05108BD0A6005FBC7E /* EventsAdministration.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = EventsAdministration.tiff; sourceTree = "<group>"; };
 		7759CC14108BD1DE005FBC7E /* EventsTracker.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = EventsTracker.tiff; sourceTree = "<group>"; };
 		775BD93D109B528300826A31 /* BookmarksSmall.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = BookmarksSmall.tiff; sourceTree = "<group>"; };
+		775BF368109C726E00826A31 /* AddBookmark.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = AddBookmark.tiff; sourceTree = "<group>"; };
 		775C63061066DB04001BDEA3 /* UnreadPost.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = UnreadPost.tiff; sourceTree = "<group>"; };
 		775C63081066DB1A001BDEA3 /* FileLink.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = FileLink.tiff; sourceTree = "<group>"; };
 		777790AF10617FE200248834 /* WCBoardsTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCBoardsTextView.h; sourceTree = "<group>"; };
@@ -666,7 +668,7 @@
 		A54AF8FB0F13AEBA00AFD50E /* EventOff.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = EventOff.tiff; sourceTree = "<group>"; };
 		A54AF8FC0F13AEBA00AFD50E /* Download.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Download.tiff; sourceTree = "<group>"; };
 		A54AF8FD0F13AEBA00AFD50E /* Disconnect.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Disconnect.tiff; sourceTree = "<group>"; };
-		A54AF8FE0F13AEBA00AFD50E /* DeleteTracker.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = DeleteTracker.tiff; sourceTree = "<group>"; };
+		A54AF8FE0F13AEBA00AFD50E /* DeleteBookmark.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = DeleteBookmark.tiff; sourceTree = "<group>"; };
 		A54AF8FF0F13AEBA00AFD50E /* DeleteFile.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = DeleteFile.tiff; sourceTree = "<group>"; };
 		A54AF9000F13AEBA00AFD50E /* DeleteAccount.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = DeleteAccount.tiff; sourceTree = "<group>"; };
 		A54AF9010F13AEBA00AFD50E /* DefaultIcon.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = DefaultIcon.tiff; sourceTree = "<group>"; };
@@ -721,7 +723,7 @@
 		A54AF9330F13AEBB00AFD50E /* RemoveTransfer.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = RemoveTransfer.tiff; sourceTree = "<group>"; };
 		A54AF9340F13AEBB00AFD50E /* ChangePassword.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = ChangePassword.tiff; sourceTree = "<group>"; };
 		A54AF9350F13AEBB00AFD50E /* Bookmarks.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Bookmarks.tiff; sourceTree = "<group>"; };
-		A54AF9360F13AEBB00AFD50E /* AddTracker.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = AddTracker.tiff; sourceTree = "<group>"; };
+		A54AF9360F13AEBB00AFD50E /* AddTrackerBookmark.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = AddTrackerBookmark.tiff; sourceTree = "<group>"; };
 		A54AF9370F13AEBB00AFD50E /* Action.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Action.tiff; sourceTree = "<group>"; };
 		A54AF9870F13AED000AFD50E /* AliasBadge.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AliasBadge.icns; sourceTree = "<group>"; };
 		A54AF9880F13AED000AFD50E /* Folder.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Folder.icns; sourceTree = "<group>"; };
@@ -1395,7 +1397,8 @@
 				A54AF98B0F13AED000AFD50E /* UploadsBadge.icns */,
 				A54AF90C0F13AEBB00AFD50E /* Accounts.tiff */,
 				A54AF9370F13AEBB00AFD50E /* Action.tiff */,
-				A54AF9360F13AEBB00AFD50E /* AddTracker.tiff */,
+				775BF368109C726E00826A31 /* AddBookmark.tiff */,
+				A54AF9360F13AEBB00AFD50E /* AddTrackerBookmark.tiff */,
 				A54AF8F00F13AEBA00AFD50E /* Back.tiff */,
 				A54AF8EF0F13AEBA00AFD50E /* Ban.tiff */,
 				A54AF8EE0F13AEBA00AFD50E /* Banlist.tiff */,
@@ -1417,9 +1420,9 @@
 				A54AF9020F13AEBA00AFD50E /* Conversation.tiff */,
 				A54AF9010F13AEBA00AFD50E /* DefaultIcon.tiff */,
 				A54AF9000F13AEBA00AFD50E /* DeleteAccount.tiff */,
+				A54AF8FE0F13AEBA00AFD50E /* DeleteBookmark.tiff */,
 				A54AF8FF0F13AEBA00AFD50E /* DeleteFile.tiff */,
 				A5CD59500F4CB01B00CF374C /* DeleteThread.tiff */,
-				A54AF8FE0F13AEBA00AFD50E /* DeleteTracker.tiff */,
 				A54AF8FD0F13AEBA00AFD50E /* Disconnect.tiff */,
 				A54AF8FC0F13AEBA00AFD50E /* Download.tiff */,
 				A54AF8FB0F13AEBA00AFD50E /* EventOff.tiff */,
@@ -1871,7 +1874,8 @@
 				A54AF9900F13AED000AFD50E /* UploadsBadge.icns in Resources */,
 				A54AF9580F13AEBB00AFD50E /* Accounts.tiff in Resources */,
 				A54AF9830F13AEBB00AFD50E /* Action.tiff in Resources */,
-				A54AF9820F13AEBB00AFD50E /* AddTracker.tiff in Resources */,
+				775BF369109C726E00826A31 /* AddBookmark.tiff in Resources */,
+				A54AF9820F13AEBB00AFD50E /* AddTrackerBookmark.tiff in Resources */,
 				A54AF9810F13AEBB00AFD50E /* Bookmarks.tiff in Resources */,
 				775BD93E109B528300826A31 /* BookmarksSmall.tiff in Resources */,
 				A54AF9380F13AEBB00AFD50E /* Bonjour.tiff in Resources */,
@@ -1893,9 +1897,9 @@
 				A54AF94E0F13AEBB00AFD50E /* Conversation.tiff in Resources */,
 				A54AF94D0F13AEBB00AFD50E /* DefaultIcon.tiff in Resources */,
 				A54AF94C0F13AEBB00AFD50E /* DeleteAccount.tiff in Resources */,
+				A54AF94A0F13AEBB00AFD50E /* DeleteBookmark.tiff in Resources */,
 				A54AF94B0F13AEBB00AFD50E /* DeleteFile.tiff in Resources */,
 				A5CD59510F4CB01B00CF374C /* DeleteThread.tiff in Resources */,
-				A54AF94A0F13AEBB00AFD50E /* DeleteTracker.tiff in Resources */,
 				A54AF9490F13AEBB00AFD50E /* Disconnect.tiff in Resources */,
 				A54AF9480F13AEBB00AFD50E /* Download.tiff in Resources */,
 				A54AF9470F13AEBB00AFD50E /* EventOff.tiff in Resources */,

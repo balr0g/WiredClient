@@ -55,8 +55,9 @@
 
 - (IBAction)reload:(id)sender;
 - (IBAction)open:(id)sender;
-- (IBAction)addTracker:(id)sender;
-- (IBAction)deleteTracker:(id)sender;
+- (IBAction)addBookmark:(id)sender;
+- (IBAction)addTrackerBookmark:(id)sender;
+- (IBAction)deleteBookmark:(id)sender;
 - (IBAction)search:(id)sender;
 
 @end

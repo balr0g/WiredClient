@@ -44,7 +44,7 @@
 - (void)_themeDidChange;
 
 - (void)_updateStatus;
-- (void)_reloadTrackers;
+- (void)_reloadServers;
 - (void)_sortServers;
 
 - (void)_openTracker:(WCServerTracker *)tracker;
@@ -177,7 +177,7 @@
 
 
 
-- (void)_reloadTrackers {
+- (void)_reloadServers {
 	NSEnumerator		*enumerator;
 	NSDictionary		*bookmark;
 	
@@ -297,6 +297,11 @@
 
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
+		   selector:@selector(bookmarksDidChange:)
+			   name:WCBookmarksDidChangeNotification];
+
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
 		   selector:@selector(trackerBookmarksDidChange:)
 			   name:WCTrackerBookmarksDidChangeNotification];
 
@@ -350,7 +355,7 @@
 	
 	[self _themeDidChange];
 	[self _updateStatus];
-	[self _reloadTrackers];
+	[self _reloadServers];
 	
 	[_serversOutlineView expandItem:_bonjour];
 	[_serversOutlineView expandItem:_bookmarks];
@@ -377,19 +382,26 @@
 												 target:self
 												 action:@selector(open:)];
 	}
-	else if([identifier isEqualToString:@"AddTracker"]) {
+	else if([identifier isEqualToString:@"AddBookmark"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
-												   name:NSLS(@"Add", @"Add tracker toolbar item")
-												content:[NSImage imageNamed:@"AddTracker"]
+												   name:NSLS(@"Add Bookmark", @"Add bookmark toolbar item")
+												content:[NSImage imageNamed:@"AddBookmark"]
 												 target:self
-												 action:@selector(addTracker:)];
+												 action:@selector(addBookmark:)];
 	}
-	else if([identifier isEqualToString:@"DeleteTracker"]) {
+	else if([identifier isEqualToString:@"AddTrackerBookmark"]) {
 		return [NSToolbarItem toolbarItemWithIdentifier:identifier
-												   name:NSLS(@"Delete", @"Delete tracker toolbar item")
-												content:[NSImage imageNamed:@"DeleteTracker"]
+												   name:NSLS(@"Add Tracker Bookmark", @"Add tracker bookmark toolbar item")
+												content:[NSImage imageNamed:@"AddTrackerBookmark"]
 												 target:self
-												 action:@selector(deleteTracker:)];
+												 action:@selector(addTrackerBookmark:)];
+	}
+	else if([identifier isEqualToString:@"DeleteBookmark"]) {
+		return [NSToolbarItem toolbarItemWithIdentifier:identifier
+												   name:NSLS(@"Delete", @"Delete bookmark toolbar item")
+												content:[NSImage imageNamed:@"DeleteBookmark"]
+												 target:self
+												 action:@selector(deleteBookmark:)];
 	}
 	else if([identifier isEqualToString:@"Search"]) {
 		searchField = [[[NSSearchField alloc] initWithFrame:NSMakeRect(0.0, 0.0, 200.0, 22.0)] autorelease];
@@ -411,8 +423,9 @@
 		@"Reload",
 		NSToolbarSpaceItemIdentifier,
 		@"Connect",
-		@"AddTracker",
-		@"DeleteTracker",
+		@"AddBookmark",
+		@"AddTrackerBookmark",
+		@"DeleteBookmark",
 		NSToolbarFlexibleSpaceItemIdentifier,
 		@"Search",
 		NULL];
@@ -424,8 +437,9 @@
 	return [NSArray arrayWithObjects:
 		@"Reload",
 		@"Connect",
-		@"AddTracker",
-		@"DeleteTracker",
+		@"AddBookmark",
+		@"AddTrackerBookmark",
+		@"DeleteBookmark",
 		@"Search",
 		NSToolbarSeparatorItemIdentifier,
 		NSToolbarSpaceItemIdentifier,
@@ -441,8 +455,14 @@
 
 
 
+- (void)bookmarksDidChange:(NSNotification *)notification {
+	[self _reloadServers];
+}
+
+
+
 - (void)trackerBookmarksDidChange:(NSNotification *)notification {
-	[self _reloadTrackers];
+	[self _reloadServers];
 }
 
 
@@ -604,13 +624,15 @@
 	item = [self _selectedItem];
 	
 	if(selector == @selector(reload:))
-		return [item isKindOfClass:[WCServerTracker class]];
+		return [item class] == [WCServerTracker class];
 	else if(selector == @selector(open:))
-		return ([item isKindOfClass:[WCServerBonjourServer class]] || [item isKindOfClass:[WCServerTrackerServer class]]);
-	else if(selector == @selector(addTracker:))
-		return ([item isKindOfClass:[WCServerTrackerServer class]] && [item isTracker]);
-	else if(selector == @selector(deleteTracker:))
-		return ([item class] == [WCServerTracker class]);
+		return ([item class] == [WCServerBonjourServer class] || [item class] == [WCServerTrackerServer class]);
+	else if(selector == @selector(addBookmark:))
+		return ([item class] == [WCServerBonjourServer class] || [item class] == [WCServerTrackerServer class]);
+	else if(selector == @selector(addTrackerBookmark:))
+		return ([item class] == [WCServerTrackerServer class] && [item isTracker]);
+	else if(selector == @selector(deleteBookmark:))
+		return ([item class] == [WCServerBookmarkServer class] || [item class] == [WCServerTracker class]);
 	
 	return YES;
 }
@@ -638,10 +660,9 @@
 
 
 - (IBAction)open:(id)sender {
-	WIAddress			*address;
-	WIError				*error;
 	WIURL				*url;
 	WCConnect			*connect;
+	WCError				*error;
 	id					item;
 	
 	if([_serversOutlineView clickedHeader])
@@ -653,15 +674,13 @@
 	   [item isKindOfClass:[WCServerBonjourServer class]] ||
 	   [item isKindOfClass:[WCServerTrackerServer class]]) {
 		if([item isKindOfClass:[WCServerBonjourServer class]]) {
-			address = [WIAddress addressWithNetService:[item netService] error:&error];
+			url = [item URLWithError:&error];
 			
-			if(!address) {
-				[[error alert] beginSheetModalForWindow:[self window] modalDelegate:NULL didEndSelector:NULL contextInfo:NULL];
+			if(!url) {
+				[[error alert] beginSheetModalForWindow:[self window]];
 				
 				return;
 			}
-
-			url = [WIURL URLWithScheme:@"wiredp7" host:[address string] port:[address port]];
 		} else {
 			url = [(WCServerTrackerServer *) item URL];
 		}
@@ -676,29 +695,70 @@
 
 
 
-- (IBAction)addTracker:(id)sender {
+- (IBAction)addBookmark:(id)sender {
 	NSDictionary	*bookmark;
+	WIURL			*url;
+	WCError			*error;
 	id				item;
 	
 	item = [self _selectedItem];
 	
-	if([item isKindOfClass:[WCServerTrackerServer class]] && [item isTracker]) {
+	if([item class] == [WCServerBonjourServer class] || [item class] == [WCServerTrackerServer class]) {
+		if([item class] == [WCServerBonjourServer class]) {
+			url = [item URLWithError:&error];
+			
+			if(!url) {
+				[[error alert] beginSheetModalForWindow:[self window]];
+				
+				return;
+			}
+		} else {
+			url = [(WCServerTrackerServer *) item URL];
+		}
+		
 		bookmark = [NSDictionary dictionaryWithObjectsAndKeys:
-			[item name],						WCTrackerBookmarksName,
-			[(WIURL *) [item URL] hostpair],	WCTrackerBookmarksAddress,
-			@"",								WCTrackerBookmarksLogin,
-			[NSString UUIDString],				WCTrackerBookmarksIdentifier,
+			[item name],					WCBookmarksName,
+			[url hostpair],					WCBookmarksAddress,
+			@"",							WCBookmarksLogin,
+			@"",							WCBookmarksNick,
+			@"",							WCBookmarksStatus,
+			[NSString UUIDString],			WCBookmarksIdentifier,
 			NULL];
 		
-		[[WCSettings settings] addObject:bookmark toArrayForKey:WCTrackerBookmarks];
+		[[WCSettings settings] addObject:bookmark toArrayForKey:WCBookmarks];
 		
-		[self _reloadTrackers];
+		[self _reloadServers];
 	}
 }
 
 
 
-- (IBAction)deleteTracker:(id)sender {
+- (IBAction)addTrackerBookmark:(id)sender {
+	NSDictionary	*bookmark;
+	WIURL			*url;
+	id				item;
+	
+	item = [self _selectedItem];
+	
+	if([item class] == [WCServerTrackerServer class] && [item isTracker]) {
+		url = [(WCServerTrackerServer *) item URL];
+		
+		bookmark = [NSDictionary dictionaryWithObjectsAndKeys:
+			[item name],					WCTrackerBookmarksName,
+			[url hostpair],					WCTrackerBookmarksAddress,
+			@"",							WCTrackerBookmarksLogin,
+			[NSString UUIDString],			WCTrackerBookmarksIdentifier,
+			NULL];
+		
+		[[WCSettings settings] addObject:bookmark toArrayForKey:WCTrackerBookmarks];
+		
+		[self _reloadServers];
+	}
+}
+
+
+
+- (IBAction)deleteBookmark:(id)sender {
 	NSArray			*bookmarks;
 	NSString		*identifier;
 	id				item;
@@ -706,11 +766,28 @@
 	
 	item = [self _selectedItem];
 	
-	if([item isKindOfClass:[WCServerTracker class]]) {
-		identifier = [[item bookmark] objectForKey:WCTrackerBookmarksIdentifier];
-		bookmarks = [[WCSettings settings] objectForKey:WCTrackerBookmarks];
-		count = [bookmarks count];
-		index = NSNotFound;
+	if([item class] == [WCServerBookmarkServer class]) {
+		identifier		= [[item bookmark] objectForKey:WCBookmarksIdentifier];
+		bookmarks		= [[WCSettings settings] objectForKey:WCBookmarks];
+		count			= [bookmarks count];
+		index			= NSNotFound;
+		
+		for(i = 0; i < count; i++) {
+			if([[[bookmarks objectAtIndex:i] objectForKey:WCBookmarksIdentifier] isEqualToString:identifier]) {
+				index = i;
+				
+				break;
+			}
+		}
+		
+		if(index != NSNotFound)
+			[[WCSettings settings] removeObjectAtIndex:index fromArrayForKey:WCBookmarks];
+	}
+	else if([item class] == [WCServerTracker class]) {
+		identifier		= [[item bookmark] objectForKey:WCTrackerBookmarksIdentifier];
+		bookmarks		= [[WCSettings settings] objectForKey:WCTrackerBookmarks];
+		count			= [bookmarks count];
+		index			= NSNotFound;
 		
 		for(i = 0; i < count; i++) {
 			if([[[bookmarks objectAtIndex:i] objectForKey:WCTrackerBookmarksIdentifier] isEqualToString:identifier]) {
@@ -720,12 +797,11 @@
 			}
 		}
 		
-		if(index != NSNotFound) {
+		if(index != NSNotFound)
 			[[WCSettings settings] removeObjectAtIndex:index fromArrayForKey:WCTrackerBookmarks];
-
-			[self _reloadTrackers];
-		}
 	}
+
+	[self _reloadServers];
 }
 
 

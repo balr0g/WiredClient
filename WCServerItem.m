@@ -300,6 +300,25 @@
 	return _netService;
 }
 
+
+
+- (WIURL *)URL {
+	return [self URLWithError:NULL];
+}
+
+
+
+- (WIURL *)URLWithError:(WCError **)error {
+	WIAddress		*address;
+	
+	address = [WIAddress addressWithNetService:[self netService] error:error];
+	
+	if(!address)
+		return NULL;
+			
+	return [WIURL URLWithScheme:@"wiredp7" host:[address string] port:[address port]];
+}
+
 @end
 
 
