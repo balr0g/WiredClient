@@ -518,11 +518,12 @@
 
 
 - (void)wiredTrackerGetCategoriesReply:(WIP7Message *)message {
-	NSEnumerator		*enumerator, *pathEnumerator;
-	NSArray				*categories;
-	NSString			*path, *component, *categoryPath;
-	WCServerTracker		*tracker;
-	id					item;
+	NSEnumerator				*enumerator, *pathEnumerator;
+	NSArray						*categories;
+	NSString					*path, *component, *categoryPath;
+	WCServerTracker				*tracker;
+	WCServerTrackerCategory		*category;
+	WCServerContainer			*item;
 	
 	tracker = [(id) [message contextInfo] tracker];
 	
@@ -531,14 +532,21 @@
 		enumerator = [categories objectEnumerator];
 		
 		while((path = [enumerator nextObject])) {
+			item			= tracker;
 			categoryPath	= @"";
 			pathEnumerator	= [[path pathComponents] objectEnumerator];
 			
 			while((component = [pathEnumerator nextObject])) {
 				categoryPath	= [categoryPath stringByAppendingPathComponent:component];
-				item			= [tracker itemForCategoryPath:categoryPath];
+				category		= [tracker categoryForPath:categoryPath];
 				
-				[item addItem:[WCServerTrackerCategory itemWithName:component]];
+				if(!category) {
+					category = [WCServerTrackerCategory itemWithName:component];
+					
+					[item addItem:category];
+				}
+					
+				item = category;
 			}
 		}
 	}
@@ -550,15 +558,20 @@
 
 
 - (void)wiredTrackerGetServersReply:(WIP7Message *)message {
-	WCServerTracker			*tracker;
-	WCServerTrackerServer	*server;
+	WCServerTracker				*tracker;
+	WCServerTrackerCategory		*category;
+	WCServerTrackerServer		*server;
 	
 	tracker = [(id) [message contextInfo] tracker];
 	
 	if([[message name] isEqualToString:@"wired.tracker.server_list"]) {
-		server = [WCServerTrackerServer itemWithMessage:message];
+		server		= [WCServerTrackerServer itemWithMessage:message];
+		category	= [tracker categoryForPath:[server categoryPath]];
 		
-		[(WCServerContainer *) [tracker itemForCategoryPath:[server categoryPath]] addItem:server];
+		if(category)
+			[category addItem:server];
+		else
+			[tracker addItem:server];
 	}
 	else if([[message name] isEqualToString:@"wired.tracker.server_list.done"]) {
 		[tracker setState:WCServerTrackerLoaded];

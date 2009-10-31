@@ -443,30 +443,29 @@
 
 #pragma mark -
 
-- (id)itemForCategoryPath:(NSString *)path {
+- (WCServerTrackerCategory *)categoryForPath:(NSString *)path {
 	NSEnumerator	*enumerator;
 	NSArray			*components;
 	NSString		*component;
-	id				category, child;
+	id				item, child;
 	
-	components	= [path componentsSeparatedByString:@"/"];
-
-	if([components count] == 0)
-		return self;
-	
-	category = self;
-	enumerator = [components objectEnumerator];
+	components		= [path pathComponents];
+	item			= self;
+	enumerator		= [components objectEnumerator];
 	
 	while((component = [enumerator nextObject])) {
-		child = [category _itemWithClass:[WCServerTrackerCategory class] name:component];
+		child = [item _itemWithClass:[WCServerTrackerCategory class] name:component];
 		
 		if(!child)
-			break;
+			return NULL;
 		
-		category = child;
+		item = child;
 	}
 	
-	return category;
+	if([item isKindOfClass:[WCServerTrackerCategory class]])
+		return item;
+	
+	return NULL;
 }
 
 

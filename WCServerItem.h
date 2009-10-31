@@ -121,7 +121,7 @@ typedef enum _WCServerTrackerState	WCServerTrackerState;
 
 + (id)itemWithBookmark:(NSDictionary *)bookmark;
 
-- (id)itemForCategoryPath:(NSString *)path;
+- (WCServerTrackerCategory *)categoryForPath:(NSString *)path;
 
 - (NSDictionary *)bookmark;
 - (WIURL *)URL;
