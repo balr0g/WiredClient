@@ -72,7 +72,7 @@
 #pragma mark -
 
 - (NSComparisonResult)compareIP:(WCBan *)ban {
-	return [self->_ip compare:ban->_ip options:NSCaseInsensitiveSearch | NSNumericSearch];
+	return [self->_ip caseInsensitiveAndNumericCompare:ban->_ip];
 }
 
 

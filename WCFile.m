@@ -851,7 +851,7 @@
 #pragma mark -
 
 - (NSComparisonResult)compareName:(WCFile *)file {
-	return [[self name] compare:[file name] options:NSCaseInsensitiveSearch | NSNumericSearch];
+	return [[self name] finderCompare:[file name]];
 }
 
 

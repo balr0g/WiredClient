@@ -2416,7 +2416,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	NSArray			*paths;
 
 	if(returnCode == NSOKButton) {
-		paths = [[openPanel filenames] sortedArrayUsingSelector:@selector(compare:)];
+		paths = [[openPanel filenames] sortedArrayUsingSelector:@selector(finderCompare:)];
 
 		[[WCTransfers transfers] uploadPaths:paths toFolder:_currentDirectory];
 	}
@@ -3267,7 +3267,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 			return YES;
 		}
 		else if([types containsObject:NSFilenamesPboardType]) {
-			sources = [[pasteboard propertyListForType:NSFilenamesPboardType] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
+			sources = [[pasteboard propertyListForType:NSFilenamesPboardType] sortedArrayUsingSelector:@selector(finderCompare:)];
 			
 			return [[WCTransfers transfers] uploadPaths:sources toFolder:destinationFile];
 		}

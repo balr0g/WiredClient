@@ -90,7 +90,7 @@
 	}
 	else if([type isEqualToString:NSFilenamesPboardType]) {
 		array		= [NSMutableArray array];
-		sources		= [[pasteboard propertyListForType:NSFilenamesPboardType] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
+		sources		= [[pasteboard propertyListForType:NSFilenamesPboardType] sortedArrayUsingSelector:@selector(finderCompare:)];
 		enumerator	= [sources objectEnumerator];
 		
 		while((path = [enumerator nextObject])) {

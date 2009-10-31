@@ -463,7 +463,7 @@ typedef enum _WCEventType		WCEventType;
 - (NSComparisonResult)compareNick:(WCEvent *)event {
 	NSComparisonResult	result;
 	
-	result = [self->_nick compare:event->_nick options:NSCaseInsensitiveSearch];
+	result = [self->_nick caseInsensitiveCompare:event->_nick];
 	
 	if(result == NSOrderedSame)
 		result = [self compareTime:event];
@@ -476,7 +476,7 @@ typedef enum _WCEventType		WCEventType;
 - (NSComparisonResult)compareLogin:(WCEvent *)event {
 	NSComparisonResult	result;
 	
-	result = [self->_login compare:event->_login options:NSCaseInsensitiveSearch];
+	result = [self->_login caseInsensitiveCompare:event->_login];
 	
 	if(result == NSOrderedSame)
 		result = [self compareTime:event];
@@ -489,7 +489,7 @@ typedef enum _WCEventType		WCEventType;
 - (NSComparisonResult)compareIP:(WCEvent *)event {
 	NSComparisonResult	result;
 	
-	result = [self->_ip compare:event->_ip options:NSCaseInsensitiveSearch | NSNumericSearch];
+	result = [self->_ip caseInsensitiveAndNumericCompare:event->_ip];
 	
 	if(result == NSOrderedSame)
 		result = [self compareTime:event];
@@ -502,7 +502,7 @@ typedef enum _WCEventType		WCEventType;
 - (NSComparisonResult)compareMessage:(WCEvent *)event {
 	NSComparisonResult	result;
 	
-	result = [self->_message compare:event->_message options:NSCaseInsensitiveSearch];
+	result = [self->_message caseInsensitiveCompare:event->_message];
 	
 	if(result == NSOrderedSame)
 		result = [self compareTime:event];
@@ -641,7 +641,7 @@ typedef enum _WCEventType		WCEventType;
 	while([_ipPopUpButton numberOfItems] > 1)
 		[_ipPopUpButton removeItemAtIndex:1];
 	
-	[_ipPopUpButton addItemsWithTitles:[[_allIPs allObjects] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)]];
+	[_ipPopUpButton addItemsWithTitles:[[_allIPs allObjects] sortedArrayUsingSelector:@selector(caseInsensitiveAndNumericCompare:)]];
 	
 	if([_ipPopUpButton numberOfItems] > 1)
 		[_ipPopUpButton insertItem:[NSMenuItem separatorItem] atIndex:1];
