@@ -518,10 +518,11 @@
 
 
 - (void)wiredTrackerGetCategoriesReply:(WIP7Message *)message {
-	NSEnumerator		*enumerator;
+	NSEnumerator		*enumerator, *pathEnumerator;
 	NSArray				*categories;
-	NSString			*path;
+	NSString			*path, *component, *categoryPath;
 	WCServerTracker		*tracker;
+	id					item;
 	
 	tracker = [(id) [message contextInfo] tracker];
 	
@@ -529,8 +530,17 @@
 		categories = [message listForName:@"wired.tracker.categories"];
 		enumerator = [categories objectEnumerator];
 		
-		while((path = [enumerator nextObject]))
-			[[tracker itemForCategoryPath:path] addItem:[WCServerTrackerCategory itemWithName:[path lastPathComponent]]];
+		while((path = [enumerator nextObject])) {
+			categoryPath	= @"";
+			pathEnumerator	= [[path pathComponents] objectEnumerator];
+			
+			while((component = [pathEnumerator nextObject])) {
+				categoryPath	= [categoryPath stringByAppendingPathComponent:component];
+				item			= [tracker itemForCategoryPath:categoryPath];
+				
+				[item addItem:[WCServerTrackerCategory itemWithName:component]];
+			}
+		}
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
 		[_errorQueue showError:[WCError errorWithWiredMessage:message]];
