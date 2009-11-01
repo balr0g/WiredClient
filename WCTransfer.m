@@ -165,7 +165,6 @@
 	[_file release];
 	[_icon release];
 	
-	[_progressIndicator removeFromSuperview];
 	[_progressIndicator release];
 
 	[_untransferredFilesList release];

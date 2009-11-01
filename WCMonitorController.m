@@ -138,16 +138,19 @@
 
 
 - (void)_reloadFilter {
+	NSEnumerator	*enumerator;
 	WCUser			*user;
-	NSUInteger		i, count;
+	
+	enumerator = [_shownUsers objectEnumerator];
+	
+	while((user = [enumerator nextObject]))
+		[[[user transfer] progressIndicator] removeFromSuperview];
 	
 	[_shownUsers removeAllObjects];
 	
-	count = [_allUsers count];
+	enumerator = [_allUsers objectEnumerator];
 	
-	for(i = 0; i < count; i++) {
-		user = [_allUsers objectAtIndex:i];
-		
+	while((user = [enumerator nextObject])) {
 		if([self _filterIncludesUser:user])
 			[_shownUsers addObject:user];
 	}
