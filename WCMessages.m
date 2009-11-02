@@ -284,7 +284,7 @@ NSString * const WCMessagesDidChangeUnreadCountNotification		= @"WCMessagesDidCh
 	[text replaceOccurrencesOfString:@">" withString:@"&#62;"];
 	[text replaceOccurrencesOfString:@"\"" withString:@"&#34;"];
 	[text replaceOccurrencesOfString:@"\'" withString:@"&#39;"];
-	[text replaceOccurrencesOfString:@"\n" withString:@"\n<br />\n"];
+	[text replaceOccurrencesOfString:@"\n" withString:@"<br />\n"];
 	
 	regex = [NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController URLRegex]];
 	
@@ -935,6 +935,11 @@ NSString * const WCMessagesDidChangeUnreadCountNotification		= @"WCMessagesDidCh
 				[_messageTextView setString:@""];
 			}
 				
+			return YES;
+		}
+		else if(selector == @selector(insertNewlineIgnoringFieldEditor:)) {
+			[_messageTextView insertNewline:self];
+			
 			return YES;
 		}
 		else if(selector == @selector(moveToBeginningOfDocument:) ||
