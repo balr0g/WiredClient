@@ -12,8 +12,8 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="449"/>
 			<integer value="336"/>
+			<integer value="449"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1380,7 +1380,7 @@ AAAAAAAAAAAAAAAAAAAAAHRleHQAAAAAQ29weXJpZ2h0IEFwcGxlLCBJbmMuLCAyMDA5AA</bytes>
 							<object class="NSTextField" id="511968721">
 								<reference key="NSNextResponder" ref="85365319"/>
 								<int key="NSvFlags">265</int>
-								<string key="NSFrame">{{482, 6}, {55, 14}}</string>
+								<string key="NSFrame">{{472, 6}, {65, 14}}</string>
 								<reference key="NSSuperview" ref="85365319"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="191160196">
@@ -1396,7 +1396,7 @@ AAAAAAAAAAAAAAAAAAAAAHRleHQAAAAAQ29weXJpZ2h0IEFwcGxlLCBJbmMuLCAyMDA5AA</bytes>
 							<object class="NSTextField" id="590515995">
 								<reference key="NSNextResponder" ref="85365319"/>
 								<int key="NSvFlags">265</int>
-								<string key="NSFrame">{{403, 6}, {55, 14}}</string>
+								<string key="NSFrame">{{388, 6}, {65, 14}}</string>
 								<reference key="NSSuperview" ref="85365319"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="96304444">
@@ -1424,7 +1424,7 @@ AAAAAAAAAAAAAAAAAAAAAHRleHQAAAAAQ29weXJpZ2h0IEFwcGxlLCBJbmMuLCAyMDA5AA</bytes>
 										<string>NeXT TIFF v4.0 pasteboard type</string>
 									</object>
 								</object>
-								<string key="NSFrame">{{468, 8}, {9, 10}}</string>
+								<string key="NSFrame">{{458, 8}, {9, 10}}</string>
 								<reference key="NSSuperview" ref="85365319"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSImageCell" key="NSCell" id="422932382">
@@ -1457,7 +1457,7 @@ AAAAAAAAAAAAAAAAAAAAAHRleHQAAAAAQ29weXJpZ2h0IEFwcGxlLCBJbmMuLCAyMDA5AA</bytes>
 										<string>NeXT TIFF v4.0 pasteboard type</string>
 									</object>
 								</object>
-								<string key="NSFrame">{{389, 8}, {9, 10}}</string>
+								<string key="NSFrame">{{374, 8}, {9, 10}}</string>
 								<reference key="NSSuperview" ref="85365319"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSImageCell" key="NSCell" id="254563497">
