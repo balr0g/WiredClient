@@ -80,7 +80,8 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 - (void)_reloadThreadAndRememberPosition:(BOOL)rememberPosition;
 - (NSString *)_HTMLStringForThread:(WCBoardThread *)thread changedUnread:(BOOL *)changedUnread;
 - (NSString *)_HTMLStringForPost:(WCBoardPost *)post writable:(BOOL)writable;
-- (NSString *)_textForPostText:(NSString *)text;
+- (NSString *)_plainTextForPostText:(NSString *)text;
+- (NSString *)_BBCodeTextForPostText:(NSString *)text;
 - (void)_insertBBCodeWithStartTag:(NSString *)startTag endTag:(NSString *)endTag;
 
 - (void)_reloadBoardListsSelectingBoard:(WCBoard *)board;
@@ -780,7 +781,23 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 
 
 
-- (NSString *)_textForPostText:(NSString *)text {
+- (NSString *)_plainTextForPostText:(NSString *)text {
+	NSMutableString		*string;
+	
+	string = [[text mutableCopy] autorelease];
+	
+	while([string replaceOccurrencesOfRegex:@"\\[img\\].*?\\[/img\\]" withString:@"" options:RKLCaseless | RKLMultiline] > 0)
+		;
+	
+	while([string replaceOccurrencesOfRegex:@"\\[.+?\\](.*?)\\[/.+?\\]" withString:@"$1" options:RKLCaseless | RKLMultiline] > 0)
+		;
+	
+	return string;
+}
+
+
+
+- (NSString *)_BBCodeTextForPostText:(NSString *)text {
 	NSMutableString		*string;
 	NSString			*regex;
 	
@@ -1843,7 +1860,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	
 	[[NSNotificationCenter defaultCenter] postNotificationName:WCBoardsDidChangeUnreadCountNotification];
 	
-	[connection triggerEvent:WCEventsBoardPostReceived info1:[post nick] info2:[post text]];
+	[connection triggerEvent:WCEventsBoardPostReceived info1:[post nick] info2:[self _plainTextForPostText:[post text]]];
 }
 
 
@@ -2443,7 +2460,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 		[message setString:[board path] forName:@"wired.board.board"];
 		[message setUUID:[thread threadID] forName:@"wired.board.thread"];
 		[message setString:[_subjectTextField stringValue] forName:@"wired.board.subject"];
-		[message setString:[self _textForPostText:string] forName:@"wired.board.text"];
+		[message setString:[self _BBCodeTextForPostText:string] forName:@"wired.board.text"];
 		[[board connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardAddPostReply:)];
 	}
 	
@@ -2502,7 +2519,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 		[message setUUID:[thread threadID] forName:@"wired.board.thread"];
 		[message setUUID:[post postID] forName:@"wired.board.post"];
 		[message setString:[_subjectTextField stringValue] forName:@"wired.board.subject"];
-		[message setString:[self _textForPostText:string] forName:@"wired.board.text"];
+		[message setString:[self _BBCodeTextForPostText:string] forName:@"wired.board.text"];
 		[[board connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardEditPostReply:)];
 		
 		newBoard = [_postLocationPopUpButton representedObjectOfSelectedItem];
@@ -2922,7 +2939,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 		message = [WIP7Message messageWithName:@"wired.board.add_thread" spec:WCP7Spec];
 		[message setString:[board path] forName:@"wired.board.board"];
 		[message setString:[_subjectTextField stringValue] forName:@"wired.board.subject"];
-		[message setString:[self _textForPostText:string] forName:@"wired.board.text"];
+		[message setString:[self _BBCodeTextForPostText:string] forName:@"wired.board.text"];
 		[[board connection] sendMessage:message fromObserver:self selector:@selector(wiredBoardAddThreadReply:)];
 	}
 
