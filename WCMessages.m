@@ -1185,6 +1185,7 @@ NSString * const WCMessagesDidChangeUnreadCountNotification		= @"WCMessagesDidCh
 		[self _saveMessages];
 		
 		[_conversationsOutlineView reloadData];
+		[_conversationsOutlineView deselectAll:self];
 		
 		[_selectedConversation release];
 		_selectedConversation = NULL;
