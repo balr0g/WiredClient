@@ -560,7 +560,7 @@ typedef enum _WCChatActivity				WCChatActivity;
 												 connection:[chatController connection]
 											  modalDelegate:self
 											 didEndSelector:@selector(closeTabSheetDidEnd:returnCode:contextInfo:)
-												contextInfo:NULL];
+												contextInfo:[tabViewItem retain]];
 }
 
 
@@ -903,24 +903,37 @@ typedef enum _WCChatActivity				WCChatActivity;
 
 
 - (IBAction)closeTab:(id)sender {
+	NSTabViewItem			*tabViewItem;
 	WCServerConnection		*connection;
 	
-	connection = [[self selectedChatController] connection];
+	tabViewItem		= [_chatTabView selectedTabViewItem];
+	connection		= [[self selectedChatController] connection];
 	
 	if([self _beginConfirmDisconnectSheetModalForWindow:[self window]
 											 connection:connection
 										  modalDelegate:self
 										 didEndSelector:@selector(closeTabSheetDidEnd:returnCode:contextInfo:)
-											contextInfo:NULL]) {
-		[self _closeSelectedTabViewItem];
+											contextInfo:[tabViewItem retain]]) {
+		[self _removeTabViewItem:tabViewItem];
+		
+		[_chatTabView removeTabViewItem:tabViewItem];
+		
+		[tabViewItem release];
 	}
 }
 
 
 
 - (void)closeTabSheetDidEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo {
-	if(returnCode == NSAlertFirstButtonReturn)
-		[self _closeSelectedTabViewItem];
+	NSTabViewItem		*tabViewItem = contextInfo;
+	
+	if(returnCode == NSAlertFirstButtonReturn) {
+		[self _removeTabViewItem:tabViewItem];
+		
+		[_chatTabView removeTabViewItem:tabViewItem];
+	}
+	
+	[tabViewItem release];
 }
 
 
