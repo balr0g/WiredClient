@@ -1577,9 +1577,6 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	NSInvocation		*invocation;
 	NSUInteger			style;
 
-	[self setShouldCascadeWindows:YES];
-	[self setWindowFrameAutosaveName:@"Files"];
-
 	toolbar = [[NSToolbar alloc] initWithIdentifier:@"Files"];
 	[toolbar setDisplayMode:NSToolbarDisplayModeIconOnly];
 	[toolbar setDelegate:self];
@@ -1589,6 +1586,9 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	[[self window] setToolbar:toolbar];
 	[toolbar release];
 	
+	[self setShouldCascadeWindows:YES];
+	[self setWindowFrameAutosaveName:@"Files"];
+
 	_errorQueue = [[WCErrorQueue alloc] initWithWindow:[self window]];
 	
 	if([_sourceOutlineView respondsToSelector:@selector(setSelectionHighlightStyle:)]) {
