@@ -311,6 +311,38 @@ static WCApplicationController		*sharedController;
 
 
 
+#pragma mark -
+
++ (NSString *)copiedNameForName:(NSString *)name existingNames:(NSArray *)names {
+	NSMutableString		*copiedName;
+	NSString			*string, *copy;
+	NSUInteger			number;
+	
+	copy = NSLS(@"Copy", @"Account copy");
+	
+	if([name containsSubstring:[NSSWF:@" %@", copy]]) {
+		string			= [name stringByMatching:[NSSWF:@"(\\d+)$", copy] capture:1];
+		number			= string ? [string unsignedIntegerValue] + 1 : 2;
+		copiedName		= [[name mutableCopy] autorelease];
+	} else {
+		number			= 2;
+		copiedName		= [NSMutableString stringWithFormat:@"%@ %@", name, copy];
+	}
+	
+	while([names containsObject:copiedName]) {
+		if([copiedName replaceOccurrencesOfRegex:@"(\\d+)$" withString:[NSSWF:@"%u", number]] == 0)
+			[copiedName appendFormat:[NSSWF:@" %u", number]];
+		
+		number++;
+	}
+	
+	return copiedName;
+}
+
+
+
+#pragma mark -
+
 - (id)init {
 	NSTimer		*timer;
 	NSDate		*date;

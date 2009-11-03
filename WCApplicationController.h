@@ -55,6 +55,8 @@ extern NSString * const						WCExceptionHandlerReceivedExceptionNotification;
 
 + (WCApplicationController *)sharedController;
 
++ (NSString *)copiedNameForName:(NSString *)name existingNames:(NSArray *)names;
+
 - (NSArray *)allSmileys;
 - (NSString *)pathForSmiley:(NSString *)smiley;
 

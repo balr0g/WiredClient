@@ -26,6 +26,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "WCApplicationController.h"
 #import "WCKeychain.h"
 #import "WCPreferences.h"
 
@@ -65,6 +66,7 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 - (void)_reloadDownloadFolder;
 - (void)_reloadTrackerBookmark;
 
+- (NSArray *)_themeNames;
 - (void)_changeSelectedThemeToTheme:(NSDictionary *)theme;
 
 - (void)_savePasswordForBookmark:(NSArray *)arguments;
@@ -480,6 +482,22 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 
 #pragma mark -
 
+- (NSArray *)_themeNames {
+	NSEnumerator		*enumerator;
+	NSDictionary		*theme;
+	NSMutableArray		*array;
+	
+	array			= [NSMutableArray array];
+	enumerator		= [[[WCSettings settings] objectForKey:WCThemes] objectEnumerator];
+	
+	while((theme = [enumerator nextObject]))
+		[array addObject:[theme objectForKey:WCThemesName]];
+	
+	return array;
+}
+
+
+
 - (void)_changeSelectedThemeToTheme:(NSDictionary *)theme {
 	NSAlert		*alert;
 	
@@ -514,8 +532,8 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 	
 	if(returnCode == NSAlertFirstButtonReturn) {
 		newTheme = [[theme mutableCopy] autorelease];
-		[newTheme setObject:[NSSWF:NSLS(@"%@ Copy", @"Duplicated builtin theme name"), [theme objectForKey:WCThemesName]]
-							forKey:WCThemesName];
+		[newTheme setObject:[WCApplicationController copiedNameForName:[theme objectForKey:WCThemesName] existingNames:[self _themeNames]]
+					 forKey:WCThemesName];
 		[newTheme setObject:[NSString UUIDString] forKey:WCThemesIdentifier];
 		[newTheme removeObjectForKey:WCThemesBuiltinName];
 		
@@ -1073,7 +1091,7 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 	
 	[theme setObject:[NSString UUIDString] forKey:WCThemesIdentifier];
 	[theme removeObjectForKey:WCThemesBuiltinName];
-	[theme setObject:[NSSWF:NSLS(@"%@ Copy", @"Duplicated builtin theme name"), [theme objectForKey:WCThemesName]]
+	[theme setObject:[WCApplicationController copiedNameForName:[theme objectForKey:WCThemesName] existingNames:[self _themeNames]]
 			  forKey:WCThemesName];
 	
 	[[WCSettings settings] addObject:theme toArrayForKey:WCThemes];
