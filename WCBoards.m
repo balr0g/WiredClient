@@ -3123,8 +3123,10 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 
 
 - (IBAction)search:(id)sender {
+	NSEnumerator			*enumerator;
 	NSString				*string;
 	WCBoard					*board;
+	WCBoardThread			*thread;
 	WCBoardThreadFilter		*filter;
 	NSInteger				row;
 	
@@ -3145,6 +3147,11 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 		board	= (row < 0) ? NULL : [_boardsOutlineView itemAtRow:row];
 	}
 	
+	enumerator = [[_selectedBoard threads] objectEnumerator];
+	
+	while((thread = [enumerator nextObject]))
+		[[thread goToLatestPostButton] removeFromSuperview];
+
 	[board retain];
 	[_selectedBoard release];
 	
