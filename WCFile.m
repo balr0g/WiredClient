@@ -577,18 +577,6 @@
 
 
 
-- (BOOL)isReadable {
-	return _readable;
-}
-
-
-
-- (BOOL)isWritable {
-	return _writable;
-}
-
-
-
 - (NSString *)owner {
 	return _owner;
 }
@@ -762,6 +750,30 @@
 
 - (WIFileOffset)freeSpace {
 	return _free;
+}
+
+
+
+- (void)setReadable:(BOOL)readable {
+	_readable = readable;
+}
+
+
+
+- (BOOL)isReadable {
+	return _readable;
+}
+
+
+
+- (void)setWritable:(BOOL)writable {
+	_writable = writable;
+}
+
+
+
+- (BOOL)isWritable {
+	return _writable;
 }
 
 

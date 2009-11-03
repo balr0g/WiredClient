@@ -1490,7 +1490,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 	selector		= [self _sortSelector];
 	sortOrder		= [_filesOutlineView sortOrder];
-	enumerator		= [[self _directoriesForConnection:NULL] objectEnumerator];
+	enumerator		= [[self _directoriesForConnection:_searching ? NULL : [_currentDirectory connection]] objectEnumerator];
 	
 	while((directory = [enumerator nextObject])) {
 		[directory sortUsingSelector:selector];
@@ -1913,6 +1913,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	WCServerConnection		*connection;
 	WCFile					*file, *listedFile;
 	WIP7UInt64				free;
+	WIP7Bool				value;
 	
 	connection = [message contextInfo];
 
@@ -1953,8 +1954,15 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		
 		[file setFreeSpace:free];
 		
+		if([message getBool:&value forName:@"wired.file.readable"])
+			[file setReadable:value];
+		
+		if([message getBool:&value forName:@"wired.file.writable"])
+			[file setWritable:value];
+		
 		[self _reloadStatus];
 		[self _selectFiles];
+		[self _validate];
 		
 		[connection removeObserver:self message:message];
 	}
