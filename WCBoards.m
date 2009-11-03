@@ -83,6 +83,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 - (NSString *)_plainTextForPostText:(NSString *)text;
 - (NSString *)_BBCodeTextForPostText:(NSString *)text;
 - (void)_insertBBCodeWithStartTag:(NSString *)startTag endTag:(NSString *)endTag;
+- (NSAttributedString *)_attributedPostString;
 
 - (void)_reloadBoardListsSelectingBoard:(WCBoard *)board;
 - (void)_reloadBoardListsWithChildrenOfBoard:(WCBoard *)board level:(NSUInteger)level;
@@ -840,6 +841,59 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	range.location += [startTag length];
 
 	[_postTextView setSelectedRange:range];
+}
+
+
+
+- (NSAttributedString *)_attributedPostString {
+	NSMutableAttributedString	*attributedString;
+	NSTextAttachment			*attachment;
+	NSFileWrapper				*fileWrapper;
+	NSBitmapImageRep			*imageRep;
+	NSDictionary				*attributes;
+	NSData						*data;
+	NSString					*string, *mimeType;
+	NSRange						range;
+	WITextAttachment			*newAttachment;
+	NSUInteger					i, length;
+	
+	attributedString	= [[[_postTextView textStorage] mutableCopy] autorelease];
+	length				= [attributedString length];
+		
+	for(i = 0; i < length; i++) {
+		attributes = [attributedString attributesAtIndex:i effectiveRange:&range];
+		attachment = [attributes objectForKey:NSAttachmentAttributeName];
+		
+		if(attachment) {
+			if(![attachment isKindOfClass:[WITextAttachment class]]) {
+				fileWrapper		= [attachment fileWrapper];
+				data			= [fileWrapper regularFileContents];
+				imageRep		= [NSBitmapImageRep imageRepWithData:data];
+				
+				if(imageRep) {
+					if([[[fileWrapper preferredFilename] pathExtension] isEqualToString:@"gif"]) {
+						mimeType = @"image/gif";
+					} else {
+						data = [imageRep representationUsingType:NSPNGFileType properties:NULL];
+						mimeType = @"image/png";
+					}
+					
+					string = [NSSWF:@"[img]data:%@;base64,%@[/img]", mimeType, [data base64EncodedString]];
+					
+					if([string length] < 512 * 1024) {
+						newAttachment = [[WITextAttachment alloc] initWithFileWrapper:fileWrapper string:string];
+						
+						[attributedString removeAttribute:NSAttachmentAttributeName range:range];
+						[attributedString addAttribute:NSAttachmentAttributeName value:newAttachment range:range];
+						
+						[newAttachment release];
+					}
+				}
+			}
+		}
+	}
+	
+	return attributedString;
 }
 
 
@@ -2454,7 +2508,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	WCBoardThread	*thread = [array objectAtIndex:1];
 	
 	if(returnCode == NSOKButton) {
-		string = [WCChatController stringByDecomposingSmileyAttributesInAttributedString:[_postTextView textStorage]];
+		string = [WCChatController stringByDecomposingSmileyAttributesInAttributedString:[self _attributedPostString]];
 
 		message = [WIP7Message messageWithName:@"wired.board.add_post" spec:WCP7Spec];
 		[message setString:[board path] forName:@"wired.board.board"];
@@ -2504,15 +2558,15 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 
 
 - (void)editPanelDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-	NSArray			*array = contextInfo;
-	NSString		*string;
-	WIP7Message		*message;
-	WCBoard			*board = [array objectAtIndex:0], *newBoard;
-	WCBoardThread	*thread = [array objectAtIndex:1];
-	WCBoardPost		*post = [array objectAtIndex:2];
+	NSArray				*array = contextInfo;
+	NSString			*string;
+	WIP7Message			*message;
+	WCBoard				*board = [array objectAtIndex:0], *newBoard;
+	WCBoardThread		*thread = [array objectAtIndex:1];
+	WCBoardPost			*post = [array objectAtIndex:2];
 	
 	if(returnCode == NSOKButton) {
-		string = [WCChatController stringByDecomposingSmileyAttributesInAttributedString:[_postTextView textStorage]];
+		string = [WCChatController stringByDecomposingSmileyAttributesInAttributedString:[self _attributedPostString]];
 		
 		message = [WIP7Message messageWithName:@"wired.board.edit_post" spec:WCP7Spec];
 		[message setString:[board path] forName:@"wired.board.board"];
@@ -2934,7 +2988,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	
 	if(returnCode == NSOKButton) {
 		board		= [_postLocationPopUpButton representedObjectOfSelectedItem];
-		string		= [WCChatController stringByDecomposingSmileyAttributesInAttributedString:[_postTextView textStorage]];
+		string		= [WCChatController stringByDecomposingSmileyAttributesInAttributedString:[self _attributedPostString]];
 
 		message = [WIP7Message messageWithName:@"wired.board.add_thread" spec:WCP7Spec];
 		[message setString:[board path] forName:@"wired.board.board"];

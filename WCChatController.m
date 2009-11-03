@@ -869,7 +869,7 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 
 
-+ (NSString *)stringByDecomposingSmileyAttributesInAttributedString:(NSMutableAttributedString *)attributedString {
++ (NSString *)stringByDecomposingSmileyAttributesInAttributedString:(NSAttributedString *)attributedString {
 	if(![attributedString containsAttachments])
 		return [[[attributedString string] copy] autorelease];
 	

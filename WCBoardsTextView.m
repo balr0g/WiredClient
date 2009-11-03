@@ -62,19 +62,14 @@
 
 
 - (BOOL)readSelectionFromPasteboard:(NSPasteboard *)pasteboard type:(NSString *)type {
-	NSEnumerator		*enumerator;
-	NSMutableArray		*array;
-	NSArray				*sources;
-	NSString			*path, *string, *mimeType;
-	NSBitmapImageRep	*imageRep;
-	NSFileWrapper		*fileWrapper;
-	NSData				*data;
-	WITextAttachment	*attachment;
-	WCFile				*file;
+	NSEnumerator			*enumerator;
+	NSMutableArray			*array;
+	NSArray					*sources;
+	WCFile					*file;
 	
 	if([type isEqualToString:WCFilePboardType]) {
 		array		= [NSMutableArray array];
-		sources		= [NSKeyedUnarchiver unarchiveObjectWithData:[pasteboard dataForType:WCFilePboardType]];
+		sources		= [NSKeyedUnarchiver unarchiveObjectWithData:[pasteboard dataForType:type]];
 		enumerator	= [sources objectEnumerator];
 		
 		while((file = [enumerator nextObject])) {
@@ -88,54 +83,7 @@
 		
 		return YES;
 	}
-	else if([type isEqualToString:NSFilenamesPboardType]) {
-		array		= [NSMutableArray array];
-		sources		= [[pasteboard propertyListForType:NSFilenamesPboardType] sortedArrayUsingSelector:@selector(finderCompare:)];
-		enumerator	= [sources objectEnumerator];
-		
-		while((path = [enumerator nextObject])) {
-			data = [NSData dataWithContentsOfFile:path];
-			
-			if(data) {
-				imageRep = [NSBitmapImageRep imageRepWithData:data];
-				
-				if(imageRep) {
-					fileWrapper = [[NSFileWrapper alloc] initWithPath:path];
-					
-					if(fileWrapper) {
-						if([[path pathExtension] isEqualToString:@"gif"]) {
-							mimeType = @"image/gif";
-						} else {
-							data = [imageRep representationUsingType:NSPNGFileType properties:NULL];
-							mimeType = @"image/png";
-						}
-						
-						string = [NSSWF:@"[img]data:image/gif;base64,%@[/img]", [data base64EncodedString]];
-						
-						if([string length] < 512 * 1024) {
-							attachment = [[WITextAttachment alloc] initWithFileWrapper:fileWrapper string:string];
-							
-							[array addObject:attachment];
-							
-							[attachment release];
-						}
 
-						[fileWrapper release];
-					}
-				}
-			}
-		}
-		
-		[[self window] makeFirstResponder:self];
-		
-		enumerator = [array objectEnumerator];
-		
-		while((attachment = [enumerator nextObject]))
-			[self insertText:[NSAttributedString attributedStringWithAttachment:attachment]];
-		
-		return YES;
-	}
-	
 	return [super readSelectionFromPasteboard:pasteboard type:type];
 }
 
