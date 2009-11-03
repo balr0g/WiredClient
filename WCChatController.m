@@ -879,19 +879,28 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 
 + (NSString *)URLRegex {
-	return @"\\w+://(?:\\w|\\.|/|~|-|\\?|\\!|;|&|=|%|#|:|@|\\+|\\$|,|\\*|\\(|\\))+?";
+	return @"(?:[a-zA-Z0-9\\-]+)"									/* Scheme */
+		   @"://"													/* "://" */
+		   @"(?:(?:\\S+?)(?::(?:\\S+?))?@)?"						/* Password and user */
+		   @"(?:[a-zA-Z0-9\\-.]+)"									/* Host name */
+		   @"(?::(?:\\d+))?"										/* Port */
+		   @"(?:(?:/[a-zA-Z0-9\\-._?,'+\\&%$=~*!():@\\\\]*)+)?";	/* Path */
 }
 
 
 
 + (NSString *)schemelessURLRegex {
-	return @"www\\.(?:\\w|\\.|/|~|-|\\?|\\!|;|&|=|%|#|:|@|\\+|\\$|,|\\*|\\(|\\))+?";
+	return @"(?:www\\.[a-zA-Z0-9\\-.]+)"							/* Host name */
+		   @"(?::(?:\\d+))?"										/* Port */
+		   @"(?:(?:/[a-zA-Z0-9\\-._?,'+\\&%$=~*!():@\\\\]*)+)?";	/* Path */
 }
 
 
 
 + (NSString *)mailtoURLRegex {
-	return @"(?:\\w|\\.|-)+@(?:\\w|\\.|-)+?";
+	return @"(?:[a-zA-Z0-9%_.+\\-]+)"								/* User */
+		   @"@"														/* "@" */
+		   @"(?:[a-zA-Z0-9.\\-]+?\\.[a-zA-Z]{2,6})";				/* Host name */
 }
 
 

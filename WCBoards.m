@@ -800,24 +800,27 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 
 - (NSString *)_BBCodeTextForPostText:(NSString *)text {
 	NSMutableString		*string;
-	NSString			*regex;
+	NSUInteger			matches;
 	
 	string = [[text mutableCopy] autorelease];
 	
-	regex = [NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController URLRegex]];
-
-	while([string replaceOccurrencesOfRegex:regex withString:@"$1[url]$2[/url]$3$4" options:RKLCaseless | RKLMultiline] > 0)
-		;
+	do {
+		matches = [string replaceOccurrencesOfRegex:[NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController URLRegex]]
+										 withString:@"$1[url]$2[/url]$3$4"
+											options:RKLCaseless];
+	} while(matches > 0);
 	
-	regex = [NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController schemelessURLRegex]];
+	do {
+		matches = [string replaceOccurrencesOfRegex:[NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController schemelessURLRegex]]
+										 withString:@"$1[url]http://$2[/url]$3$4"
+											options:RKLCaseless];
+	} while(matches > 0);
 	
-	while([string replaceOccurrencesOfRegex:regex withString:@"$1[url]http://$2[/url]$3$4" options:RKLCaseless | RKLMultiline] > 0)
-		;
-	
-	regex = [NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController mailtoURLRegex]];
-	
-	while([string replaceOccurrencesOfRegex:regex withString:@"$1[email]$2[/email]$3$4" options:RKLCaseless | RKLMultiline] > 0)
-		;
+	do {
+		matches = [string replaceOccurrencesOfRegex:[NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController mailtoURLRegex]]
+										 withString:@"$1[email]$2[/email]$3$4"
+											options:RKLCaseless];
+	} while(matches > 0);
 	
 	return string;
 }

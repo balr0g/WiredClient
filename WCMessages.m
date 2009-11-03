@@ -275,6 +275,7 @@ NSString * const WCMessagesDidChangeUnreadCountNotification		= @"WCMessagesDidCh
 	NSDictionary		*theme, *regexs;
 	NSMutableString		*string, *text;
 	NSString			*smiley, *path, *regex;
+	NSUInteger			matches;
 	
 	theme		= [message theme];
 	text		= [[[message message] mutableCopy] autorelease];
@@ -284,23 +285,25 @@ NSString * const WCMessagesDidChangeUnreadCountNotification		= @"WCMessagesDidCh
 	[text replaceOccurrencesOfString:@">" withString:@"&#62;"];
 	[text replaceOccurrencesOfString:@"\"" withString:@"&#34;"];
 	[text replaceOccurrencesOfString:@"\'" withString:@"&#39;"];
-	[text replaceOccurrencesOfString:@"\n" withString:@"<br />\n"];
 	
-	regex = [NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController URLRegex]];
+	do {
+		matches = [text replaceOccurrencesOfRegex:[NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController URLRegex]]
+									   withString:@"$1<a href=\"$2\">$2</a>$3$4"
+										  options:RKLCaseless];
+	} while(matches > 0);
 	
-	while([text replaceOccurrencesOfRegex:regex withString:@"$1<a href=\"$2\">$2</a>$3$4" options:RKLCaseless | RKLMultiline] > 0)
-		;
+	do {
+		matches = [text replaceOccurrencesOfRegex:[NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController schemelessURLRegex]]
+									   withString:@"$1<a href=\"http://$2\">$2</a>$3$4"
+										  options:RKLCaseless];
+	} while(matches > 0);
 	
-	regex = [NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController schemelessURLRegex]];
+	do {
+		matches = [text replaceOccurrencesOfRegex:[NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController mailtoURLRegex]]
+									   withString:@"$1<a href=\"mailto:$2\">$2</a>$3$4"
+										  options:RKLCaseless];
+	} while(matches > 0);
 	
-	while([text replaceOccurrencesOfRegex:regex withString:@"$1<a href=\"http://$2\">$2</a>$3$4" options:RKLCaseless | RKLMultiline] > 0)
-		;
-	
-	regex = [NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController mailtoURLRegex]];
-	
-	while([text replaceOccurrencesOfRegex:regex withString:@"$1<a href=\"mailto:$2\">$2</a>$3$4" options:RKLCaseless | RKLMultiline] > 0)
-		;
-
 	if([theme boolForKey:WCThemesShowSmileys]) {
 		regexs			= [WCChatController smileyRegexs];
 		enumerator		= [regexs keyEnumerator];
@@ -315,6 +318,8 @@ NSString * const WCMessagesDidChangeUnreadCountNotification		= @"WCMessagesDidCh
 		}
 	}
 
+	[text replaceOccurrencesOfString:@"\n" withString:@"<br />\n"];
+	
 	string = [[_messageTemplate mutableCopy] autorelease];
 	
 	if([message direction] == WCMessageTo)
