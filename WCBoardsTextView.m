@@ -65,7 +65,7 @@
 	NSEnumerator		*enumerator;
 	NSMutableArray		*array;
 	NSArray				*sources;
-	NSString			*path, *string;
+	NSString			*path, *string, *mimeType;
 	NSBitmapImageRep	*imageRep;
 	NSFileWrapper		*fileWrapper;
 	NSData				*data;
@@ -103,8 +103,14 @@
 					fileWrapper = [[NSFileWrapper alloc] initWithPath:path];
 					
 					if(fileWrapper) {
-						data = [imageRep representationUsingType:NSPNGFileType properties:NULL];
-						string = [NSSWF:@"[img]data:image/png;base64,%@[/img]", [data base64EncodedString]];
+						if([[path pathExtension] isEqualToString:@"gif"]) {
+							mimeType = @"image/gif";
+						} else {
+							data = [imageRep representationUsingType:NSPNGFileType properties:NULL];
+							mimeType = @"image/png";
+						}
+						
+						string = [NSSWF:@"[img]data:image/gif;base64,%@[/img]", [data base64EncodedString]];
 						
 						if([string length] < 512 * 1024) {
 							attachment = [[WITextAttachment alloc] initWithFileWrapper:fileWrapper string:string];
