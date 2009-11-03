@@ -120,6 +120,7 @@ extern NSString * const					WCAccountsControllerAccountsDidChangeNotification;
 - (IBAction)touch:(id)sender;
 - (IBAction)addAccount:(id)sender;
 - (IBAction)deleteAccount:(id)sender;
+- (IBAction)duplicateAccount:(id)sender;
 - (IBAction)all:(id)sender;
 - (IBAction)users:(id)sender;
 - (IBAction)groups:(id)sender;

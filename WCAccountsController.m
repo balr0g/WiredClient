@@ -27,8 +27,9 @@
  */
 
 #import "WCAccount.h"
-#import "WCAdministration.h"
 #import "WCAccountsController.h"
+#import "WCAdministration.h"
+#import "WCApplicationController.h"
 #import "WCServerConnection.h"
 #import "WCUser.h"
 
@@ -53,6 +54,7 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 - (void)_validate;
 - (BOOL)_validateAddAccount;
 - (BOOL)_validateDeleteAccount;
+- (BOOL)_validateDuplicateAccount;
 
 - (void)_requestAccounts;
 
@@ -72,6 +74,9 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 - (NSArray *)_selectedAccounts;
 - (void)_reloadGroups;
 - (void)_reloadSettings;
+- (BOOL)_filterIncludesAccount:(WCAccount *)account;
+- (void)_reloadFilter;
+- (void)_selectAccounts;
 
 @end
 
@@ -144,6 +149,28 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 	}
 	
 	return NO;
+}
+
+
+
+- (BOOL)_validateDuplicateAccount {
+	NSArray			*accounts;
+	WCAccount		*account;
+	
+	if(![_administration connection] || ![[_administration connection] isConnected])
+		return NO;
+	
+	accounts = [self _selectedAccounts];
+	
+	if([accounts count] != 1)
+		return NO;
+
+	account = [[_administration connection] account];
+	
+	if([[accounts objectAtIndex:0] isKindOfClass:[WCUserAccount class]])
+		return [account accountCreateUsers];
+	else
+		return [account accountCreateGroups];
 }
 
 
@@ -685,9 +712,9 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 	NSIndexSet			*indexes;
 	NSUInteger			index;
 	
-	array = [NSMutableArray array];
-	indexes = [_accountsTableView selectedRowIndexes];
-	index = [indexes firstIndex];
+	array		= [NSMutableArray array];
+	indexes		= [_accountsTableView selectedRowIndexes];
+	index		= [indexes firstIndex];
 	
 	while(index != NSNotFound) {
 		[array addObject:[self _accountAtIndex:index]];
@@ -1427,6 +1454,8 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 		return [self _validateAddAccount];
 	else if(selector == @selector(deleteDocument:))
 		return [self _validateDeleteAccount];
+	else if(selector == @selector(duplicateAccount:))
+		return [self _validateDuplicateAccount];
 	
 	return YES;
 }
@@ -1723,6 +1752,27 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 	}
 	
 	[_deletedAccounts removeAllObjects];
+}
+
+
+
+- (IBAction)duplicateAccount:(id)sender {
+	NSArray				*names;
+	WCAccount			*account;
+	
+	if(![self _validateDuplicateAccount])
+		return;
+	
+	account		= [[[[self _selectedAccounts] objectAtIndex:0] copy] autorelease];
+	names		= [account isKindOfClass:[WCUserAccount class]] ? [self userNames] : [self groupNames];
+
+	[account setName:[WCApplicationController copiedNameForName:[account name] existingNames:names]];
+	
+	[[_administration connection] sendMessage:[account createAccountMessage]
+								 fromObserver:self
+									 selector:@selector(wiredAccountChangeAccountReply:)];
+	
+	[_selectAccounts setArray:[NSArray arrayWithObject:account]];
 }
 
 

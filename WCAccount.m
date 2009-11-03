@@ -460,6 +460,18 @@ NSString * const WCAccountFieldToolTip				= @"WCAccountFieldToolTip";
 
 #pragma mark -
 
+- (id)copyWithZone:(NSZone *)zone {
+	WCAccount		*account;
+	
+	account = [[[self class] allocWithZone:zone] init];
+
+	[account setValues:[self values]];
+	
+	return account;
+}
+
+
+
 - (NSUInteger)hash {
 	return [[self newName] hash] + [[self name] hash];
 }

@@ -67,7 +67,7 @@ extern NSString * const						WCAccountFieldReadOnly;
 extern NSString * const						WCAccountFieldToolTip;
 
 
-@interface WCAccount : WIObject {
+@interface WCAccount : WIObject <NSCopying> {
 	NSMutableDictionary						*_values;
 	NSDictionary							*_originalValues;
 }
