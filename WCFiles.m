@@ -1490,7 +1490,7 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 
 	selector		= [self _sortSelector];
 	sortOrder		= [_filesOutlineView sortOrder];
-	enumerator		= [[self _directoriesForConnection:[self _selectedConnection]] objectEnumerator];
+	enumerator		= [[self _directoriesForConnection:NULL] objectEnumerator];
 	
 	while((directory = [enumerator nextObject])) {
 		[directory sortUsingSelector:selector];
