@@ -1763,7 +1763,7 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 	if(![self _validateDuplicateAccount])
 		return;
 	
-	account		= [[[[self _selectedAccounts] objectAtIndex:0] copy] autorelease];
+	account		= [[[_accounts objectAtIndex:0] copy] autorelease];
 	names		= [account isKindOfClass:[WCUserAccount class]] ? [self userNames] : [self groupNames];
 
 	[account setName:[WCApplicationController copiedNameForName:[account name] existingNames:names]];
