@@ -512,7 +512,6 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 		}
 		
 		group			= NULL;
-		groups			= NULL;
 		enumerator		= [_accounts objectEnumerator];
 		
 		while((account = [enumerator nextObject])) {
@@ -526,7 +525,12 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 				if([account isKindOfClass:[WCUserAccount class]])
 					group = [(WCUserAccount *) account group];
 			}
-			
+		}
+		
+		groups			= NULL;
+		enumerator		= [_accounts objectEnumerator];
+		
+		while((account = [enumerator nextObject])) {
 			if(groups) {
 				if(![account isKindOfClass:[WCUserAccount class]] || ![groups isEqualToArray:[(WCUserAccount *) account groups]]) {
 					groups = NULL;
