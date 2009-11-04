@@ -409,6 +409,7 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 - (void)_readFromAccounts {
 	NSEnumerator		*enumerator;
 	NSDictionary		*section;
+	NSArray				*groups;
 	NSString			*group;
 	WCAccount			*account;
 	
@@ -511,17 +512,12 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 		}
 		
 		group			= NULL;
+		groups			= NULL;
 		enumerator		= [_accounts objectEnumerator];
 		
 		while((account = [enumerator nextObject])) {
 			if(group) {
-				if([account isKindOfClass:[WCUserAccount class]]) {
-					if(![group isEqualToString:[(WCUserAccount *) account group]]) {
-						group = NULL;
-						
-						break;
-					}
-				} else {
+				if(![account isKindOfClass:[WCUserAccount class]] || ![group isEqualToString:[(WCUserAccount *) account group]]) {
 					group = NULL;
 					
 					break;
@@ -529,6 +525,17 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 			} else {
 				if([account isKindOfClass:[WCUserAccount class]])
 					group = [(WCUserAccount *) account group];
+			}
+			
+			if(groups) {
+				if(![account isKindOfClass:[WCUserAccount class]] || ![groups isEqualToArray:[(WCUserAccount *) account groups]]) {
+					groups = NULL;
+					
+					break;
+				}
+			} else {
+				if([account isKindOfClass:[WCUserAccount class]])
+					groups = [(WCUserAccount *) account groups];
 			}
 		}
 		
@@ -544,7 +551,11 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 		else
 			[_groupPopUpButton selectItemWithTitle:group];
 		
-		[_groupsTokenField setStringValue:@""];
+		if(groups == NULL)
+			[_groupsTokenField setStringValue:NSLS(@"<Multiple values>", @"Account field value")];
+		else
+			[_groupsTokenField setStringValue:[groups componentsJoinedByString:@","]];
+		
 		[_commentTextView setString:@""];
 		[_creationTimeTextField setStringValue:@""];
 		[_modificationTimeTextField setStringValue:@""];
@@ -621,7 +632,7 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 		[_fullNameTextField setEnabled:NO];
 		[_passwordTextField setEnabled:NO];
 		[_groupPopUpButton setEnabled:!group];
-		[_groupsTokenField setEnabled:NO];
+		[_groupsTokenField setEnabled:!group];
 		[_commentTextView setEditable:NO];
 		[_selectAllButton setEnabled:YES];
 	}
@@ -666,7 +677,8 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 			
 			[(WCUserAccount *) account setGroup:group];
 
-			groups = [[_groupsTokenField stringValue] componentsSeparatedByCharactersFromSet:[_groupsTokenField tokenizingCharacterSet]];
+			groups = [[_groupsTokenField stringValue] componentsSeparatedByCharactersFromSet:
+				[_groupsTokenField tokenizingCharacterSet]];
 			
 			if(!groups)
 				groups = [NSArray array];
@@ -685,6 +697,16 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 						group = @"";
 					
 					[(WCUserAccount *) account setGroup:group];
+				}
+				
+				if(![[_groupsTokenField stringValue] isEqualToString:NSLS(@"<Multiple values>", @"Account field value")]) {
+					groups = [[_groupsTokenField stringValue] componentsSeparatedByCharactersFromSet:
+						[_groupsTokenField tokenizingCharacterSet]];
+					
+					if(!groups)
+						groups = [NSArray array];
+				
+					[(WCUserAccount *) account setGroups:groups];
 				}
 			}
 		}
@@ -2201,7 +2223,7 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 					[cell font],			NSFontAttributeName,
 					NULL];
 				attributedString	= [NSAttributedString attributedStringWithString:NSLS(@"<Multiple values>", @"Account field value")
-																	   attributes:attributes];
+																		  attributes:attributes];
 				
 				if(type == WCAccountFieldBoolean)
 					value = [NSNumber numberWithInteger:NSMixedState];
