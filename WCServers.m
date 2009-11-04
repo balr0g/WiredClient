@@ -688,7 +688,7 @@
 	WCError				*error;
 	id					item;
 	
-	if([_serversOutlineView clickedHeader])
+	if(sender == _serversOutlineView && [_serversOutlineView clickedHeader])
 		return;
 
 	item = [self _selectedItem];
