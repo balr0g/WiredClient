@@ -814,7 +814,7 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 				accountsEnumerator = [_accounts objectEnumerator];
 				
 				while((account = [accountsEnumerator nextObject])) {
-					if([account valueForKey:[setting objectForKey:WCAccountFieldName]]) {
+					if([account valueForKey:[setting objectForKey:WCAccountFieldNameKey]]) {
 						[settings addObject:setting];
 						
 						break;
@@ -985,8 +985,8 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 	while((field = [enumerator nextObject])) {
 		setting = [[field mutableCopy] autorelease];
 		
-		switch([[setting objectForKey:WCAccountFieldType] intValue]) {
-			case WCAccountFieldBoolean:
+		switch((WCAccountFieldType) [[setting objectForKey:WCAccountFieldTypeKey] integerValue]) {
+			case WCAccountFieldTypeBoolean:
 				buttonCell = [[NSButtonCell alloc] initTextCell:@""];
 				[buttonCell setControlSize:NSSmallControlSize];
 				[buttonCell setButtonType:NSSwitchButton];
@@ -995,8 +995,8 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 				[buttonCell release];
 				break;
 
-			case WCAccountFieldNumber:
-			case WCAccountFieldString:
+			case WCAccountFieldTypeNumber:
+			case WCAccountFieldTypeString:
 				textFieldCell = [[NSTextFieldCell alloc] initTextCell:@""];
 				[textFieldCell setControlSize:NSSmallControlSize];
 				[textFieldCell setEditable:YES];
@@ -1006,13 +1006,13 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 				[textFieldCell release];
 				break;
 			
-			case WCAccountFieldEnum:
+			case WCAccountFieldTypeEnum:
 				popUpButtonCell = [[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO];
 				[popUpButtonCell setControlSize:NSSmallControlSize];
 				[popUpButtonCell setBordered:NO];
 				[popUpButtonCell setFont:[NSFont smallSystemFont]];
 				
-				if([[setting objectForKey:WCAccountFieldName] isEqualToString:@"wired.account.color"]) {
+				if([[setting objectForKey:WCAccountFieldNameKey] isEqualToString:@"wired.account.color"]) {
 					[popUpButtonCell addItem:[NSMenuItem itemWithTitle:NSLS(@"Black", @"Account color")
 																 image:[NSImage imageNamed:@"LabelBlack"]]];
 					[popUpButtonCell addItem:[NSMenuItem itemWithTitle:NSLS(@"Red", @"Account color")
@@ -1030,38 +1030,45 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 				[setting setObject:popUpButtonCell forKey:WCAccountsFieldCell];
 				[popUpButtonCell release];
 				break;
+			
+			case WCAccountFieldTypeDate:
+			case WCAccountFieldTypeList:
+				break;
 		}
 		
-		switch([[setting objectForKey:WCAccountFieldSection] intValue]) {
-			case WCAccountFieldBasics:
+		switch((WCAccountFieldSection) [[setting objectForKey:WCAccountFieldSectionKey] integerValue]) {
+			case WCAccountFieldSectionNone:
+				break;
+				
+			case WCAccountFieldSectionBasics:
 				[basicsSettings addObject:setting];
 				break;
 
-			case WCAccountFieldFiles:
+			case WCAccountFieldSectionFiles:
 				[filesSettings addObject:setting];
 				break;
 
-			case WCAccountFieldBoards:
+			case WCAccountFieldSectionBoards:
 				[boardsSettings addObject:setting];
 				break;
 
-			case WCAccountFieldTracker:
+			case WCAccountFieldSectionTracker:
 				[trackerSettings addObject:setting];
 				break;
 
-			case WCAccountFieldUsers:
+			case WCAccountFieldSectionUsers:
 				[usersSettings addObject:setting];
 				break;
 
-			case WCAccountFieldAccounts:
+			case WCAccountFieldSectionAccounts:
 				[accountsSettings addObject:setting];
 				break;
 
-			case WCAccountFieldAdministration:
+			case WCAccountFieldSectionAdministration:
 				[administrationSettings addObject:setting];
 				break;
 
-			case WCAccountFieldLimits:
+			case WCAccountFieldSectionLimits:
 				[limitsSettings addObject:setting];
 				break;
 		}
@@ -1069,35 +1076,35 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 	
 	_allSettings = [[NSArray alloc] initWithObjects:
 		[NSDictionary dictionaryWithObjectsAndKeys:
-			NSLS(@"Basics", @"Account section"),			WCAccountFieldLocalizedName,
+			NSLS(@"Basics", @"Account section"),			WCAccountFieldLocalizedNameKey,
 			basicsSettings,									WCAccountsFieldSettings,
 			NULL],	
 		[NSDictionary dictionaryWithObjectsAndKeys:
-			NSLS(@"Files", @"Account section"),				WCAccountFieldLocalizedName,
+			NSLS(@"Files", @"Account section"),				WCAccountFieldLocalizedNameKey,
 			filesSettings,									WCAccountsFieldSettings,
 			NULL],
 		[NSDictionary dictionaryWithObjectsAndKeys:
-			NSLS(@"Boards", @"Account section"),			WCAccountFieldLocalizedName,
+			NSLS(@"Boards", @"Account section"),			WCAccountFieldLocalizedNameKey,
 			boardsSettings,									WCAccountsFieldSettings,
 			NULL],
 		[NSDictionary dictionaryWithObjectsAndKeys:
-			NSLS(@"Tracker", @"Account section"),			WCAccountFieldLocalizedName,
+			NSLS(@"Tracker", @"Account section"),			WCAccountFieldLocalizedNameKey,
 			trackerSettings,								WCAccountsFieldSettings,
 			NULL],
 		[NSDictionary dictionaryWithObjectsAndKeys:
-			NSLS(@"Users", @"Account section"),				WCAccountFieldLocalizedName,
+			NSLS(@"Users", @"Account section"),				WCAccountFieldLocalizedNameKey,
 			usersSettings,									WCAccountsFieldSettings,
 			NULL],
 		[NSDictionary dictionaryWithObjectsAndKeys:
-			NSLS(@"Accounts", @"Account section"),			WCAccountFieldLocalizedName,
+			NSLS(@"Accounts", @"Account section"),			WCAccountFieldLocalizedNameKey,
 			accountsSettings,								WCAccountsFieldSettings,
 			NULL],
 		[NSDictionary dictionaryWithObjectsAndKeys:
-			NSLS(@"Administration", @"Account section"),	WCAccountFieldLocalizedName,
+			NSLS(@"Administration", @"Account section"),	WCAccountFieldLocalizedNameKey,
 			administrationSettings,							WCAccountsFieldSettings,
 			NULL],
 		[NSDictionary dictionaryWithObjectsAndKeys:
-			NSLS(@"Limits", @"Account section"),			WCAccountFieldLocalizedName,
+			NSLS(@"Limits", @"Account section"),			WCAccountFieldLocalizedNameKey,
 			limitsSettings,									WCAccountsFieldSettings,
 			NULL],
 		NULL];
@@ -1949,11 +1956,11 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 		settingsEnumerator = [[section objectForKey:WCAccountsFieldSettings] objectEnumerator];
 		
 		while((setting = [settingsEnumerator nextObject])) {
-			if([[setting objectForKey:WCAccountFieldType] integerValue] == WCAccountFieldBoolean) {
+			if([[setting objectForKey:WCAccountFieldTypeKey] integerValue] == WCAccountFieldTypeBoolean) {
 				accountsEnumerator = [_accounts objectEnumerator];
 				
 				while((account = [accountsEnumerator nextObject]))
-					[account setValue:[NSNumber numberWithBool:YES] forKey:[setting objectForKey:WCAccountFieldName]];
+					[account setValue:[NSNumber numberWithBool:YES] forKey:[setting objectForKey:WCAccountFieldNameKey]];
 			}
 		}
 	}
@@ -1979,7 +1986,7 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 	
 	while(index != NSNotFound) {
 		setting		= [_settingsOutlineView itemAtRow:index];
-		name		= [setting objectForKey:WCAccountFieldName];
+		name		= [setting objectForKey:WCAccountFieldNameKey];
 		
 		if(name) {
 			enumerator = [_accounts objectEnumerator];
@@ -2173,20 +2180,20 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 	NSString				*name;
 	WCAccount				*account;
 	id						cell, value;
-	NSInteger				type;
+	WCAccountFieldType		type;
 	
 	if(tableColumn == _settingTableColumn) {
-		return [item objectForKey:WCAccountFieldLocalizedName];
+		return [item objectForKey:WCAccountFieldLocalizedNameKey];
 	}
 	else if(tableColumn == _valueTableColumn) {
-		type = [[item objectForKey:WCAccountFieldType] integerValue];
-		name = [item objectForKey:WCAccountFieldName];
+		type = [[item objectForKey:WCAccountFieldTypeKey] integerValue];
+		name = [item objectForKey:WCAccountFieldNameKey];
 		cell = [item objectForKey:WCAccountsFieldCell];
 		
 		if(!name)
 			return NULL;
 		
-		if(type == WCAccountFieldEnum) {
+		if(type == WCAccountFieldTypeEnum) {
 			if([[cell itemAtIndex:0] tag] == -1) {
 				[cell removeItemAtIndex:0];
 				[cell removeItemAtIndex:0];
@@ -2206,17 +2213,34 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 			while((account = [enumerator nextObject])) {
 				value = [account valueForKey:name];
 				
-				if(value)
-					[values addObject:value];
-				else
-					[values addObject:[NSNull null]];
+				if(!value) {
+					switch(type) {
+						case WCAccountFieldTypeString:
+							value = @"";
+							break;
+						case WCAccountFieldTypeDate:
+							value = [NSDate date];
+							break;
+						case WCAccountFieldTypeNumber:
+							value = [NSNumber numberWithInteger:0];
+							break;
+						case WCAccountFieldTypeBoolean:
+							value = [NSNumber numberWithBool:0];
+							break;
+						case WCAccountFieldTypeEnum:
+							value = [NSNumber numberWithInteger:-1];
+							break;
+						case WCAccountFieldTypeList:
+							value = [NSArray array];
+							break;
+					}
+				}
+				
+				[values addObject:value];
 			}
 			
 			if([values count] == 1) {
 				value = [values anyObject];
-				
-				if([value isKindOfClass:[NSNull class]])
-					value = NULL;
 			}
 			else if([values count] == 0) {
 				value = NULL;
@@ -2229,9 +2253,9 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 				attributedString	= [NSAttributedString attributedStringWithString:NSLS(@"<Multiple values>", @"Account field value")
 																		  attributes:attributes];
 				
-				if(type == WCAccountFieldBoolean)
+				if(type == WCAccountFieldTypeBoolean)
 					value = [NSNumber numberWithInteger:NSMixedState];
-				else if(type == WCAccountFieldEnum) {
+				else if(type == WCAccountFieldTypeEnum) {
 					[cell insertItem:[NSMenuItem itemWithAttributedTitle:attributedString tag:-1] atIndex:0];
 					[cell insertItem:[NSMenuItem separatorItem] atIndex:1];
 					
@@ -2249,7 +2273,7 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 				value = [NSNumber numberWithInteger:[value doubleValue] / 1024.0];
 		}
 		
-		if(type == WCAccountFieldNumber && [value isKindOfClass:[NSNumber class]] && [value integerValue] == 0)
+		if(type == WCAccountFieldTypeNumber && [value isKindOfClass:[NSNumber class]] && [value integerValue] == 0)
 			value = NULL;
 
 		return value;
@@ -2262,7 +2286,7 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 
 - (BOOL)outlineView:(NSOutlineView *)outlineView shouldEditTableColumn:(NSTableColumn *)tableColumn item:(id)item {
 	if(tableColumn == _valueTableColumn)
-		return ([item objectForKey:WCAccountFieldName] != NULL);
+		return ([item objectForKey:WCAccountFieldNameKey] != NULL);
 
 	return NO;
 }
@@ -2270,27 +2294,27 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 
 
 - (void)outlineView:(NSOutlineView *)outlineView setObjectValue:(id)object forTableColumn:(NSTableColumn *)tableColumn byItem:(id)item {
-	NSEnumerator	*enumerator;
-	NSString		*name;
-	WCAccount		*account;
-	NSInteger		type;
-	id				cell, value;
+	NSEnumerator			*enumerator;
+	NSString				*name;
+	WCAccount				*account;
+	id						cell, value;
+	WCAccountFieldType		type;
 	
-	type	= [[item objectForKey:WCAccountFieldType] integerValue];
-	name	= [item objectForKey:WCAccountFieldName];
+	type	= [[item objectForKey:WCAccountFieldTypeKey] integerValue];
+	name	= [item objectForKey:WCAccountFieldNameKey];
 	cell	= [item objectForKey:WCAccountsFieldCell];
 	value	= object;
 	
-	if(type == WCAccountFieldNumber) {
+	if(type == WCAccountFieldTypeNumber) {
 		if([object isKindOfClass:[NSString class]] && [object length] == 0)
 			return;
 		
 		value = [NSNumber numberWithInteger:[value integerValue]];
 	}
-	else if(type == WCAccountFieldBoolean) {
+	else if(type == WCAccountFieldTypeBoolean) {
 		value = [NSNumber numberWithBool:([value integerValue] == -1) ? YES : [value boolValue]];
 	}
-	else if(type == WCAccountFieldEnum) {
+	else if(type == WCAccountFieldTypeEnum) {
 		if([value integerValue] < 0)
 			return;
 		
@@ -2315,15 +2339,15 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 
 
 - (void)outlineView:(NSOutlineView *)outlineView willDisplayCell:(id)cell forTableColumn:(NSTableColumn *)tableColumn item:(id)item {
-	NSEnumerator	*enumerator;
-	NSString		*name;
-	WCAccount		*account;
-	id				value;
-	NSUInteger		type;
-	BOOL			set = NO;
+	NSEnumerator			*enumerator;
+	NSString				*name;
+	WCAccount				*account;
+	id						value;
+	WCAccountFieldType		type;
+	BOOL					set = NO;
 	
-	type		= [[item objectForKey:WCAccountFieldType] integerValue];
-	name		= [item objectForKey:WCAccountFieldName];
+	type		= [[item objectForKey:WCAccountFieldTypeKey] integerValue];
+	name		= [item objectForKey:WCAccountFieldNameKey];
 	enumerator	= [_accounts objectEnumerator];
 	value		= [cell objectValue];
 	
@@ -2354,7 +2378,7 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 
 
 - (NSString *)outlineView:(NSOutlineView *)outlineView toolTipForCell:(NSCell *)cell rect:(NSRectPointer)rect tableColumn:(NSTableColumn *)tableColumn item:(id)item mouseLocation:(NSPoint)mouseLocation {
-	return [item objectForKey:WCAccountFieldToolTip];
+	return [item objectForKey:WCAccountFieldToolTipKey];
 }
 
 

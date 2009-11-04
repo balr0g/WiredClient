@@ -36,35 +36,37 @@ enum _WCAccountColor {
 };
 typedef enum _WCAccountColor				WCAccountColor;
 
-extern NSString * const						WCAccountFieldName;
-extern NSString * const						WCAccountFieldLocalizedName;
-extern NSString * const						WCAccountFieldType;
+extern NSString * const						WCAccountFieldNameKey;
+extern NSString * const						WCAccountFieldLocalizedNameKey;
+extern NSString * const						WCAccountFieldTypeKey;
 
-enum {
-	WCAccountFieldString					= 0,
-	WCAccountFieldDate						= 1,
-	WCAccountFieldNumber					= 2,
-	WCAccountFieldBoolean					= 3,
-	WCAccountFieldEnum						= 4,
-	WCAccountFieldList						= 5
+enum _WCAccountFieldType {
+	WCAccountFieldTypeString				= 0,
+	WCAccountFieldTypeDate					= 1,
+	WCAccountFieldTypeNumber				= 2,
+	WCAccountFieldTypeBoolean				= 3,
+	WCAccountFieldTypeEnum					= 4,
+	WCAccountFieldTypeList					= 5
 };
+typedef enum _WCAccountFieldType			WCAccountFieldType;
 
-extern NSString * const						WCAccountFieldSection;
+extern NSString * const						WCAccountFieldSectionKey;
 
-enum {
-	WCAccountFieldNone						= 0,
-	WCAccountFieldBasics					= 1,
-	WCAccountFieldFiles						= 2,
-	WCAccountFieldBoards					= 3,
-	WCAccountFieldTracker					= 4,
-	WCAccountFieldUsers						= 5,
-	WCAccountFieldAccounts					= 6,
-	WCAccountFieldAdministration			= 7,
-	WCAccountFieldLimits					= 8
+enum _WCAccountFieldSection {
+	WCAccountFieldSectionNone				= 0,
+	WCAccountFieldSectionBasics				= 1,
+	WCAccountFieldSectionFiles				= 2,
+	WCAccountFieldSectionBoards				= 3,
+	WCAccountFieldSectionTracker			= 4,
+	WCAccountFieldSectionUsers				= 5,
+	WCAccountFieldSectionAccounts			= 6,
+	WCAccountFieldSectionAdministration		= 7,
+	WCAccountFieldSectionLimits				= 8
 };
+typedef enum _WCAccountFieldSection			WCAccountFieldSection;
 
-extern NSString * const						WCAccountFieldReadOnly;
-extern NSString * const						WCAccountFieldToolTip;
+extern NSString * const						WCAccountFieldReadOnlyKey;
+extern NSString * const						WCAccountFieldToolTipKey;
 
 
 @interface WCAccount : WIObject <NSCopying> {

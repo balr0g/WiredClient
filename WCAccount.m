@@ -29,12 +29,12 @@
 #import "WCAccount.h"
 #import "WCServerConnection.h"
 
-NSString * const WCAccountFieldName					= @"WCAccountFieldName";
-NSString * const WCAccountFieldLocalizedName		= @"WCAccountFieldLocalizedName";
-NSString * const WCAccountFieldType					= @"WCAccountFieldType";
-NSString * const WCAccountFieldSection				= @"WCAccountFieldSection";
-NSString * const WCAccountFieldReadOnly				= @"WCAccountFieldReadOnly";
-NSString * const WCAccountFieldToolTip				= @"WCAccountFieldToolTip";
+NSString * const WCAccountFieldNameKey				= @"WCAccountFieldNameKey";
+NSString * const WCAccountFieldLocalizedNameKey		= @"WCAccountFieldLocalizedNameKey";
+NSString * const WCAccountFieldTypeKey				= @"WCAccountFieldTypeKey";
+NSString * const WCAccountFieldSectionKey			= @"WCAccountFieldSectionKey";
+NSString * const WCAccountFieldReadOnlyKey			= @"WCAccountFieldReadOnlyKey";
+NSString * const WCAccountFieldToolTipKey			= @"WCAccountFieldToolTipKey";
 
 
 @interface WCAccount(Private)
@@ -59,25 +59,25 @@ NSString * const WCAccountFieldToolTip				= @"WCAccountFieldToolTip";
 	enumerator = [[[self class] fields] objectEnumerator];
 	
 	while((field = [enumerator nextObject])) {
-		name	= [field objectForKey:WCAccountFieldName];
+		name	= [field objectForKey:WCAccountFieldNameKey];
 		value	= NULL;
 		
-		switch([[field objectForKey:WCAccountFieldType] intValue]) {
-			case WCAccountFieldString:
+		switch((WCAccountFieldType) [[field objectForKey:WCAccountFieldTypeKey] integerValue]) {
+			case WCAccountFieldTypeString:
 				value = [message stringForName:name];
 				break;
 			
-			case WCAccountFieldDate:
+			case WCAccountFieldTypeDate:
 				value = [message dateForName:name];
 				break;
 
-			case WCAccountFieldNumber:
-			case WCAccountFieldBoolean:
-			case WCAccountFieldEnum:
+			case WCAccountFieldTypeNumber:
+			case WCAccountFieldTypeBoolean:
+			case WCAccountFieldTypeEnum:
 				value = [message numberForName:name];
 				break;
 			
-			case WCAccountFieldList:
+			case WCAccountFieldTypeList:
 				value = [message listForName:name];
 				break;
 		}
@@ -104,27 +104,27 @@ NSString * const WCAccountFieldToolTip				= @"WCAccountFieldToolTip";
 	enumerator = [[[self class] fields] objectEnumerator];
 	
 	while((field = [enumerator nextObject])) {
-		if(![[field objectForKey:WCAccountFieldReadOnly] boolValue]) {
-			name	= [field objectForKey:WCAccountFieldName];
+		if(![[field objectForKey:WCAccountFieldReadOnlyKey] boolValue]) {
+			name	= [field objectForKey:WCAccountFieldNameKey];
 			value	= [self valueForKey:name];
 			
 			if(value) {
-				switch([[field objectForKey:WCAccountFieldType] integerValue]) {
-					case WCAccountFieldString:
+				switch((WCAccountFieldType) [[field objectForKey:WCAccountFieldTypeKey] integerValue]) {
+					case WCAccountFieldTypeString:
 						[message setString:value forName:name];
 						break;
 					
-					case WCAccountFieldDate:
+					case WCAccountFieldTypeDate:
 						[message setDate:value forName:name];
 						break;
 
-					case WCAccountFieldNumber:
-					case WCAccountFieldBoolean:
-					case WCAccountFieldEnum:
+					case WCAccountFieldTypeNumber:
+					case WCAccountFieldTypeBoolean:
+					case WCAccountFieldTypeEnum:
 						[message setNumber:value forName:name];
 						break;
 
-					case WCAccountFieldList:
+					case WCAccountFieldTypeList:
 						[message setList:value forName:name];
 						break;
 				}
@@ -140,19 +140,19 @@ NSString * const WCAccountFieldToolTip				= @"WCAccountFieldToolTip";
 
 #define WCAccountFieldDictionary(section, name, localizedname, type, readonly, tooltip)		\
 	[NSDictionary dictionaryWithObjectsAndKeys:												\
-		[NSNumber numberWithInteger:(section)],		WCAccountFieldSection,					\
-		(name),										WCAccountFieldName,						\
-		(localizedname),							WCAccountFieldLocalizedName,			\
-		[NSNumber numberWithInteger:(type)],		WCAccountFieldType,						\
-		[NSNumber numberWithBool:(readonly)],		WCAccountFieldReadOnly,					\
-		(tooltip),									WCAccountFieldToolTip,					\
+		[NSNumber numberWithInteger:(section)],		WCAccountFieldSectionKey,				\
+		(name),										WCAccountFieldNameKey,					\
+		(localizedname),							WCAccountFieldLocalizedNameKey,			\
+		[NSNumber numberWithInteger:(type)],		WCAccountFieldTypeKey,					\
+		[NSNumber numberWithBool:(readonly)],		WCAccountFieldReadOnlyKey,				\
+		(tooltip),									WCAccountFieldToolTipKey,				\
 		NULL]
 
 #define WCAccountFieldBooleanDictionary(section, name, localizedname, tooltip)				\
-	WCAccountFieldDictionary((section), (name), (localizedname), WCAccountFieldBoolean, NO, (tooltip))
+	WCAccountFieldDictionary((section), (name), (localizedname), WCAccountFieldTypeBoolean, NO, (tooltip))
 
 #define WCAccountFieldNumberDictionary(section, name, localizedname, tooltip)				\
-	WCAccountFieldDictionary((section), (name), (localizedname), WCAccountFieldNumber, NO, (tooltip))
+	WCAccountFieldDictionary((section), (name), (localizedname), WCAccountFieldTypeNumber, NO, (tooltip))
 
 + (NSArray *)fields {
 	static NSArray		*fields;
@@ -161,249 +161,249 @@ NSString * const WCAccountFieldToolTip				= @"WCAccountFieldToolTip";
 		return fields;
 	
 	fields = [[NSArray alloc] initWithObjects:
-		WCAccountFieldDictionary(WCAccountFieldNone,
-			@"wired.account.name", @"", WCAccountFieldString, NO, @""),
-		WCAccountFieldDictionary(WCAccountFieldNone,
-			@"wired.account.new_name", @"", WCAccountFieldString, NO, @""),
-		WCAccountFieldDictionary(WCAccountFieldNone,
-			@"wired.account.full_name", @"", WCAccountFieldString, NO, @""),
-		WCAccountFieldDictionary(WCAccountFieldNone,
-			@"wired.account.comment", @"", WCAccountFieldString, NO, @""),
-		WCAccountFieldDictionary(WCAccountFieldNone,
-			@"wired.account.creation_time", @"", WCAccountFieldDate, YES, @""),
-		WCAccountFieldDictionary(WCAccountFieldNone,
-			@"wired.account.modification_time", @"", WCAccountFieldDate, YES, @""),
-		WCAccountFieldDictionary(WCAccountFieldNone,
-			@"wired.account.login_time", @"", WCAccountFieldDate, YES, @""),
-		WCAccountFieldDictionary(WCAccountFieldNone,
-			@"wired.account.edited_by", @"", WCAccountFieldString, YES, @""),
-		WCAccountFieldDictionary(WCAccountFieldNone,
-			@"wired.account.downloads", @"", WCAccountFieldNumber, YES, @""),
-		WCAccountFieldDictionary(WCAccountFieldNone,
-			@"wired.account.download_transferred", @"", WCAccountFieldNumber, YES, @""),
-		WCAccountFieldDictionary(WCAccountFieldNone,
-			@"wired.account.uploads", @"", WCAccountFieldNumber, YES, @""),
-		WCAccountFieldDictionary(WCAccountFieldNone,
-			@"wired.account.upload_transferred", @"", WCAccountFieldNumber, YES, @""),
-		WCAccountFieldDictionary(WCAccountFieldNone,
-			@"wired.account.group", @"", WCAccountFieldString, NO, @""),
-		WCAccountFieldDictionary(WCAccountFieldNone,
-			@"wired.account.groups", @"", WCAccountFieldList, NO, @""),
-		WCAccountFieldDictionary(WCAccountFieldNone,
-			@"wired.account.password", @"", WCAccountFieldString, NO, @""),
+		WCAccountFieldDictionary(WCAccountFieldSectionNone,
+			@"wired.account.name", @"", WCAccountFieldTypeString, NO, @""),
+		WCAccountFieldDictionary(WCAccountFieldSectionNone,
+			@"wired.account.new_name", @"", WCAccountFieldTypeString, NO, @""),
+		WCAccountFieldDictionary(WCAccountFieldSectionNone,
+			@"wired.account.full_name", @"", WCAccountFieldTypeString, NO, @""),
+		WCAccountFieldDictionary(WCAccountFieldSectionNone,
+			@"wired.account.comment", @"", WCAccountFieldTypeString, NO, @""),
+		WCAccountFieldDictionary(WCAccountFieldSectionNone,
+			@"wired.account.creation_time", @"", WCAccountFieldTypeDate, YES, @""),
+		WCAccountFieldDictionary(WCAccountFieldSectionNone,
+			@"wired.account.modification_time", @"", WCAccountFieldTypeDate, YES, @""),
+		WCAccountFieldDictionary(WCAccountFieldSectionNone,
+			@"wired.account.login_time", @"", WCAccountFieldTypeDate, YES, @""),
+		WCAccountFieldDictionary(WCAccountFieldSectionNone,
+			@"wired.account.edited_by", @"", WCAccountFieldTypeString, YES, @""),
+		WCAccountFieldDictionary(WCAccountFieldSectionNone,
+			@"wired.account.downloads", @"", WCAccountFieldTypeNumber, YES, @""),
+		WCAccountFieldDictionary(WCAccountFieldSectionNone,
+			@"wired.account.download_transferred", @"", WCAccountFieldTypeNumber, YES, @""),
+		WCAccountFieldDictionary(WCAccountFieldSectionNone,
+			@"wired.account.uploads", @"", WCAccountFieldTypeNumber, YES, @""),
+		WCAccountFieldDictionary(WCAccountFieldSectionNone,
+			@"wired.account.upload_transferred", @"", WCAccountFieldTypeNumber, YES, @""),
+		WCAccountFieldDictionary(WCAccountFieldSectionNone,
+			@"wired.account.group", @"", WCAccountFieldTypeString, NO, @""),
+		WCAccountFieldDictionary(WCAccountFieldSectionNone,
+			@"wired.account.groups", @"", WCAccountFieldTypeList, NO, @""),
+		WCAccountFieldDictionary(WCAccountFieldSectionNone,
+			@"wired.account.password", @"", WCAccountFieldTypeString, NO, @""),
 		
-		WCAccountFieldDictionary(WCAccountFieldBasics,
-			@"wired.account.color", NSLS(@"Color", @"Account field name"), WCAccountFieldEnum, NO,
+		WCAccountFieldDictionary(WCAccountFieldSectionBasics,
+			@"wired.account.color", NSLS(@"Color", @"Account field name"), WCAccountFieldTypeEnum, NO,
 			@""),
-		WCAccountFieldBooleanDictionary(WCAccountFieldBasics,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionBasics,
 			@"wired.account.user.cannot_set_nick", NSLS(@"Cannot Set Nick", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldBasics,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionBasics,
 			@"wired.account.user.get_info", NSLS(@"Get User Info", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldBasics,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionBasics,
 			@"wired.account.chat.set_topic", NSLS(@"Set Chat Topic", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldBasics,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionBasics,
 			@"wired.account.chat.create_chats", NSLS(@"Create Chats", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldBasics,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionBasics,
 			@"wired.account.message.send_messages", NSLS(@"Send Messages", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldBasics,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionBasics,
 			@"wired.account.message.broadcast", NSLS(@"Broadcast Messages", @"Account field name"),
 			@"TBD"),
 
-		WCAccountFieldDictionary(WCAccountFieldFiles,
-			@"wired.account.files", NSLS(@"Files Folder", @"Account field name"), WCAccountFieldString, NO, 
+		WCAccountFieldDictionary(WCAccountFieldSectionFiles,
+			@"wired.account.files", NSLS(@"Files Folder", @"Account field name"), WCAccountFieldTypeString, NO, 
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldFiles,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionFiles,
 			@"wired.account.file.list_files", NSLS(@"List Files", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldFiles,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionFiles,
 			@"wired.account.file.search_files", NSLS(@"Search Files", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldFiles,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionFiles,
 			@"wired.account.file.get_info", NSLS(@"Get File Info", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldFiles,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionFiles,
 			@"wired.account.file.create_directories", NSLS(@"Create Folders", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldFiles,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionFiles,
 			@"wired.account.file.create_links", NSLS(@"Create Links", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldFiles,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionFiles,
 			@"wired.account.file.move_files", NSLS(@"Move Files", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldFiles,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionFiles,
 			@"wired.account.file.rename_files", NSLS(@"Rename Files", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldFiles,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionFiles,
 			@"wired.account.file.set_type", NSLS(@"Set Folder Type", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldFiles,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionFiles,
 			@"wired.account.file.set_comment", NSLS(@"Set Comments", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldFiles,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionFiles,
 			@"wired.account.file.set_permissions", NSLS(@"Set Permissions", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldFiles,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionFiles,
 			@"wired.account.file.set_executable", NSLS(@"Set Executable", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldFiles,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionFiles,
 			@"wired.account.file.set_label", NSLS(@"Set Label", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldFiles,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionFiles,
 			@"wired.account.file.delete_files", NSLS(@"Delete Files", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldFiles,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionFiles,
 			@"wired.account.file.access_all_dropboxes", NSLS(@"Access All Drop Boxes", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldFiles,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionFiles,
 			@"wired.account.transfer.download_files", NSLS(@"Download Files", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldFiles,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionFiles,
 			@"wired.account.transfer.upload_files", NSLS(@"Upload Files", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldFiles,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionFiles,
 			@"wired.account.transfer.upload_directories", NSLS(@"Upload Folders", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldFiles,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionFiles,
 			@"wired.account.transfer.upload_anywhere", NSLS(@"Upload Anywhere", @"Account field name"),
 			@"TBD"),
 
-		WCAccountFieldBooleanDictionary(WCAccountFieldBoards,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionBoards,
 			@"wired.account.board.read_boards", NSLS(@"Read Boards", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldBoards,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionBoards,
 			@"wired.account.board.add_boards", NSLS(@"Add Boards", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldBoards,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionBoards,
 			@"wired.account.board.move_boards", NSLS(@"Move Boards", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldBoards,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionBoards,
 			@"wired.account.board.rename_boards", NSLS(@"Rename Boards", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldBoards,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionBoards,
 			@"wired.account.board.delete_boards", NSLS(@"Delete Boards", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldBoards,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionBoards,
 			@"wired.account.board.set_permissions", NSLS(@"Set Board Permissions", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldBoards,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionBoards,
 			@"wired.account.board.add_threads", NSLS(@"Add Threads", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldBoards,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionBoards,
 			@"wired.account.board.move_threads", NSLS(@"Move Threads", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldBoards,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionBoards,
 			@"wired.account.board.delete_threads", NSLS(@"Delete Threads", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldBoards,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionBoards,
 			@"wired.account.board.add_posts", NSLS(@"Add Posts", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldBoards,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionBoards,
 			@"wired.account.board.edit_own_posts", NSLS(@"Edit Own Posts", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldBoards,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionBoards,
 			@"wired.account.board.edit_all_posts", NSLS(@"Edit All Posts", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldBoards,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionBoards,
 			@"wired.account.board.delete_own_posts", NSLS(@"Delete Own Posts", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldBoards,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionBoards,
 			@"wired.account.board.delete_all_posts", NSLS(@"Delete All Posts", @"Account field name"),
 			@"TBD"),
 			  
-		WCAccountFieldBooleanDictionary(WCAccountFieldTracker,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionTracker,
 			@"wired.account.tracker.list_servers", NSLS(@"List Servers", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldTracker,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionTracker,
 			@"wired.account.tracker.register_servers", NSLS(@"Register Servers", @"Account field name"),
 			@"TBD"),
 
-		WCAccountFieldBooleanDictionary(WCAccountFieldUsers,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionUsers,
 			@"wired.account.chat.kick_users", NSLS(@"Kick Users", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldUsers,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionUsers,
 			@"wired.account.user.disconnect_users", NSLS(@"Disconnect Users", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldUsers,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionUsers,
 			@"wired.account.user.ban_users", NSLS(@"Ban Users", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldUsers,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionUsers,
 			@"wired.account.user.cannot_be_disconnected", NSLS(@"Cannot Be Disconnected", @"Account field name"),
 			@"TBD"),
 
-		WCAccountFieldBooleanDictionary(WCAccountFieldAccounts,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionAccounts,
 			@"wired.account.account.change_password", NSLS(@"Change Password", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldAccounts,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionAccounts,
 			@"wired.account.account.list_accounts", NSLS(@"List Accounts", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldAccounts,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionAccounts,
 			@"wired.account.account.read_accounts", NSLS(@"Read Accounts", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldAccounts,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionAccounts,
 			@"wired.account.account.create_users", NSLS(@"Create Users", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldAccounts,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionAccounts,
 			@"wired.account.account.edit_users", NSLS(@"Edit Users", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldAccounts,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionAccounts,
 			@"wired.account.account.delete_users", NSLS(@"Delete Users", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldAccounts,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionAccounts,
 			@"wired.account.account.create_groups", NSLS(@"Create Groups", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldAccounts,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionAccounts,
 			@"wired.account.account.edit_groups", NSLS(@"Edit Groups", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldAccounts,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionAccounts,
 			@"wired.account.account.delete_groups", NSLS(@"Delete Groups", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldAccounts,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionAccounts,
 			@"wired.account.account.raise_account_privileges", NSLS(@"Raise Privileges", @"Account field name"),
 			@"TBD"),
 		
-		WCAccountFieldBooleanDictionary(WCAccountFieldAdministration,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionAdministration,
 			@"wired.account.user.get_users", NSLS(@"Monitor Users", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldAdministration,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionAdministration,
 			@"wired.account.events.view_events", NSLS(@"View Events", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldAdministration,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionAdministration,
 			@"wired.account.log.view_log", NSLS(@"View Log", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldAdministration,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionAdministration,
 			@"wired.account.settings.get_settings", NSLS(@"Read Settings", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldAdministration,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionAdministration,
 			@"wired.account.settings.set_settings", NSLS(@"Edit Settings", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldAdministration,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionAdministration,
 			@"wired.account.banlist.get_bans", NSLS(@"Read Banlist", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldAdministration,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionAdministration,
 			@"wired.account.banlist.add_bans", NSLS(@"Add Bans", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldBooleanDictionary(WCAccountFieldAdministration,
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionAdministration,
 			@"wired.account.banlist.delete_bans", NSLS(@"Delete Bans", @"Account field name"),
 			@"TBD"),
 
-		WCAccountFieldNumberDictionary(WCAccountFieldLimits,
+		WCAccountFieldNumberDictionary(WCAccountFieldSectionLimits,
 			@"wired.account.file.recursive_list_depth_limit", NSLS(@"Download Folder Depth", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldNumberDictionary(WCAccountFieldLimits,
+		WCAccountFieldNumberDictionary(WCAccountFieldSectionLimits,
 			@"wired.account.transfer.download_limit", NSLS(@"Concurrent Downloads", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldNumberDictionary(WCAccountFieldLimits,
+		WCAccountFieldNumberDictionary(WCAccountFieldSectionLimits,
 			@"wired.account.transfer.upload_limit", NSLS(@"Concurrent Uploads", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldNumberDictionary(WCAccountFieldLimits,
+		WCAccountFieldNumberDictionary(WCAccountFieldSectionLimits,
 			@"wired.account.transfer.download_speed_limit", NSLS(@"Download Speed (KB/s)", @"Account field name"),
 			@"TBD"),
-		WCAccountFieldNumberDictionary(WCAccountFieldLimits,
+		WCAccountFieldNumberDictionary(WCAccountFieldSectionLimits,
 			@"wired.account.transfer.upload_speed_limit", NSLS(@"Upload Speed (KB/s)", @"Account field name"),
 			@"TBD"),
 		NULL];
