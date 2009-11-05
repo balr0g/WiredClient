@@ -48,6 +48,7 @@ NSString * const WCMessagesDidChangeUnreadCountNotification		= @"WCMessagesDidCh
 
 - (void)_showDialogForMessage:(WCMessage *)message;
 - (NSString *)_stringForMessageString:(NSString *)string;
+- (void)_sendMessage;
 
 - (WCConversation *)_selectedConversation;
 - (void)_saveMessages;
@@ -156,6 +157,39 @@ NSString * const WCMessagesDidChangeUnreadCountNotification		= @"WCMessagesDidCh
 	return string;
 }
 
+
+
+- (void)_sendMessage {
+	NSString				*string;
+	WIP7Message				*p7Message;
+	WCServerConnection		*connection;
+	WCConversation			*conversation;
+	WCMessage				*message;
+	WCUser					*user;
+
+	string			= [WCChatController stringByDecomposingSmileyAttributesInAttributedString:[_messageTextView textStorage]];
+	conversation	= [self _selectedConversation];
+	connection		= [conversation connection];
+	user			= [[connection chatController] userWithUserID:[connection userID]];
+	message			= [WCPrivateMessage messageToSomeoneFromUser:user
+												   message:string
+												connection:connection];
+	
+	[conversation addMessage:message];
+	
+	[self _saveMessages];
+	
+	p7Message = [WIP7Message messageWithName:@"wired.message.send_message" spec:WCP7Spec];
+	[p7Message setUInt32:[[conversation user] userID] forName:@"wired.user.id"];
+	[p7Message setString:[self _stringForMessageString:[message message]] forName:@"wired.message.message"];
+	[[message connection] sendMessage:p7Message];
+	
+	[[WCStats stats] addUnsignedInt:1 forKey:WCStatsMessagesSent];
+	
+	[self _reloadConversation];
+	
+	[_messageTextView setString:@""];
+}
 
 
 #pragma mark -
@@ -286,6 +320,7 @@ NSString * const WCMessagesDidChangeUnreadCountNotification		= @"WCMessagesDidCh
 	[text replaceOccurrencesOfString:@"\"" withString:@"&#34;"];
 	[text replaceOccurrencesOfString:@"\'" withString:@"&#39;"];
 	
+	/* Do this in a custom loop to avoid corrupted strings when using $1 multiple times */
 	do {
 		range = [text rangeOfRegex:[NSSWF:@"(?:^|\\s)(%@)(?:\\.|,|:|\\?|!)?(?:\\s|$)", [WCChatController URLRegex]]
 						   options:RKLCaseless
@@ -298,6 +333,7 @@ NSString * const WCMessagesDidChangeUnreadCountNotification		= @"WCMessagesDidCh
 		}
 	} while(range.location != NSNotFound);
 	
+	/* Do this in a custom loop to avoid corrupted strings when using $1 multiple times */
 	do {
 		range = [text rangeOfRegex:[NSSWF:@"(?:^|\\s)(%@)(?:\\.|,|:|\\?|!)?(?:\\s|$)", [WCChatController schemelessURLRegex]]
 						   options:RKLCaseless
@@ -310,6 +346,7 @@ NSString * const WCMessagesDidChangeUnreadCountNotification		= @"WCMessagesDidCh
 		}
 	} while(range.location != NSNotFound);
 	
+	/* Do this in a custom loop to avoid corrupted strings when using $1 multiple times */
 	do {
 		range = [text rangeOfRegex:[NSSWF:@"(?:^|\\s)(%@)(?:\\.|,|:|\\?|!)?(?:\\s|$)", [WCChatController mailtoURLRegex]]
 						   options:RKLCaseless
@@ -915,13 +952,6 @@ NSString * const WCMessagesDidChangeUnreadCountNotification		= @"WCMessagesDidCh
 
 
 - (BOOL)textView:(NSTextView *)textView doCommandBySelector:(SEL)selector {
-	NSString				*string;
-	WIP7Message				*p7Message;
-	WCServerConnection		*connection;
-	WCConversation			*conversation;
-	WCMessage				*message;
-	WCUser					*user;
-
 	if(textView == _broadcastTextView) {
 		if(selector == @selector(insertNewline:)) {
 			if([[NSApp currentEvent] character] == NSEnterCharacter) {
@@ -933,30 +963,8 @@ NSString * const WCMessagesDidChangeUnreadCountNotification		= @"WCMessagesDidCh
 	}
 	else if(textView == _messageTextView) {
 		if(selector == @selector(insertNewline:)) {
-			if([[_messageTextView string] length] > 0) {
-				string			= [WCChatController stringByDecomposingSmileyAttributesInAttributedString:[_messageTextView textStorage]];
-				conversation	= [self _selectedConversation];
-				connection		= [conversation connection];
-				user			= [[connection chatController] userWithUserID:[connection userID]];
-				message			= [WCPrivateMessage messageToSomeoneFromUser:user
-																	 message:string
-																  connection:connection];
-
-				[conversation addMessage:message];
-				
-				[self _saveMessages];
-
-				p7Message = [WIP7Message messageWithName:@"wired.message.send_message" spec:WCP7Spec];
-				[p7Message setUInt32:[[conversation user] userID] forName:@"wired.user.id"];
-				[p7Message setString:[self _stringForMessageString:[message message]] forName:@"wired.message.message"];
-				[[message connection] sendMessage:p7Message];
-
-				[[WCStats stats] addUnsignedInt:1 forKey:WCStatsMessagesSent];
-				
-				[self _reloadConversation];
-				
-				[_messageTextView setString:@""];
-			}
+			if([[_messageTextView string] length] > 0)
+				[self _sendMessage];
 				
 			return YES;
 		}
