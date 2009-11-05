@@ -1247,6 +1247,7 @@ NSString * const WCMessagesDidChangeUnreadCountNotification		= @"WCMessagesDidCh
 - (void)deleteConversationAlertDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
 	NSEnumerator		*enumerator;
 	WCConversation		*conversation = contextInfo, *eachConversation;
+	id					item;
 	NSInteger			row;
 	
 	if(returnCode == NSAlertFirstButtonReturn) {
@@ -1260,11 +1261,18 @@ NSString * const WCMessagesDidChangeUnreadCountNotification		= @"WCMessagesDidCh
 		[_conversationsOutlineView reloadData];
 		
 		[_selectedConversation release];
+		_selectedConversation = NULL;
 		
 		row = [_conversationsOutlineView selectedRow];
 		
-		if(row >= 0)
-			_selectedConversation = [[_conversationsOutlineView itemAtRow:row] retain];
+		if(row >= 0) {
+			item = [_conversationsOutlineView itemAtRow:row];
+		
+			if(item == _messageConversations || item == _broadcastConversations)
+				[_conversationsOutlineView deselectAll:self];
+			else
+				_selectedConversation = [item retain];
+		}
 
 		[self _validate];
 		[self _reloadConversation];
