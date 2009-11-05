@@ -274,8 +274,8 @@ NSString * const WCMessagesDidChangeUnreadCountNotification		= @"WCMessagesDidCh
 	NSEnumerator		*enumerator;
 	NSDictionary		*theme, *regexs;
 	NSMutableString		*string, *text;
-	NSString			*smiley, *path, *regex;
-	NSUInteger			matches;
+	NSString			*smiley, *path, *regex, *substring;
+	NSRange				range;
 	
 	theme		= [message theme];
 	text		= [[[message message] mutableCopy] autorelease];
@@ -287,22 +287,40 @@ NSString * const WCMessagesDidChangeUnreadCountNotification		= @"WCMessagesDidCh
 	[text replaceOccurrencesOfString:@"\'" withString:@"&#39;"];
 	
 	do {
-		matches = [text replaceOccurrencesOfRegex:[NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController URLRegex]]
-									   withString:@"$1<a href=\"$2\">$2</a>$3$4"
-										  options:RKLCaseless];
-	} while(matches > 0);
+		range = [text rangeOfRegex:[NSSWF:@"(?:^|\\s)(%@)(?:\\.|,|:|\\?|!)?(?:\\s|$)", [WCChatController URLRegex]]
+						   options:RKLCaseless
+						   capture:1];
+		
+		if(range.location != NSNotFound) {
+			substring = [text substringWithRange:range];
+			
+			[text replaceCharactersInRange:range withString:[NSSWF:@"<a href=\"%@\">%@</a>", substring, substring]];
+		}
+	} while(range.location != NSNotFound);
 	
 	do {
-		matches = [text replaceOccurrencesOfRegex:[NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController schemelessURLRegex]]
-									   withString:@"$1<a href=\"http://$2\">$2</a>$3$4"
-										  options:RKLCaseless];
-	} while(matches > 0);
+		range = [text rangeOfRegex:[NSSWF:@"(?:^|\\s)(%@)(?:\\.|,|:|\\?|!)?(?:\\s|$)", [WCChatController schemelessURLRegex]]
+						   options:RKLCaseless
+						   capture:1];
+		
+		if(range.location != NSNotFound) {
+			substring = [text substringWithRange:range];
+			
+			[text replaceCharactersInRange:range withString:[NSSWF:@"<a href=\"http://%@\">%@</a>", substring, substring]];
+		}
+	} while(range.location != NSNotFound);
 	
 	do {
-		matches = [text replaceOccurrencesOfRegex:[NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController mailtoURLRegex]]
-									   withString:@"$1<a href=\"mailto:$2\">$2</a>$3$4"
-										  options:RKLCaseless];
-	} while(matches > 0);
+		range = [text rangeOfRegex:[NSSWF:@"(?:^|\\s)(%@)(?:\\.|,|:|\\?|!)?(?:\\s|$)", [WCChatController mailtoURLRegex]]
+						   options:RKLCaseless
+						   capture:1];
+		
+		if(range.location != NSNotFound) {
+			substring = [text substringWithRange:range];
+			
+			[text replaceCharactersInRange:range withString:[NSSWF:@"<a href=\"mailto:%@\">%@</a>", substring, substring]];
+		}
+	} while(range.location != NSNotFound);
 	
 	if([theme boolForKey:WCThemesShowSmileys]) {
 		regexs			= [WCChatController smileyRegexs];
