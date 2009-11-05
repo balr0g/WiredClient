@@ -2220,7 +2220,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 		}
 		
 		if(!handled)
-			[[NSWorkspace sharedWorkspace] openURL:[url URL]];
+			[[NSWorkspace sharedWorkspace] openURL:[action objectForKey:WebActionOriginalURLKey]];
 	}
 }
 
