@@ -409,6 +409,10 @@ NSString * const WCDebug								= @"WCDebug";
 		[newBookmarks addObject:newBookmark];
 	}
 	
+	/* Check download folder */
+	if(![[NSFileManager defaultManager] directoryExistsAtPath:[self objectForKey:WCDownloadFolder]])
+		[self setObject:[@"~/Desktop" stringByExpandingTildeInPath] forKey:WCDownloadFolder];
+	
 	[self setObject:newBookmarks forKey:WCTrackerBookmarks];
 }
 
