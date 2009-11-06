@@ -911,6 +911,10 @@ typedef enum _WCEventType		WCEventType;
 
 
 - (void)wiredEventArchive:(WIP7Message *)message {
+	[[_allEvents objectForKey:[NSNull null]] removeAllObjects];
+	
+	[self _reloadFilter];
+	
 	[_allArchives addObject:[message dateForName:@"wired.event.archive"]];
 	
 	[self _reloadPopUpButtons];
