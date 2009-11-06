@@ -578,8 +578,6 @@ typedef enum _WCChatActivity				WCChatActivity;
 	WCServerConnection		*connection;
 	SEL						selector;
 	
-	NSLog(@"validate %@", item);
-	
 	chatController	= [self selectedChatController];
 	connection		= [[self selectedChatController] connection];
 	selector		= [item action];

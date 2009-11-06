@@ -30,6 +30,8 @@
 #import "WCConsole.h"
 #import "WCServerConnection.h"
 
+#define WCConsoleMaxLength						1048576
+
 @interface WCConsole(Private)
 
 - (id)_initConsoleWithConnection:(WCServerConnection *)connection;
@@ -103,6 +105,9 @@
 		[[[_consoleTextView textStorage] mutableString] appendString:@"\n"];
 	
 	[[_consoleTextView textStorage] appendAttributedString:attributedString];
+	
+	if([[_consoleTextView textStorage] length] > WCConsoleMaxLength * 2)
+		[[_consoleTextView textStorage] deleteCharactersInRange:NSMakeRange(0, WCConsoleMaxLength)];
 	
 	if(position == 1.0)
 		[_consoleTextView performSelectorOnce:@selector(scrollToBottom) withObject:NULL afterDelay:0.1];
