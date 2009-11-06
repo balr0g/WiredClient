@@ -61,6 +61,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 
 - (void)_getBoardsForConnection:(WCServerConnection *)connection;
 - (void)_saveBoards;
+- (void)_updateSelectedBoard;
 
 - (WCBoardThread *)_threadAtIndex:(NSUInteger)index;
 - (WCBoard *)_selectedBoard;
@@ -272,6 +273,52 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	boards = [_boards boardsWithExpansionStatus:NO];
 	
 	[[WCSettings settings] setObject:[NSKeyedArchiver archivedDataWithRootObject:boards] forKey:WCCollapsedBoards];
+}
+
+
+
+- (void)_updateSelectedBoard {
+	NSEnumerator		*enumerator;
+	WCBoardThread		*thread;
+	id					item;
+	NSInteger			row;
+	
+	enumerator = [[_selectedBoard threads] objectEnumerator];
+	
+	while((thread = [enumerator nextObject]))
+		[[thread goToLatestPostButton] removeFromSuperview];
+		
+	[_selectedBoard release];
+	_selectedBoard = NULL;
+
+	if(_searching) {
+		_selectedBoard = [_searchBoard retain];
+	} else {
+		row = [_boardsOutlineView selectedRow];
+		
+		if(row >= 0) {
+			item = [_boardsOutlineView itemAtRow:row];
+			
+			if([item isRootBoard]) {
+				[_boardsOutlineView deselectAll:self];
+			} else {
+				[item retain];
+				[_selectedBoard release];
+				
+				_selectedBoard = item;
+			}
+		}
+	}
+		
+	if([_selectedBoard isKindOfClass:[WCSmartBoard class]]) {
+		[_selectedBoard removeAllThreads];
+		[_selectedBoard addThreads:[_boards threadsMatchingFilter:[_selectedBoard filter] includeChildBoards:YES]];
+	}
+	
+	[_selectedBoard sortThreadsUsingSelector:[self _sortSelector]];
+	
+	[_threadsTableView reloadData];
+	[_threadsTableView deselectAll:self];
 }
 
 
@@ -1094,7 +1141,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	self = [super initWithWindowNibName:@"Boards"];
 	
 	_boards						= [[WCBoard rootBoard] retain];
-	_searchBoard				= [[WCSmartBoard rootBoard] retain];
+	_searchBoard				= [[WCSearchBoard rootBoard] retain];
 	_receivedBoards				= [[NSMutableSet alloc] init];
 	_readPosts					= [[NSMutableSet alloc] initWithArray:[[WCSettings settings] objectForKey:WCReadBoardPosts]];
 	
@@ -1437,6 +1484,10 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	
 	[_boards addBoard:[WCBoard boardWithConnection:connection]];
 	
+	[_boardsOutlineView reloadData];
+	
+	[self _updateSelectedBoard];
+	
 	[_receivedBoards removeObject:[connection URL]];
 
 	[connection addObserver:self selector:@selector(wiredBoardBoardAdded:) messageName:@"wired.board.board_added"];
@@ -1470,6 +1521,8 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 		[_boards removeBoard:board];
 		
 		[_boardsOutlineView reloadData];
+		
+		[self _updateSelectedBoard];
 	}
 	
 	[_boards invalidateForConnection:connection];
@@ -1496,6 +1549,8 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 		[_boards removeBoard:board];
 		
 		[_boardsOutlineView reloadData];
+		
+		[self _updateSelectedBoard];
 	}
 	
 	[_boards invalidateForConnection:[notification object]];
@@ -1768,6 +1823,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	[_boardsOutlineView reloadData];
 	[_boardsOutlineView expandItem:newParent];
 	
+	[self _updateSelectedBoard];
 	[self _reloadBoardListsSelectingBoard:NULL];
 	[self _validate];
 }
@@ -1786,7 +1842,8 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	[parent removeBoard:[[_boards boardForConnection:connection] boardForPath:path]];
 	
 	[_boardsOutlineView reloadData];
-
+	
+	[self _updateSelectedBoard];
 	[self _reloadBoardListsSelectingBoard:NULL];
 	[self _validate];
 
@@ -2894,6 +2951,8 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 			[_boardsOutlineView reloadData];
 			[_boardsOutlineView deselectAll:self];
 			
+			[self _updateSelectedBoard];
+			
 			[self _saveFilters];
 		} else {
 			message = [WIP7Message messageWithName:@"wired.board.delete_board" spec:WCP7Spec];
@@ -3205,12 +3264,8 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 
 
 - (IBAction)search:(id)sender {
-	NSEnumerator			*enumerator;
 	NSString				*string;
-	WCBoard					*board;
-	WCBoardThread			*thread;
 	WCBoardThreadFilter		*filter;
-	NSInteger				row;
 	
 	[_searchBoard removeAllThreads];
 	
@@ -3220,26 +3275,15 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 		filter = [WCBoardThreadFilter filter];
 		[filter setText:string];
 		[filter setSubject:string];
-		[_searchBoard addThreads:[_boards threadsMatchingFilter:filter includeChildBoards:YES]];
-		[_searchBoard sortThreadsUsingSelector:[self _sortSelector]];
+
+		[_searchBoard setFilter:filter];
 	
-		board	= _searchBoard;
+		_searching = YES;
 	} else {
-		row		= [_boardsOutlineView selectedRow];
-		board	= (row < 0) ? NULL : [_boardsOutlineView itemAtRow:row];
+		_searching = NO;
 	}
 	
-	enumerator = [[_selectedBoard threads] objectEnumerator];
-	
-	while((thread = [enumerator nextObject]))
-		[[thread goToLatestPostButton] removeFromSuperview];
-
-	[board retain];
-	[_selectedBoard release];
-	
-	_selectedBoard = board;
-	
-	[_threadsTableView reloadData];
+	[self _updateSelectedBoard];
 }
 
 
@@ -3441,40 +3485,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 
 
 - (void)outlineViewSelectionDidChange:(NSNotification *)notification {
-	NSEnumerator		*enumerator;
-	WCBoard				*board;
-	WCBoardThread		*thread;
-	NSInteger			row;
-	
-	enumerator = [[_selectedBoard threads] objectEnumerator];
-	
-	while((thread = [enumerator nextObject]))
-		[[thread goToLatestPostButton] removeFromSuperview];
-	
-	row = [_boardsOutlineView selectedRow];
-	
-	if(row < 0) {
-		[_selectedBoard release];
-		_selectedBoard = NULL;
-	} else {
-		board = [_boardsOutlineView itemAtRow:row];
-		
-		[board retain];
-		[_selectedBoard release];
-		
-		_selectedBoard = board;
-	}
-	
-	if([_selectedBoard isKindOfClass:[WCSmartBoard class]]) {
-		[_selectedBoard removeAllThreads];
-		[_selectedBoard addThreads:[_boards threadsMatchingFilter:[_selectedBoard filter] includeChildBoards:YES]];
-	}
-	
-	[_selectedBoard sortThreadsUsingSelector:[self _sortSelector]];
-	
-	[_threadsTableView reloadData];
-	[_threadsTableView deselectAll:self];
-	
+	[self _updateSelectedBoard];
 	[self _validate];
 }
 

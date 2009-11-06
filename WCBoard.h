@@ -125,3 +125,8 @@ typedef enum _WCBoardPermissions		WCBoardPermissions;
 - (WCBoardThreadFilter *)filter;
 
 @end
+
+
+@interface WCSearchBoard : WCSmartBoard
+
+@end

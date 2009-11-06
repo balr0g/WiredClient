@@ -118,6 +118,8 @@ extern NSString * const								WCBoardsDidChangeUnreadCountNotification;
 	NSString										*_selectPostID;
 	
 	NSRect											_previousVisibleRect;
+	
+	BOOL											_searching;
 }
 
 + (id)boards;
