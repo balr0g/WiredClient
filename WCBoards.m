@@ -864,34 +864,19 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 
 - (NSString *)_BBCodeTextForPostText:(NSString *)text {
 	NSMutableString		*string;
-	NSString			*substring;
-	NSRange				range;
 	
 	string = [[text mutableCopy] autorelease];
 	
-	[string replaceOccurrencesOfRegex:[NSSWF:@"(?:^|\\s)(%@)(?:\\.|,|:|\\?|!)?(?:\\s|$)", [WCChatController URLRegex]]
-						   withString:@"[url]$1[/url]"
+	[string replaceOccurrencesOfRegex:[NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController URLRegex]]
+						   withString:@"$1[url]$2[/url]$3$4"
 							  options:RKLCaseless];
 	
-	/* Do this in a custom loop to avoid corrupted strings when using $1 multiple times */
-	do {
-		range = [string rangeOfRegex:[NSSWF:@"(?:^|\\s)(%@)(?:\\.|,|:|\\?|!)?(?:\\s|$)", [WCChatController schemelessURLRegex]]
-							 options:RKLCaseless
-							 capture:1];
-		
-		if(range.location != NSNotFound) {
-			substring = [string substringWithRange:range];
-			
-			[string replaceCharactersInRange:range withString:[NSSWF:@"[url=%@]%@[/a]", substring, substring]];
-		}
-	} while(range.location != NSNotFound);
-	
-	[string replaceOccurrencesOfRegex:[NSSWF:@"(?:^|\\s)(%@)(?:\\.|,|:|\\?|!)?(?:\\s|$)", [WCChatController URLRegex]]
-						   withString:@"[url]$1[/url]"
+	[string replaceOccurrencesOfRegex:[NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController schemelessURLRegex]]
+						   withString:@"$1[url]http://$2[/url]$3$4"
 							  options:RKLCaseless];
 	
-	[string replaceOccurrencesOfRegex:[NSSWF:@"(?:^|\\s)(%@)(?:\\.|,|:|\\?|!)?(?:\\s|$)", [WCChatController mailtoURLRegex]]
-						   withString:@"[email]$1[/email]"
+	[string replaceOccurrencesOfRegex:[NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController mailtoURLRegex]]
+						   withString:@"$1[email]$2[/email]$3$4"
 							  options:RKLCaseless];
 	
 	return string;
