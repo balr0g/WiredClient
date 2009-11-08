@@ -29,10 +29,12 @@
 extern NSString * const								WCMessagesDidChangeUnreadCountNotification;
 
 
-@class WCSourceSplitView;
+@class WCConversationController, WCSourceSplitView;
 @class WCConversation, WCMessageConversation, WCBroadcastConversation, WCUser;
 
 @interface WCMessages : WIWindowController {
+	IBOutlet WCConversationController				*_conversationController;
+	
 	IBOutlet WCSourceSplitView						*_conversationsSplitView;
 	IBOutlet NSView									*_conversationsView;
 	IBOutlet NSView									*_messagesView;
@@ -46,7 +48,6 @@ extern NSString * const								WCMessagesDidChangeUnreadCountNotification;
 	
 	IBOutlet NSButton								*_deleteConversationButton;
 	
-	IBOutlet WebView								*_messageWebView;
 	IBOutlet NSTextView								*_messageTextView;
 
 	IBOutlet NSPanel								*_broadcastPanel;
@@ -57,19 +58,9 @@ extern NSString * const								WCMessagesDidChangeUnreadCountNotification;
 	WCBroadcastConversation							*_broadcastConversations;
 	WCConversation									*_selectedConversation;
 	
-	NSFont											*_messageFont;
-	NSColor											*_messageColor;
-	NSColor											*_backgroundColor;
 	NSImage											*_conversationIcon;
 	
 	WIDateFormatter									*_dialogDateFormatter;
-	WIDateFormatter									*_messageStatusDateFormatter;
-	WIDateFormatter									*_messageTimeDateFormatter;
-	
-	NSMutableString									*_headerTemplate;
-	NSMutableString									*_footerTemplate;
-	NSMutableString									*_messageTemplate;
-	NSMutableString									*_statusTemplate;
 }
 
 + (id)messages;

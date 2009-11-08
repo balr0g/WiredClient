@@ -2,9 +2,9 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1030</int>
-		<string key="IBDocument.SystemVersion">10A432</string>
+		<string key="IBDocument.SystemVersion">10B504</string>
 		<string key="IBDocument.InterfaceBuilderVersion">740</string>
-		<string key="IBDocument.AppKitVersion">1038</string>
+		<string key="IBDocument.AppKitVersion">1038.2</string>
 		<string key="IBDocument.HIToolboxVersion">437.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -823,6 +823,9 @@
 				<string key="NSMinSize">{200, 222}</string>
 				<string key="NSMaxSize">{1.79769e+308, 1.79769e+308}</string>
 			</object>
+			<object class="NSCustomObject" id="463449650">
+				<string key="NSClassName">WCConversationController</string>
+			</object>
 		</object>
 		<object class="IBObjectContainer" key="IBDocument.Objects">
 			<object class="NSMutableArray" key="connectionRecords">
@@ -1005,38 +1008,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">policyDelegate</string>
-						<reference key="source" ref="1038656235"/>
-						<reference key="destination" ref="710707039"/>
-					</object>
-					<int key="connectionID">301</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">UIDelegate</string>
-						<reference key="source" ref="1038656235"/>
-						<reference key="destination" ref="710707039"/>
-					</object>
-					<int key="connectionID">302</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">_messageWebView</string>
-						<reference key="source" ref="710707039"/>
-						<reference key="destination" ref="1038656235"/>
-					</object>
-					<int key="connectionID">303</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">frameLoadDelegate</string>
-						<reference key="source" ref="1038656235"/>
-						<reference key="destination" ref="710707039"/>
-					</object>
-					<int key="connectionID">304</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">delegate</string>
 						<reference key="source" ref="759025002"/>
 						<reference key="destination" ref="710707039"/>
@@ -1066,6 +1037,46 @@
 						<reference key="destination" ref="2245127"/>
 					</object>
 					<int key="connectionID">311</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_conversationController</string>
+						<reference key="source" ref="710707039"/>
+						<reference key="destination" ref="463449650"/>
+					</object>
+					<int key="connectionID">313</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_conversationWebView</string>
+						<reference key="source" ref="463449650"/>
+						<reference key="destination" ref="1038656235"/>
+					</object>
+					<int key="connectionID">314</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">frameLoadDelegate</string>
+						<reference key="source" ref="1038656235"/>
+						<reference key="destination" ref="463449650"/>
+					</object>
+					<int key="connectionID">315</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">policyDelegate</string>
+						<reference key="source" ref="1038656235"/>
+						<reference key="destination" ref="463449650"/>
+					</object>
+					<int key="connectionID">316</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">UIDelegate</string>
+						<reference key="source" ref="1038656235"/>
+						<reference key="destination" ref="463449650"/>
+					</object>
+					<int key="connectionID">317</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1386,6 +1397,11 @@
 						<reference key="object" ref="900511088"/>
 						<reference key="parent" ref="2245127"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">312</int>
+						<reference key="object" ref="463449650"/>
+						<reference key="parent" ref="0"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -1434,6 +1450,7 @@
 					<string>290.IBPluginDependency</string>
 					<string>308.IBPluginDependency</string>
 					<string>309.IBPluginDependency</string>
+					<string>312.IBPluginDependency</string>
 					<string>62.IBPluginDependency</string>
 					<string>62.ImportedFromIB2</string>
 					<string>63.IBPluginDependency</string>
@@ -1511,6 +1528,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
@@ -1559,7 +1577,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">311</int>
+			<int key="maxID">317</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -1643,6 +1661,18 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
+					<string key="className">WCConversationController</string>
+					<string key="superclassName">WIObject</string>
+					<object class="NSMutableDictionary" key="outlets">
+						<string key="NS.key.0">_conversationWebView</string>
+						<string key="NS.object.0">WebView</string>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">WCConversationController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">WCMessages</string>
 					<string key="superclassName">WIWindowController</string>
 					<object class="NSMutableDictionary" key="actions">
@@ -1666,6 +1696,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>_broadcastPanel</string>
 							<string>_broadcastTextView</string>
+							<string>_conversationController</string>
 							<string>_conversationTableColumn</string>
 							<string>_conversationsOutlineView</string>
 							<string>_conversationsSplitView</string>
@@ -1674,7 +1705,6 @@
 							<string>_messageBottomView</string>
 							<string>_messageTextView</string>
 							<string>_messageTopView</string>
-							<string>_messageWebView</string>
 							<string>_messagesSplitView</string>
 							<string>_messagesView</string>
 							<string>_unreadTableColumn</string>
@@ -1683,6 +1713,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>NSPanel</string>
 							<string>NSTextView</string>
+							<string>WCConversationController</string>
 							<string>NSTableColumn</string>
 							<string>WIOutlineView</string>
 							<string>WCSourceSplitView</string>
@@ -1691,7 +1722,6 @@
 							<string>NSView</string>
 							<string>NSTextView</string>
 							<string>NSView</string>
-							<string>WebView</string>
 							<string>WISplitView</string>
 							<string>NSView</string>
 							<string>NSTableColumn</string>
