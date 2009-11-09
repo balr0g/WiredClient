@@ -154,18 +154,18 @@
 - (id)init {
 	self = [super init];
 	
-	_headerTemplate		= [[NSMutableString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"MessageHeader" ofType:@"html"]
-															  encoding:NSUTF8StringEncoding
-																 error:NULL];
-	_footerTemplate		= [[NSMutableString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"MessageFooter" ofType:@"html"]
-															  encoding:NSUTF8StringEncoding
-																 error:NULL];
-	_messageTemplate	= [[NSMutableString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"Message" ofType:@"html"]
-															  encoding:NSUTF8StringEncoding
-																 error:NULL];
-	_statusTemplate		= [[NSMutableString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"MessageStatus" ofType:@"html"]
-															  encoding:NSUTF8StringEncoding
-																 error:NULL];
+	_headerTemplate		= [[NSString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"MessageHeader" ofType:@"html"]
+													   encoding:NSUTF8StringEncoding
+														  error:NULL];
+	_footerTemplate		= [[NSString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"MessageFooter" ofType:@"html"]
+													   encoding:NSUTF8StringEncoding
+														  error:NULL];
+	_messageTemplate	= [[NSString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"Message" ofType:@"html"]
+													   encoding:NSUTF8StringEncoding
+														  error:NULL];
+	_statusTemplate		= [[NSString alloc] initWithContentsOfFile:[[self bundle] pathForResource:@"MessageStatus" ofType:@"html"]
+													   encoding:NSUTF8StringEncoding
+														  error:NULL];
 	
 	_messageStatusDateFormatter = [[WIDateFormatter alloc] init];
 	[_messageStatusDateFormatter setTimeStyle:NSDateFormatterNoStyle];
@@ -175,11 +175,6 @@
 	[_messageTimeDateFormatter setTimeStyle:NSDateFormatterShortStyle];
 	
 	return self;
-}
-
-
-
-- (void)awakeFromNib {
 }
 
 
@@ -195,6 +190,9 @@
 	[_font release];
 	[_textColor release];
 	[_backgroundColor release];
+	
+	[_messageStatusDateFormatter release];
+	[_messageTimeDateFormatter release];
 	
 	[super dealloc];
 }
@@ -322,10 +320,11 @@
 	[html replaceOccurrencesOfString:@"<? backgroundcolor ?>" withString:[NSSWF:@"#%.6x", [_backgroundColor HTMLValue]]];
 
 	if(_conversation && ![_conversation isExpandable]) {
+		isKeyWindow = ([NSApp keyWindow] == [_conversationWebView window]);
+		
 		if([_conversation numberOfMessages] == 0) {
 			[html appendString:[self _HTMLStringForStatus:[_messageStatusDateFormatter stringFromDate:[NSDate date]]]];
 		} else {
-			isKeyWindow		= ([NSApp keyWindow] == [_conversationWebView window]);
 			calendar		= [NSCalendar currentCalendar];
 			day				= -1;
 			icons			= [NSMutableDictionary dictionary];
