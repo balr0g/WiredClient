@@ -1960,7 +1960,7 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 	[bookmark setObject:[_trackerBookmarksAddressTextField stringValue] forKey:WCTrackerBookmarksAddress];
 	[bookmark setObject:[_trackerBookmarksLoginTextField stringValue] forKey:WCTrackerBookmarksLogin];
 	
-	if(!_bookmarksPassword || ![_bookmarksPassword isEqualToString:password] ||
+	if(!_trackerBookmarksPassword || ![_trackerBookmarksPassword isEqualToString:password] ||
 	   ![[oldBookmark objectForKey:WCBookmarksAddress] isEqualToString:[bookmark objectForKey:WCBookmarksAddress]]) {
 		[NSObject cancelPreviousPerformRequestsWithTarget:self];
 		[self performSelector:@selector(_savePasswordForTrackerBookmark:)
