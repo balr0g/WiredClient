@@ -57,6 +57,7 @@
 		775C63071066DB04001BDEA3 /* UnreadPost.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 775C63061066DB04001BDEA3 /* UnreadPost.tiff */; };
 		775C63091066DB1A001BDEA3 /* FileLink.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 775C63081066DB1A001BDEA3 /* FileLink.tiff */; };
 		775F624B10A74B8500A876A8 /* WCConversationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 775F624A10A74B8500A876A8 /* WCConversationController.m */; };
+		775F68A410A7583800A876A8 /* WCBoardThreadController.m in Sources */ = {isa = PBXBuildFile; fileRef = 775F68A310A7583800A876A8 /* WCBoardThreadController.m */; };
 		777790B110617FE200248834 /* WCBoardsTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 777790B010617FE200248834 /* WCBoardsTextView.m */; };
 		7777A6E71062588A00248834 /* Warning.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 7777A6E61062588A00248834 /* Warning.tiff */; };
 		7777C7961063D8B800248834 /* WiredBookmarks.icns in Resources */ = {isa = PBXBuildFile; fileRef = 7777C7951063D8B800248834 /* WiredBookmarks.icns */; };
@@ -488,6 +489,8 @@
 		775C63081066DB1A001BDEA3 /* FileLink.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = FileLink.tiff; sourceTree = "<group>"; };
 		775F624910A74B8500A876A8 /* WCConversationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCConversationController.h; sourceTree = "<group>"; };
 		775F624A10A74B8500A876A8 /* WCConversationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCConversationController.m; sourceTree = "<group>"; };
+		775F68A210A7583800A876A8 /* WCBoardThreadController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCBoardThreadController.h; sourceTree = "<group>"; };
+		775F68A310A7583800A876A8 /* WCBoardThreadController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCBoardThreadController.m; sourceTree = "<group>"; };
 		777790AF10617FE200248834 /* WCBoardsTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCBoardsTextView.h; sourceTree = "<group>"; };
 		777790B010617FE200248834 /* WCBoardsTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCBoardsTextView.m; sourceTree = "<group>"; };
 		7777A6E61062588A00248834 /* Warning.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Warning.tiff; sourceTree = "<group>"; };
@@ -1138,6 +1141,8 @@
 				777790AF10617FE200248834 /* WCBoardsTextView.h */,
 				77CED3A40EC068F500123164 /* WCBoardThread.m */,
 				77CED3A30EC068F500123164 /* WCBoardThread.h */,
+				775F68A310A7583800A876A8 /* WCBoardThreadController.m */,
+				775F68A210A7583800A876A8 /* WCBoardThreadController.h */,
 				77BB1C990F28C20E00A402B7 /* WCBoardsWindow.m */,
 				77BB1C980F28C20E00A402B7 /* WCBoardsWindow.h */,
 			);
@@ -2139,6 +2144,7 @@
 				777790B110617FE200248834 /* WCBoardsTextView.m in Sources */,
 				77BB1C9A0F28C20E00A402B7 /* WCBoardsWindow.m in Sources */,
 				77CED3A80EC068F500123164 /* WCBoardThread.m in Sources */,
+				775F68A410A7583800A876A8 /* WCBoardThreadController.m in Sources */,
 				A57512EC05E4E64D003B51D7 /* WCCache.m in Sources */,
 				A541A7800F115A6800D1EE94 /* WCChatController.m in Sources */,
 				77C83C340B70FBD8000F8478 /* WCChatTextView.m in Sources */,

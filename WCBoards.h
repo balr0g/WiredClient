@@ -29,9 +29,11 @@
 extern NSString * const								WCBoardsDidChangeUnreadCountNotification;
 
 
-@class WCErrorQueue, WCSourceSplitView, WCBoard, WCSmartBoard;
+@class WCBoardThreadController, WCErrorQueue, WCSourceSplitView, WCBoard, WCSmartBoard;
 
 @interface WCBoards : WIWindowController {
+	IBOutlet WCBoardThreadController				*_threadController;
+	
 	IBOutlet WCSourceSplitView						*_boardsSplitView;
 	IBOutlet NSView									*_boardsView;
 	IBOutlet NSView									*_threadsView;
@@ -53,8 +55,6 @@ extern NSString * const								WCBoardsDidChangeUnreadCountNotification;
 	IBOutlet NSTableColumn							*_threadTimeTableColumn;
 	IBOutlet NSTableColumn							*_postTimeTableColumn;
 
-	IBOutlet WebView								*_threadWebView;
-	
 	IBOutlet NSPanel								*_addBoardPanel;
 	IBOutlet NSPopUpButton							*_boardLocationPopUpButton;
 	IBOutlet NSTextField							*_nameTextField;
@@ -93,31 +93,13 @@ extern NSString * const								WCBoardsDidChangeUnreadCountNotification;
 	id												_selectedBoard;
 	WCSmartBoard									*_searchBoard;
 	
-	NSFont											*_threadFont;
-	NSColor											*_threadColor;
-	NSColor											*_backgroundColor;
 	WIDateFormatter									*_dateFormatter;
 	
 	NSArray											*_collapsedBoards;
 	BOOL											_expandingBoards;
 	
 	NSMutableSet									*_receivedBoards;
-	NSMutableSet									*_readPosts;
-	
-	NSMutableString									*_headerTemplate;
-	NSMutableString									*_footerTemplate;
-	NSMutableString									*_replyTemplate;
-	NSMutableString									*_postTemplate;
-	
-	NSString										*_fileLinkBase64String;
-	NSString										*_unreadPostBase64String;
-	NSString										*_defaultIconBase64String;
-	
-	NSMutableDictionary								*_smileyBase64Strings;
-	
-	NSString										*_selectPostID;
-	
-	NSRect											_previousVisibleRect;
+	NSMutableSet									*_readPostIDs;
 	
 	BOOL											_searching;
 }
