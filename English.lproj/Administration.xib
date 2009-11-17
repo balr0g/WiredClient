@@ -12,7 +12,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="556"/>
+			<integer value="559"/>
 			<integer value="996"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
@@ -1077,8 +1077,8 @@ IGxiSh3yRkIHxwKiAaEADEB8E4nABOB4kyHFL4G8HK42HH5kG4HKHeHJtNEiHSLGHTIiVQIF3unF4lez
 AAAAAQAuAAABAQADAAAAAQAuAAABAgADAAAABAAAFZABAwADAAAAAQAFAAABBgADAAAAAQACAAABEQAE
 AAAAAQAAAAgBEgADAAAAAQABAAABFQADAAAAAQAEAAABFgADAAAAAQAuAAABFwAEAAAAAQAAFM0BHAAD
 AAAAAQABAAABPQADAAAAAQACAAABUgADAAAAAQABAAABUwADAAAABAAAFZiHcwAHAAAnhAAAFaAAAAAA
-AAgACAAIAAgAAQABAAEAAQAAJ4RhcHBsAgAAAG1udHJSR0IgWFlaIAfZAAgAHwAKAC4AAmFjc3BBUFBM
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD21gABAAAAANMtYXBwbGDAUOCa/Yxemaf4NzHNCg4AAAAA
+AAgACAAIAAgAAQABAAEAAQAAJ4RhcHBsAgAAAG1udHJSR0IgWFlaIAfZAAsADgABAAQAHWFjc3BBUFBM
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD21gABAAAAANMtYXBwbExqc1S8uwVvBW3aql61nyYAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEXJYWVoAAAFQAAAAFGdYWVoAAAFkAAAAFGJYWVoAAAF4
 AAAAFHd0cHQAAAGMAAAAFGNoYWQAAAGgAAAALHJUUkMAAAHMAAAIDGdUUkMAAAnYAAAIDGJUUkMAABHk
 AAAIDGFhcmcAABnwAAAAIGFhZ2cAABoQAAAAIGFhYmcAABowAAAAIHZjZ3QAABpQAAAGEm5kaW4AACBk
@@ -1244,7 +1244,7 @@ uB25mLsTvIu+A794wO3CYcPTxUXGtsgoyZrLDMx+zfHPYdDV0knTv9U01qrYIdma2xXckd3V3wDgI+FG
 4mjji+Sr5cvm6OgC6RrqLes97EntTu5R703wRvE68inzE/P59Nz1uvaV9234QPkS+d/6rPt0/Dz8//3C
 /oL/Qf//AABkZXNjAAAAAAAAAApDb2xvciBMQ0QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAbWx1YwAAAAAAAAAB
-AAAADGVuVVMAAAASAAAAHABDAG8AbABvAHIAIABMAEMARAAAbW1vZAAAAAAAAAYQAACcowAAAADFeH2A
+AAAADGVuVVMAAAASAAAAHABDAG8AbABvAHIAIABMAEMARAAAbW1vZAAAAAAAAAYQAACcowAAAADFeHGh
 AAAAAAAAAAAAAAAAAAAAAHRleHQAAAAAQ29weXJpZ2h0IEFwcGxlLCBJbmMuLCAyMDA5AA</bytes>
 																	</object>
 																	<string key="NSCacheWindowColorSpace">NSCalibratedRGBColorSpace</string>
@@ -2609,8 +2609,8 @@ BwtG1o5kHMdx9G6q4AHsex/RugaYoEeSBzogR+oGfyAgAAAPAQAAAwAAAAEADgAAAQEAAwAAAAEADgAA
 AQIAAwAAAAQAAAOsAQMAAwAAAAEABQAAAQYAAwAAAAEAAgAAAREABAAAAAEAAAAIARIAAwAAAAEAAQAA
 ARUAAwAAAAEABAAAARYAAwAAAAEADgAAARcABAAAAAEAAALpARwAAwAAAAEAAQAAAT0AAwAAAAEAAgAA
 AVIAAwAAAAEAAQAAAVMAAwAAAAQAAAO0h3MABwAAJ4QAAAO8AAAAAAAIAAgACAAIAAEAAQABAAEAACeE
-YXBwbAIAAABtbnRyUkdCIFhZWiAH2QAIAB8ACgAuAAJhY3NwQVBQTAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAA9tYAAQAAAADTLWFwcGxgwFDgmv2MXpmn+DcxzQoOAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+YXBwbAIAAABtbnRyUkdCIFhZWiAH2QALAA4AAQAEAB1hY3NwQVBQTAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAA9tYAAQAAAADTLWFwcGxManNUvLsFbwVt2qpetZ8mAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAABFyWFlaAAABUAAAABRnWFlaAAABZAAAABRiWFlaAAABeAAAABR3dHB0AAABjAAAABRjaGFk
 AAABoAAAACxyVFJDAAABzAAACAxnVFJDAAAJ2AAACAxiVFJDAAAR5AAACAxhYXJnAAAZ8AAAACBhYWdn
 AAAaEAAAACBhYWJnAAAaMAAAACB2Y2d0AAAaUAAABhJuZGluAAAgZAAABj5kZXNjAAAmpAAAAGRkc2Nt
@@ -2776,7 +2776,7 @@ xrbIKMmaywzMfs3xz2HQ1dJJ07/VNNaq2CHZmtsV3JHd1d8A4CPhRuJo44vkq+XL5ujoAuka6i3rPexJ
 7U7uUe9N8EbxOvIp8xPz+fTc9br2lfdt+ED5Evnf+qz7dPw8/P/9wv6C/0H//wAAZGVzYwAAAAAAAAAK
 Q29sb3IgTENEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG1sdWMAAAAAAAAAAQAAAAxlblVTAAAAEgAAABwAQwBv
-AGwAbwByACAATABDAEQAAG1tb2QAAAAAAAAGEAAAnKMAAAAAxXh9gAAAAAAAAAAAAAAAAAAAAAB0ZXh0
+AGwAbwByACAATABDAEQAAG1tb2QAAAAAAAAGEAAAnKMAAAAAxXhxoQAAAAAAAAAAAAAAAAAAAAB0ZXh0
 AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 																	</object>
 																	<string key="NSCacheWindowColorSpace">NSCalibratedRGBColorSpace</string>
@@ -3085,6 +3085,22 @@ AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 						<int key="NSvFlags">266</int>
 						<object class="NSMutableArray" key="NSSubviews">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="NSTextField" id="400769311">
+								<reference key="NSNextResponder" ref="355919729"/>
+								<int key="NSvFlags">265</int>
+								<string key="NSFrame">{{258, 7}, {83, 14}}</string>
+								<reference key="NSSuperview" ref="355919729"/>
+								<bool key="NSEnabled">YES</bool>
+								<object class="NSTextFieldCell" key="NSCell" id="51964275">
+									<int key="NSCellFlags">68288064</int>
+									<int key="NSCellFlags2">71435264</int>
+									<string key="NSContents">&lt;&lt;do not localize&gt;&gt;</string>
+									<reference key="NSSupport" ref="26"/>
+									<reference key="NSControlView" ref="400769311"/>
+									<reference key="NSBackgroundColor" ref="46487534"/>
+									<reference key="NSTextColor" ref="441106160"/>
+								</object>
+							</object>
 							<object class="NSSearchField" id="911448631">
 								<reference key="NSNextResponder" ref="355919729"/>
 								<int key="NSvFlags">265</int>
@@ -6715,6 +6731,14 @@ AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 					</object>
 					<int key="connectionID">1000</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_statusTextField</string>
+						<reference key="source" ref="591104344"/>
+						<reference key="destination" ref="400769311"/>
+					</object>
+					<int key="connectionID">1003</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -7982,6 +8006,7 @@ AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 							<reference ref="7658694"/>
 							<reference ref="128280879"/>
 							<reference ref="1001355316"/>
+							<reference ref="400769311"/>
 						</object>
 						<reference key="parent" ref="1055821315"/>
 					</object>
@@ -9434,6 +9459,20 @@ AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 						<reference key="object" ref="361307952"/>
 						<reference key="parent" ref="1028833445"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1001</int>
+						<reference key="object" ref="400769311"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="51964275"/>
+						</object>
+						<reference key="parent" ref="355919729"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1002</int>
+						<reference key="object" ref="51964275"/>
+						<reference key="parent" ref="400769311"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -9441,6 +9480,8 @@ AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 				<object class="NSArray" key="dict.sortedKeys">
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>-3.IBPluginDependency</string>
+					<string>1001.IBPluginDependency</string>
+					<string>1002.IBPluginDependency</string>
 					<string>295.IBEditorWindowLastContentRect</string>
 					<string>295.IBPluginDependency</string>
 					<string>295.IBWindowTemplateEditedContentRect</string>
@@ -9936,6 +9977,8 @@ AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 				</object>
 				<object class="NSMutableArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{{400, 394}, {435, 158}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -10449,7 +10492,7 @@ AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1000</int>
+			<int key="maxID">1003</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -10585,6 +10628,7 @@ AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 							<string>_settingsDefinedAtThisLevelMenuItem</string>
 							<string>_settingsOutlineView</string>
 							<string>_showPopUpButton</string>
+							<string>_statusTextField</string>
 							<string>_typePopUpButton</string>
 							<string>_uploadsTextField</string>
 							<string>_userMenuItem</string>
@@ -10625,6 +10669,7 @@ AAAAAENvcHlyaWdodCBBcHBsZSwgSW5jLiwgMjAwOQA</bytes>
 							<string>NSMenuItem</string>
 							<string>WIOutlineView</string>
 							<string>NSPopUpButton</string>
+							<string>NSTextField</string>
 							<string>NSPopUpButton</string>
 							<string>NSTextField</string>
 							<string>NSMenuItem</string>

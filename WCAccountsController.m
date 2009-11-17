@@ -904,6 +904,12 @@ typedef enum _WCAccountsAction										WCAccountsAction;
 		if([self _filterIncludesAccount:account])
 			[_shownAccounts addObject:account];
 	}
+	
+	[_statusTextField setStringValue:[NSSWF:NSLS(@"%u %@", @"Accounts (count, 'account(s)'"),
+		[_shownAccounts count],
+		[_shownAccounts count] == 1
+			? NSLS(@"account", @"Account singular")
+			: NSLS(@"accounts", @"Account singular")]];
 }
 
 

@@ -975,7 +975,7 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		770966D1107E8994005F357B /* Classes */ = {
+		770966D1107E8994005F357B /* Error */ = {
 			isa = PBXGroup;
 			children = (
 				778D4F11108EFCB400A74B39 /* Resources */,
@@ -984,7 +984,7 @@
 				A51474A80F487ECD00DBE395 /* WCErrorQueue.m */,
 				A51474A70F487ECD00DBE395 /* WCErrorQueue.h */,
 			);
-			name = Classes;
+			name = Error;
 			sourceTree = "<group>";
 		};
 		772F6CE90F1E1A8E00CB8001 /* Views */ = {
@@ -1351,7 +1351,6 @@
 			isa = PBXGroup;
 			children = (
 				A55C73330F26800B006E8568 /* Classes */,
-				770966D1107E8994005F357B /* Classes */,
 				772F6CE90F1E1A8E00CB8001 /* Views */,
 				29B97315FDCFA39411CA2CEA /* Sources */,
 				A5E8BABF08748D6D0010F2A4 /* Config */,
@@ -1549,6 +1548,7 @@
 				A5AAD1280D86EA8B0072FFA1 /* Administration */,
 				A5492D2E0D8EAD4E002D37D7 /* Servers */,
 				A52B1C2E06C404FC0033D317 /* Console */,
+				770966D1107E8994005F357B /* Error */,
 			);
 			name = Classes;
 			sourceTree = "<group>";

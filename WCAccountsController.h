@@ -36,6 +36,7 @@ extern NSString * const					WCAccountsControllerAccountsDidChangeNotification;
 	IBOutlet NSButton					*_allFilterButton;
 	IBOutlet NSButton					*_usersFilterButton;
 	IBOutlet NSButton					*_groupsFilterButton;
+	IBOutlet NSTextField				*_statusTextField;
 	IBOutlet NSPopUpButton				*_groupFilterPopUpButton;
 	IBOutlet NSMenuItem					*_anyGroupMenuItem;
 	IBOutlet NSMenuItem					*_noGroupMenuItem;
