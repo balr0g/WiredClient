@@ -619,9 +619,9 @@ typedef enum _WCChatActivity				WCChatActivity;
 	else if(selector == @selector(files:))
 		return (connection != NULL && [connection isConnected] && [[connection account] fileListFiles]);
 	else if(selector == @selector(serverInfo:) || selector == @selector(administration:) ||
-			selector == @selector(monitor:) || selector == @selector(events:) ||
-			selector == @selector(log:) || selector == @selector(accounts:) ||
-			selector == @selector(banlist:))
+			selector == @selector(settings:) || selector == @selector(monitor:) ||
+			selector == @selector(events:) || selector == @selector(log:) ||
+			selector == @selector(accounts:) || selector == @selector(banlist:))
 		return (connection != NULL);
 	
 	return YES;
