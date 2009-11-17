@@ -614,7 +614,7 @@ typedef enum _WCEventType		WCEventType;
 	if([_allArchives count] > 0)
 		[_archivePopUpButton addItem:[NSMenuItem separatorItem]];
 	
-	enumerator = [[_allArchives sortedArrayUsingSelector:@selector(compare:)] objectEnumerator];
+	enumerator = [[_allArchives sortedArrayUsingSelector:@selector(compare:)] reverseObjectEnumerator];
 	
 	while((archive = [enumerator nextObject]))
 		[_archivePopUpButton addItem:[NSMenuItem itemWithTitle:[_dateFormatter stringFromDate:archive] representedObject:archive]];
