@@ -1162,6 +1162,9 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	WIP7Message				*message;
 	WCServerConnection		*connection;
 	
+	if([file type] == WCFileDropBox && ![file isReadable])
+		return;
+	
 	if([_selectFiles count] == 0)
 		[_selectFiles setArray:[self _selectedFiles]];
 	
@@ -1477,6 +1480,9 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 		
 		if(complete)
 			[_selectFiles removeAllObjects];
+	} else {
+		if([self _selectedStyle] == WCFilesStyleTree)
+			[_filesTreeView selectPath:[_filesTreeView selectedPath] byExtendingSelection:NO];
 	}
 }
 
@@ -1896,6 +1902,10 @@ NSString * const							WCPlacePboardType = @"WCPlacePboardType";
 	
 	file = [self _existingFileForFile:[WCFile fileWithDirectory:[message stringForName:@"wired.file.path"]
 													 connection:[message contextInfo]]];
+	
+	[NSObject cancelPreviousPerformRequestsWithTarget:self
+											 selector:@selector(_reloadFilesAtDirectory:)
+											   object:file];
 	
 	[_subscribedFiles removeObject:file];
 	
