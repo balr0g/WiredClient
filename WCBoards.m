@@ -584,15 +584,15 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	
 	[string replaceOccurrencesOfRegex:[NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController URLRegex]]
 						   withString:@"$1[url]$2[/url]$3$4"
-							  options:RKLCaseless];
+							  options:RKLCaseless | RKLMultiline];
 	
 	[string replaceOccurrencesOfRegex:[NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController schemelessURLRegex]]
 						   withString:@"$1[url]http://$2[/url]$3$4"
-							  options:RKLCaseless];
+							  options:RKLCaseless | RKLMultiline];
 	
 	[string replaceOccurrencesOfRegex:[NSSWF:@"(^|\\s)(%@)(\\.|,|:|\\?|!)?(\\s|$)", [WCChatController mailtoURLRegex]]
 						   withString:@"$1[email]$2[/email]$3$4"
-							  options:RKLCaseless];
+							  options:RKLCaseless | RKLMultiline];
 	
 	return string;
 }
@@ -2117,13 +2117,14 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	
 	[self _reloadBoardListsSelectingBoard:board]; 
 	
-	[_postLocationPopUpButton setEnabled:NO]; 
-	[_subjectTextField setEnabled:NO]; 
-	[_subjectTextField setStringValue:subject]; 
-	[_postTextView setString:@""]; 
-	[_postButton setTitle:NSLS(@"Reply", @"Reply post button title")]; 
+	[_postLocationPopUpButton setEnabled:NO];
+	[_subjectTextField setEnabled:NO];
+	[_subjectTextField setStringValue:subject];
+	[_postTextView setTypingAttributes:[NSDictionary dictionary]];
+	[_postTextView setString:@""];
+	[_postButton setTitle:NSLS(@"Reply", @"Reply post button title")];
 	
-	[_postPanel makeFirstResponder:_postTextView]; 
+	[_postPanel makeFirstResponder:_postTextView];
 	
 	[NSApp beginSheet:_postPanel 
 	   modalForWindow:[self window] 
@@ -2168,7 +2169,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	[_postLocationPopUpButton setEnabled:NO];
 	[_subjectTextField setEnabled:NO];
 	[_subjectTextField setStringValue:subject];
-	[_postTextView setString:[NSSWF:@"[quote=%@]%@[/quote]\n\n", [post nick], text]];
+	[_postTextView setAttributedString:[NSAttributedString attributedStringWithString:[NSSWF:@"[quote=%@]%@[/quote]\n\n", [post nick], text]]];
 	[_postButton setTitle:NSLS(@"Reply", @"Reply post button title")];
 	
 	[_postPanel makeFirstResponder:_postTextView];
@@ -2225,7 +2226,7 @@ NSString * const WCBoardsDidChangeUnreadCountNotification	= @"WCBoardsDidChangeU
 	[_postLocationPopUpButton setEnabled:([post isEqual:[thread firstPost]] && [[[board connection] account] boardMoveThreads])];
 	[_subjectTextField setEnabled:[post isEqual:[thread firstPost]]];
 	[_subjectTextField setStringValue:[post subject]];
-	[_postTextView setString:[post text]];
+	[_postTextView setAttributedString:[NSAttributedString attributedStringWithString:[post text]]];
 	[_postButton setTitle:NSLS(@"Edit", @"Edit post button title")];
 	
 	[_postPanel makeFirstResponder:_postTextView];
