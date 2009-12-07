@@ -73,18 +73,27 @@ NSString * const WCServerConnectionEventInfo2Key						= @"WCServerConnectionEven
 @implementation WCServerConnection(Private)
 
 - (void)_triggerAutoReconnect {
-	if(_shouldAutoReconnect && ([[WCSettings settings] boolForKey:WCAutoReconnect] || [[self bookmark] boolForKey:WCBookmarksAutoReconnect])) {
-		_autoReconnectAttempts++;
+	NSTimeInterval		interval;
 	
-		if(_autoReconnectAttempts <= 30) {
-			[[self chatController] printEvent:
-				[NSSWF:NSLS(@"Reconnecting to %@ in %.0f seconds...", @"Auto-reconnecting chat message (server, time)"), [self name], 10.0]];
-			
-			[self performSelector:@selector(_autoReconnect) afterDelay:10.0];
-		} else {
-			[[self chatController] printEvent:
-				[NSSWF:NSLS(@"Stopping automatic reconnects: Too many tries", @"Stopping auto-reconnecting chat message")]];
-		}
+	if(_shouldAutoReconnect && ([[WCSettings settings] boolForKey:WCAutoReconnect] || [[self bookmark] boolForKey:WCBookmarksAutoReconnect])) {
+		if(_autoReconnectAttempts < 6)
+			interval = 10.0;
+		else if(_autoReconnectAttempts < 10)
+			interval = 30.0;
+		else if(_autoReconnectAttempts < 15)
+			interval = 60.0;
+		else if(_autoReconnectAttempts < 21)
+			interval = 600.0;
+		else
+			interval = 3600.0;
+		
+		[[self chatController] printEvent:[NSSWF:NSLS(@"Reconnecting to %@ in %@...", @"Auto-reconnecting chat message (server, time)"),
+			[self name],
+			[_timeIntervalFormatter stringFromTimeInterval:interval]]];
+		
+		[self performSelector:@selector(_autoReconnect) afterDelay:interval];
+		
+		_autoReconnectAttempts++;
 	}
 }
 
@@ -115,6 +124,8 @@ NSString * const WCServerConnectionEventInfo2Key						= @"WCServerConnectionEven
 	_cache					= [[WCCache alloc] initWithCapacity:100];
 	_connectionControllers	= [[NSMutableArray alloc] init];
 	_identifier				= [[NSString UUIDString] retain];
+	
+	_timeIntervalFormatter	= [[WITimeIntervalFormatter alloc] init];
 	
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
@@ -172,6 +183,8 @@ NSString * const WCServerConnectionEventInfo2Key						= @"WCServerConnectionEven
 	
 	[_connectionControllers release];
 	[_chatController release];
+	
+	[_timeIntervalFormatter release];
 	
 	[super dealloc];
 }
