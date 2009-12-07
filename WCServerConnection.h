@@ -68,6 +68,8 @@ extern NSString * const WCServerConnectionEventInfo2Key;
 	
 	NSMutableArray							*_connectionControllers;
 	
+	WITimeIntervalFormatter					*_timeIntervalFormatter;
+	
 	BOOL									_manuallyReconnecting;
 	BOOL									_shouldAutoReconnect;
 	BOOL									_willAutoReconnect;
