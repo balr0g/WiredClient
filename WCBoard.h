@@ -44,9 +44,8 @@ typedef enum _WCBoardPermissions		WCBoardPermissions;
 @interface WCBoard : WCServerConnectionObject {
 	NSString							*_name;
 	NSString							*_path;
-	NSString							*_owner;
-	NSString							*_group;
-	NSUInteger							_permissions;
+	BOOL								_readable;
+	BOOL								_writable;
 	
 	NSInteger							_sorting;
 	BOOL								_expanded;
@@ -66,19 +65,16 @@ typedef enum _WCBoardPermissions		WCBoardPermissions;
 - (NSString *)name;
 - (void)setPath:(NSString *)path;
 - (NSString *)path;
-- (void)setOwner:(NSString *)owner;
-- (NSString *)owner;
-- (void)setGroup:(NSString *)group;
-- (NSString *)group;
-- (void)setPermissions:(NSUInteger)permissions;
-- (NSUInteger)permissions;
 - (void)setSorting:(NSInteger)sorting;
 - (NSInteger)sorting;
 - (void)setExpanded:(BOOL)expanded;
 - (BOOL)isExpanded;
 - (BOOL)isExpandable;
 - (BOOL)isRootBoard;
-- (BOOL)isWritableByAccount:(WCUserAccount *)account;
+- (void)setReadable:(BOOL)readable;
+- (BOOL)isReadable;
+- (void)setWritable:(BOOL)writable;
+- (BOOL)isWritable;
 
 - (NSUInteger)numberOfBoards;
 - (NSArray *)boards;

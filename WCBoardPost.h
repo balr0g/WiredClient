@@ -29,16 +29,13 @@
 #import "WCServerConnectionObject.h"
 
 @interface WCBoardPost : WCServerConnectionObject {
-	NSString					*_board;
-	NSString					*_thread;
-	NSString					*_post;
+	NSString					*_postID;
 	NSDate						*_postDate;
 	NSDate						*_editDate;
+	BOOL						_ownPost;
+	NSString					*_text;
 	NSString					*_nick;
 	NSString					*_icon;
-	WIP7Bool					_own;
-	NSString					*_subject;
-	NSString					*_text;
 	
 	BOOL						_unread;
 }
@@ -46,20 +43,15 @@
 + (WCBoardPost *)postWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection;
 - (id)initWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection;
 
-- (void)setBoard:(NSString *)board;
-- (NSString *)board;
-- (NSString *)threadID;
 - (NSString *)postID;
 - (NSDate *)postDate;
 - (void)setEditDate:(NSDate *)editDate;
 - (NSDate *)editDate;
-- (NSString *)nick;
-- (NSString *)icon;
 - (BOOL)isOwnPost;
-- (void)setSubject:(NSString *)subject;
-- (NSString *)subject;
 - (void)setText:(NSString *)text;
 - (NSString *)text;
+- (NSString *)nick;
+- (NSString *)icon;
 - (void)setUnread:(BOOL)unread;
 - (BOOL)isUnread;
 

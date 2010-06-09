@@ -93,13 +93,15 @@ extern NSString * const								WCBoardsDidChangeUnreadCountNotification;
 	id												_selectedBoard;
 	WCSmartBoard									*_searchBoard;
 	
+	NSMutableDictionary								*_boardsByThreadID;
+	
 	WIDateFormatter									*_dateFormatter;
 	
 	NSArray											*_collapsedBoards;
 	BOOL											_expandingBoards;
 	
 	NSMutableSet									*_receivedBoards;
-	NSMutableSet									*_readPostIDs;
+	NSMutableSet									*_readIDs;
 	
 	BOOL											_searching;
 }
@@ -132,7 +134,7 @@ extern NSString * const								WCBoardsDidChangeUnreadCountNotification;
 - (IBAction)markAsUnread:(id)sender;
 - (IBAction)search:(id)sender;
 
-- (IBAction)goToLatestPost:(id)sender;
+- (IBAction)goToLatestReply:(id)sender;
 
 - (IBAction)bold:(id)sender;
 - (IBAction)italic:(id)sender;

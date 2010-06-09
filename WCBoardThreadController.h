@@ -31,6 +31,7 @@
 @interface WCBoardThreadController : WIObject {
 	IBOutlet WebView					*_threadWebView;
 	
+	WCBoard								*_board;
 	WCBoardThread						*_thread;
 	
 	NSMutableString						*_headerTemplate;
@@ -54,6 +55,8 @@
 	NSRect								_previousVisibleRect;
 }
 
+- (void)setBoard:(WCBoard *)board;
+- (WCBoard *)board;
 - (void)setThread:(WCBoardThread *)thread;
 - (WCBoardThread *)thread;
 - (void)setFont:(NSFont *)font;

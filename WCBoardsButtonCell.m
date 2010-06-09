@@ -59,12 +59,14 @@ NSString * const WCBoardsButtonCellButtonKey		= @"WCBoardsButtonCellButtonKey";
 	value		= [(NSDictionary *) [self objectValue] objectForKey:WCBoardsButtonCellValueKey];
 	button		= [(NSDictionary *) [self objectValue] objectForKey:WCBoardsButtonCellButtonKey];
 	
-	if(![button superview])
-		[view addSubview:button];
-	
-	[button setFrame:NSMakeRect(frame.origin.x, frame.origin.y - 1.0, 16.0, 16.0)];
+	if(value && button) {
+		if(![button superview])
+			[view addSubview:button];
+		
+		[button setFrame:NSMakeRect(frame.origin.x, frame.origin.y - 1.0, 16.0, 16.0)];
 
-	[self setStringValue:value];
+		[self setStringValue:value];
+	}
 	
 	[super drawWithFrame:NSMakeRect(frame.origin.x + 16.0, frame.origin.y, frame.size.width - 16.0, frame.size.height) inView:view];
 }

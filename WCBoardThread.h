@@ -30,30 +30,54 @@
 
 @interface WCBoardThread : WCServerConnectionObject {
 	NSString							*_threadID;
-	NSMutableArray						*_posts;
+	NSUInteger							_replies;
+	NSString							*_subject;
+	NSString							*_text;
+	NSDate								*_postDate;
+	NSDate								*_editDate;
+	NSString							*_latestReplyID;
+	NSDate								*_latestReplyDate;
+	BOOL								_ownThread;
+	NSString							*_nick;
+	NSString							*_icon;
+
 	BOOL								_unread;
-	WCBoard								*_board;
-	NSButton							*_goToLatestPostButton;
+	BOOL								_loaded;
+	NSMutableArray						*_posts;
+	
+	NSButton							*_goToLatestReplyButton;
 }
 
-+ (WCBoardThread *)threadWithPost:(WCBoardPost *)post connection:(WCServerConnection *)connection;
-- (id)initWithPost:(WCBoardPost *)post connection:(WCServerConnection *)connection;
++ (WCBoardThread *)threadWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection;
 
 - (NSString *)threadID;
+- (void)setSubject:(NSString *)subject;
+- (NSString *)subject;
+- (void)setText:(NSString *)text;
+- (NSString *)text;
+- (NSDate *)postDate;
+- (void)setEditDate:(NSDate *)editDate;
+- (NSDate *)editDate;
+- (BOOL)isOwnThread;
+- (void)setNumberOfReplies:(NSUInteger)numberOfReplies;
+- (NSUInteger)numberOfReplies;
+- (void)setLatestReplyID:(NSString *)latestReplyID;
+- (NSString *)latestReplyID;
+- (void)setLatestReplyDate:(NSDate *)latestReplyDate;
+- (NSDate *)latestReplyDate;
+- (NSString *)nick;
+- (void)setIcon:(NSString *)icon;
+- (NSString *)icon;
 - (void)setUnread:(BOOL)unread;
 - (BOOL)isUnread;
-- (void)setBoard:(WCBoard *)board;
-- (WCBoard *)board;
+- (void)setLoaded:(BOOL)loaded;
+- (BOOL)isLoaded;
 
-- (NSButton *)goToLatestPostButton;
+- (NSButton *)goToLatestReplyButton;
 
-- (NSUInteger)numberOfPosts;
-- (NSUInteger)numberOfUnreadPosts;
 - (NSArray *)posts;
 - (WCBoardPost *)postAtIndex:(NSUInteger)index;
 - (WCBoardPost *)postWithID:(NSString *)postID;
-- (WCBoardPost *)firstPost;
-- (WCBoardPost *)lastPost;
 - (BOOL)hasPostMatchingFilter:(WCBoardThreadFilter *)filter;
 - (void)addPost:(WCBoardPost *)post;
 - (void)removePost:(WCBoardPost *)post;
@@ -62,9 +86,9 @@
 - (NSComparisonResult)compareUnread:(id)object;
 - (NSComparisonResult)compareSubject:(id)object;
 - (NSComparisonResult)compareNick:(id)object;
-- (NSComparisonResult)compareNumberOfPosts:(id)object;
+- (NSComparisonResult)compareNumberOfReplies:(id)object;
 - (NSComparisonResult)compareDate:(id)object;
-- (NSComparisonResult)compareLastPostDate:(id)object;
+- (NSComparisonResult)compareLatestReplyDate:(id)object;
 
 @end
 

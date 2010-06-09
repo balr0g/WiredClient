@@ -39,10 +39,10 @@
 
 @interface WCBoardThreadController(Private)
 
-- (void)_reloadDataAndScrollToCurrentPosition:(BOOL)ScrollToCurrentPosition selectPost:(WCBoardPost *)selectPost;
+- (void)_reloadDataAndScrollToCurrentPosition:(BOOL)scrollToCurrentPosition selectPost:(WCBoardPost *)selectPost;
 
-- (NSString *)_HTMLStringForThread:(WCBoardThread *)thread readPostIDs:(NSSet **)readPostIDs;
-- (NSString *)_HTMLStringForPost:(WCBoardPost *)post writable:(BOOL)writable;
+- (NSString *)_HTMLStringWithReadPostIDs:(NSSet **)readPostIDs;
+- (NSString *)_HTMLStringForPost:(id)post writable:(BOOL)writable;
 
 @end
 
@@ -62,7 +62,7 @@
 	_selectPost = [selectPost retain];
 	
 	if(_thread) {
-		html			= [self _HTMLStringForThread:_thread readPostIDs:&readPostIDs];
+		html			= [self _HTMLStringWithReadPostIDs:&readPostIDs];
 	} else {
 		html			= @"";
 		readPostIDs		= NULL;
@@ -79,7 +79,7 @@
 
 #pragma mark -
 
-- (NSString *)_HTMLStringForThread:(WCBoardThread *)thread readPostIDs:(NSSet **)readPostIDs {
+- (NSString *)_HTMLStringWithReadPostIDs:(NSSet **)readPostIDs {
 	NSEnumerator		*enumerator;
 	NSMutableSet		*set;
 	NSMutableString		*html, *string;
@@ -88,7 +88,7 @@
 	
 	html = [NSMutableString stringWithString:_headerTemplate];
 	
-	[html replaceOccurrencesOfString:@"<? title ?>" withString:[[thread firstPost] subject]];
+	[html replaceOccurrencesOfString:@"<? title ?>" withString:[_thread subject]];
 	[html replaceOccurrencesOfString:@"<? fontname ?>" withString:[_font fontName]];
 	[html replaceOccurrencesOfString:@"<? fontsize ?>" withString:[NSSWF:@"%.0fpx", [_font pointSize]]];
 	[html replaceOccurrencesOfString:@"<? textcolor ?>" withString:[NSSWF:@"#%.6x", [_textColor HTMLValue]]];
@@ -96,32 +96,39 @@
 
 	isKeyWindow		= ([NSApp keyWindow] == [_threadWebView window]);
 	set				= [NSMutableSet set];
-	enumerator		= [[thread posts] objectEnumerator];
-	writable		= [[thread board] isWritableByAccount:[[thread connection] account]];
+	enumerator		= [[_thread posts] objectEnumerator];
+	writable		= [_board isWritable];
 	
-	while((post = [enumerator nextObject])) {
-		[html appendString:[self _HTMLStringForPost:post writable:writable]];
-		
-		if([post isUnread] && isKeyWindow) {
-			[post setUnread:NO];
+	if([_thread text]) {
+		[html appendString:[self _HTMLStringForPost:_thread writable:writable]];
+
+		while((post = [enumerator nextObject])) {
+			[html appendString:[self _HTMLStringForPost:post writable:writable]];
 			
-			[set addObject:[post postID]];
+			if(isKeyWindow) {
+				[post setUnread:NO];
+				
+				[set addObject:[post postID]];
+			}
 		}
+		
+		if(isKeyWindow) {
+			[_thread setUnread:NO];
+			
+			[set addObject:[_thread threadID]];
+		}
+		
+		string = [[_replyTemplate mutableCopy] autorelease]; 
+		
+		if([[[_thread connection] account] boardAddPosts] && writable) 
+			[string replaceOccurrencesOfString:@"<? replydisabled ?>" withString:@""]; 
+		else 
+			[string replaceOccurrencesOfString:@"<? replydisabled ?>" withString:@"disabled=\"disabled\""]; 
+		
+		[string replaceOccurrencesOfString:@"<? replystring ?>" withString:NSLS(@"Post Reply", @"Post reply button title")]; 
+		
+		[html appendString:string]; 
 	}
-	
-	if([thread isUnread] && isKeyWindow)
-		[thread setUnread:NO];
-	
-	string = [[_replyTemplate mutableCopy] autorelease]; 
-	
-	if([[[thread connection] account] boardAddPosts] && writable) 
-		[string replaceOccurrencesOfString:@"<? replydisabled ?>" withString:@""]; 
-	else 
-		[string replaceOccurrencesOfString:@"<? replydisabled ?>" withString:@"disabled=\"disabled\""]; 
-	
-	[string replaceOccurrencesOfString:@"<? replystring ?>" withString:NSLS(@"Post Reply", @"Post reply button title")]; 
-	
-	[html appendString:string]; 
 	
 	[html appendString:_footerTemplate];
 	
@@ -133,16 +140,17 @@
 
 
 
-- (NSString *)_HTMLStringForPost:(WCBoardPost *)post writable:(BOOL)writable {
+- (NSString *)_HTMLStringForPost:(id)post writable:(BOOL)writable {
 	NSEnumerator		*enumerator;
 	NSDictionary		*theme, *regexs;
 	NSMutableString		*string, *text, *regex;
 	NSString			*substring, *smiley, *path, *icon, *smileyBase64String;
 	WCAccount			*account;
 	NSRange				range;
+	BOOL				own;
 	
 	theme		= [post theme];
-	account		= [[post connection] account];
+	account		= [(WCServerConnection *) [post connection] account];
 	text		= [[[post text] mutableCopy] autorelease];
 	
 	[text replaceOccurrencesOfString:@"&" withString:@"&#38;"];
@@ -259,8 +267,6 @@
 
 	[string replaceOccurrencesOfString:@"<? from ?>" withString:[post nick]];
 
-	[string replaceOccurrencesOfString:@"<? subject ?>" withString:[post subject]];
-	
 	if([post isUnread]) {
 		[string replaceOccurrencesOfString:@"<? unreadimage ?>"
 								withString:[NSSWF:@"<img class=\"postunread\" src=\"data:image/tiff;base64,%@\" />",
@@ -277,7 +283,7 @@
 	else
 		[string replaceOccurrencesOfString:@"<div class=\"posteditdate\"><? editdate ?></div>" withString:@""];
 	
-	icon = [post icon];
+	icon = (NSString *) [post icon];
 	
 	if([icon length] > 0) {
 		[string replaceOccurrencesOfString:@"<? icon ?>"
@@ -288,19 +294,28 @@
 	}
 
 	[string replaceOccurrencesOfString:@"<? body ?>" withString:text];
-	[string replaceOccurrencesOfString:@"<? postid ?>" withString:[post postID]];
+	
+	if([post isKindOfClass:[WCBoardThread class]])
+		[string replaceOccurrencesOfString:@"<? postid ?>" withString:[post threadID]];
+	else
+		[string replaceOccurrencesOfString:@"<? postid ?>" withString:[post postID]];
 	
 	if([account boardAddPosts] && writable)
 		[string replaceOccurrencesOfString:@"<? quotedisabled ?>" withString:@""];
 	else
 		[string replaceOccurrencesOfString:@"<? quotedisabled ?>" withString:@"disabled=\"disabled\""];
 	
-	if(([account boardEditAllPosts] || ([account boardEditOwnPosts] && [post isOwnPost])) && writable)
+	if([post isKindOfClass:[WCBoardThread class]])
+		own = [post isOwnThread];
+	else
+		own = [post isOwnPost];
+	
+	if(([account boardEditAllThreadsAndPosts] || ([account boardEditOwnThreadsAndPosts] && own)) && writable)
 		[string replaceOccurrencesOfString:@"<? editdisabled ?>" withString:@""];
 	else
 		[string replaceOccurrencesOfString:@"<? editdisabled ?>" withString:@"disabled=\"disabled\""];
 
-	if(([account boardDeleteAllPosts] || ([account boardDeleteOwnPosts] && [post isOwnPost])) && writable)
+	if(([account boardDeleteAllThreadsAndPosts] || ([account boardDeleteOwnThreadsAndPosts] && own)) && writable)
 		[string replaceOccurrencesOfString:@"<? deletedisabled ?>" withString:@""];
 	else
 		[string replaceOccurrencesOfString:@"<? deletedisabled ?>" withString:@"disabled=\"disabled\""];
@@ -335,7 +350,6 @@
 														error:NULL];
 	
 	[_headerTemplate replaceOccurrencesOfString:@"<? fromstring ?>" withString:NSLS(@"From", @"Post header")];
-	[_headerTemplate replaceOccurrencesOfString:@"<? subjectstring ?>" withString:NSLS(@"Subject", @"Post header")];
 	[_headerTemplate replaceOccurrencesOfString:@"<? postdatestring ?>" withString:NSLS(@"Post Date", @"Post header")];
 	[_headerTemplate replaceOccurrencesOfString:@"<? editdatestring ?>" withString:NSLS(@"Edit Date", @"Post header")];
 	
@@ -455,6 +469,21 @@
 
 #pragma mark -
 
+- (void)setBoard:(WCBoard *)board {
+	[board retain];
+	[_board release];
+	
+	_board = board;
+}
+
+
+
+- (WCBoard *)board {
+	return _board;
+}
+
+
+
 - (void)setThread:(WCBoardThread *)thread {
 	[thread retain];
 	[_thread release];
@@ -524,7 +553,7 @@
 
 
 - (NSString *)HTMLString {
-	return [self _HTMLStringForThread:_thread readPostIDs:NULL];
+	return [self _HTMLStringWithReadPostIDs:NULL];
 }
 
 

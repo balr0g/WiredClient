@@ -29,32 +29,53 @@
 #import "WCBoardPost.h"
 #import "WCBoardThread.h"
 
-@implementation WCBoardThread
+@interface WCBoardThread(Private)
 
-+ (WCBoardThread *)threadWithPost:(WCBoardPost *)post connection:(WCServerConnection *)connection {
-	return [[[self alloc] initWithPost:post connection:connection] autorelease];
-}
+- (id)_initWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection;
+
+@end
 
 
+@implementation WCBoardThread(Private)
 
-- (id)initWithPost:(WCBoardPost *)post connection:(WCServerConnection *)connection {
+- (id)_initWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection {
+	WIP7UInt32		replies;
+	WIP7Bool		ownThread;
+	
 	self = [super initWithConnection:connection];
 	
-	_goToLatestPostButton	= [[NSButton alloc] init];
+	_goToLatestReplyButton = [[NSButton alloc] init];
+	[_goToLatestReplyButton setButtonType:NSMomentaryLightButton];
+	[_goToLatestReplyButton setBordered:NO];
+	[[_goToLatestReplyButton cell] setHighlightsBy:NSContentsCellMask];
+	[_goToLatestReplyButton setImage:[NSImage imageNamed:@"GoToLatestPost"]];
+	[_goToLatestReplyButton retain];
 	
-	[_goToLatestPostButton setButtonType:NSMomentaryLightButton];
-	[_goToLatestPostButton setBordered:NO];
-	[[_goToLatestPostButton cell] setHighlightsBy:NSContentsCellMask];
-	[_goToLatestPostButton setImage:[NSImage imageNamed:@"GoToLatestPost"]];
-	[_goToLatestPostButton retain];
+	[message getUInt32:&replies forName:@"wired.board.replies"];
+	[message getBool:&ownThread forName:@"wired.board.own_thread"];
 	
-	_posts					= [[NSMutableArray alloc] init];
-	_threadID				= [[post threadID] retain];
-	_unread					= [post isUnread];
-	
-	[_posts addObject:post];
+	_replies			= replies;
+	_threadID			= [[message UUIDForName:@"wired.board.thread"] retain];
+	_subject			= [[message stringForName:@"wired.board.subject"] retain];
+	_postDate			= [[message dateForName:@"wired.board.post_date"] retain];
+	_editDate			= [[message dateForName:@"wired.board.edit_date"] retain];
+	_latestReplyID		= [[message dateForName:@"wired.board.latest_reply"] retain];
+	_latestReplyDate	= [[message dateForName:@"wired.board.latest_reply_date"] retain];
+	_ownThread			= ownThread;
+	_nick				= [[message stringForName:@"wired.user.nick"] retain];
+	_posts				= [[NSMutableArray alloc] init];
 	
 	return self;
+}
+
+@end
+
+
+
+@implementation WCBoardThread
+
++ (WCBoardThread *)threadWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection {
+	return [[[self alloc] _initWithMessage:message connection:connection] autorelease];
 }
 
 
@@ -63,8 +84,8 @@
 	[_threadID release];
 	[_posts release];
 
-	[_goToLatestPostButton removeFromSuperview];
-	[_goToLatestPostButton release];
+	[_goToLatestReplyButton removeFromSuperview];
+	[_goToLatestReplyButton release];
 	
 	[super dealloc];
 }
@@ -72,6 +93,21 @@
 
 
 #pragma mark -
+
+- (BOOL)isEqual:(id)object {
+	if(![self isKindOfClass:[object class]])
+		return NO;
+	
+	return [[self threadID] isEqualToString:[object threadID]];
+}
+
+
+
+- (NSUInteger)hash {
+	return [_threadID hash];
+}
+
+
 
 - (NSString *)description {
 	return [NSSWF:@"<%@: %p>{id = %@, posts = %@}", [self class], self, [self threadID], [self posts]];
@@ -83,6 +119,126 @@
 
 - (NSString *)threadID {
 	return _threadID;
+}
+
+
+
+- (void)setSubject:(NSString *)subject {
+	[subject retain];
+	[_subject release];
+	
+	_subject = subject;
+}
+
+
+
+- (NSString *)subject {
+	return _subject;
+}
+
+
+
+- (void)setText:(NSString *)text {
+	[text retain];
+	[_text release];
+	
+	_text = text;
+}
+
+
+
+- (NSString *)text {
+	return _text;
+}
+
+
+
+- (NSDate *)postDate {
+	return _postDate;
+}
+
+
+
+- (void)setEditDate:(NSDate *)editDate {
+	[editDate retain];
+	[_editDate release];
+	
+	_editDate = editDate;
+}
+
+
+
+- (NSDate *)editDate {
+	return _editDate;
+}
+
+
+
+- (BOOL)isOwnThread {
+	return _ownThread;
+}
+
+
+
+- (void)setNumberOfReplies:(NSUInteger)replies {
+	_replies = replies;
+}
+
+
+
+- (NSUInteger)numberOfReplies {
+	return _replies;
+}
+
+
+
+- (void)setLatestReplyID:(NSString *)latestReplyID {
+	[latestReplyID retain];
+	[_latestReplyID release];
+	
+	_latestReplyID = latestReplyID;
+}
+
+
+
+- (NSString *)latestReplyID {
+	return _latestReplyID;
+}
+
+
+
+- (void)setLatestReplyDate:(NSDate *)latestReplyDate {
+	[latestReplyDate retain];
+	[_latestReplyDate release];
+	
+	_latestReplyDate = latestReplyDate;
+}
+
+
+
+- (NSDate *)latestReplyDate {
+	return _latestReplyDate;
+}
+
+
+
+- (NSString *)nick {
+	return _nick;
+}
+
+
+
+- (void)setIcon:(NSString *)icon {
+	[icon retain];
+	[_icon release];
+	
+	_icon = icon;
+}
+
+
+
+- (NSString *)icon {
+	return _icon;
 }
 
 
@@ -99,58 +255,27 @@
 
 
 
-- (void)setBoard:(WCBoard *)board {
-	NSEnumerator		*enumerator;
-	WCBoardPost			*post;
-
-	_board = board;
-
-	enumerator = [_posts objectEnumerator];
-	
-	while((post = [enumerator nextObject]))
-		[post setBoard:[board path]];
+- (void)setLoaded:(BOOL)loaded {
+	_loaded = loaded;
 }
 
 
 
-- (WCBoard *)board {
-	return _board;
+- (BOOL)isLoaded {
+	return _loaded;
 }
 
 
 
 #pragma mark -
 
-- (NSButton *)goToLatestPostButton {
-	return _goToLatestPostButton;
+- (NSButton *)goToLatestReplyButton {
+	return _goToLatestReplyButton;
 }
 
 
 
 #pragma mark -
-
-- (NSUInteger)numberOfPosts {
-	return [_posts count];
-}
-
-
-
-- (NSUInteger)numberOfUnreadPosts {
-	NSEnumerator		*enumerator;
-	WCBoardPost			*post;
-	NSUInteger			count = 0;
-	
-	enumerator = [_posts objectEnumerator];
-	
-	while((post = [enumerator nextObject])) {
-		if([post isUnread])
-			count++;
-	}
-	
-	return count;
-}
-
-
 
 - (NSArray *)posts {
 	return _posts;
@@ -180,20 +305,8 @@
 
 
 
-- (WCBoardPost *)firstPost {
-	return [_posts objectAtIndex:0];
-}
-
-
-
-- (WCBoardPost *)lastPost {
-	return [_posts lastObject];
-}
-
-
-
 - (BOOL)hasPostMatchingFilter:(WCBoardThreadFilter *)filter {
-	NSEnumerator		*enumerator;
+/*	NSEnumerator		*enumerator;
 	NSString			*boardString, *textString, *subjectString, *nickString;
 	WCBoardPost			*post;
 	
@@ -231,6 +344,7 @@
 			return YES;
 	}
 	
+	return NO;*/
 	return NO;
 }
 
@@ -270,7 +384,7 @@
 - (NSComparisonResult)compareSubject:(id)object {
 	NSComparisonResult		result;
 	
-	result = [[[self firstPost] subject] compare:[[object firstPost] subject] options:NSCaseInsensitiveSearch];
+	result = [[self subject] compare:[object subject] options:NSCaseInsensitiveSearch];
 	
 	if(result == NSOrderedSame)
 		result = [self compareDate:object];
@@ -283,7 +397,7 @@
 - (NSComparisonResult)compareNick:(id)object {
 	NSComparisonResult		result;
 	
-	result = [[[self firstPost] nick] compare:[[object firstPost] nick] options:NSCaseInsensitiveSearch];
+	result = [[self nick] compare:[object nick] options:NSCaseInsensitiveSearch];
 	
 	if(result == NSOrderedSame)
 		result = [self compareDate:object];
@@ -293,25 +407,30 @@
 
 
 
-- (NSComparisonResult)compareNumberOfPosts:(id)object {
-	if([self numberOfPosts] > [object numberOfPosts])
+- (NSComparisonResult)compareNumberOfReplies:(id)object {
+	if([self numberOfReplies] > [object numberOfReplies])
 		return NSOrderedAscending;
-	else if([self numberOfPosts] < [object numberOfPosts])
+	else if([self numberOfReplies] < [object numberOfReplies])
 		return NSOrderedDescending;
 
-	return [self compareLastPostDate:object];
+	return [self compareLatestReplyDate:object];
 }
 
 
 
 - (NSComparisonResult)compareDate:(id)object {
-	return [[[self firstPost] postDate] compare:[[object firstPost] postDate]];
+	return [[self postDate] compare:[object postDate]];
 }
 
 
 
-- (NSComparisonResult)compareLastPostDate:(id)object {
-	return [[[self lastPost] postDate] compare:[[object lastPost] postDate]];
+- (NSComparisonResult)compareLatestReplyDate:(id)object {
+	NSDate		*latestReplyDate, *otherLatestReplyDate;
+	
+	latestReplyDate			= [self latestReplyDate] ? [self latestReplyDate] : [[[self posts] lastObject] postDate];
+	otherLatestReplyDate	= [object latestReplyDate] ? [object latestReplyDate] : [[[object posts] lastObject] postDate];
+	
+	return [latestReplyDate compare:otherLatestReplyDate];
 }
 
 @end

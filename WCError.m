@@ -180,6 +180,14 @@ NSString * const WCWiredProtocolErrorDomain		= @"WCWiredProtocolErrorDomain";
 				return NSLS(@"Board Exists", @"Wired protocol error title");
 				break;
 			
+			case WCWiredProtocolThreadNotFound:
+				return NSLS(@"Thread Not Found", @"Wired protocol error title");
+				break;
+			
+			case WCWiredProtocolPostNotFound:
+				return NSLS(@"Post Not Found", @"Wired protocol error title");
+				break;
+			
 			case WCWiredProtocolRsrcNotSupported:
 				return NSLS(@"Resource Fork Not Supported.", @"Wired protocol error title");
 				break;
@@ -336,6 +344,14 @@ NSString * const WCWiredProtocolErrorDomain		= @"WCWiredProtocolErrorDomain";
 			
 			case WCWiredProtocolBoardExists:
 				return NSLS(@"The board you tried to create already exists on the server.", @"Wired protocol error description");
+				break;
+			
+			case WCWiredProtocolThreadNotFound:
+				return NSLS(@"Could not find the thread you referred to. Perhaps someone deleted it.", @"Wired protocol error description");
+				break;
+			
+			case WCWiredProtocolPostNotFound:
+				return NSLS(@"Could not find the post you referred to. Perhaps someone deleted it.", @"Wired protocol error description");
 				break;
 			
 			case WCWiredProtocolRsrcNotSupported:

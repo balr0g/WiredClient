@@ -51,7 +51,6 @@ typedef enum _WCEventType		WCEventType;
 	
 	NSString					*_formattedTime;
 	
-	NSDate						*_archive;
 	NSDate						*_time;
 	NSString					*_nick;
 	NSString					*_login;
@@ -253,9 +252,15 @@ typedef enum _WCEventType		WCEventType;
 		type = WCEventBoards;
 		string = NSLS(@"Got boards", @"Event message");
 	}
-	else if([name isEqualToString:@"wired.event.board.got_posts"]) {
+	else if([name isEqualToString:@"wired.event.board.got_threads"]) {
 		type = WCEventBoards;
-		string = NSLS(@"Got posts", @"Event message");
+		string = NSLS(@"Got threads", @"Event message");
+	}
+	else if([name isEqualToString:@"wired.event.board.got_thread"] && [parameters count] >= 2) {
+		type = WCEventBoards;
+		string = [NSSWF:NSLS(@"Read thread \u201c%@\u201d in board \u201c%@\u201d", @"Event message (subject, board)"),
+			[parameters objectAtIndex:0],
+			[parameters objectAtIndex:1]];
 	}
 	else if([name isEqualToString:@"wired.event.board.added_board"] && [parameters count] >= 1) {
 		type = WCEventBoards;
@@ -286,38 +291,44 @@ typedef enum _WCEventType		WCEventType;
 	}
 	else if([name isEqualToString:@"wired.event.board.added_thread"] && [parameters count] >= 2) {
 		type = WCEventBoards;
-		string = [NSSWF:NSLS(@"Added \u201c%@\u201d in \u201c%@\u201d", @"Event message (board, subject)"),
+		string = [NSSWF:NSLS(@"Added \u201c%@\u201d in \u201c%@\u201d", @"Event message (subject, board)"),
+			[parameters objectAtIndex:0],
+			[parameters objectAtIndex:1]];
+	}
+	else if([name isEqualToString:@"wired.event.board.edited_thread"] && [parameters count] >= 2) {
+		type = WCEventBoards;
+		string = [NSSWF:NSLS(@"Edited \u201c%@\u201d in \u201c%@\u201d", @"Event message (subject, board)"),
 			[parameters objectAtIndex:0],
 			[parameters objectAtIndex:1]];
 	}
 	else if([name isEqualToString:@"wired.event.board.moved_thread"] && [parameters count] >= 3) {
 		type = WCEventBoards;
-		string = [NSSWF:NSLS(@"Moved \u201c%@\u201d from \u201c%@\u201d to \u201c%@\u201d", @"Event message (oldboard, newboard, subject)"),
+		string = [NSSWF:NSLS(@"Moved \u201c%@\u201d from \u201c%@\u201d to \u201c%@\u201d", @"Event message (subject, oldboard, newboard)"),
 			[parameters objectAtIndex:0],
 			[parameters objectAtIndex:1],
 			[parameters objectAtIndex:2]];
 	}
 	else if([name isEqualToString:@"wired.event.board.deleted_thread"] && [parameters count] >= 2) {
 		type = WCEventBoards;
-		string = [NSSWF:NSLS(@"Deleted \u201c%@\u201d in \u201c%@\u201d", @"Event message (board, subject)"),
+		string = [NSSWF:NSLS(@"Deleted \u201c%@\u201d in \u201c%@\u201d", @"Event message (subject, board)"),
 			[parameters objectAtIndex:0],
 			[parameters objectAtIndex:1]];
 	}
 	else if([name isEqualToString:@"wired.event.board.added_post"] && [parameters count] >= 2) {
 		type = WCEventBoards;
-		string = [NSSWF:NSLS(@"Added \u201c%@\u201d in \u201c%@\u201d", @"Event message (board, subject)"),
+		string = [NSSWF:NSLS(@"Added \u201c%@\u201d in \u201c%@\u201d", @"Event message (subject, board)"),
 			[parameters objectAtIndex:0],
 			[parameters objectAtIndex:1]];
 	}
 	else if([name isEqualToString:@"wired.event.board.edited_post"] && [parameters count] >= 2) {
 		type = WCEventBoards;
-		string = [NSSWF:NSLS(@"Edited \u201c%@\u201d in \u201c%@\u201d", @"Event message (board, subject)"),
+		string = [NSSWF:NSLS(@"Edited \u201c%@\u201d in \u201c%@\u201d", @"Event message (subject, board)"),
 			[parameters objectAtIndex:0],
 			[parameters objectAtIndex:1]];
 	}
 	else if([name isEqualToString:@"wired.event.board.deleted_post"] && [parameters count] >= 2) {
 		type = WCEventBoards;
-		string = [NSSWF:NSLS(@"Deleted \u201c%@\u201d \u201c%@\u201d", @"Event message (board, subject)"),
+		string = [NSSWF:NSLS(@"Deleted \u201c%@\u201d \u201c%@\u201d", @"Event message (subject, board)"),
 			[parameters objectAtIndex:0],
 			[parameters objectAtIndex:1]];
 	}
@@ -328,13 +339,13 @@ typedef enum _WCEventType		WCEventType;
 	}
 	else if([name isEqualToString:@"wired.event.transfer.stopped_file_download"] && [parameters count] >= 2) {
 		type = WCEventDownloads;
-		string = [NSSWF:NSLS(@"Stopped download of \u201c%@\u201d after sending %@", @"Event message (path)"),
+		string = [NSSWF:NSLS(@"Stopped download of \u201c%@\u201d after sending %@", @"Event message (path, size)"),
 			[parameters objectAtIndex:0],
 			[sizeFormatter stringFromSize:[[parameters objectAtIndex:1] unsignedLongLongValue]]];
 	}
 	else if([name isEqualToString:@"wired.event.transfer.completed_file_download"] && [parameters count] >= 2) {
 		type = WCEventDownloads;
-		string = [NSSWF:NSLS(@"Completed download of \u201c%@\u201d after sending %@", @"Event message (path)"),
+		string = [NSSWF:NSLS(@"Completed download of \u201c%@\u201d after sending %@", @"Event message (path, size)"),
 			[parameters objectAtIndex:0],
 			[sizeFormatter stringFromSize:[[parameters objectAtIndex:1] unsignedLongLongValue]]];
 	}
@@ -345,13 +356,13 @@ typedef enum _WCEventType		WCEventType;
 	}
 	else if([name isEqualToString:@"wired.event.transfer.stopped_file_upload"] && [parameters count] >= 2) {
 		type = WCEventUploads;
-		string = [NSSWF:NSLS(@"Stopped upload of \u201c%@\u201d after sending %@", @"Event message (path)"),
+		string = [NSSWF:NSLS(@"Stopped upload of \u201c%@\u201d after sending %@", @"Event message (path, size)"),
 			[parameters objectAtIndex:0],
 			[sizeFormatter stringFromSize:[[parameters objectAtIndex:1] unsignedLongLongValue]]];
 	}
 	else if([name isEqualToString:@"wired.event.transfer.completed_file_upload"] && [parameters count] >= 2) {
 		type = WCEventUploads;
-		string = [NSSWF:NSLS(@"Completed upload of \u201c%@\u201d after sending %@", @"Event message (path)"),
+		string = [NSSWF:NSLS(@"Completed upload of \u201c%@\u201d after sending %@", @"Event message (path, size)"),
 			[parameters objectAtIndex:0],
 			[sizeFormatter stringFromSize:[[parameters objectAtIndex:1] unsignedLongLongValue]]];
 	}
@@ -414,7 +425,6 @@ typedef enum _WCEventType		WCEventType;
 	event					= [[self alloc] init];
 	event->_type			= type;
 	event->_message			= [string retain];
-	event->_archive			= [[message dateForName:@"wired.event.archive"] retain];
 	event->_time			= [[message dateForName:@"wired.event.time"] retain];
 	event->_nick			= [[message stringForName:@"wired.user.nick"] retain];
 	event->_login			= [[message stringForName:@"wired.user.login"] retain];
@@ -429,7 +439,6 @@ typedef enum _WCEventType		WCEventType;
 - (void)dealloc {
 	[_formattedTime release];
 
-	[_archive release];
 	[_time release];
 	[_nick release];
 	[_login release];
@@ -520,6 +529,7 @@ typedef enum _WCEventType		WCEventType;
 - (BOOL)_filterIncludesEvent:(WCEvent *)event;
 - (void)_reloadFilter;
 - (void)_reloadPopUpButtons;
+- (void)_reloadDates;
 - (void)_refreshReceivedEvents;
 
 - (void)_requestEvents;
@@ -578,15 +588,13 @@ typedef enum _WCEventType		WCEventType;
 - (void)_reloadFilter {
 	NSArray			*events;
 	WCEvent			*event;
-	id				archive;
 	NSUInteger		i, count;
 	
 	[_shownEvents removeAllObjects];
 	
-	archive		= [_archivePopUpButton representedObjectOfSelectedItem]
-		? [_archivePopUpButton representedObjectOfSelectedItem]
-		: [NSNull null];
-	events		= [_allEvents objectForKey:archive];
+	events		= ([[_datePopUpButton representedObjectOfSelectedItem] isEqual:[NSNull null]]
+		? _allCurrentEvents
+		: _allArchivedEvents);
 	count		= [events count];
 	
 	for(i = 0; i < count; i++) {
@@ -603,25 +611,6 @@ typedef enum _WCEventType		WCEventType;
 
 
 - (void)_reloadPopUpButtons {
-	NSEnumerator		*enumerator;
-	NSDate				*archive, *selectedArchive;
-	
-	selectedArchive = [[[_archivePopUpButton representedObjectOfSelectedItem] retain] autorelease];
-	
-	while([_archivePopUpButton numberOfItems] > 1)
-		[_archivePopUpButton removeItemAtIndex:1];
-	
-	if([_allArchives count] > 0)
-		[_archivePopUpButton addItem:[NSMenuItem separatorItem]];
-	
-	enumerator = [[_allArchives sortedArrayUsingSelector:@selector(compare:)] reverseObjectEnumerator];
-	
-	while((archive = [enumerator nextObject]))
-		[_archivePopUpButton addItem:[NSMenuItem itemWithTitle:[_dateFormatter stringFromDate:archive] representedObject:archive]];
-	
-	if(selectedArchive)
-		[_archivePopUpButton selectItemWithRepresentedObject:selectedArchive];
-	
 	while([_nickPopUpButton numberOfItems] > 1)
 		[_nickPopUpButton removeItemAtIndex:1];
 	
@@ -649,6 +638,41 @@ typedef enum _WCEventType		WCEventType;
 
 
 
+- (void)_reloadDates {
+	NSMutableArray			*menuItems;
+	NSDate					*date, *weekDate, *selectedDate;
+	NSDateComponents		*components;
+	NSString				*title;
+	
+	selectedDate = [_datePopUpButton representedObjectOfSelectedItem];
+	
+	while([_datePopUpButton numberOfItems] > 1)
+		[_datePopUpButton removeItemAtIndex:1];
+	
+	date		= [NSDate date];
+	weekDate	= [_firstDate dateAtStartOfWeek];
+	menuItems	= [NSMutableArray array];
+	
+	while([date compare:weekDate] == NSOrderedDescending) {
+		components	= [[NSCalendar currentCalendar] components:NSYearCalendarUnit | NSWeekCalendarUnit fromDate:weekDate];
+		title		= [NSSWF:NSLS(@"Week %u, %u", @"Event archive (week, year)"), [components week], [components year]];
+
+		[menuItems addObject:[NSMenuItem itemWithTitle:title representedObject:weekDate]];
+		
+		weekDate = [weekDate dateByAddingDays:7];
+	}
+	
+	if([menuItems count] > 0) {
+		[_datePopUpButton addItem:[NSMenuItem separatorItem]];
+		[_datePopUpButton addItems:[menuItems reversedArray]];
+	}
+	
+	if(selectedDate)
+		[_datePopUpButton selectItemWithRepresentedObject:selectedDate];
+}
+
+
+
 - (void)_refreshReceivedEvents {
 	WCEvent			*event;
 	NSUInteger		i, count;
@@ -659,7 +683,7 @@ typedef enum _WCEventType		WCEventType;
 	for(i = 0; i < count; i++) {
 		event = [_receivedEvents objectAtIndex:i];
 
-		if([self _filterIncludesEvent:event])
+		if([[_datePopUpButton representedObjectOfSelectedItem] isEqual:[NSNull null]] && [self _filterIncludesEvent:event])
 			[_shownEvents addObject:event];
 		
 		if(![_allNicks containsObject:event->_nick]) {
@@ -698,10 +722,11 @@ typedef enum _WCEventType		WCEventType;
 	WIP7Message		*message;
 	
 	if(!_requested && [[_administration connection] isConnected] && [[[_administration connection] account] eventsViewEvents]) {
-		message = [WIP7Message messageWithName:@"wired.event.get_archives" spec:WCP7Spec];
-		[[_administration connection] sendMessage:message fromObserver:self selector:@selector(wiredEventGetArchivesReply:)];
+		message = [WIP7Message messageWithName:@"wired.event.get_first_time" spec:WCP7Spec];
+		[[_administration connection] sendMessage:message fromObserver:self selector:@selector(wiredEventGetFirstTimeReply:)];
 		
 		message = [WIP7Message messageWithName:@"wired.event.get_events" spec:WCP7Spec];
+		[message setUInt32:1000 forName:@"wired.event.last_event_count"];
 		[[_administration connection] sendMessage:message fromObserver:self selector:@selector(wiredEventGetEventsReply:)];
 		
 		message = [WIP7Message messageWithName:@"wired.event.subscribe" spec:WCP7Spec];
@@ -741,13 +766,11 @@ typedef enum _WCEventType		WCEventType;
 - (id)init {
 	self = [super init];
 	
-	_allEvents			= [[NSMutableDictionary alloc] init];
+	_allCurrentEvents	= [[NSMutableArray alloc] init];
+	_allArchivedEvents	= [[NSMutableArray alloc] init];
 	_listedEvents		= [[NSMutableArray alloc] init];
 	_receivedEvents		= [[NSMutableArray alloc] init];
 	_shownEvents		= [[NSMutableArray alloc] init];
-	
-	_allArchives		= [[NSMutableArray alloc] init];
-	_listedArchives		= [[NSMutableArray alloc] init];
 	
 	_allNicks			= [[NSMutableSet alloc] init];
 	_allLogins			= [[NSMutableSet alloc] init];
@@ -765,13 +788,11 @@ typedef enum _WCEventType		WCEventType;
 
 
 - (void)dealloc {
-	[_allEvents release];
+	[_allCurrentEvents release];
+	[_allArchivedEvents release];
 	[_listedEvents release];
 	[_receivedEvents release];
 	[_shownEvents release];
-	
-	[_allArchives release];
-	[_listedArchives release];
 	
 	[_dateFormatter release];
 	[_sizeFormatter release];
@@ -781,6 +802,8 @@ typedef enum _WCEventType		WCEventType;
 	[_allIPs release];
 	[_messageFilter release];
 	
+	[_firstDate release];
+	
 	[super dealloc];
 }
 
@@ -789,10 +812,11 @@ typedef enum _WCEventType		WCEventType;
 #pragma mark -
 
 - (void)windowDidLoad {
-	[[_administration connection] addObserver:self selector:@selector(wiredEventArchive:) messageName:@"wired.event.archive"];
 	[[_administration connection] addObserver:self selector:@selector(wiredEventEvent:) messageName:@"wired.event.event"];
 	
 	[_eventsTableView setHighlightedTableColumn:_timeTableColumn sortOrder:WISortAscending];
+	
+	[[_datePopUpButton itemAtIndex:0] setRepresentedObject:[NSNull null]];
 }
 
 
@@ -817,17 +841,12 @@ typedef enum _WCEventType		WCEventType;
 
 
 
-- (void)wiredEventGetArchivesReply:(WIP7Message *)message {
-	if([[message name] isEqualToString:@"wired.event.archive_list"]) {
-		[_listedArchives addObject:[message dateForName:@"wired.event.archive"]];
-	}
-	else if([[message name] isEqualToString:@"wired.event.archive_list.done"]) {
-		[_allArchives setArray:_listedArchives];
-		[_listedArchives removeAllObjects];
+- (void)wiredEventGetFirstTimeReply:(WIP7Message *)message {
+	if([[message name] isEqualToString:@"wired.event.first_time"]) {
+		[_firstDate release];
+		_firstDate = [[message dateForName:@"wired.event.first_time"] retain];
 		
-		[self _reloadPopUpButtons];
-		
-		[[_administration connection] removeObserver:self message:message];
+		[self _reloadDates];
 	}
 	else if([[message name] isEqualToString:@"wired.error"]) {
 		[_administration showError:[WCError errorWithWiredMessage:message]];
@@ -841,7 +860,6 @@ typedef enum _WCEventType		WCEventType;
 - (void)wiredEventGetEventsReply:(WIP7Message *)message {
 	NSMutableArray		*events;
 	WCEvent				*event;
-	id					archive;
 	NSUInteger			i, count;
 	
 	if([[message name] isEqualToString:@"wired.event.event_list"]) {
@@ -858,14 +876,9 @@ typedef enum _WCEventType		WCEventType;
 	else if([[message name] isEqualToString:@"wired.event.event_list.done"]) {
 		if([_listedEvents count] > 0) {
 			event		= [_listedEvents objectAtIndex:0];
-			archive		= event->_archive ? event->_archive : (id) [NSNull null];
-			events		= [_allEvents objectForKey:archive];
-			
-			if(!events) {
-				events = [NSMutableArray array];
-				
-				[_allEvents setObject:events forKey:archive];
-			}
+			events		= ([[_datePopUpButton representedObjectOfSelectedItem] isEqual:[NSNull null]]
+				? _allCurrentEvents
+				: _allArchivedEvents);
 			
 			[events addObjectsFromArray:_listedEvents];
 		}
@@ -880,6 +893,8 @@ typedef enum _WCEventType		WCEventType;
 			if([self _filterIncludesEvent:event])
 				[_shownEvents addObject:event];
 		}
+		
+		[self _sortEvents];
 		
 		[_listedEvents removeAllObjects];
 		
@@ -910,34 +925,13 @@ typedef enum _WCEventType		WCEventType;
 
 
 
-- (void)wiredEventArchive:(WIP7Message *)message {
-	[[_allEvents objectForKey:[NSNull null]] removeAllObjects];
-	
-	[self _reloadFilter];
-	
-	[_allArchives addObject:[message dateForName:@"wired.event.archive"]];
-	
-	[self _reloadPopUpButtons];
-}
-
-
-
 - (void)wiredEventEvent:(WIP7Message *)message {
-	NSMutableArray		*events;
 	WCEvent				*event;
 	
 	event = [WCEvent eventWithMessage:message dateFormatter:_dateFormatter sizeFormatter:_sizeFormatter];
 	
 	if(event) {
-		events = [_allEvents objectForKey:[NSNull null]];
-		
-		if(!events) {
-			events = [NSMutableArray array];
-			
-			[_allEvents setObject:events forKey:[NSNull null]];
-		}
-		
-		[events addObject:event];
+		[_allCurrentEvents addObject:event];
 		[_receivedEvents addObject:event];
 		
 		if([_receivedEvents count] > 20)
@@ -967,19 +961,20 @@ typedef enum _WCEventType		WCEventType;
 
 #pragma mark -
 
-- (IBAction)archive:(id)sender {
+- (IBAction)date:(id)sender {
 	WIP7Message		*message;
-	NSDate			*archive;
+	NSDate			*date;
 	
-	archive = [_archivePopUpButton representedObjectOfSelectedItem];
+	date = [_datePopUpButton representedObjectOfSelectedItem];
 	
-	if(archive && ![_allEvents objectForKey:archive]) {
+	if([date isEqual:[NSNull null]]) {
+		[self _reloadFilter];
+	} else {
 		message = [WIP7Message messageWithName:@"wired.event.get_events" spec:WCP7Spec];
-		[message setDate:archive forName:@"wired.event.archive"];
+		[message setDate:date forName:@"wired.event.from_time"];
+		[message setUInt32:7 forName:@"wired.event.number_of_days"];
 		[[_administration connection] sendMessage:message fromObserver:self selector:@selector(wiredEventGetEventsReply:)];
 	}
-	
-	[self _reloadFilter];
 }
 
 

@@ -171,6 +171,8 @@
 
 	data = [password dataUsingEncoding:NSUTF8StringEncoding];
 	
+	NSLog(@"'%@' -> '%@'", url, password);
+	
 	err = SecKeychainFindInternetPassword(NULL,
 										  [[url host] UTF8StringLength],
 										  [[url host] UTF8String],
@@ -231,6 +233,8 @@
 		type = kSecProtocolTypeWired;
 	else
 		type = kSecProtocolTypeHTTP;
+
+	NSLog(@"'%@' -> NULL", url);
 
 	err = SecKeychainFindInternetPassword(NULL,
 										  [[url host] UTF8StringLength],

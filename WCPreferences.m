@@ -556,7 +556,8 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 	NSDictionary		*bookmark = [arguments objectAtIndex:1];
 	NSString			*password = [arguments objectAtIndex:2];
 
-	[[WCKeychain keychain] deletePasswordForBookmark:oldBookmark];
+	if(![oldBookmark isEqual:bookmark])
+		[[WCKeychain keychain] deletePasswordForBookmark:oldBookmark];
 	
 	if([_bookmarksPassword length] > 0)
 		[[WCKeychain keychain] setPassword:password forBookmark:bookmark];
@@ -571,7 +572,8 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 	NSDictionary		*bookmark = [arguments objectAtIndex:1];
 	NSString			*password = [arguments objectAtIndex:2];
 	
-	[[WCKeychain keychain] deletePasswordForTrackerBookmark:oldBookmark];
+	if(![oldBookmark isEqual:bookmark])
+		[[WCKeychain keychain] deletePasswordForTrackerBookmark:oldBookmark];
 	
 	if([password length] > 0)
 		[[WCKeychain keychain] setPassword:password forTrackerBookmark:bookmark];
@@ -1961,7 +1963,7 @@ NSString * const WCIconDidChangeNotification				= @"WCIconDidChangeNotification"
 	[bookmark setObject:[_trackerBookmarksLoginTextField stringValue] forKey:WCTrackerBookmarksLogin];
 	
 	if(!_trackerBookmarksPassword || ![_trackerBookmarksPassword isEqualToString:password] ||
-	   ![[oldBookmark objectForKey:WCBookmarksAddress] isEqualToString:[bookmark objectForKey:WCBookmarksAddress]]) {
+	   ![[oldBookmark objectForKey:WCTrackerBookmarksAddress] isEqualToString:[bookmark objectForKey:WCTrackerBookmarksAddress]]) {
 		[NSObject cancelPreviousPerformRequestsWithTarget:self];
 		[self performSelector:@selector(_savePasswordForTrackerBookmark:)
 				   withObject:[NSArray arrayWithObjects:oldBookmark, bookmark, password, NULL]

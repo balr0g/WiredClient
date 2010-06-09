@@ -66,7 +66,9 @@ enum _WCWiredProtocolError {
 	WCWiredProtocolBanExists					= 22,
 	WCWiredProtocolBoardNotFound				= 23,
 	WCWiredProtocolBoardExists					= 24,
-	WCWiredProtocolRsrcNotSupported				= 25
+	WCWiredProtocolThreadNotFound				= 25,
+	WCWiredProtocolPostNotFound					= 26,
+	WCWiredProtocolRsrcNotSupported				= 27
 };
 typedef enum _WCWiredProtocolError				WCWiredProtocolError;
 

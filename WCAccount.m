@@ -288,7 +288,10 @@ NSString * const WCAccountFieldToolTipKey			= @"WCAccountFieldToolTipKey";
 			@"wired.account.board.delete_boards", NSLS(@"Delete Boards", @"Account field name"),
 			@"TBD"),
 		WCAccountFieldBooleanDictionary(WCAccountFieldSectionBoards,
-			@"wired.account.board.set_permissions", NSLS(@"Set Board Permissions", @"Account field name"),
+			@"wired.account.board.get_board_info", NSLS(@"Get Board Info", @"Account field name"),
+			@"TBD"),
+		WCAccountFieldBooleanDictionary(WCAccountFieldSectionBoards,
+			@"wired.account.board.set_board_info", NSLS(@"Set Board Info", @"Account field name"),
 			@"TBD"),
 		WCAccountFieldBooleanDictionary(WCAccountFieldSectionBoards,
 			@"wired.account.board.add_threads", NSLS(@"Add Threads", @"Account field name"),
@@ -303,16 +306,16 @@ NSString * const WCAccountFieldToolTipKey			= @"WCAccountFieldToolTipKey";
 			@"wired.account.board.add_posts", NSLS(@"Add Posts", @"Account field name"),
 			@"TBD"),
 		WCAccountFieldBooleanDictionary(WCAccountFieldSectionBoards,
-			@"wired.account.board.edit_own_posts", NSLS(@"Edit Own Posts", @"Account field name"),
+			@"wired.account.board.edit_own_threads_and_posts", NSLS(@"Edit Own Threads & Posts", @"Account field name"),
 			@"TBD"),
 		WCAccountFieldBooleanDictionary(WCAccountFieldSectionBoards,
-			@"wired.account.board.edit_all_posts", NSLS(@"Edit All Posts", @"Account field name"),
+			@"wired.account.board.edit_all_threads_and_posts", NSLS(@"Edit All Threads & Posts", @"Account field name"),
 			@"TBD"),
 		WCAccountFieldBooleanDictionary(WCAccountFieldSectionBoards,
-			@"wired.account.board.delete_own_posts", NSLS(@"Delete Own Posts", @"Account field name"),
+			@"wired.account.board.delete_own_threads_and_posts", NSLS(@"Delete Threads & Own Posts", @"Account field name"),
 			@"TBD"),
 		WCAccountFieldBooleanDictionary(WCAccountFieldSectionBoards,
-			@"wired.account.board.delete_all_posts", NSLS(@"Delete All Posts", @"Account field name"),
+			@"wired.account.board.delete_all_threads_and_posts", NSLS(@"Delete Threads & All Posts", @"Account field name"),
 			@"TBD"),
 			  
 		WCAccountFieldBooleanDictionary(WCAccountFieldSectionTracker,
@@ -687,8 +690,14 @@ NSString * const WCAccountFieldToolTipKey			= @"WCAccountFieldToolTipKey";
 
 
 
-- (BOOL)boardSetPermissions {
-	return [[self valueForKey:@"wired.account.board.set_permissions"] boolValue];
+- (BOOL)boardGetBoardInfo {
+	return [[self valueForKey:@"wired.account.board.get_board_info"] boolValue];
+}
+
+
+
+- (BOOL)boardSetBoardInfo {
+	return [[self valueForKey:@"wired.account.board.set_board_info"] boolValue];
 }
 
 
@@ -705,38 +714,32 @@ NSString * const WCAccountFieldToolTipKey			= @"WCAccountFieldToolTipKey";
 
 
 
-- (BOOL)boardDeleteThreads {
-	return [[self valueForKey:@"wired.account.board.delete_threads"] boolValue];
-}
-
-
-
 - (BOOL)boardAddPosts {
 	return [[self valueForKey:@"wired.account.board.add_posts"] boolValue];
 }
 
 
 
-- (BOOL)boardEditOwnPosts {
-	return [[self valueForKey:@"wired.account.board.edit_own_posts"] boolValue];
+- (BOOL)boardEditOwnThreadsAndPosts {
+	return [[self valueForKey:@"wired.account.board.edit_own_threads_and_posts"] boolValue];
 }
 
 
 
-- (BOOL)boardEditAllPosts {
-	return [[self valueForKey:@"wired.account.board.edit_all_posts"] boolValue];
+- (BOOL)boardEditAllThreadsAndPosts {
+	return [[self valueForKey:@"wired.account.board.edit_all_threads_and_posts"] boolValue];
 }
 
 
 
-- (BOOL)boardDeleteOwnPosts {
-	return [[self valueForKey:@"wired.account.board.delete_own_posts"] boolValue];
+- (BOOL)boardDeleteOwnThreadsAndPosts {
+	return [[self valueForKey:@"wired.account.board.delete_own_threads_and_posts"] boolValue];
 }
 
 
 
-- (BOOL)boardDeleteAllPosts {
-	return [[self valueForKey:@"wired.account.board.delete_all_posts"] boolValue];
+- (BOOL)boardDeleteAllThreadsAndPosts {
+	return [[self valueForKey:@"wired.account.board.delete_all_threads_and_posts"] boolValue];
 }
 
 

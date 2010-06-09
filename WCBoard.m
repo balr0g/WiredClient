@@ -32,6 +32,7 @@
 
 @interface WCBoard(Private)
 
+- (id)_initWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection;
 - (id)_initWithPath:(NSString *)path name:(NSString *)name connection:(WCServerConnection *)connection ;
 
 - (WCBoard *)_boardWithName:(NSString *)name;
@@ -41,6 +42,25 @@
 
 
 @implementation WCBoard(Private)
+
+- (id)_initWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection {
+	NSString		*path;
+	WIP7Bool		readable, writable;
+	
+	path = [message stringForName:@"wired.board.board"];
+	
+	[message getBool:&readable forName:@"wired.board.readable"];
+	[message getBool:&writable forName:@"wired.board.writable"];
+
+	self = [self _initWithPath:path name:[path lastPathComponent] connection:connection];
+	
+	_readable = readable;
+	_writable = writable;
+	
+	return self;
+}
+
+
 
 - (id)_initWithPath:(NSString *)path name:(NSString *)name connection:(WCServerConnection *)connection {
 	self = [self initWithConnection:connection];
@@ -144,41 +164,21 @@
 
 
 + (WCBoard *)boardWithMessage:(WIP7Message *)message connection:(WCServerConnection *)connection {
-	NSString		*path, *owner, *group;
+	NSString		*path;
 	WCBoard			*board;
-	NSUInteger		permissions;
-	WIP7Bool		value;
+	WIP7Bool		readable, writable;
 	
-	path	= [message stringForName:@"wired.board.board"];
-	owner	= [message stringForName:@"wired.board.owner"];
-	group	= [message stringForName:@"wired.board.group"];
+	path = [message stringForName:@"wired.board.board"];
 	
-	permissions = 0;
-	
-	if([message getBool:&value forName:@"wired.board.owner.read"] && value)
-		permissions |= WCBoardOwnerRead;
-	
-	if([message getBool:&value forName:@"wired.board.owner.write"] && value)
-		permissions |= WCBoardOwnerWrite;
-	
-	if([message getBool:&value forName:@"wired.board.group.read"] && value)
-		permissions |= WCBoardGroupRead;
-	
-	if([message getBool:&value forName:@"wired.board.group.write"] && value)
-		permissions |= WCBoardGroupWrite;
-	
-	if([message getBool:&value forName:@"wired.board.everyone.read"] && value)
-		permissions |= WCBoardEveryoneRead;
-	
-	if([message getBool:&value forName:@"wired.board.everyone.write"] && value)
-		permissions |= WCBoardEveryoneWrite;
-	
+	[message getBool:&readable forName:@"wired.board.readable"];
+	[message getBool:&writable forName:@"wired.board.writable"];
+
 	board = [[self alloc] _initWithPath:path name:[path lastPathComponent] connection:connection];
-	[board setOwner:owner];
-	[board setGroup:group];
-	[board setPermissions:permissions];
 	
-	return [board autorelease];
+	[board setReadable:readable];
+	[board setWritable:writable];
+	
+	return board;
 }
 
 
@@ -301,48 +301,6 @@
 
 
 
-- (void)setOwner:(NSString *)owner {
-	[owner retain];
-	[_owner release];
-	
-	_owner = owner;
-}
-
-
-
-- (NSString *)owner {
-	return _owner;
-}
-
-
-
-- (void)setGroup:(NSString *)group {
-	[group retain];
-	[_group release];
-	
-	_group = group;
-}
-
-
-
-- (NSString *)group {
-	return _group;
-}
-
-
-
-- (void)setPermissions:(NSUInteger)permissions {
-	_permissions = permissions;
-}
-
-
-
-- (NSUInteger)permissions {
-	return _permissions;
-}
-
-
-
 - (void)setSorting:(NSInteger)sorting {
 	_sorting = sorting;
 }
@@ -379,21 +337,26 @@
 
 
 
-- (BOOL)isWritableByAccount:(WCUserAccount *)account {
-	if(_permissions & WCBoardEveryoneWrite)
-		return YES;
-	
-	if(_permissions & WCBoardGroupWrite) {
-		if([[account group] isEqualToString:_group] || [[account groups] containsObject:_group])
-			return YES;
-	}
-	
-	if(_permissions & WCBoardOwnerWrite) {
-		if([[account name] isEqualToString:_owner])
-			return YES;
-	}
-	
-	return NO;
+- (void)setReadable:(BOOL)readable {
+	_readable = readable;
+}
+
+
+
+- (BOOL)isReadable {
+	return _readable;
+}
+
+
+
+- (void)setWritable:(BOOL)writable {
+	_writable = writable;
+}
+
+
+
+- (BOOL)isWritable {
+	return _writable;
 }
 
 
