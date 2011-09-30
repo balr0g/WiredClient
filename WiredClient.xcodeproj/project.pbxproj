@@ -249,6 +249,8 @@
 		63907A191435818F00D29EBD /* YellowDrop.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 639079951435818F00D29EBD /* YellowDrop.tiff */; };
 		63A8536E1436178900B0BC6A /* Growl.framework in Copy Files (Frameworks) */ = {isa = PBXBuildFile; fileRef = 63C9AA16143607A900233729 /* Growl.framework */; };
 		63A8536F1436178900B0BC6A /* Sparkle.framework in Copy Files (Frameworks) */ = {isa = PBXBuildFile; fileRef = 63C9AA17143607A900233729 /* Sparkle.framework */; };
+		63A8537C1436193F00B0BC6A /* AutoHyperlinks.framework in Copy Files (Frameworks) */ = {isa = PBXBuildFile; fileRef = 63A853781436189700B0BC6A /* AutoHyperlinks.framework */; };
+		63A8537E1436197C00B0BC6A /* AutoHyperlinks.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63A8537D1436197C00B0BC6A /* AutoHyperlinks.framework */; };
 		63C9AA18143607A900233729 /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63C9AA16143607A900233729 /* Growl.framework */; };
 		63C9AA19143607A900233729 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63C9AA17143607A900233729 /* Sparkle.framework */; };
 		63C9AA2F1436080700233729 /* PSMAquaTabStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 63C9AA251436080700233729 /* PSMAquaTabStyle.m */; };
@@ -406,6 +408,13 @@
 			remoteGlobalIDString = 8DC2EF5B0486A6940098B216;
 			remoteInfo = AutoHyperlinks.framework;
 		};
+		63A8537A1436193800B0BC6A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 63A853701436189700B0BC6A /* AutoHyperlinks.framework.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = AutoHyperlinks.framework;
+		};
 		7739D4990E7FFC0200D76C47 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = A544C1B90758E0E9008446CF /* WiredAdditions.xcodeproj */;
@@ -492,6 +501,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				63A8537C1436193F00B0BC6A /* AutoHyperlinks.framework in Copy Files (Frameworks) */,
 				77A1AF340F15001F00F7D24B /* PSMTabBarControl.framework in Copy Files (Frameworks) */,
 				7739D4AA0E7FFC6400D76C47 /* WiredAppKit.framework in Copy Files (Frameworks) */,
 				77270CD21090874200977C49 /* WiredFoundation.framework in Copy Files (Frameworks) */,
@@ -797,6 +807,7 @@
 		639079941435818F00D29EBD /* Warning.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = Warning.tiff; path = Images/Warning.tiff; sourceTree = "<group>"; };
 		639079951435818F00D29EBD /* YellowDrop.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = YellowDrop.tiff; path = Images/YellowDrop.tiff; sourceTree = "<group>"; };
 		63A853701436189700B0BC6A /* AutoHyperlinks.framework.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AutoHyperlinks.framework.xcodeproj; path = AutoHyperlinks/AutoHyperlinks.framework.xcodeproj; sourceTree = "<group>"; };
+		63A8537D1436197C00B0BC6A /* AutoHyperlinks.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AutoHyperlinks.framework; path = AutoHyperlinks/build/Deployment/AutoHyperlinks.framework; sourceTree = "<group>"; };
 		63C9AA16143607A900233729 /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Growl.framework; path = Frameworks/Growl.framework; sourceTree = "<group>"; };
 		63C9AA17143607A900233729 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = Frameworks/Sparkle.framework; sourceTree = "<group>"; };
 		63C9AA1A1436080700233729 /* PSMAquaTabStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PSMAquaTabStyle.h; path = PSMTabBarControl/Classes/PSMAquaTabStyle.h; sourceTree = "<group>"; };
@@ -930,6 +941,7 @@
 				77270CE21090875A00977C49 /* WiredFoundation.framework in Frameworks */,
 				7739D4A30E7FFC2C00D76C47 /* WiredNetworking.framework in Frameworks */,
 				A55C73440F268087006E8568 /* libicucore.dylib in Frameworks */,
+				63A8537E1436197C00B0BC6A /* AutoHyperlinks.framework in Frameworks */,
 				63C9AA18143607A900233729 /* Growl.framework in Frameworks */,
 				63C9AA19143607A900233729 /* Sparkle.framework in Frameworks */,
 			);
@@ -971,6 +983,7 @@
 		29B97314FDCFA39411CA2CEA /* WiredClient */ = {
 			isa = PBXGroup;
 			children = (
+				63A8537D1436197C00B0BC6A /* AutoHyperlinks.framework */,
 				A52B1C4706C408210033D317 /* Wired Client */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				A544C1C50758E107008446CF /* Subprojects */,
@@ -1784,6 +1797,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				63A8537B1436193800B0BC6A /* PBXTargetDependency */,
 				77A1AF3A0F15002800F7D24B /* PBXTargetDependency */,
 				7739D49A0E7FFC0200D76C47 /* PBXTargetDependency */,
 				7739D49C0E7FFC0200D76C47 /* PBXTargetDependency */,
@@ -2329,6 +2343,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		63A8537B1436193800B0BC6A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AutoHyperlinks.framework;
+			targetProxy = 63A8537A1436193800B0BC6A /* PBXContainerItemProxy */;
+		};
 		7739D49A0E7FFC0200D76C47 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = WiredFoundation;
@@ -2610,6 +2629,7 @@
 					"\"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)\"",
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/Frameworks\"",
+					"\"$(SRCROOT)/AutoHyperlinks/build/Deployment\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = prefix.pch;
@@ -2662,6 +2682,7 @@
 					"\"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)\"",
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/Frameworks\"",
+					"\"$(SRCROOT)/AutoHyperlinks/build/Deployment\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = prefix.pch;
@@ -2680,6 +2701,7 @@
 					"\"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)\"",
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/Frameworks\"",
+					"\"$(SRCROOT)/AutoHyperlinks/build/Deployment\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = prefix.pch;

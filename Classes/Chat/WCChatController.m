@@ -40,6 +40,9 @@
 #import "WCUserCell.h"
 #import "WCUserInfo.h"
 
+#import "AutoHyperlinks/AutoHyperlinks.h"
+
+
 #define WCPublicChatID											1
 
 #define WCLastChatFormat										@"WCLastChatFormat"
@@ -674,118 +677,8 @@ typedef enum _WCChatFormat					WCChatFormat;
 
 
 + (void)applyURLAttributesToAttributedString:(NSMutableAttributedString *)attributedString {
-	static NSCharacterSet	*whitespaceSet, *nonWhitespaceSet, *skipSet;
-	CFStringRef				string, word, subWord;
-	CFRange					searchRange, foundRange, wordRange, subRange;
-	WIURL					*url;
-	NSUInteger				length, wordLength, i;
-	CFIndex					index;
-	BOOL					interesting;
-	
-	if(!whitespaceSet) {
-		whitespaceSet		= [[NSCharacterSet whitespaceAndNewlineCharacterSet] retain];
-		nonWhitespaceSet	= [[whitespaceSet invertedSet] retain];
-		skipSet				= [[NSCharacterSet characterSetWithCharactersInString:@",.?()[]{}<>"] retain];
-	}
-	
-	string = (CFStringRef) [attributedString string];
-	length = CFStringGetLength(string);
-
-	searchRange.location = 0;
-	searchRange.length = length;
-	
-	while(searchRange.location != kCFNotFound) {
-		if(!CFStringFindCharacterFromSet(string, (CFCharacterSetRef) nonWhitespaceSet, searchRange, 0, &foundRange))
-			break;
-		
-		wordRange.location = foundRange.location;
-		searchRange.location = foundRange.location;
-		searchRange.length = length - searchRange.location;
-
-		if(!CFStringFindCharacterFromSet(string, (CFCharacterSetRef) whitespaceSet, searchRange, 0, &foundRange)) {
-			wordRange.length = length - wordRange.location;
-			searchRange.location = kCFNotFound;
-		} else {
-			wordRange.length = foundRange.location - wordRange.location;
-			searchRange.location = foundRange.location + foundRange.length;
-			searchRange.length = length - searchRange.location;
-		}
-		
-		if(wordRange.length >= 8) {
-			word = CFStringCreateWithSubstring(NULL, string, wordRange);
-			
-			interesting = NO;
-			
-			if(!interesting) {
-				index = CFStringFind(string, CFSTR("://"), 0).location;
-				
-				if(index != kCFNotFound && index != 0)
-					interesting = YES;
-			}
-			
-			if(!interesting) {
-				index = CFStringFind(string, CFSTR("www."), 0).location;
-				
-				if(index != kCFNotFound && index != 0)
-					interesting = YES;
-			}
-
-			if(interesting) {
-				i = 0;
-				wordLength = wordRange.length;
-				subRange.location = 0;
-				subRange.length = wordLength;
-				
-				while(i < wordLength && CFCharacterSetIsCharacterMember((CFCharacterSetRef) skipSet, CFStringGetCharacterAtIndex(word, i))) {
-					wordRange.location++;
-					wordRange.length--;
-
-					subRange.location++;
-					subRange.length--;
-
-					i++;
-				}
-				
-				if(subRange.length == 0) {
-					CFRelease(word);
-					
-					continue;
-				}
-				
-				i = wordLength;
-				
-				while(i > 0 && CFCharacterSetIsCharacterMember((CFCharacterSetRef) skipSet, CFStringGetCharacterAtIndex(word, i - 1))) {
-					wordRange.length--;
-					subRange.length--;
-					
-					i--;
-				}
-				
-				if(subRange.length == 0) {
-					CFRelease(word);
-					
-					continue;
-				}
-				
-				if((NSUInteger) subRange.length != wordLength) {
-					subWord = CFStringCreateWithSubstring(NULL, word, subRange);
-					
-					CFRelease(word);
-					word = subWord;
-				}
-				
-				url = [WIURL URLWithString:(NSString *) word];
-				
-				if(url) {
-					[attributedString addAttribute:NSLinkAttributeName
-											 value:[url URL]
-											 range:NSMakeRange(wordRange.location, wordRange.length)];
-				}
-			}
-	
-			CFRelease(word);
-		}
-	}
+    AHHyperlinkScanner *sc = [AHHyperlinkScanner hyperlinkScannerWithAttributedString:attributedString];
+    [attributedString setAttributedString:[sc linkifiedString]];
 }
 
 
