@@ -105,7 +105,6 @@
 		639078FA1435807300D29EBD /* WCSourceBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = 639078F21435807300D29EBD /* WCSourceBackgroundView.m */; };
 		639078FB1435807300D29EBD /* WCSourceImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 639078F41435807300D29EBD /* WCSourceImageView.m */; };
 		639078FC1435807300D29EBD /* WCSourceSplitView.m in Sources */ = {isa = PBXBuildFile; fileRef = 639078F61435807300D29EBD /* WCSourceSplitView.m */; };
-		63907908143580E000D29EBD /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 639078FE143580E000D29EBD /* Info.plist */; };
 		63907909143580E000D29EBD /* SUPublicDSAKeyFile.pem in Resources */ = {isa = PBXBuildFile; fileRef = 639078FF143580E000D29EBD /* SUPublicDSAKeyFile.pem */; };
 		6390790A143580E000D29EBD /* wired.xml in Resources */ = {isa = PBXBuildFile; fileRef = 63907900143580E000D29EBD /* wired.xml */; };
 		6390790B143580E000D29EBD /* WiredBookmarks.icns in Resources */ = {isa = PBXBuildFile; fileRef = 63907901143580E000D29EBD /* WiredBookmarks.icns */; };
@@ -1973,7 +1972,6 @@
 				779951890A122BBB00600320 /* Smile.tiff in Resources */,
 				779951900A122BBB00600320 /* Wink.tiff in Resources */,
 				779951820A122BBB00600320 /* Yuck.tiff in Resources */,
-				63907908143580E000D29EBD /* Info.plist in Resources */,
 				63907909143580E000D29EBD /* SUPublicDSAKeyFile.pem in Resources */,
 				6390790A143580E000D29EBD /* wired.xml in Resources */,
 				6390790B143580E000D29EBD /* WiredBookmarks.icns in Resources */,
