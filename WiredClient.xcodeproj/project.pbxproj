@@ -247,6 +247,8 @@
 		63907A171435818F00D29EBD /* VolumeQuiet.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 639079931435818F00D29EBD /* VolumeQuiet.tiff */; };
 		63907A181435818F00D29EBD /* Warning.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 639079941435818F00D29EBD /* Warning.tiff */; };
 		63907A191435818F00D29EBD /* YellowDrop.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 639079951435818F00D29EBD /* YellowDrop.tiff */; };
+		63A8536E1436178900B0BC6A /* Growl.framework in Copy Files (Frameworks) */ = {isa = PBXBuildFile; fileRef = 63C9AA16143607A900233729 /* Growl.framework */; };
+		63A8536F1436178900B0BC6A /* Sparkle.framework in Copy Files (Frameworks) */ = {isa = PBXBuildFile; fileRef = 63C9AA17143607A900233729 /* Sparkle.framework */; };
 		63C9AA18143607A900233729 /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63C9AA16143607A900233729 /* Growl.framework */; };
 		63C9AA19143607A900233729 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63C9AA17143607A900233729 /* Sparkle.framework */; };
 		63C9AA2F1436080700233729 /* PSMAquaTabStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 63C9AA251436080700233729 /* PSMAquaTabStyle.m */; };
@@ -292,6 +294,52 @@
 		63D02F11143582A00000C037 /* PostFooter.html in Resources */ = {isa = PBXBuildFile; fileRef = 63D02F0D143582A00000C037 /* PostFooter.html */; };
 		63D02F12143582A00000C037 /* PostHeader.html in Resources */ = {isa = PBXBuildFile; fileRef = 63D02F0E143582A00000C037 /* PostHeader.html */; };
 		63D02F13143582A00000C037 /* PostReply.html in Resources */ = {isa = PBXBuildFile; fileRef = 63D02F0F143582A00000C037 /* PostReply.html */; };
+		63D5022914360E7B0054B07B /* PSMTabBarControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 63C9AA201436080700233729 /* PSMTabBarControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		63D5022A14360E810054B07B /* NSBezierPath_AMShading.h in Headers */ = {isa = PBXBuildFile; fileRef = 63C9AA391436081300233729 /* NSBezierPath_AMShading.h */; };
+		63D5022B14360EB30054B07B /* PSMAquaTabStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 63C9AA1A1436080700233729 /* PSMAquaTabStyle.h */; };
+		63D5022C14360EB30054B07B /* PSMMetalTabStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 63C9AA1B1436080700233729 /* PSMMetalTabStyle.h */; };
+		63D5022D14360EB30054B07B /* PSMOverflowPopUpButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 63C9AA1C1436080700233729 /* PSMOverflowPopUpButton.h */; };
+		63D5022E14360EB30054B07B /* PSMProgressIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 63C9AA1D1436080700233729 /* PSMProgressIndicator.h */; };
+		63D5022F14360EB30054B07B /* PSMRolloverButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 63C9AA1E1436080700233729 /* PSMRolloverButton.h */; };
+		63D5023014360EB30054B07B /* PSMTabBarCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 63C9AA1F1436080700233729 /* PSMTabBarCell.h */; };
+		63D5023114360EB30054B07B /* PSMTabDragAssistant.h in Headers */ = {isa = PBXBuildFile; fileRef = 63C9AA211436080700233729 /* PSMTabDragAssistant.h */; };
+		63D5023214360EB30054B07B /* PSMTabStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 63C9AA221436080700233729 /* PSMTabStyle.h */; };
+		63D5023314360EB30054B07B /* PSMUnifiedTabStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 63C9AA231436080700233729 /* PSMUnifiedTabStyle.h */; };
+		63D5023414360EB30054B07B /* PSMWiredTabStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 63C9AA241436080700233729 /* PSMWiredTabStyle.h */; };
+		63D5023514360EE00054B07B /* AquaTabNew.png in Resources */ = {isa = PBXBuildFile; fileRef = 63C9AA3C1436082100233729 /* AquaTabNew.png */; };
+		63D5023614360EE00054B07B /* AquaTabNewPressed.png in Resources */ = {isa = PBXBuildFile; fileRef = 63C9AA3D1436082100233729 /* AquaTabNewPressed.png */; };
+		63D5023714360EE00054B07B /* AquaTabNewRollover.png in Resources */ = {isa = PBXBuildFile; fileRef = 63C9AA3E1436082100233729 /* AquaTabNewRollover.png */; };
+		63D5023814360EE00054B07B /* AquaTabsBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 63C9AA3F1436082100233729 /* AquaTabsBackground.png */; };
+		63D5023914360EE00054B07B /* AquaTabsDown.png in Resources */ = {isa = PBXBuildFile; fileRef = 63C9AA401436082100233729 /* AquaTabsDown.png */; };
+		63D5023A14360EE00054B07B /* AquaTabsDownGraphite.png in Resources */ = {isa = PBXBuildFile; fileRef = 63C9AA411436082100233729 /* AquaTabsDownGraphite.png */; };
+		63D5023B14360EE00054B07B /* AquaTabsDownNonKey.png in Resources */ = {isa = PBXBuildFile; fileRef = 63C9AA421436082100233729 /* AquaTabsDownNonKey.png */; };
+		63D5023C14360EE00054B07B /* AquaTabsSeparator.png in Resources */ = {isa = PBXBuildFile; fileRef = 63C9AA431436082100233729 /* AquaTabsSeparator.png */; };
+		63D5023D14360EE00054B07B /* AquaTabsSeparatorDown.png in Resources */ = {isa = PBXBuildFile; fileRef = 63C9AA441436082100233729 /* AquaTabsSeparatorDown.png */; };
+		63D5023E14360EE00054B07B /* pi.png in Resources */ = {isa = PBXBuildFile; fileRef = 63C9AA451436082100233729 /* pi.png */; };
+		63D5023F14360EE00054B07B /* TabNewMetal.png in Resources */ = {isa = PBXBuildFile; fileRef = 63C9AA461436082100233729 /* TabNewMetal.png */; };
+		63D5024014360EE00054B07B /* TabNewMetalPressed.png in Resources */ = {isa = PBXBuildFile; fileRef = 63C9AA471436082100233729 /* TabNewMetalPressed.png */; };
+		63D5024114360EE00054B07B /* TabNewMetalRollover.png in Resources */ = {isa = PBXBuildFile; fileRef = 63C9AA481436082100233729 /* TabNewMetalRollover.png */; };
+		63D5024214360EE00054B07B /* AquaTabClose_Front_Pressed.tif in Resources */ = {isa = PBXBuildFile; fileRef = 63C9AA4A1436082100233729 /* AquaTabClose_Front_Pressed.tif */; };
+		63D5024314360EE00054B07B /* AquaTabClose_Front_Rollover.tif in Resources */ = {isa = PBXBuildFile; fileRef = 63C9AA4B1436082100233729 /* AquaTabClose_Front_Rollover.tif */; };
+		63D5024414360EE00054B07B /* AquaTabClose_Front.tif in Resources */ = {isa = PBXBuildFile; fileRef = 63C9AA4C1436082100233729 /* AquaTabClose_Front.tif */; };
+		63D5024514360EE00054B07B /* overflowImage.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 63C9AA4D1436082100233729 /* overflowImage.tiff */; };
+		63D5024614360EE00054B07B /* overflowImagePressed.tif in Resources */ = {isa = PBXBuildFile; fileRef = 63C9AA4E1436082100233729 /* overflowImagePressed.tif */; };
+		63D5024714360EE00054B07B /* TabClose_Front_Pressed.tif in Resources */ = {isa = PBXBuildFile; fileRef = 63C9AA4F1436082100233729 /* TabClose_Front_Pressed.tif */; };
+		63D5024814360EE00054B07B /* TabClose_Front_Rollover.tif in Resources */ = {isa = PBXBuildFile; fileRef = 63C9AA501436082100233729 /* TabClose_Front_Rollover.tif */; };
+		63D5024914360EE00054B07B /* TabClose_Front.tif in Resources */ = {isa = PBXBuildFile; fileRef = 63C9AA511436082100233729 /* TabClose_Front.tif */; };
+		63D5024A14360EE00054B07B /* TabControlRep.tif in Resources */ = {isa = PBXBuildFile; fileRef = 63C9AA521436082100233729 /* TabControlRep.tif */; };
+		63D5024B14360EE00054B07B /* TabIcon.tif in Resources */ = {isa = PBXBuildFile; fileRef = 63C9AA531436082100233729 /* TabIcon.tif */; };
+		63D5024C14360EF40054B07B /* PSMAquaTabStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 63C9AA251436080700233729 /* PSMAquaTabStyle.m */; };
+		63D5024D14360EF40054B07B /* PSMMetalTabStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 63C9AA261436080700233729 /* PSMMetalTabStyle.m */; };
+		63D5024E14360EF40054B07B /* PSMOverflowPopUpButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 63C9AA271436080700233729 /* PSMOverflowPopUpButton.m */; };
+		63D5024F14360EF40054B07B /* PSMProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 63C9AA281436080700233729 /* PSMProgressIndicator.m */; };
+		63D5025014360EF40054B07B /* PSMRolloverButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 63C9AA291436080700233729 /* PSMRolloverButton.m */; };
+		63D5025114360EF40054B07B /* PSMTabBarCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 63C9AA2A1436080700233729 /* PSMTabBarCell.m */; };
+		63D5025214360EF40054B07B /* PSMTabBarControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 63C9AA2B1436080700233729 /* PSMTabBarControl.m */; };
+		63D5025314360EF40054B07B /* PSMTabDragAssistant.m in Sources */ = {isa = PBXBuildFile; fileRef = 63C9AA2C1436080700233729 /* PSMTabDragAssistant.m */; };
+		63D5025414360EF40054B07B /* PSMUnifiedTabStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 63C9AA2D1436080700233729 /* PSMUnifiedTabStyle.m */; };
+		63D5025514360EF40054B07B /* PSMWiredTabStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 63C9AA2E1436080700233729 /* PSMWiredTabStyle.m */; };
+		63D5025614360EF40054B07B /* NSBezierPath_AMShading.m in Sources */ = {isa = PBXBuildFile; fileRef = 63C9AA3A1436081300233729 /* NSBezierPath_AMShading.m */; };
 		77270CD21090874200977C49 /* WiredFoundation.framework in Copy Files (Frameworks) */ = {isa = PBXBuildFile; fileRef = 7743D4F5109086FE0046D05E /* WiredFoundation.framework */; };
 		77270CE21090875A00977C49 /* WiredFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7743D4F5109086FE0046D05E /* WiredFoundation.framework */; };
 		7739D4A20E7FFC2C00D76C47 /* WiredAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 779AB7D90E5C480A0031B6CE /* WiredAppKit.framework */; };
@@ -441,6 +489,8 @@
 				7739D4AA0E7FFC6400D76C47 /* WiredAppKit.framework in Copy Files (Frameworks) */,
 				77270CD21090874200977C49 /* WiredFoundation.framework in Copy Files (Frameworks) */,
 				7739D4AB0E7FFC6400D76C47 /* WiredNetworking.framework in Copy Files (Frameworks) */,
+				63A8536E1436178900B0BC6A /* Growl.framework in Copy Files (Frameworks) */,
+				63A8536F1436178900B0BC6A /* Sparkle.framework in Copy Files (Frameworks) */,
 			);
 			name = "Copy Files (Frameworks)";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1666,6 +1716,18 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				63D5022914360E7B0054B07B /* PSMTabBarControl.h in Headers */,
+				63D5022B14360EB30054B07B /* PSMAquaTabStyle.h in Headers */,
+				63D5022C14360EB30054B07B /* PSMMetalTabStyle.h in Headers */,
+				63D5022D14360EB30054B07B /* PSMOverflowPopUpButton.h in Headers */,
+				63D5022E14360EB30054B07B /* PSMProgressIndicator.h in Headers */,
+				63D5022F14360EB30054B07B /* PSMRolloverButton.h in Headers */,
+				63D5023014360EB30054B07B /* PSMTabBarCell.h in Headers */,
+				63D5023114360EB30054B07B /* PSMTabDragAssistant.h in Headers */,
+				63D5023214360EB30054B07B /* PSMTabStyle.h in Headers */,
+				63D5023314360EB30054B07B /* PSMUnifiedTabStyle.h in Headers */,
+				63D5023414360EB30054B07B /* PSMWiredTabStyle.h in Headers */,
+				63D5022A14360E810054B07B /* NSBezierPath_AMShading.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1799,6 +1861,29 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				63D5023514360EE00054B07B /* AquaTabNew.png in Resources */,
+				63D5023614360EE00054B07B /* AquaTabNewPressed.png in Resources */,
+				63D5023714360EE00054B07B /* AquaTabNewRollover.png in Resources */,
+				63D5023814360EE00054B07B /* AquaTabsBackground.png in Resources */,
+				63D5023914360EE00054B07B /* AquaTabsDown.png in Resources */,
+				63D5023A14360EE00054B07B /* AquaTabsDownGraphite.png in Resources */,
+				63D5023B14360EE00054B07B /* AquaTabsDownNonKey.png in Resources */,
+				63D5023C14360EE00054B07B /* AquaTabsSeparator.png in Resources */,
+				63D5023D14360EE00054B07B /* AquaTabsSeparatorDown.png in Resources */,
+				63D5023E14360EE00054B07B /* pi.png in Resources */,
+				63D5023F14360EE00054B07B /* TabNewMetal.png in Resources */,
+				63D5024014360EE00054B07B /* TabNewMetalPressed.png in Resources */,
+				63D5024114360EE00054B07B /* TabNewMetalRollover.png in Resources */,
+				63D5024214360EE00054B07B /* AquaTabClose_Front_Pressed.tif in Resources */,
+				63D5024314360EE00054B07B /* AquaTabClose_Front_Rollover.tif in Resources */,
+				63D5024414360EE00054B07B /* AquaTabClose_Front.tif in Resources */,
+				63D5024514360EE00054B07B /* overflowImage.tiff in Resources */,
+				63D5024614360EE00054B07B /* overflowImagePressed.tif in Resources */,
+				63D5024714360EE00054B07B /* TabClose_Front_Pressed.tif in Resources */,
+				63D5024814360EE00054B07B /* TabClose_Front_Rollover.tif in Resources */,
+				63D5024914360EE00054B07B /* TabClose_Front.tif in Resources */,
+				63D5024A14360EE00054B07B /* TabControlRep.tif in Resources */,
+				63D5024B14360EE00054B07B /* TabIcon.tif in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2053,7 +2138,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/usr/bin/codesign -f -s \"Mac OS X Developer: Axel Andersson\" \"$BUILT_PRODUCTS_DIR/$WRAPPER_NAME\" || exit 0\n";
+			shellScript = "#/usr/bin/codesign -f -s \"Mac OS X Developer: Axel Andersson\" \"$BUILT_PRODUCTS_DIR/$WRAPPER_NAME\" || exit 0\n";
 			showEnvVarsInLog = 0;
 		};
 		77F05B7F0751E75A004F4E0E /* Run Script (Localize) */ = {
@@ -2088,7 +2173,7 @@
 		};
 		A5DC7E2A057AA99B00736BBF /* Run Script (Version) */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 12;
 			files = (
 			);
 			inputPaths = (
@@ -2098,7 +2183,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "perl WiredAdditions/version.pl";
+			shellScript = "perl WiredAdditions/version.pl \"WiredAdditions\"";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -2108,6 +2193,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				63D5024C14360EF40054B07B /* PSMAquaTabStyle.m in Sources */,
+				63D5024D14360EF40054B07B /* PSMMetalTabStyle.m in Sources */,
+				63D5024E14360EF40054B07B /* PSMOverflowPopUpButton.m in Sources */,
+				63D5024F14360EF40054B07B /* PSMProgressIndicator.m in Sources */,
+				63D5025014360EF40054B07B /* PSMRolloverButton.m in Sources */,
+				63D5025114360EF40054B07B /* PSMTabBarCell.m in Sources */,
+				63D5025214360EF40054B07B /* PSMTabBarControl.m in Sources */,
+				63D5025314360EF40054B07B /* PSMTabDragAssistant.m in Sources */,
+				63D5025414360EF40054B07B /* PSMUnifiedTabStyle.m in Sources */,
+				63D5025514360EF40054B07B /* PSMWiredTabStyle.m in Sources */,
+				63D5025614360EF40054B07B /* NSBezierPath_AMShading.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2428,7 +2524,7 @@
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = PSMTabBarControl/prefix.pch;
-				INFOPLIST_FILE = PSMTabBarControl/Info.plist;
+				INFOPLIST_FILE = PSMTabBarControl/Resources/Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = (
 					"-seg1addr",
@@ -2448,7 +2544,7 @@
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = PSMTabBarControl/prefix.pch;
-				INFOPLIST_FILE = PSMTabBarControl/Info.plist;
+				INFOPLIST_FILE = PSMTabBarControl/Resources/Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = (
 					"-seg1addr",
@@ -2467,7 +2563,7 @@
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = PSMTabBarControl/prefix.pch;
-				INFOPLIST_FILE = PSMTabBarControl/Info.plist;
+				INFOPLIST_FILE = PSMTabBarControl/Resources/Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = (
 					"-seg1addr",
@@ -2490,7 +2586,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = prefix.pch;
 				HEADER_SEARCH_PATHS = "\"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/WiredNetworking.framework/Headers\"";
-				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_FILE = Resources/Info.plist;
 				PRODUCT_IDENTIFIER = com.zanka.WiredClientDebugP7;
 				PRODUCT_NAME = "Wired Client";
 				WRAPPER_EXTENSION = app;
@@ -2542,7 +2638,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = prefix.pch;
 				HEADER_SEARCH_PATHS = "\"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/WiredNetworking.framework/Headers\"";
-				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_FILE = Resources/Info.plist;
 				PRODUCT_IDENTIFIER = com.zanka.WiredClientDebugP7;
 				PRODUCT_NAME = "Wired Client";
 				WRAPPER_EXTENSION = app;
@@ -2560,7 +2656,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = prefix.pch;
 				HEADER_SEARCH_PATHS = "\"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/WiredNetworking.framework/Headers\"";
-				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_FILE = Resources/Info.plist;
 				PRODUCT_IDENTIFIER = com.zanka.WiredClient;
 				PRODUCT_NAME = "Wired Client";
 				WRAPPER_EXTENSION = app;
