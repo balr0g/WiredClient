@@ -952,6 +952,7 @@
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				63A8537D1436197C00B0BC6A /* AutoHyperlinks.framework */,
 				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
 				A509AD1105F7FBFF00E6AE2D /* Carbon.framework */,
 				A5D4F27F06D75DA4002A33D0 /* ExceptionHandling.framework */,
@@ -982,7 +983,6 @@
 		29B97314FDCFA39411CA2CEA /* WiredClient */ = {
 			isa = PBXGroup;
 			children = (
-				63A8537D1436197C00B0BC6A /* AutoHyperlinks.framework */,
 				A52B1C4706C408210033D317 /* Wired Client */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				A544C1C50758E107008446CF /* Subprojects */,
